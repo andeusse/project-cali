@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItem,
   Toolbar,
+  Typography,
   useTheme,
 } from '@mui/material';
 import { Outlet, Link as RouterLink } from 'react-router-dom';
@@ -20,6 +21,7 @@ import MonitorIcon from '@mui/icons-material/Monitor';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import InfoIcon from '@mui/icons-material/Info';
+import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 
 import { themeType } from '../types/theme';
 import { changeTheme } from '../redux/themeSlice';
@@ -87,8 +89,30 @@ const NavigationBar = (props: Props) => {
   return (
     <>
       <AppBar position="static">
-        <Container maxWidth="xl">
+        <Container maxWidth={false}>
           <Toolbar disableGutters>
+            <Typography
+              variant="h6"
+              noWrap
+              component={RouterLink}
+              to={`/`}
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                fontSize: '1rem',
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              <ElectricBoltIcon
+                sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+              />
+              SMARTGRID
+            </Typography>
+
             <Box
               sx={{
                 flexGrow: 1,

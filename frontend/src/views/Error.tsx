@@ -1,6 +1,5 @@
 import { Box, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
-import { Link as LinkBase } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 
 const Error = () => {
@@ -18,15 +17,14 @@ const Error = () => {
         ></img>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <LinkBase
-          component={Link}
-          to={'/'}
-          style={{
-            textDecoration: 'none',
-          }}
+        <Button
+          startIcon={<HomeIcon></HomeIcon>}
+          sx={{ marginRight: 2, color: 'white' }}
+          component={RouterLink}
+          to={`/`}
         >
-          <Button startIcon={<HomeIcon></HomeIcon>}>Go home</Button>
-        </LinkBase>
+          Home
+        </Button>
       </Box>
     </>
   );

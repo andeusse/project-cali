@@ -1,13 +1,10 @@
+import { Container } from '@mui/material';
 import React from 'react';
 
 type Props = {};
 
 const DigitalTwins = (props: Props) => {
-  return (
-    <div>
-      <div>DigitalTwins</div>
-    </div>
-  );
+  return <Container maxWidth="xl">DigitalTwins</Container>;
 };
 
 export default DigitalTwins;
