@@ -1,9 +1,9 @@
-import React from 'react';
 import { TabType } from '../../types/tab';
 import { Box } from '@mui/material';
 import CustomTab from '../../components/UI/CustomTab';
 import Config from '../../config/config';
 import Iframe from 'react-iframe';
+import IframeFull from '../../components/UI/IframeFull';
 
 type Props = {};
 
@@ -12,64 +12,57 @@ const TabGrafana = (props: Props) => {
     {
       title: 'Turbinas',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[0]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
     {
       title: 'Solar - Eólico',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[1]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
     {
       title: 'Celda de Hidrógeno',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[2]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
     {
       title: 'Planta de Biogás',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[3]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
     {
       title: 'Torre de refrigeración',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[4]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
     {
       title: 'Túnel de viento',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[5]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
     {
       title: 'Potencial Bioquímico (Metano)',
       children: (
-        <Iframe
+        <IframeFull
           url={Config.getInstance().params.grafanaUrls[6]}
-          styles={{ width: '100%', height: '550px' }}
-        ></Iframe>
+        ></IframeFull>
       ),
     },
   ];
