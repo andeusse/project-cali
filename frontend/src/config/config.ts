@@ -15,6 +15,9 @@ export default class Config {
           : process.env.REACT_APP_PROD_API_URL
           ? process.env.REACT_APP_PROD_API_URL
           : '',
+      grafanaUrls: process.env.REACT_APP_GRAFANA_TABS
+        ? process.env.REACT_APP_GRAFANA_TABS.split(' ')
+        : [],
     };
   }
 

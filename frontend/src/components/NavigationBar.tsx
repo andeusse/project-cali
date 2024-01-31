@@ -8,7 +8,6 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  useTheme,
 } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -63,8 +62,6 @@ const pages: PageType[] = [
 
 const NavigationBar = (props: Props) => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
-
-  const theme = useTheme();
 
   const userTheme = useAppSelector((state) => state.theme.value);
   const dispatch = useAppDispatch();
