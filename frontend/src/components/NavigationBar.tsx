@@ -3,16 +3,14 @@ import { useAppDispatch, useAppSelector } from '../redux/reduxHooks';
 import {
   AppBar,
   Box,
-  Button,
   Container,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
   useTheme,
 } from '@mui/material';
-import { Outlet, Link as RouterLink } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -21,10 +19,11 @@ import MonitorIcon from '@mui/icons-material/Monitor';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import InfoIcon from '@mui/icons-material/Info';
-import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 
 import { themeType } from '../types/theme';
 import { changeTheme } from '../redux/themeSlice';
+import LinkButton from './UI/LinkButton';
+import Logo from './UI/Logo';
 
 type Props = {};
 
@@ -91,28 +90,7 @@ const NavigationBar = (props: Props) => {
       <AppBar position="static">
         <Container maxWidth={false}>
           <Toolbar disableGutters>
-            <Typography
-              variant="h6"
-              noWrap
-              component={RouterLink}
-              to={`/`}
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                fontSize: '1rem',
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
-              }}
-            >
-              <ElectricBoltIcon
-                sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
-              />
-              SMARTGRID
-            </Typography>
-
+            <Logo></Logo>
             <Box
               sx={{
                 flexGrow: 1,
@@ -149,9 +127,8 @@ const NavigationBar = (props: Props) => {
               >
                 {pages.map((page) => (
                   <MenuItem key={page.text} onClick={handleCloseNavMenu}>
-                    <Button
-                      key={page.text}
-                      startIcon={page.icon}
+                    <LinkButton
+                      icon={page.icon}
                       sx={{
                         marginRight: 2,
                         color:
@@ -159,11 +136,9 @@ const NavigationBar = (props: Props) => {
                             ? theme.palette.grey.A700
                             : 'white',
                       }}
-                      component={RouterLink}
                       to={`${page.to}`}
-                    >
-                      {page.text}
-                    </Button>
+                      text={page.text}
+                    ></LinkButton>
                   </MenuItem>
                 ))}
               </Menu>
@@ -171,15 +146,13 @@ const NavigationBar = (props: Props) => {
 
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                <Button
+                <LinkButton
                   key={page.text}
-                  startIcon={page.icon}
+                  icon={page.icon}
                   sx={{ marginRight: 2, color: 'white' }}
-                  component={RouterLink}
                   to={`${page.to}`}
-                >
-                  {page.text}
-                </Button>
+                  text={page.text}
+                ></LinkButton>
               ))}
             </Box>
 

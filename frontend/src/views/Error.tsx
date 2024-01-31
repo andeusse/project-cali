@@ -1,6 +1,6 @@
-import { Box, Button } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Box } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
+import LinkButton from '../components/UI/LinkButton';
 
 const Error = () => {
   return (
@@ -17,14 +17,12 @@ const Error = () => {
         ></img>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <Button
-          startIcon={<HomeIcon></HomeIcon>}
+        <LinkButton
+          icon={<HomeIcon></HomeIcon>}
           sx={{ marginRight: 2, color: 'white' }}
-          component={RouterLink}
           to={`/`}
-        >
-          Home
-        </Button>
+          text={'Home'}
+        ></LinkButton>
       </Box>
     </>
   );
