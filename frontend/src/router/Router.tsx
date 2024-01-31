@@ -2,7 +2,7 @@ import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import { RouterProvider } from 'react-router';
 
-import NavigationBar from './NavigationBar';
+import NavigationBar from '../components/NavigationBar';
 import Error from '../views/Error';
 import Home from '../views/Home';
 import Monitoring from '../views/Monitoring';

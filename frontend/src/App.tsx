@@ -5,7 +5,7 @@ import { setTheme } from './redux/themeSlice';
 import IsLoading from './components/IsLoading';
 import { useEffect } from 'react';
 import string2Theme from './utils/string2Theme';
-import Router from './components/Router';
+import Router from './router/Router';
 
 function App() {
   const userTheme = useAppSelector((state) => state.theme.value);

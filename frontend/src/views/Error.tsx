@@ -19,9 +19,11 @@ const Error = () => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <LinkButton
           icon={<HomeIcon></HomeIcon>}
-          sx={{ marginRight: 2, color: 'white' }}
+          sx={{ margin: 2 }}
           to={`/`}
           text={'Home'}
+          variant="contained"
+          color="inherit"
         ></LinkButton>
       </Box>
     </>

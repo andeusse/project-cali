@@ -131,10 +131,7 @@ const NavigationBar = (props: Props) => {
                       icon={page.icon}
                       sx={{
                         marginRight: 2,
-                        color:
-                          userTheme === themeType.Light
-                            ? theme.palette.grey.A700
-                            : 'white',
+                        color: 'inherit',
                       }}
                       to={`${page.to}`}
                       text={page.text}
