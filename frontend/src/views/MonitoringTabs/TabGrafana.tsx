@@ -8,8 +8,6 @@ import Iframe from 'react-iframe';
 type Props = {};
 
 const TabGrafana = (props: Props) => {
-  console.log(Config.getInstance().params.grafanaUrls);
-
   const tabs: TabType[] = [
     {
       title: 'Turbinas',

@@ -18,7 +18,7 @@ const Monitoring = (props: Props) => {
       children: <TabRealTime></TabRealTime>,
     },
   ];
-
+  // sx={{ display: { xs: 'grid', md: 'flex' } }}
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">
