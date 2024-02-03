@@ -125,14 +125,15 @@ const NavigationBar = (props: Props) => {
                 {pages.map((page) => (
                   <MenuItem key={page.text} onClick={handleCloseNavMenu}>
                     <LinkButton
-                      icon={page.icon}
+                      startIcon={page.icon}
                       sx={{
                         marginRight: 2,
                         color: 'inherit',
                       }}
                       to={`${page.to}`}
-                      text={page.text}
-                    ></LinkButton>
+                    >
+                      {page.text}
+                    </LinkButton>
                   </MenuItem>
                 ))}
               </Menu>
@@ -142,11 +143,12 @@ const NavigationBar = (props: Props) => {
               {pages.map((page) => (
                 <LinkButton
                   key={page.text}
-                  icon={page.icon}
+                  startIcon={page.icon}
                   sx={{ marginRight: 2, color: 'white' }}
                   to={`${page.to}`}
-                  text={page.text}
-                ></LinkButton>
+                >
+                  {page.text}
+                </LinkButton>
               ))}
             </Box>
 

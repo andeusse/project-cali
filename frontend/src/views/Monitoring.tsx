@@ -1,5 +1,4 @@
 import { Box, Container } from '@mui/material';
-import React from 'react';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
 import TabGrafana from './MonitoringTabs/TabGrafana';
@@ -18,7 +17,6 @@ const Monitoring = (props: Props) => {
       children: <TabRealTime></TabRealTime>,
     },
   ];
-  // sx={{ display: { xs: 'grid', md: 'flex' } }}
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">

@@ -27,29 +27,32 @@ const Home = (props: Props) => {
         alignItems="center"
       >
         <LinkButton
-          icon={<MonitorIcon></MonitorIcon>}
+          startIcon={<MonitorIcon></MonitorIcon>}
           sx={style}
           to={`monitoring`}
-          text={'Monitoring'}
           variant="contained"
           color="inherit"
-        ></LinkButton>
+        >
+          Monitoring
+        </LinkButton>
         <LinkButton
-          icon={<ContentCopyIcon></ContentCopyIcon>}
+          startIcon={<ContentCopyIcon></ContentCopyIcon>}
           sx={style}
           to={`digitaltwins`}
-          text={'Digital Twins'}
           variant="contained"
           color="inherit"
-        ></LinkButton>
+        >
+          Digital Twins
+        </LinkButton>
         <LinkButton
-          icon={<StackedLineChartIcon></StackedLineChartIcon>}
+          startIcon={<StackedLineChartIcon></StackedLineChartIcon>}
           sx={style}
           to={`scenarios`}
-          text={'Scenarios'}
           variant="contained"
           color="inherit"
-        ></LinkButton>
+        >
+          Scenarios
+        </LinkButton>
       </Box>
     </Container>
   );

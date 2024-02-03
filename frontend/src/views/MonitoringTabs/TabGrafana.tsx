@@ -2,7 +2,6 @@ import { TabType } from '../../types/tab';
 import { Box } from '@mui/material';
 import CustomTab from '../../components/UI/CustomTab';
 import Config from '../../config/config';
-import Iframe from 'react-iframe';
 import IframeFull from '../../components/UI/IframeFull';
 
 type Props = {};
