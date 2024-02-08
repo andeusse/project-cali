@@ -29,7 +29,7 @@ const Home = (props: Props) => {
         <LinkButton
           startIcon={<MonitorIcon></MonitorIcon>}
           sx={style}
-          to={`monitoring`}
+          to={`/monitoring`}
           variant="contained"
           color="inherit"
         >
@@ -38,7 +38,7 @@ const Home = (props: Props) => {
         <LinkButton
           startIcon={<ContentCopyIcon></ContentCopyIcon>}
           sx={style}
-          to={`digitaltwins`}
+          to={`/digitaltwins`}
           variant="contained"
           color="inherit"
         >
@@ -47,7 +47,7 @@ const Home = (props: Props) => {
         <LinkButton
           startIcon={<StackedLineChartIcon></StackedLineChartIcon>}
           sx={style}
-          to={`scenarios`}
+          to={`/scenarios`}
           variant="contained"
           color="inherit"
         >

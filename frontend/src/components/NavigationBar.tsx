@@ -9,7 +9,7 @@ import {
   MenuItem,
   Toolbar,
 } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -20,9 +20,11 @@ import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { themeType } from '../types/theme';
-import { changeTheme } from '../redux/themeSlice';
+import { changeTheme } from '../redux/slices/themeSlice';
 import LinkButton from './UI/LinkButton';
 import Logo from './UI/Logo';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import Config from '../config/config';
 
 type Props = {};
 
@@ -35,7 +37,7 @@ type PageType = {
 const pages: PageType[] = [
   {
     text: 'Home',
-    to: '/',
+    to: '/home',
     icon: <HomeIcon></HomeIcon>,
   },
   {
@@ -62,6 +64,7 @@ const pages: PageType[] = [
 
 const NavigationBar = (props: Props) => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const route = useLocation();
 
   const userTheme = useAppSelector((state) => state.theme.value);
   const dispatch = useAppDispatch();
@@ -85,6 +88,13 @@ const NavigationBar = (props: Props) => {
   return (
     <>
       <AppBar position="static">
+        <HelmetProvider>
+          <Helmet>
+            <title>{`${route.pathname
+              .split('/')[1]
+              .toUpperCase()} | ${Config.getInstance().params.projectName.toUpperCase()}`}</title>
+          </Helmet>
+        </HelmetProvider>
         <Container maxWidth={false}>
           <Toolbar disableGutters>
             <Logo></Logo>

@@ -1,6 +1,5 @@
-import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import { RouterProvider } from 'react-router';
+import { Navigate, RouterProvider } from 'react-router';
 
 import NavigationBar from '../components/NavigationBar';
 import Error from '../views/Error';
@@ -20,7 +19,7 @@ const Router = (props: Props) => {
       errorElement: <Error></Error>,
       children: [
         {
-          path: '/',
+          path: '/home',
           element: <Home></Home>,
         },
         {
@@ -38,6 +37,10 @@ const Router = (props: Props) => {
         {
           path: '/about',
           element: <AboutUs></AboutUs>,
+        },
+        {
+          path: '/',
+          element: <Navigate to={'/home'}></Navigate>,
         },
       ],
     },

@@ -18,6 +18,9 @@ export default class Config {
       grafanaUrls: process.env.REACT_APP_GRAFANA_TABS
         ? process.env.REACT_APP_GRAFANA_TABS.split(' ')
         : [],
+      projectName: process.env.REACT_APP_TITLE
+        ? process.env.REACT_APP_TITLE
+        : 'Project',
     };
   }
 
