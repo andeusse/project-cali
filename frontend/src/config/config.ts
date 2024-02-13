@@ -15,9 +15,14 @@ export default class Config {
           : process.env.REACT_APP_PROD_API_URL
           ? process.env.REACT_APP_PROD_API_URL
           : '',
-      grafanaUrls: process.env.REACT_APP_GRAFANA_TABS
-        ? process.env.REACT_APP_GRAFANA_TABS.split(' ')
-        : [],
+      grafanaUrls:
+        process.env.REACT_APP_STATUS === 'dev'
+          ? process.env.REACT_APP_DEV_GRAFANA_TABS
+            ? process.env.REACT_APP_DEV_GRAFANA_TABS.split(' ')
+            : []
+          : process.env.REACT_APP_PROD_GRAFANA_TABS
+          ? process.env.REACT_APP_PROD_GRAFANA_TABS.split(' ')
+          : [],
       projectName: process.env.REACT_APP_TITLE
         ? process.env.REACT_APP_TITLE
         : 'Project',

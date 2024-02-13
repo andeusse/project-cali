@@ -1,34 +1,37 @@
-# Getting Started with Create React App
+# CALI Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Introducción del proyecto ...
 
-## Available Scripts
+## Pasos para ejecutar el frontend en modo desarrollador por primera vez
 
-In the project directory, you can run:
+Para iniciar el proyecto se deben seguir los siguientes pasos:
 
-### `npm start`
+1. Tener instalado nvm o npm
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- npm (Node Package Manager): Se pueden seguir los pasos de [link](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- nvm (Node Version Manager): Se pueden seguir los pasos de [link](https://github.com/nvm-sh/nvm), y ejecutar el comando:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+  `nvm install latest`
 
-### `npm test`
+1. Verificar que se tiene instalado npm, ejecutando el código:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   `npm --version`
 
-### `npm run build`
+1. Ubicarse en la carpeta del proyecto: **\project-cali\frontend** y ejecutar el comando:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   `npm install`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Copiar el archivo ubicado en **\project-cali\frontend\env** en **\project-cali\frontend** y cambiar le nombre a **.env**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Configurar las variables de entorno de acuerdo con el proyecto.
 
-## CALI Project
+- **REACT_APP_STATUS**: Puede ser "dev" o "prod", dependiendo del ambiente
+- **REACT_APP_DEV_API_URL**: Link del API para desarrollo
+- **REACT_APP_PROD_API_URL**: Link del API para producción
+- **REACT_APP_DEV_GRAFANA_TABS**: Arreglo de strings el cual contienen las direcciones de grafana para las pertañas de monitoreo en desarrollo
+- **REACT_APP_PROD_GRAFANA_TABS**: Arreglo de strings el cual contienen las direcciones de grafana para las pertañas de monitoreo en producción
+- **REACT_APP_TITLE**: Nombre del proyecto
 
-Project developed for ...
+5. Ejecutar el comando:
+
+   `npm start`
