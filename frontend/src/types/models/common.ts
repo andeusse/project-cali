@@ -4,3 +4,11 @@ export default interface commonParameters {
   stepTime: number;
   stepUnit: 'hour' | 'minute' | 'second';
 }
+
+export interface bodyTest {
+  data: string;
+}
+
+export interface respTest {
+  data: string;
+}
