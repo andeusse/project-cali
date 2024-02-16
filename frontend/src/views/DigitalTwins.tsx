@@ -30,7 +30,7 @@ const DigitalTwins = (props: Props) => {
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>DigitalTwins</h1>
+        <h1>Gemelos digitales</h1>
       </Box>
       <CustomTab tabs={tabs}></CustomTab>
     </Container>

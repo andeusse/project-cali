@@ -41,22 +41,22 @@ const pages: PageType[] = [
     icon: <HomeIcon></HomeIcon>,
   },
   {
-    text: 'Monitoring',
+    text: 'Monitoreo',
     to: '/monitoring',
     icon: <MonitorIcon></MonitorIcon>,
   },
   {
-    text: 'Digital Twins',
+    text: 'Gemelos digitales',
     to: '/digitaltwins',
     icon: <ContentCopyIcon></ContentCopyIcon>,
   },
   {
-    text: 'Scenarios',
+    text: 'Escenarios',
     to: '/scenarios',
     icon: <StackedLineChartIcon></StackedLineChartIcon>,
   },
   {
-    text: 'About',
+    text: 'Acerca de',
     to: '/about',
     icon: <InfoIcon></InfoIcon>,
   },

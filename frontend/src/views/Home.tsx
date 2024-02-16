@@ -33,7 +33,7 @@ const Home = (props: Props) => {
           variant="contained"
           color="inherit"
         >
-          Monitoring
+          Monitoreo
         </LinkButton>
         <LinkButton
           startIcon={<ContentCopyIcon></ContentCopyIcon>}
@@ -42,7 +42,7 @@ const Home = (props: Props) => {
           variant="contained"
           color="inherit"
         >
-          Digital Twins
+          Gemelos digitales
         </LinkButton>
         <LinkButton
           startIcon={<StackedLineChartIcon></StackedLineChartIcon>}
@@ -51,7 +51,7 @@ const Home = (props: Props) => {
           variant="contained"
           color="inherit"
         >
-          Scenarios
+          Escenarios
         </LinkButton>
       </Box>
     </Container>

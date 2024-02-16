@@ -23,7 +23,7 @@ const Scenarios = (props: Props) => {
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>Scenarios</h1>
+        <h1>Escenarios</h1>
       </Box>
       <CustomTab tabs={tabs}></CustomTab>
     </Container>

@@ -9,18 +9,18 @@ type Props = {};
 const Monitoring = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Historic Data - Grafana',
+      title: 'Históricos - Grafana',
       children: <TabGrafana></TabGrafana>,
     },
     {
-      title: 'Real Time - Node-RED',
+      title: 'Tiempo real - Node-RED',
       children: <TabRealTime></TabRealTime>,
     },
   ];
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>Monitoring</h1>
+        <h1>Monitoreo</h1>
       </Box>
       <CustomTab tabs={tabs}></CustomTab>
     </Container>

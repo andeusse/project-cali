@@ -7,7 +7,7 @@ const AboutUs = (props: Props) => {
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>About Us</h1>
+        <h1>Acerca De</h1>
       </Box>
     </Container>
   );
