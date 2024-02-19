@@ -1,32 +1,38 @@
 import { Box, Container } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
+import Turbine from './DigitalTwinsTabs/Turbine';
 
 type Props = {};
 
 const DigitalTwins = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Gen. Solar',
+      title: 'Turbinas',
+      children: <Turbine></Turbine>,
+    },
+    {
+      title: 'Solar - Eólico',
       children: <></>,
     },
     {
-      title: 'Gen. Eólico',
+      title: 'Celda de Hidrógeno',
       children: <></>,
     },
     {
-      title: 'Gen. Hidráulico',
+      title: 'Planta de Biogás',
       children: <></>,
     },
     {
-      title: 'Gen. Biogás',
+      title: 'Torre de refrigeración',
       children: <></>,
     },
     {
-      title: 'Baterías',
+      title: 'Potencial Bioquímico (Metano)',
       children: <></>,
     },
   ];
+
   return (
     <Container maxWidth="xl">
       <Box display="flex" justifyContent="center" alignItems="center">

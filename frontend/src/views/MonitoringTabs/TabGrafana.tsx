@@ -49,14 +49,6 @@ const TabGrafana = (props: Props) => {
       ),
     },
     {
-      title: 'Túnel de viento',
-      children: (
-        <IframeFull
-          url={Config.getInstance().params.grafanaUrls[5]}
-        ></IframeFull>
-      ),
-    },
-    {
       title: 'Potencial Bioquímico (Metano)',
       children: (
         <IframeFull
