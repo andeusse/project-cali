@@ -9,7 +9,7 @@ const initialState: isLoadingState = {
 };
 
 const isLoadingSlice = createSlice({
-  name: 'theme',
+  name: 'isLoading',
   initialState: initialState,
   reducers: {
     setIsLoading(state, action: PayloadAction<boolean>) {
