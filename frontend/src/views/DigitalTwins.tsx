@@ -1,7 +1,7 @@
 import { Box, Container } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
-import Turbine from './DigitalTwinsTabs/Turbine/Turbine';
+import Turbine from './digitalTwinsTabs/Turbine';
 
 type Props = {};
 

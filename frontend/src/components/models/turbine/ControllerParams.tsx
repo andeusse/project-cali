@@ -7,7 +7,7 @@ import {
   Select,
   Switch,
 } from '@mui/material';
-import CustomNumberField from '../../../components/UI/CustomNumberField';
+import CustomNumberField from '../../UI/CustomNumberField';
 import { controllerStateType, turbine } from '../../../types/models/turbine';
 
 type Props = {

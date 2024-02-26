@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import CustomNumberField from '../../../components/UI/CustomNumberField';
+import CustomNumberField from '../../UI/CustomNumberField';
 import { turbine } from '../../../types/models/turbine';
 
 type Props = {

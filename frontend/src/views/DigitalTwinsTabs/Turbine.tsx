@@ -1,10 +1,12 @@
 import { Box, Container, Grid } from '@mui/material';
-import TurbineParams from './TurbineParams';
+import TurbineParams from '../../components/models/turbine/TurbineParams';
 import { useState } from 'react';
-import { TURBINE, turbine } from '../../../types/models/turbine';
-import ControllerParams from './ControllerParams';
-import BatteryParams from './BatteryParams';
-import InverterParams from './InverterParams';
+import { TURBINE, turbine } from '../../types/models/turbine';
+import ControllerParams from '../../components/models/turbine/ControllerParams';
+import BatteryParams from '../../components/models/turbine/BatteryParams';
+import InverterParams from '../../components/models/turbine/InverterParams';
+import TimeGraphs from '../../components/models/common/TimeGraphs';
+import { GRAPH_TEST } from '../../types/graph';
 
 type Props = {};
 
@@ -70,6 +72,9 @@ const Turbine = (props: Props) => {
             turbine={userTurbine}
             handleChange={handleChange}
           ></InverterParams>
+        </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          <TimeGraphs graphs={GRAPH_TEST}></TimeGraphs>
         </Grid>
       </Grid>
     </Container>

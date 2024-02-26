@@ -6,7 +6,7 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from '@mui/material';
-import CustomNumberField from '../../../components/UI/CustomNumberField';
+import CustomNumberField from '../../UI/CustomNumberField';
 import {
   turbineType,
   PELTON_TURBINE,
@@ -27,8 +27,9 @@ const TurbineParams = (props: Props) => {
       <Grid container spacing={2} margin={'normal'}>
         <Grid item xs={12} md={12} xl={12}>
           <FormControl fullWidth>
-            <InputLabel>Tipo de turbina</InputLabel>
+            <InputLabel id="turbine-type">Tipo de turbina</InputLabel>
             <Select
+              labelId="turbine-type"
               label="Tipo de turbina"
               value={selectedTurbine}
               name="turbineType"

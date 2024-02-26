@@ -1,8 +1,8 @@
 import { Box, Container } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
-import TabGrafana from './MonitoringTabs/TabGrafana';
-import TabRealTime from './MonitoringTabs/TabRealTime';
+import TabGrafana from './monitoringTabs/TabGrafana';
+import TabRealTime from './monitoringTabs/TabRealTime';
 
 type Props = {};
 
