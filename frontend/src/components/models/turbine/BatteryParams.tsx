@@ -1,13 +1,8 @@
 import { Grid } from '@mui/material';
 import CustomNumberField from '../../UI/CustomNumberField';
-import { turbine } from '../../../types/models/turbine';
+import { TurbineParamsType } from '../../../types/models/common';
 
-type Props = {
-  turbine: turbine;
-  handleChange: (e: any) => void;
-};
-
-const BatteryParams = (props: Props) => {
+const BatteryParams = (props: TurbineParamsType) => {
   const { turbine, handleChange } = props;
 
   return (

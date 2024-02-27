@@ -8,14 +8,14 @@ import {
 } from '@mui/material';
 import CustomNumberField from '../../UI/CustomNumberField';
 import {
-  turbineType,
+  TurbineType,
   PELTON_TURBINE,
   TURGO_TURBINE,
 } from '../../../types/models/turbine';
 
 type Props = {
-  selectedTurbine: turbineType;
-  handleChange: (e: SelectChangeEvent<turbineType>) => void;
+  selectedTurbine: TurbineType;
+  handleChange: (e: SelectChangeEvent<TurbineType>) => void;
 };
 
 const TurbineParams = (props: Props) => {
@@ -35,7 +35,7 @@ const TurbineParams = (props: Props) => {
               name="turbineType"
               onChange={handleChange}
             >
-              {Object.keys(turbineType).map((key) => (
+              {Object.keys(TurbineType).map((key) => (
                 <MenuItem key={key} value={key}>
                   {key}
                 </MenuItem>
@@ -43,7 +43,7 @@ const TurbineParams = (props: Props) => {
             </Select>
           </FormControl>
         </Grid>
-        {selectedTurbine === turbineType.Pelton &&
+        {selectedTurbine === TurbineType.Pelton &&
           PELTON_TURBINE.map((variable) => (
             <Grid
               key={variable.variableName + variable.subIndex}
@@ -55,7 +55,7 @@ const TurbineParams = (props: Props) => {
               <CustomNumberField variable={variable}></CustomNumberField>
             </Grid>
           ))}
-        {selectedTurbine === turbineType.Turgo &&
+        {selectedTurbine === TurbineType.Turgo &&
           TURGO_TURBINE.map((variable) => (
             <Grid
               key={variable.variableName + variable.subIndex}

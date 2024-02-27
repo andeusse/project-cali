@@ -1,16 +1,8 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
-import { inputType } from '../../types/models/common';
+import { CustomTextFieldType } from '../../types/customTextField';
 
-type Props = {
-  variable: inputType;
-  name?: string;
-  min?: number;
-  max?: number;
-  handleChange?: (e: any) => void;
-};
-
-const CustomNumberField = (props: Props) => {
-  const { variable, name, min, max, handleChange } = props;
+const CustomNumberField = (props: CustomTextFieldType) => {
+  const { variable, name, min, max, step, handleChange } = props;
   const { disabled, value, tooltip, unit, variableName, subIndex } = variable;
 
   return (
@@ -29,7 +21,7 @@ const CustomNumberField = (props: Props) => {
           onChange={handleChange}
           InputProps={{
             type: 'number',
-            inputProps: { min: min, max: max },
+            inputProps: { min: min, max: max, step: step },
             endAdornment: (
               <InputAdornment position="end">{unit}</InputAdornment>
             ),

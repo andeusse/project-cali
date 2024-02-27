@@ -1,49 +1,53 @@
-import { inputType } from './common';
+import { InputType } from './common';
 
-export enum turbineType {
+export enum TurbineType {
   Pelton = 'Pelton',
   Turgo = 'Turgo',
 }
 
-export function string2TurbineType(s: string): turbineType {
-  return s === turbineType.Pelton ? turbineType.Pelton : turbineType.Turgo;
+export function string2TurbineType(s: string): TurbineType {
+  return s === TurbineType.Pelton ? TurbineType.Pelton : TurbineType.Turgo;
 }
 
-export enum controllerStateType {
+export enum ControllerStateType {
   Encendida = 'Encendida',
   Apagada = 'Apagada',
 }
 
-export function string2ControllerStateType(s: string): controllerStateType {
-  return s === controllerStateType.Encendida
-    ? controllerStateType.Encendida
-    : controllerStateType.Apagada;
+export function string2ControllerStateType(s: string): ControllerStateType {
+  return s === ControllerStateType.Encendida
+    ? ControllerStateType.Encendida
+    : ControllerStateType.Apagada;
 }
 
-export type turbine = {
-  turbineType: turbineType;
-  controllerInitialState: controllerStateType;
+export type TurbineParameters = {
+  turbineType: TurbineType;
+  controllerInitialState: ControllerStateType;
   controllerCustomize: boolean;
-  controllerEfficiency: inputType;
-  controllerChargeVoltageBulk: inputType;
-  controllerChargeVoltageFloat: inputType;
-  controllerChargingMinimunVoltage: inputType;
-  controllerDissipatorOffVoltage: inputType;
-  controllerDissipatorOnVoltage: inputType;
-  batteryStateOfCharge: inputType;
-  batteryTemperatureCoefficient: inputType;
-  batteryCapacity: inputType;
-  batterySelfDischargeCoefficient: inputType;
-  batteryChargeDischargeEfficiency: inputType;
-  batteryTemperatureCompensationCoefficient: inputType;
-  inverterEfficiency: inputType;
-  inverterNominalPower: inputType;
+  controllerEfficiency: InputType;
+  controllerChargeVoltageBulk: InputType;
+  controllerChargeVoltageFloat: InputType;
+  controllerChargingMinimunVoltage: InputType;
+  controllerDissipatorOffVoltage: InputType;
+  controllerDissipatorOnVoltage: InputType;
+  batteryStateOfCharge: InputType;
+  batteryTemperatureCoefficient: InputType;
+  batteryCapacity: InputType;
+  batterySelfDischargeCoefficient: InputType;
+  batteryChargeDischargeEfficiency: InputType;
+  batteryTemperatureCompensationCoefficient: InputType;
+  inverterEfficiency: InputType;
+  inverterNominalPower: InputType;
+  inputPressure: InputType;
+  inputFlow: InputType;
+  inputActivePower: InputType;
+  inputPowerFactor: InputType;
 };
 
-export const TURBINE: turbine = {
-  turbineType: turbineType.Pelton,
+export const TURBINE: TurbineParameters = {
+  turbineType: TurbineType.Pelton,
   controllerCustomize: false,
-  controllerInitialState: controllerStateType.Apagada,
+  controllerInitialState: ControllerStateType.Apagada,
   controllerEfficiency: {
     disabled: true,
     value: 96,
@@ -155,6 +159,39 @@ export const TURBINE: turbine = {
     unit: 'kW',
     variableName: 'P',
     subIndex: 'inverter',
+  },
+
+  inputPressure: {
+    disabled: true,
+    value: 100,
+    tooltip: 'Presión',
+    unit: 'kPa',
+    variableName: 'Presión',
+    subIndex: '',
+  },
+  inputFlow: {
+    disabled: true,
+    value: 8,
+    tooltip: 'Flujo',
+    unit: 'l / s',
+    variableName: 'Flujo',
+    subIndex: '',
+  },
+  inputActivePower: {
+    disabled: true,
+    value: 200,
+    tooltip: 'Potencia activa',
+    unit: 'W',
+    variableName: 'Potencia activa',
+    subIndex: '',
+  },
+  inputPowerFactor: {
+    disabled: true,
+    value: 1,
+    tooltip: 'Factor de potencia',
+    unit: '',
+    variableName: 'Factor de potencia',
+    subIndex: '',
   },
 };
 

@@ -1,19 +1,21 @@
 import { Box, Container, Grid } from '@mui/material';
 import TurbineParams from '../../components/models/turbine/TurbineParams';
 import { useState } from 'react';
-import { TURBINE, turbine } from '../../types/models/turbine';
+import { TURBINE, TurbineParameters } from '../../types/models/turbine';
 import ControllerParams from '../../components/models/turbine/ControllerParams';
 import BatteryParams from '../../components/models/turbine/BatteryParams';
 import InverterParams from '../../components/models/turbine/InverterParams';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import { GRAPH_TEST } from '../../types/graph';
+import { InputType } from '../../types/models/common';
+import InputParams from '../../components/models/turbine/InputParams';
 
 type Props = {};
 
 const Turbine = (props: Props) => {
-  const [userTurbine, setUserTurbine] = useState<turbine>(TURBINE);
+  const [userTurbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: any, variableName?: string) => {
     if (
       e.target.type === 'checkbox' &&
       e.target.name === 'controllerCustomize'
@@ -29,12 +31,27 @@ const Turbine = (props: Props) => {
         return newState;
       });
     } else if (
-      typeof userTurbine[e.target.name as keyof turbine] === 'object'
+      e.target.type === 'checkbox' &&
+      e.target.name === 'variableCustomize'
+    ) {
+      setUserTurbine((oldState) => {
+        let newState = { ...oldState };
+        if (variableName) {
+          (
+            newState[variableName as keyof TurbineParameters] as InputType
+          ).disabled = !e.target.checked;
+        }
+        return newState;
+      });
+    } else if (
+      typeof userTurbine[e.target.name as keyof TurbineParameters] === 'object'
     ) {
       setUserTurbine({
         ...userTurbine,
         [e.target.name]: {
-          ...(userTurbine[e.target.name as keyof turbine] as object),
+          ...(userTurbine[
+            e.target.name as keyof TurbineParameters
+          ] as InputType),
           value: e.target.value,
         },
       });
@@ -72,6 +89,12 @@ const Turbine = (props: Props) => {
             turbine={userTurbine}
             handleChange={handleChange}
           ></InverterParams>
+        </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          <InputParams
+            turbine={userTurbine}
+            handleChange={handleChange}
+          ></InputParams>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <TimeGraphs graphs={GRAPH_TEST}></TimeGraphs>

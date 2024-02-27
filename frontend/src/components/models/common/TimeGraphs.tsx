@@ -10,11 +10,11 @@ import {
   Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { graph } from '../../../types/graph';
+import { GraphType } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
 
 type Props = {
-  graphs: graph[];
+  graphs: GraphType[];
 };
 
 const marks = [
@@ -34,7 +34,7 @@ const TimeGraphs = (props: Props) => {
   const [availableGraphs, setAvailableGraphs] = useState([...graphs]);
 
   const [selectedVariable, setSelectedVariable] = useState<string>('');
-  const [currentGraphs, setGraphs] = useState<graph[]>([]);
+  const [currentGraphs, setGraphs] = useState<GraphType[]>([]);
 
   const handleAddGraph = () => {
     const newGraph = availableGraphs.find(
@@ -77,8 +77,10 @@ const TimeGraphs = (props: Props) => {
               value={selectedVariable}
               onChange={(e) => setSelectedVariable(e.target.value)}
             >
-              {availableGraphs.map((g) => (
-                <MenuItem value={g.variable}>{g.variable}</MenuItem>
+              {availableGraphs.map((g, index) => (
+                <MenuItem key={`${index}${g.variable}`} value={g.variable}>
+                  {g.variable}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>

@@ -1,10 +1,10 @@
-export type graph = {
+export type GraphType = {
   variable: string;
   xValues: number[];
   yValues: number[];
 };
 
-export const GRAPH_TEST: graph[] = [
+export const GRAPH_TEST: GraphType[] = [
   {
     variable: 'Var 1',
     xValues: [1, 2, 3, 4, 5],

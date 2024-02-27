@@ -1,9 +1,9 @@
 import React from 'react';
-import { graph } from '../../../types/graph';
+import { GraphType } from '../../../types/graph';
 import { LineChart } from '@mui/x-charts';
 
 type Props = {
-  graph: graph | undefined;
+  graph: GraphType | undefined;
 };
 
 const TimeGraph = (props: Props) => {

@@ -8,14 +8,10 @@ import {
   Switch,
 } from '@mui/material';
 import CustomNumberField from '../../UI/CustomNumberField';
-import { controllerStateType, turbine } from '../../../types/models/turbine';
+import { ControllerStateType } from '../../../types/models/turbine';
+import { TurbineParamsType } from '../../../types/models/common';
 
-type Props = {
-  turbine: turbine;
-  handleChange: (e: any) => void;
-};
-
-const ControllerParams = (props: Props) => {
+const ControllerParams = (props: TurbineParamsType) => {
   const { turbine, handleChange } = props;
 
   return (
@@ -31,7 +27,7 @@ const ControllerParams = (props: Props) => {
               name="controllerInitialState"
               onChange={handleChange}
             >
-              {Object.keys(controllerStateType).map((key) => (
+              {Object.keys(ControllerStateType).map((key) => (
                 <MenuItem key={key} value={key}>
                   {key}
                 </MenuItem>
@@ -43,7 +39,7 @@ const ControllerParams = (props: Props) => {
           <FormControlLabel
             control={
               <Switch
-                value={turbine.controllerCustomize}
+                checked={turbine.controllerCustomize}
                 name="controllerCustomize"
                 onChange={handleChange}
                 color="default"

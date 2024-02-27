@@ -1,10 +1,10 @@
-import { themeType } from '../types/theme';
+import { ThemeType } from '../types/theme';
 
 const string2Theme = (theme: string) => {
   if (theme.toLowerCase() === 'light') {
-    return themeType.Light;
+    return ThemeType.Light;
   }
-  return themeType.Dark;
+  return ThemeType.Dark;
 };
 
 export default string2Theme;

@@ -19,7 +19,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import InfoIcon from '@mui/icons-material/Info';
 
-import { themeType } from '../types/theme';
+import { ThemeType } from '../types/theme';
 import { changeTheme } from '../redux/slices/themeSlice';
 import LinkButton from './UI/LinkButton';
 import Logo from './UI/Logo';
@@ -72,7 +72,7 @@ const NavigationBar = (props: Props) => {
   const handleChangeTheme = () => {
     localStorage.setItem(
       'theme',
-      userTheme === themeType.Light ? themeType.Dark : themeType.Light
+      userTheme === ThemeType.Light ? ThemeType.Dark : ThemeType.Light
     );
     dispatch(changeTheme());
   };
@@ -164,10 +164,10 @@ const NavigationBar = (props: Props) => {
 
             <Box sx={{ flexGrow: 0 }}>
               <IconButton onClick={handleChangeTheme}>
-                {userTheme === themeType.Dark && (
+                {userTheme === ThemeType.Dark && (
                   <LightModeIcon></LightModeIcon>
                 )}
-                {userTheme === themeType.Light && <DarkModeIcon></DarkModeIcon>}
+                {userTheme === ThemeType.Light && <DarkModeIcon></DarkModeIcon>}
               </IconButton>
             </Box>
           </Toolbar>

@@ -1,9 +1,9 @@
 import { Grid } from '@mui/material';
 import CustomNumberField from '../../UI/CustomNumberField';
-import { turbine } from '../../../types/models/turbine';
+import { TurbineParameters } from '../../../types/models/turbine';
 
 type Props = {
-  turbine: turbine;
+  turbine: TurbineParameters;
   handleChange: (e: any) => void;
 };
 
