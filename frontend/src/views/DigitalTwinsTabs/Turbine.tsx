@@ -7,56 +7,31 @@ import BatteryParams from '../../components/models/turbine/BatteryParams';
 import InverterParams from '../../components/models/turbine/InverterParams';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import { GRAPH_TEST } from '../../types/graph';
-import { InputType } from '../../types/models/common';
 import InputParams from '../../components/models/turbine/InputParams';
+import PlayerControls from '../../components/UI/PlayerControls';
+import { setFormState } from '../../utils/setFormState';
 
 type Props = {};
 
 const Turbine = (props: Props) => {
   const [userTurbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
 
+  const onPlay = () => {};
+
+  const onPause = () => {};
+
+  const onStop = () => {};
+
   const handleChange = (e: any, variableName?: string) => {
-    if (
-      e.target.type === 'checkbox' &&
-      e.target.name === 'controllerCustomize'
-    ) {
-      setUserTurbine((oldState) => {
-        let newState = { ...oldState };
-        newState.controllerCustomize = e.target.checked;
-        newState.controllerChargeVoltageBulk.disabled = !e.target.checked;
-        newState.controllerChargeVoltageFloat.disabled = !e.target.checked;
-        newState.controllerChargingMinimunVoltage.disabled = !e.target.checked;
-        newState.controllerDissipatorOffVoltage.disabled = !e.target.checked;
-        newState.controllerDissipatorOnVoltage.disabled = !e.target.checked;
-        return newState;
-      });
-    } else if (
-      e.target.type === 'checkbox' &&
-      e.target.name === 'variableCustomize'
-    ) {
-      setUserTurbine((oldState) => {
-        let newState = { ...oldState };
-        if (variableName) {
-          (
-            newState[variableName as keyof TurbineParameters] as InputType
-          ).disabled = !e.target.checked;
-        }
-        return newState;
-      });
-    } else if (
-      typeof userTurbine[e.target.name as keyof TurbineParameters] === 'object'
-    ) {
-      setUserTurbine({
-        ...userTurbine,
-        [e.target.name]: {
-          ...(userTurbine[
-            e.target.name as keyof TurbineParameters
-          ] as InputType),
-          value: e.target.value,
-        },
-      });
-    } else {
-      setUserTurbine({ ...userTurbine, [e.target.name]: e.target.value });
+    const newState = setFormState<TurbineParameters>(
+      e,
+      userTurbine,
+      variableName
+    );
+    console.log(newState);
+
+    if (newState) {
+      setUserTurbine(newState);
     }
   };
 
@@ -91,10 +66,21 @@ const Turbine = (props: Props) => {
           ></InverterParams>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
-          <InputParams
-            turbine={userTurbine}
-            handleChange={handleChange}
-          ></InputParams>
+          <Grid container spacing={2} margin={'normal'}>
+            <Grid item xs={12} md={2} xl={2}>
+              <InputParams
+                turbine={userTurbine}
+                handleChange={handleChange}
+              ></InputParams>
+            </Grid>
+            <Grid item xs={12} md={10} xl={10}>
+              <PlayerControls
+                onPlay={onPlay}
+                onPause={onPause}
+                onStop={onStop}
+              ></PlayerControls>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <TimeGraphs graphs={GRAPH_TEST}></TimeGraphs>
