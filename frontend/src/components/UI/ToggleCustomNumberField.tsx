@@ -13,10 +13,10 @@ const ToggleCustomNumberField = (
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={10} md={10} xl={10}>
+      <Grid item xs={8} md={10} xl={10}>
         <CustomNumberField {...props}></CustomNumberField>
       </Grid>
-      <Grid item xs={2} md={2} xl={2}>
+      <Grid item xs={4} md={2} xl={2} sx={{ marginTop: '10px' }}>
         <FormControlLabel
           control={
             <Switch
@@ -28,10 +28,9 @@ const ToggleCustomNumberField = (
                 }
               }}
               color="default"
-              sx={{ marginTop: '10px' }}
             />
           }
-          label=""
+          label="Manual"
         />
       </Grid>
     </Grid>

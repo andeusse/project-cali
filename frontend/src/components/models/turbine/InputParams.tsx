@@ -10,7 +10,7 @@ const InputParams = (props: TurbineParamsType) => {
     <>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
-          <h2>Entradas turbina</h2>
+          <h2>Entradas</h2>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <h3>Parámetros turbina</h3>

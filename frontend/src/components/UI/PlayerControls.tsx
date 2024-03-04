@@ -41,27 +41,27 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
         onClick={handlePlay}
         disabled={isPlaying}
         startIcon={<PlayArrowIcon />}
-        sx={{ width: '105px', marginLeft: '10px' }}
+        sx={{ width: '120px', margin: '5px' }}
       >
-        Play
+        Iniciar
       </Button>
       <Button
         variant="contained"
         onClick={handlePause}
         disabled={!isPlaying}
         startIcon={<PauseIcon />}
-        sx={{ width: '105px', marginLeft: '10px' }}
+        sx={{ width: '120px', margin: '5px' }}
       >
-        Pause
+        Pausar
       </Button>
       <Button
         variant="contained"
         onClick={handleStop}
         disabled={!isPlaying}
         startIcon={<StopIcon />}
-        sx={{ width: '105px', marginLeft: '10px' }}
+        sx={{ width: '120px', margin: '5px' }}
       >
-        Stop
+        Detener
       </Button>
     </div>
   );
