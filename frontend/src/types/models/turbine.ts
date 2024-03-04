@@ -63,6 +63,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'V',
     variableName: 'V',
     subIndex: 'bulk',
+    min: 20,
+    max: 35,
   },
   controllerChargeVoltageFloat: {
     disabled: true,
@@ -71,6 +73,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'V',
     variableName: 'V',
     subIndex: 'float',
+    min: 20,
+    max: 35,
   },
   controllerChargingMinimunVoltage: {
     disabled: true,
@@ -79,6 +83,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'V',
     variableName: 'V',
     subIndex: 'bat_min',
+    min: 24,
+    max: 35,
   },
   controllerDissipatorOffVoltage: {
     disabled: true,
@@ -87,6 +93,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'V',
     variableName: 'V',
     subIndex: 'sink_off',
+    min: 24,
+    max: 35,
   },
   controllerDissipatorOnVoltage: {
     disabled: true,
@@ -95,6 +103,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'V',
     variableName: 'V',
     subIndex: 'sink_on',
+    min: 24,
+    max: 35,
   },
   batteryStateOfCharge: {
     disabled: false,
@@ -103,6 +113,8 @@ export const TURBINE: TurbineParameters = {
     unit: '%',
     variableName: 'SOC',
     subIndex: 'inicial',
+    min: 0,
+    max: 100,
   },
   batteryTemperatureCoefficient: {
     disabled: true,
@@ -168,6 +180,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'kPa',
     variableName: 'Presión',
     subIndex: '',
+    min: 0,
+    max: 1000,
   },
   inputFlow: {
     disabled: true,
@@ -176,6 +190,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'l / s',
     variableName: 'Flujo',
     subIndex: '',
+    min: 0,
+    max: 10,
   },
   inputActivePower: {
     disabled: true,
@@ -184,6 +200,8 @@ export const TURBINE: TurbineParameters = {
     unit: 'W',
     variableName: 'Potencia activa',
     subIndex: '',
+    min: 0,
+    max: 100000,
   },
   inputPowerFactor: {
     disabled: true,
@@ -192,6 +210,8 @@ export const TURBINE: TurbineParameters = {
     unit: '',
     variableName: 'Factor de potencia',
     subIndex: '',
+    min: -1,
+    max: 1,
   },
 };
 

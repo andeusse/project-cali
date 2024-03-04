@@ -26,8 +26,6 @@ const InputParams = (props: TurbineParamsType) => {
           <ToggleCustomNumberField
             variable={turbine.inputFlow}
             name="inputFlow"
-            min={1}
-            max={10}
             handleChange={handleChange}
           ></ToggleCustomNumberField>
         </Grid>
@@ -45,8 +43,6 @@ const InputParams = (props: TurbineParamsType) => {
           <ToggleCustomNumberField
             variable={turbine.inputPowerFactor}
             name="inputPowerFactor"
-            min={0}
-            max={1}
             step={0.1}
             handleChange={handleChange}
           ></ToggleCustomNumberField>

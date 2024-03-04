@@ -28,8 +28,6 @@ const Turbine = (props: Props) => {
       userTurbine,
       variableName
     );
-    console.log(newState);
-
     if (newState) {
       setUserTurbine(newState);
     }

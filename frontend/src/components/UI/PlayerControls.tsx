@@ -33,12 +33,15 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
   };
 
   return (
-    <div>
+    <div
+      style={{ textAlign: 'center', marginTop: '20px', marginBottom: '20px' }}
+    >
       <Button
         variant="contained"
         onClick={handlePlay}
         disabled={isPlaying}
         startIcon={<PlayArrowIcon />}
+        sx={{ width: '105px', marginLeft: '10px' }}
       >
         Play
       </Button>
@@ -47,6 +50,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
         onClick={handlePause}
         disabled={!isPlaying}
         startIcon={<PauseIcon />}
+        sx={{ width: '105px', marginLeft: '10px' }}
       >
         Pause
       </Button>
@@ -55,6 +59,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
         onClick={handleStop}
         disabled={!isPlaying}
         startIcon={<StopIcon />}
+        sx={{ width: '105px', marginLeft: '10px' }}
       >
         Stop
       </Button>

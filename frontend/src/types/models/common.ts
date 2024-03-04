@@ -7,6 +7,8 @@ export type InputType = {
   unit: string;
   variableName: string;
   subIndex: string;
+  min?: number;
+  max?: number;
 };
 
 export type TurbineParamsType = {

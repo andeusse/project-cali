@@ -13,8 +13,6 @@ const BatteryParams = (props: TurbineParamsType) => {
           <CustomNumberField
             variable={turbine.batteryStateOfCharge}
             name="batteryStateOfCharge"
-            min={0}
-            max={100}
             handleChange={handleChange}
           ></CustomNumberField>
         </Grid>
