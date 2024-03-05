@@ -7,4 +7,6 @@ export type CustomTextFieldType = {
   handleChange?: (e: any, variableName?: string) => void;
 };
 
-export type ToggleCustomTextFieldType = {};
+export type ToggleCustomTextFieldType = {
+  offlineOperation?: boolean;
+};

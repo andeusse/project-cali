@@ -1,4 +1,4 @@
-import { InputType } from './common';
+import { DiagramVariableType, InputType } from './common';
 
 export enum TurbineType {
   Pelton = 'Pelton',
@@ -38,10 +38,156 @@ export type TurbineParameters = {
   batteryTemperatureCompensationCoefficient: InputType;
   inverterEfficiency: InputType;
   inverterNominalPower: InputType;
+  inputOfflineOperation: boolean;
   inputPressure: InputType;
   inputFlow: InputType;
   inputActivePower: InputType;
   inputPowerFactor: InputType;
+};
+
+export type TurbineDiagramParameters = {
+  variables: DiagramVariableType[];
+};
+
+export const TURBINE_DIAGRAM: TurbineDiagramParameters = {
+  variables: [
+    {
+      name: 'v1',
+      x: 255,
+      y: 60,
+      printedName: 'Voltaje',
+      unit: 'Vca',
+      fixed: 1,
+    },
+    {
+      name: 'v2',
+      x: 255,
+      y: 85,
+      printedName: 'Corriente',
+      unit: 'Aca',
+      fixed: 1,
+    },
+    {
+      name: 'v3',
+      x: 255,
+      y: 110,
+      printedName: 'Potencia',
+      unit: 'W',
+      fixed: 1,
+    },
+    {
+      name: 'v4',
+      x: 130,
+      y: 600,
+      printedName: 'Voltaje',
+      unit: 'Vcd',
+      fixed: 1,
+    },
+    {
+      name: 'v5',
+      x: 130,
+      y: 625,
+      printedName: 'Corriente',
+      unit: 'Vcd',
+      fixed: 1,
+    },
+    {
+      name: 'v6',
+      x: 130,
+      y: 650,
+      printedName: 'Potencia',
+      unit: 'W',
+      fixed: 1,
+    },
+    {
+      name: 'v7',
+      x: 410,
+      y: 50,
+      printedName: 'SOC',
+      unit: '%',
+      fixed: 3,
+    },
+    {
+      name: 'v8',
+      x: 410,
+      y: 75,
+      printedName: 'Voltaje',
+      unit: 'Vcd',
+      fixed: 3,
+    },
+    {
+      name: 'v9',
+      x: 410,
+      y: 100,
+      printedName: 'Corriente',
+      unit: 'Acd',
+      fixed: 1,
+    },
+    {
+      name: 'v10',
+      x: 410,
+      y: 125,
+      printedName: 'Potencia',
+      unit: 'W',
+      fixed: 1,
+    },
+    {
+      name: 'v11',
+      x: 665,
+      y: 15,
+      printedName: 'Potencia',
+      unit: 'W',
+      fixed: 1,
+    },
+    {
+      name: 'v12',
+      x: 665,
+      y: 40,
+      printedName: 'Voltaje',
+      unit: 'Vca',
+      fixed: 1,
+    },
+    {
+      name: 'v13',
+      x: 665,
+      y: 65,
+      printedName: 'Corriente',
+      unit: 'Ica',
+      fixed: 1,
+    },
+    {
+      name: 'v14',
+      x: 665,
+      y: 90,
+      printedName: 'P. Aparente',
+      unit: 'VA',
+      fixed: 1,
+    },
+    {
+      name: 'v15',
+      x: 665,
+      y: 115,
+      printedName: 'P. Reactiva',
+      unit: 'var',
+      fixed: 1,
+    },
+    {
+      name: 'v16',
+      x: 470,
+      y: 700,
+      printedName: 'Estado',
+      unit: '',
+      fixed: 1,
+    },
+    {
+      name: 'v17',
+      x: 470,
+      y: 725,
+      printedName: 'Potencia',
+      unit: 'W',
+      fixed: 1,
+    },
+  ],
 };
 
 export const TURBINE: TurbineParameters = {
@@ -152,7 +298,7 @@ export const TURBINE: TurbineParameters = {
     disabled: true,
     value: -0.06,
     tooltip: 'Coeficiente de compensación de temperatura',
-    unit: 'v / °C',
+    unit: 'V / °C',
     variableName: 'δ',
     subIndex: 'V',
   },
@@ -172,7 +318,7 @@ export const TURBINE: TurbineParameters = {
     variableName: 'P',
     subIndex: 'inverter',
   },
-
+  inputOfflineOperation: false,
   inputPressure: {
     disabled: true,
     value: 100,

@@ -10,11 +10,12 @@ import { GRAPH_TEST } from '../../types/graph';
 import InputParams from '../../components/models/turbine/InputParams';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { setFormState } from '../../utils/setFormState';
+import Diagram from '../../components/UI/Diagram';
 
 type Props = {};
 
 const Turbine = (props: Props) => {
-  const [userTurbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
+  const [turbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
 
   const onPlay = () => {};
 
@@ -23,11 +24,7 @@ const Turbine = (props: Props) => {
   const onStop = () => {};
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<TurbineParameters>(
-      e,
-      userTurbine,
-      variableName
-    );
+    const newState = setFormState<TurbineParameters>(e, turbine, variableName);
     if (newState) {
       setUserTurbine(newState);
     }
@@ -41,42 +38,43 @@ const Turbine = (props: Props) => {
       <Grid container spacing={2}>
         <Grid item xs={12} md={6} xl={3.5}>
           <TurbineParams
-            selectedTurbine={userTurbine.turbineType}
+            selectedTurbine={turbine.turbineType}
             handleChange={handleChange}
           ></TurbineParams>
         </Grid>
         <Grid item xs={12} md={6} xl={3.5}>
           <ControllerParams
-            turbine={userTurbine}
+            turbine={turbine}
             handleChange={handleChange}
           ></ControllerParams>
         </Grid>
         <Grid item xs={12} md={6} xl={3.5}>
           <BatteryParams
-            turbine={userTurbine}
+            turbine={turbine}
             handleChange={handleChange}
           ></BatteryParams>
         </Grid>
         <Grid item xs={12} md={6} xl={1.5}>
           <InverterParams
-            turbine={userTurbine}
+            turbine={turbine}
             handleChange={handleChange}
           ></InverterParams>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2} margin={'normal'}>
-            <Grid item xs={12} md={3} xl={2}>
+            <Grid item xs={12} md={3} xl={3}>
               <InputParams
-                turbine={userTurbine}
+                turbine={turbine}
                 handleChange={handleChange}
               ></InputParams>
             </Grid>
-            <Grid item xs={12} md={9} xl={10}>
+            <Grid item xs={12} md={9} xl={9}>
               <PlayerControls
                 onPlay={onPlay}
                 onPause={onPause}
                 onStop={onStop}
               ></PlayerControls>
+              <Diagram turbineType={turbine.turbineType}></Diagram>
             </Grid>
           </Grid>
         </Grid>

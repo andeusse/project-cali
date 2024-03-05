@@ -11,6 +11,15 @@ export type InputType = {
   max?: number;
 };
 
+export type DiagramVariableType = {
+  name: string;
+  x: number;
+  y: number;
+  printedName: string;
+  unit: string;
+  fixed: number;
+};
+
 export type TurbineParamsType = {
   turbine: TurbineParameters;
   handleChange: (e: any) => void;

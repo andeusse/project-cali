@@ -33,6 +33,8 @@ export const setFormState = <T extends TurbineParameters>(
         value: e.target.value,
       },
     };
+  } else if (e.target.type === 'checkbox') {
+    newState = { ...oldState, [e.target.name]: e.target.checked };
   } else {
     newState = { ...oldState, [e.target.name]: e.target.value };
   }

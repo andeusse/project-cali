@@ -9,19 +9,20 @@ import CustomNumberField from './CustomNumberField';
 const ToggleCustomNumberField = (
   props: CustomTextFieldType & ToggleCustomTextFieldType
 ) => {
-  const { variable, name, handleChange } = props;
+  const { variable, name, handleChange, offlineOperation } = props;
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={8} md={10} xl={10}>
+      <Grid item xs={7} md={7} xl={7}>
         <CustomNumberField {...props}></CustomNumberField>
       </Grid>
-      <Grid item xs={4} md={2} xl={2} sx={{ marginTop: '10px' }}>
+      <Grid item xs={5} md={5} xl={5} sx={{ marginTop: '10px' }}>
         <FormControlLabel
           control={
             <Switch
               checked={!variable.disabled}
               name="variableCustomize"
+              disabled={!offlineOperation}
               onChange={(e) => {
                 if (handleChange) {
                   handleChange(e, name);
