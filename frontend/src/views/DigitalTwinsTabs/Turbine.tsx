@@ -1,6 +1,6 @@
-import { Box, Container, Grid } from '@mui/material';
+import { Alert, Box, Container, Grid } from '@mui/material';
 import TurbineParams from '../../components/models/turbine/TurbineParams';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TURBINE, TurbineParameters } from '../../types/models/turbine';
 import ControllerParams from '../../components/models/turbine/ControllerParams';
 import BatteryParams from '../../components/models/turbine/BatteryParams';
@@ -11,17 +11,54 @@ import InputParams from '../../components/models/turbine/InputParams';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { setFormState } from '../../utils/setFormState';
 import Diagram from '../../components/UI/Diagram';
+import { updateModel } from '../../api/digitalTwinsModels';
+import { AxiosError } from 'axios';
 
 type Props = {};
 
 const Turbine = (props: Props) => {
   const [turbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
 
-  const onPlay = () => {};
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const onPause = () => {};
+  const [error, setError] = useState('');
 
-  const onStop = () => {};
+  const queryApi = useCallback(() => {
+    updateModel<TurbineParameters, string>('turbine', turbine)
+      .then((resp) => {
+        setError('');
+      })
+      .catch((err: AxiosError) => {
+        setError(`Error al realizar la consulta con el mesaje: ${err.message}`);
+      })
+      .finally(() => {});
+  }, [turbine]);
+
+  useEffect(() => {
+    const interval: NodeJS.Timer = setInterval(() => {
+      if (isPlaying) {
+        queryApi();
+      }
+    }, 5000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isPlaying, queryApi, turbine]);
+
+  const onPlay = () => {
+    queryApi();
+    setIsPlaying(true);
+  };
+
+  const onPause = () => {
+    setIsPlaying(false);
+    setError('');
+  };
+
+  const onStop = () => {
+    setIsPlaying(false);
+    setError('');
+  };
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<TurbineParameters>(e, turbine, variableName);
@@ -32,6 +69,11 @@ const Turbine = (props: Props) => {
 
   return (
     <Container maxWidth="xl">
+      {error !== '' && isPlaying && (
+        <Alert severity="error" variant="filled">
+          {error}
+        </Alert>
+      )}
       <Box display="flex" justifyContent="center" alignItems="center">
         <h2>Parámetros del sistema</h2>
       </Box>

@@ -33,7 +33,7 @@ const Diagram = (props: Props) => {
         <g>
           {TURBINE_DIAGRAM.variables.map((v, index) => {
             return (
-              <g transform={`translate(${v.x},${v.y})`}>
+              <g key={v.name} transform={`translate(${v.x},${v.y})`}>
                 <text
                   style={{
                     alignmentBaseline: 'central',
