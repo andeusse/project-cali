@@ -2,6 +2,7 @@ import { Box, Container } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
 import Turbine from './digitalTwinsTabs/Turbine';
+import Solar from './digitalTwinsTabs/Solar';
 
 type Props = {};
 
@@ -13,7 +14,7 @@ const DigitalTwins = (props: Props) => {
     },
     {
       title: 'Solar - Eólico',
-      children: <></>,
+      children: <Solar></Solar>,
     },
     {
       title: 'Celda de Hidrógeno',

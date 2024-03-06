@@ -1,14 +1,17 @@
 import { InputType } from '../types/models/common';
+import { SolarPanelParameters } from '../types/models/solar';
 import { TurbineParameters } from '../types/models/turbine';
 
-export const setFormState = <T extends TurbineParameters>(
+export const setFormState = <
+  T extends TurbineParameters | SolarPanelParameters
+>(
   e: any,
   oldState: T,
   variableName?: string
 ) => {
   let newState = { ...oldState };
-  if (e.target.type === 'checkbox' && e.target.name === 'controllerCustomize') {
-    if (isTurbineParameters(oldState)) {
+  if (e.target.name === 'controllerCustomize') {
+    if ('controllerCustomize' in newState) {
       newState.controllerCustomize = e.target.checked;
       newState.controllerChargeVoltageBulk.disabled = !e.target.checked;
       newState.controllerChargeVoltageFloat.disabled = !e.target.checked;
@@ -40,7 +43,3 @@ export const setFormState = <T extends TurbineParameters>(
   }
   return newState;
 };
-
-function isTurbineParameters(arg: any): arg is TurbineParameters {
-  return typeof arg === 'object' && 'turbineType' in arg;
-}

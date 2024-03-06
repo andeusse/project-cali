@@ -1,7 +1,12 @@
 import { Alert, Box, Container, Grid } from '@mui/material';
 import TurbineParams from '../../components/models/turbine/TurbineParams';
-import { useCallback, useEffect, useState } from 'react';
-import { TURBINE, TurbineParameters } from '../../types/models/turbine';
+import { useState } from 'react';
+import {
+  TURBINE,
+  TURBINE_DIAGRAM_VARIABLES,
+  TurbineParameters,
+  TurbineType,
+} from '../../types/models/turbine';
 import ControllerParams from '../../components/models/turbine/ControllerParams';
 import BatteryParams from '../../components/models/turbine/BatteryParams';
 import InverterParams from '../../components/models/turbine/InverterParams';
@@ -11,54 +16,19 @@ import InputParams from '../../components/models/turbine/InputParams';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { setFormState } from '../../utils/setFormState';
 import Diagram from '../../components/UI/Diagram';
-import { updateModel } from '../../api/digitalTwinsModels';
-import { AxiosError } from 'axios';
+import { useControlPlayer } from '../../hooks/useControlPlayer';
+import peltonDiagram from '../../assets/peltonTurbineDiagram.svg';
+import turgoDiagram from '../../assets/turgoTurbineDiagram.svg';
 
 type Props = {};
 
 const Turbine = (props: Props) => {
   const [turbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const [error, setError] = useState('');
-
-  const queryApi = useCallback(() => {
-    updateModel<TurbineParameters, string>('turbine', turbine)
-      .then((resp) => {
-        setError('');
-      })
-      .catch((err: AxiosError) => {
-        setError(`Error al realizar la consulta con el mesaje: ${err.message}`);
-      })
-      .finally(() => {});
-  }, [turbine]);
-
-  useEffect(() => {
-    const interval: NodeJS.Timer = setInterval(() => {
-      if (isPlaying) {
-        queryApi();
-      }
-    }, 5000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isPlaying, queryApi, turbine]);
-
-  const onPlay = () => {
-    queryApi();
-    setIsPlaying(true);
-  };
-
-  const onPause = () => {
-    setIsPlaying(false);
-    setError('');
-  };
-
-  const onStop = () => {
-    setIsPlaying(false);
-    setError('');
-  };
+  const [data, isPlaying, error, onPlay, onPause, onStop] = useControlPlayer<
+    TurbineParameters,
+    string
+  >('turbine', turbine);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<TurbineParameters>(e, turbine, variableName);
@@ -73,6 +43,9 @@ const Turbine = (props: Props) => {
         <Alert severity="error" variant="filled">
           {error}
         </Alert>
+      )}
+      {data !== undefined && isPlaying && (
+        <Alert severity="info" variant="filled"></Alert>
       )}
       <Box display="flex" justifyContent="center" alignItems="center">
         <h2>Parámetros del sistema</h2>
@@ -116,7 +89,16 @@ const Turbine = (props: Props) => {
                 onPause={onPause}
                 onStop={onStop}
               ></PlayerControls>
-              <Diagram turbineType={turbine.turbineType}></Diagram>
+              <Diagram
+                diagram={
+                  turbine.turbineType === TurbineType.Pelton
+                    ? peltonDiagram
+                    : turgoDiagram
+                }
+                variables={TURBINE_DIAGRAM_VARIABLES}
+                width={800}
+                height={800}
+              ></Diagram>
             </Grid>
           </Grid>
         </Grid>

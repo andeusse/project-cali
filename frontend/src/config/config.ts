@@ -26,6 +26,9 @@ export default class Config {
       projectName: process.env.REACT_APP_TITLE
         ? process.env.REACT_APP_TITLE
         : 'Project',
+      windyUrl: process.env.REACT_APP_WINDY_URL
+        ? process.env.REACT_APP_WINDY_URL
+        : '',
     };
   }
 

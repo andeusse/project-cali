@@ -1,14 +1,16 @@
-import React from 'react';
-import pelton from '../../assets/peltonTurbine.svg';
-import turgo from '../../assets/turgoTurbine.svg';
-import { TurbineType, TURBINE_DIAGRAM } from '../../types/models/turbine';
 import { useTheme } from '@mui/material';
+import { DiagramVariableType } from '../../types/models/common';
 
-type Props = { turbineType: TurbineType };
+type Props = {
+  diagram: string;
+  variables: DiagramVariableType[];
+  width: number;
+  height: number;
+};
 
 const Diagram = (props: Props) => {
-  const { turbineType } = props;
-  const array: number[] = new Array(TURBINE_DIAGRAM.variables.length);
+  const { diagram, variables, width, height } = props;
+  const array: number[] = new Array(variables.length);
 
   const theme = useTheme();
 
@@ -25,13 +27,11 @@ const Diagram = (props: Props) => {
         width={'100%'}
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox={`0 0 800 800`}
+        viewBox={`0 0 ${width} ${height}`}
       >
-        <image
-          href={turbineType === TurbineType.Pelton ? pelton : turgo}
-        ></image>
+        <image href={diagram}></image>
         <g>
-          {TURBINE_DIAGRAM.variables.map((v, index) => {
+          {variables.map((v, index) => {
             return (
               <g key={v.name} transform={`translate(${v.x},${v.y})`}>
                 <text
