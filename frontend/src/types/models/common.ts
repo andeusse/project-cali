@@ -5,8 +5,8 @@ export type InputType = {
   value: number;
   tooltip: string;
   unit: string;
-  variableName: string;
-  subIndex: string;
+  variableString: string;
+  variableSubString: string;
   min?: number;
   max?: number;
 };
@@ -19,6 +19,18 @@ export type DiagramVariableType = {
   unit: string;
   fixed: number;
 };
+
+export type CommonSystemParameter = {
+  name: string;
+};
+
+export type SolarSystem = CommonSystemParameter & {};
+
+export type BatterySystem = CommonSystemParameter & {};
+
+export type BiogasSystem = CommonSystemParameter & {};
+
+export type LoadSystem = CommonSystemParameter & {};
 
 export type TurbineParamsType = {
   turbine: TurbineParameters;

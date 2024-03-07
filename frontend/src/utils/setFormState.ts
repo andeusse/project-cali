@@ -1,9 +1,10 @@
 import { InputType } from '../types/models/common';
+import { SmartCityParameters } from '../types/models/smartCity';
 import { SolarPanelParameters } from '../types/models/solar';
 import { TurbineParameters } from '../types/models/turbine';
 
 export const setFormState = <
-  T extends TurbineParameters | SolarPanelParameters
+  T extends TurbineParameters | SolarPanelParameters | SmartCityParameters
 >(
   e: any,
   oldState: T,

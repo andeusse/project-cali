@@ -37,8 +37,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     value: 1,
     tooltip: 'Cantidad de módulos solares',
     unit: '',
-    variableName: 'Número de módulos',
-    subIndex: '',
+    variableString: 'Número de módulos',
+    variableSubString: '',
     min: 1,
   },
   modulePeakPower: {
@@ -46,8 +46,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     value: 100,
     tooltip: 'Potencia pico de cada módulo',
     unit: 'W',
-    variableName: 'Potencia pico / módulo',
-    subIndex: '',
+    variableString: 'Potencia pico / módulo',
+    variableSubString: '',
     min: 0,
   },
   moduleReductionPowerFactor: {
@@ -56,8 +56,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     tooltip:
       'Factor de reducción de la potencia del módulo de acuerdo con los años de operación',
     unit: '',
-    variableName: 'f',
-    subIndex: 'pu',
+    variableString: 'f',
+    variableSubString: 'pu',
     min: 0,
     max: 1,
   },
@@ -66,8 +66,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     value: 15.44,
     tooltip: 'Eficiencia eléctrica del módulo',
     unit: '%',
-    variableName: 'η',
-    subIndex: 'C',
+    variableString: 'η',
+    variableSubString: 'C',
     min: 0.01,
     max: 100,
   },
@@ -77,8 +77,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     tooltip:
       'Irradiancia solar en condiciones estándar de prueba del módulo, típicamente 1000 W/m²',
     unit: 'W / m²',
-    variableName: 'G',
-    subIndex: 'STC',
+    variableString: 'G',
+    variableSubString: 'STC',
     min: 0,
   },
   moduleStantardTestTemperature: {
@@ -87,8 +87,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     tooltip:
       'Temperatura del módulo fotovoltaico en condiciones estándar de prueba, típicamente 25 °C',
     unit: '°C',
-    variableName: 'Tc',
-    subIndex: 'STC',
+    variableString: 'Tc',
+    variableSubString: 'STC',
     min: 0,
   },
   moduleStandardIrradiation: {
@@ -96,8 +96,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     value: 800,
     tooltip: 'Irradiancia normal de operación del módulo, típicamente 800 W/m²',
     unit: 'W / m²',
-    variableName: 'G',
-    subIndex: 'NOCT',
+    variableString: 'G',
+    variableSubString: 'NOCT',
     min: 0,
   },
   moduleStandardTemperature: {
@@ -106,8 +106,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     tooltip:
       'Temperatura nominal de operación del módulo, típicamente 45-48 °C',
     unit: '°C',
-    variableName: 'Tc',
-    subIndex: 'NOCT',
+    variableString: 'Tc',
+    variableSubString: 'NOCT',
     min: 0,
   },
   moduleEnvironmentTemperature: {
@@ -116,8 +116,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     tooltip:
       'Temperatura ambiente normal de operación del módulo, típicamente 20 °C',
     unit: '°C',
-    variableName: 'Ta',
-    subIndex: 'NOCT',
+    variableString: 'Ta',
+    variableSubString: 'NOCT',
     min: 0,
   },
   moduleCoefficientPowerVariation: {
@@ -126,8 +126,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     tooltip:
       'Coeficiente de variación de la potencia con la temperatura en la condición de extracción de máxima potencia',
     unit: '% / °C',
-    variableName: 'μ',
-    subIndex: 'pm',
+    variableString: 'μ',
+    variableSubString: 'pm',
   },
   inputOfflineOperation: false,
   inputIrradiation: {
@@ -135,8 +135,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     value: 1000,
     tooltip: 'Irradiancia de los módulos',
     unit: 'W / m²',
-    variableName: 'Irradiancia',
-    subIndex: '',
+    variableString: 'Irradiancia',
+    variableSubString: '',
     min: 0,
   },
   inputTemperature: {
@@ -144,8 +144,8 @@ export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
     value: 25,
     tooltip: 'Temperatura de los módulos',
     unit: '°C',
-    variableName: 'Temperatura',
-    subIndex: '',
+    variableString: 'Temperatura',
+    variableSubString: '',
     min: 0,
   },
 };

@@ -2,6 +2,7 @@ import { Box, Container } from '@mui/material';
 
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
+import SmartHome from './scenariosTabs/SmartHome';
 
 type Props = {};
 
@@ -9,7 +10,7 @@ const Scenarios = (props: Props) => {
   const tabs: TabType[] = [
     {
       title: 'Smart Home',
-      children: <></>,
+      children: <SmartHome></SmartHome>,
     },
     {
       title: 'Smart Factory',

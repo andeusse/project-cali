@@ -46,7 +46,7 @@ const TurbineParams = (props: Props) => {
         {selectedTurbine === TurbineType.Pelton &&
           PELTON_TURBINE.map((variable) => (
             <Grid
-              key={variable.variableName + variable.subIndex}
+              key={variable.variableString + variable.variableSubString}
               item
               xs={6}
               md={6}
@@ -58,7 +58,7 @@ const TurbineParams = (props: Props) => {
         {selectedTurbine === TurbineType.Turgo &&
           TURGO_TURBINE.map((variable) => (
             <Grid
-              key={variable.variableName + variable.subIndex}
+              key={variable.variableString + variable.variableSubString}
               item
               xs={6}
               md={6}

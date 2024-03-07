@@ -3,7 +3,8 @@ import { CustomTextFieldType } from '../../types/customTextField';
 
 const CustomNumberField = (props: CustomTextFieldType) => {
   const { variable, name, step, handleChange } = props;
-  const { disabled, value, tooltip, unit, variableName, subIndex } = variable;
+  const { disabled, value, tooltip, unit, variableString, variableSubString } =
+    variable;
 
   const onWheel = (e: any) => {
     e.target.blur();
@@ -28,8 +29,8 @@ const CustomNumberField = (props: CustomTextFieldType) => {
         <TextField
           label={
             <>
-              {variableName}
-              <sub>{subIndex}</sub>
+              {variableString}
+              <sub>{variableSubString}</sub>
             </>
           }
           disabled={disabled}

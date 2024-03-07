@@ -68,7 +68,6 @@ const Solar = (props: Props) => {
             url={Config.getInstance().params.windyUrl}
           ></Iframe>
         </Grid>
-
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2} margin={'normal'}>
             <Grid item xs={12} md={3} xl={3}>
