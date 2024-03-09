@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { updateModel } from '../api/digitalTwinsModels';
 
 export const useControlPlayer = <T, G>(url: string, model: T) => {
-  const [data, setData] = useState<G | undefined>(undefined);
+  const [data, setData] = useState<G | undefined>();
 
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -13,8 +13,6 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
     updateModel<T, G>(url, model)
       .then((resp) => {
         setData(resp.data);
-        console.log(resp.data);
-
         setError('');
       })
       .catch((err: AxiosError) => {

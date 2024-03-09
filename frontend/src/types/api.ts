@@ -1,7 +1,3 @@
-export interface bodyTest {
-  data: string;
-}
-
-export interface respTest {
-  data: string;
-}
+export type resp<T> = {
+  model: T;
+};

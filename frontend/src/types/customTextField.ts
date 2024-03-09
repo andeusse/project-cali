@@ -8,5 +8,7 @@ export type CustomTextFieldType = {
 };
 
 export type ToggleCustomTextFieldType = {
+  falseText?: string;
+  trueText?: string;
   offlineOperation?: boolean;
 };

@@ -17,8 +17,18 @@ export const setFormState = <
       newState.controllerChargeVoltageBulk.disabled = !e.target.checked;
       newState.controllerChargeVoltageFloat.disabled = !e.target.checked;
       newState.controllerChargingMinimunVoltage.disabled = !e.target.checked;
-      newState.controllerDissipatorOffVoltage.disabled = !e.target.checked;
-      newState.controllerDissipatorOnVoltage.disabled = !e.target.checked;
+      newState.controllerSinkOffVoltage.disabled = !e.target.checked;
+      newState.controllerSinkOnVoltage.disabled = !e.target.checked;
+    }
+  } else if (e.target.name === 'inputOfflineOperation') {
+    if ('controllerCustomize' in newState) {
+      newState.inputOfflineOperation = !newState.inputOfflineOperation;
+      if (newState.inputOfflineOperation) {
+        newState.inputPressure.disabled = false;
+        newState.inputFlow.disabled = false;
+        newState.inputActivePower.disabled = false;
+        newState.inputPowerFactor.disabled = false;
+      }
     }
   } else if (
     e.target.type === 'checkbox' &&
@@ -28,13 +38,12 @@ export const setFormState = <
       (newState[variableName as keyof T] as InputType).disabled =
         !e.target.checked;
     }
-    return newState;
   } else if (typeof oldState[e.target.name as keyof T] === 'object') {
     newState = {
       ...oldState,
       [e.target.name]: {
         ...(oldState[e.target.name as keyof T] as InputType),
-        value: e.target.value,
+        value: parseFloat(e.target.value),
       },
     };
   } else if (e.target.type === 'checkbox') {

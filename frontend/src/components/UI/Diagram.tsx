@@ -1,20 +1,17 @@
 import { useTheme } from '@mui/material';
 import { DiagramVariableType } from '../../types/models/common';
 
-type Props = {
+type Props<T> = {
   diagram: string;
   variables: DiagramVariableType[];
+  data: T;
   width: number;
   height: number;
 };
 
-const Diagram = (props: Props) => {
-  const { diagram, variables, width, height } = props;
-  const array: number[] = new Array(variables.length);
-
+const Diagram = <T,>(props: Props<T>) => {
+  const { diagram, variables, data, width, height } = props;
   const theme = useTheme();
-
-  array.fill(Math.random() * 100);
 
   return (
     <div
@@ -41,7 +38,7 @@ const Diagram = (props: Props) => {
                     fill: theme.palette.text.primary,
                     fontSize: '13px',
                   }}
-                >{`${v.printedName}: ${array[index].toFixed(v.fixed)} ${
+                >{`${v.printedName}: ${data[v.name as keyof T]} ${
                   v.unit
                 }`}</text>
               </g>

@@ -20,9 +20,9 @@ const ControllerParams = (props: TurbineParamsType) => {
       <Grid container spacing={2} margin={'normal'}>
         <Grid item xs={6} md={6} xl={6}>
           <FormControl fullWidth>
-            <InputLabel>Estado inicial del controlador</InputLabel>
+            <InputLabel>Estado inicial disipación</InputLabel>
             <Select
-              label="Estado inicial del controlador"
+              label="Estado inicial disipación"
               value={turbine.controllerInitialState}
               name="controllerInitialState"
               onChange={handleChange}
@@ -45,7 +45,7 @@ const ControllerParams = (props: TurbineParamsType) => {
                 color="default"
               />
             }
-            label="Personalizar"
+            label={turbine.controllerCustomize ? 'Manual' : 'Auto'}
           />
         </Grid>
         <Grid item xs={6} md={6} xl={6}>
@@ -77,14 +77,14 @@ const ControllerParams = (props: TurbineParamsType) => {
         </Grid>
         <Grid item xs={6} md={6} xl={6}>
           <CustomNumberField
-            variable={turbine.controllerDissipatorOffVoltage}
+            variable={turbine.controllerSinkOffVoltage}
             name="controllerDissipatorOffVoltage"
             handleChange={handleChange}
           ></CustomNumberField>
         </Grid>
         <Grid item xs={6} md={6} xl={6}>
           <CustomNumberField
-            variable={turbine.controllerDissipatorOnVoltage}
+            variable={turbine.controllerSinkOnVoltage}
             name="controllerDissipatorOnVoltage"
             handleChange={handleChange}
           ></CustomNumberField>

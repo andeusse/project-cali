@@ -2,6 +2,7 @@ import React from 'react';
 import { FormControlLabel, Grid, Switch } from '@mui/material';
 import { TurbineParamsType } from '../../../types/models/common';
 import ToggleCustomNumberField from '../../UI/ToggleCustomNumberField';
+import { TurbineType } from '../../../types/models/turbine';
 
 const InputParams = (props: TurbineParamsType) => {
   const { turbine, handleChange } = props;
@@ -22,7 +23,7 @@ const InputParams = (props: TurbineParamsType) => {
                 color="default"
               />
             }
-            label="Operación offline"
+            label={turbine.inputOfflineOperation ? 'Offline' : 'Online'}
           />
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
@@ -47,6 +48,32 @@ const InputParams = (props: TurbineParamsType) => {
             offlineOperation={turbine.inputOfflineOperation}
           ></ToggleCustomNumberField>
         </Grid>
+        {turbine.turbineType === TurbineType.Turgo && (
+          <>
+            <Grid item xs={12} md={12} xl={12}>
+              <h3>Parámetros carga CD</h3>
+            </Grid>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={turbine.inputDirectCurrentPower}
+                  name="inputDirectCurrentPower"
+                  onChange={(e) => {
+                    if (handleChange) {
+                      handleChange(e);
+                    }
+                  }}
+                  color="default"
+                />
+              }
+              label={
+                turbine.inputDirectCurrentPower
+                  ? 'Conectado: 2.4 W'
+                  : 'Desconectado: 0.0 W'
+              }
+            />
+          </>
+        )}
         <Grid item xs={12} md={12} xl={12}>
           <h3>Parámetros carga CA</h3>
         </Grid>

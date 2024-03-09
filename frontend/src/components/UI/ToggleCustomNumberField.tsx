@@ -9,7 +9,14 @@ import CustomNumberField from './CustomNumberField';
 const ToggleCustomNumberField = (
   props: CustomTextFieldType & ToggleCustomTextFieldType
 ) => {
-  const { variable, name, handleChange, offlineOperation } = props;
+  const {
+    variable,
+    name,
+    handleChange,
+    falseText = 'Auto',
+    trueText = 'Manual',
+    offlineOperation,
+  } = props;
 
   return (
     <Grid container spacing={2}>
@@ -22,7 +29,7 @@ const ToggleCustomNumberField = (
             <Switch
               checked={!variable.disabled}
               name="variableCustomize"
-              disabled={!offlineOperation}
+              disabled={offlineOperation}
               onChange={(e) => {
                 if (handleChange) {
                   handleChange(e, name);
@@ -31,7 +38,7 @@ const ToggleCustomNumberField = (
               color="default"
             />
           }
-          label="Manual"
+          label={variable.disabled ? falseText : trueText}
         />
       </Grid>
     </Grid>

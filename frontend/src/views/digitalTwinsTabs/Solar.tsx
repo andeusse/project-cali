@@ -1,4 +1,11 @@
-import { Container, Alert, Box, Grid } from '@mui/material';
+import {
+  Container,
+  Alert,
+  Box,
+  Grid,
+  FormControl,
+  TextField,
+} from '@mui/material';
 import { useState } from 'react';
 import SolarParams from '../../components/models/solar/SolarParams';
 import {
@@ -46,13 +53,20 @@ const Solar = (props: Props) => {
           {error}
         </Alert>
       )}
-      {data !== undefined && isPlaying && (
-        <Alert severity="info" variant="filled"></Alert>
-      )}
       <Box display="flex" justifyContent="center" alignItems="center">
         <h2>Parámetros del sistema</h2>
       </Box>
       <Grid container spacing={2}>
+        <Grid item xs={12} md={12} xl={12}>
+          <FormControl fullWidth>
+            <TextField
+              label="Nombre"
+              value={solarModule.name}
+              name="name"
+              onChange={handleChange}
+            />
+          </FormControl>
+        </Grid>
         <Grid item xs={12} md={8} xl={8}>
           <SolarParams
             solarModule={solarModule}
@@ -82,8 +96,9 @@ const Solar = (props: Props) => {
                 onPause={onPause}
                 onStop={onStop}
               ></PlayerControls>
-              <Diagram
+              <Diagram<{}>
                 diagram={solarDiagram}
+                data={{}}
                 variables={SOLAR_DIAGRAM_VARIABLES}
                 width={800}
                 height={400}

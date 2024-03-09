@@ -1,4 +1,8 @@
-import { DiagramVariableType, InputType } from './common';
+import {
+  CommonSystemParameter,
+  DiagramVariableType,
+  InputType,
+} from './common';
 
 export enum SolarPanelModulesType {
   Custom = 'Custom',
@@ -8,7 +12,7 @@ export enum SolarPanelModulesType {
   CadmiumTelluride = 'Telururo de Cadmio',
 }
 
-export type SolarPanelParameters = {
+export type SolarPanelParameters = CommonSystemParameter & {
   panelType: SolarPanelModulesType;
   moduleNumber: InputType;
   modulePeakPower: InputType;
@@ -31,6 +35,7 @@ export type SolarParamsType = {
 };
 
 export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
+  name: 'Nombre',
   panelType: SolarPanelModulesType.Custom,
   moduleNumber: {
     disabled: false,

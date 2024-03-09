@@ -1,9 +1,17 @@
-import { Alert, Box, Container, Grid } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Container,
+  FormControl,
+  Grid,
+  TextField,
+} from '@mui/material';
 import TurbineParams from '../../components/models/turbine/TurbineParams';
 import { useState } from 'react';
 import {
   TURBINE,
   TURBINE_DIAGRAM_VARIABLES,
+  TurbineOutput,
   TurbineParameters,
   TurbineType,
 } from '../../types/models/turbine';
@@ -19,6 +27,7 @@ import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import peltonDiagram from '../../assets/peltonTurbineDiagram.svg';
 import turgoDiagram from '../../assets/turgoTurbineDiagram.svg';
+import { resp } from '../../types/api';
 
 type Props = {};
 
@@ -27,7 +36,7 @@ const Turbine = (props: Props) => {
 
   const [data, isPlaying, error, onPlay, onPause, onStop] = useControlPlayer<
     TurbineParameters,
-    string
+    resp<TurbineOutput>
   >('turbine', turbine);
 
   const handleChange = (e: any, variableName?: string) => {
@@ -44,13 +53,20 @@ const Turbine = (props: Props) => {
           {error}
         </Alert>
       )}
-      {data !== undefined && isPlaying && (
-        <Alert severity="info" variant="filled"></Alert>
-      )}
       <Box display="flex" justifyContent="center" alignItems="center">
         <h2>Parámetros del sistema</h2>
       </Box>
       <Grid container spacing={2}>
+        <Grid item xs={12} md={12} xl={12}>
+          <FormControl fullWidth>
+            <TextField
+              label="Nombre"
+              value={turbine.name}
+              name="name"
+              onChange={handleChange}
+            />
+          </FormControl>
+        </Grid>
         <Grid item xs={12} md={6} xl={3.5}>
           <TurbineParams
             selectedTurbine={turbine.turbineType}
@@ -89,16 +105,19 @@ const Turbine = (props: Props) => {
                 onPause={onPause}
                 onStop={onStop}
               ></PlayerControls>
-              <Diagram
-                diagram={
-                  turbine.turbineType === TurbineType.Pelton
-                    ? peltonDiagram
-                    : turgoDiagram
-                }
-                variables={TURBINE_DIAGRAM_VARIABLES}
-                width={800}
-                height={800}
-              ></Diagram>
+              {data !== undefined && (
+                <Diagram<TurbineOutput>
+                  diagram={
+                    turbine.turbineType === TurbineType.Pelton
+                      ? peltonDiagram
+                      : turgoDiagram
+                  }
+                  data={data.model}
+                  variables={TURBINE_DIAGRAM_VARIABLES}
+                  width={800}
+                  height={800}
+                ></Diagram>
+              )}
             </Grid>
           </Grid>
         </Grid>

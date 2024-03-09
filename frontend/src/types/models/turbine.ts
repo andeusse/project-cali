@@ -1,4 +1,8 @@
-import { DiagramVariableType, InputType } from './common';
+import {
+  CommonSystemParameter,
+  DiagramVariableType,
+  InputType,
+} from './common';
 
 export enum TurbineType {
   Pelton = 'Pelton',
@@ -10,7 +14,7 @@ export enum ControllerStateType {
   Apagada = 'Apagada',
 }
 
-export type TurbineParameters = {
+export type TurbineParameters = CommonSystemParameter & {
   turbineType: TurbineType;
   controllerInitialState: ControllerStateType;
   controllerCustomize: boolean;
@@ -18,8 +22,8 @@ export type TurbineParameters = {
   controllerChargeVoltageBulk: InputType;
   controllerChargeVoltageFloat: InputType;
   controllerChargingMinimunVoltage: InputType;
-  controllerDissipatorOffVoltage: InputType;
-  controllerDissipatorOnVoltage: InputType;
+  controllerSinkOffVoltage: InputType;
+  controllerSinkOnVoltage: InputType;
   batteryStateOfCharge: InputType;
   batteryTemperatureCoefficient: InputType;
   batteryCapacity: InputType;
@@ -31,150 +35,33 @@ export type TurbineParameters = {
   inputOfflineOperation: boolean;
   inputPressure: InputType;
   inputFlow: InputType;
+  inputDirectCurrentPower: boolean;
   inputActivePower: InputType;
   inputPowerFactor: InputType;
 };
 
-export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
-  {
-    name: 'v1',
-    x: 255,
-    y: 60,
-    printedName: 'Voltaje',
-    unit: 'Vca',
-    fixed: 1,
-  },
-  {
-    name: 'v2',
-    x: 255,
-    y: 85,
-    printedName: 'Corriente',
-    unit: 'Aca',
-    fixed: 1,
-  },
-  {
-    name: 'v3',
-    x: 255,
-    y: 110,
-    printedName: 'Potencia',
-    unit: 'W',
-    fixed: 1,
-  },
-  {
-    name: 'v4',
-    x: 130,
-    y: 600,
-    printedName: 'Voltaje',
-    unit: 'Vcd',
-    fixed: 1,
-  },
-  {
-    name: 'v5',
-    x: 130,
-    y: 625,
-    printedName: 'Corriente',
-    unit: 'Vcd',
-    fixed: 1,
-  },
-  {
-    name: 'v6',
-    x: 130,
-    y: 650,
-    printedName: 'Potencia',
-    unit: 'W',
-    fixed: 1,
-  },
-  {
-    name: 'v7',
-    x: 410,
-    y: 50,
-    printedName: 'SOC',
-    unit: '%',
-    fixed: 3,
-  },
-  {
-    name: 'v8',
-    x: 410,
-    y: 75,
-    printedName: 'Voltaje',
-    unit: 'Vcd',
-    fixed: 3,
-  },
-  {
-    name: 'v9',
-    x: 410,
-    y: 100,
-    printedName: 'Corriente',
-    unit: 'Acd',
-    fixed: 1,
-  },
-  {
-    name: 'v10',
-    x: 410,
-    y: 125,
-    printedName: 'Potencia',
-    unit: 'W',
-    fixed: 1,
-  },
-  {
-    name: 'v11',
-    x: 665,
-    y: 15,
-    printedName: 'Potencia',
-    unit: 'W',
-    fixed: 1,
-  },
-  {
-    name: 'v12',
-    x: 665,
-    y: 40,
-    printedName: 'Voltaje',
-    unit: 'Vca',
-    fixed: 1,
-  },
-  {
-    name: 'v13',
-    x: 665,
-    y: 65,
-    printedName: 'Corriente',
-    unit: 'Ica',
-    fixed: 1,
-  },
-  {
-    name: 'v14',
-    x: 665,
-    y: 90,
-    printedName: 'P. Aparente',
-    unit: 'VA',
-    fixed: 1,
-  },
-  {
-    name: 'v15',
-    x: 665,
-    y: 115,
-    printedName: 'P. Reactiva',
-    unit: 'var',
-    fixed: 1,
-  },
-  {
-    name: 'v16',
-    x: 470,
-    y: 700,
-    printedName: 'Estado',
-    unit: '',
-    fixed: 1,
-  },
-  {
-    name: 'v17',
-    x: 470,
-    y: 725,
-    printedName: 'Potencia',
-    unit: 'W',
-    fixed: 1,
-  },
-];
+export type TurbineOutput = {
+  turbineCurrent: number;
+  directCurrentVoltage: number;
+  controllerCurrent: number;
+  controllerPower: number;
+  batteryStateOfCharge: number;
+  batteryVoltage: number;
+  batteryCurrent: number;
+  batteryPower: number;
+  inverterApparentPower: number;
+  inverterActivePower: number;
+  inverterReactivePower: number;
+  inverterState: boolean;
+  inverterOutputCurrent: number;
+  inverterInputCurrent: number;
+  inverterInputPower: number;
+  sinkLoadState: boolean;
+  sinkLoadPower: number;
+};
 
 export const TURBINE: TurbineParameters = {
+  name: 'Nombre',
   turbineType: TurbineType.Pelton,
   controllerCustomize: false,
   controllerInitialState: ControllerStateType.Apagada,
@@ -216,7 +103,7 @@ export const TURBINE: TurbineParameters = {
     min: 24,
     max: 35,
   },
-  controllerDissipatorOffVoltage: {
+  controllerSinkOffVoltage: {
     disabled: true,
     value: 24.75,
     tooltip: 'Voltaje de apagado de carga disipadora',
@@ -226,7 +113,7 @@ export const TURBINE: TurbineParameters = {
     min: 24,
     max: 35,
   },
-  controllerDissipatorOnVoltage: {
+  controllerSinkOnVoltage: {
     disabled: true,
     value: 28,
     tooltip: 'Voltaje de encendido de carga disipadora',
@@ -323,6 +210,7 @@ export const TURBINE: TurbineParameters = {
     min: 0,
     max: 10,
   },
+  inputDirectCurrentPower: false,
   inputActivePower: {
     disabled: true,
     value: 200,
@@ -344,6 +232,145 @@ export const TURBINE: TurbineParameters = {
     max: 1,
   },
 };
+
+export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
+  {
+    name: 'v1',
+    x: 255,
+    y: 60,
+    printedName: 'Voltaje',
+    unit: 'Vca',
+    fixed: 1,
+  },
+  {
+    name: 'turbineCurrent',
+    x: 255,
+    y: 85,
+    printedName: 'Corriente',
+    unit: 'Aca',
+    fixed: 1,
+  },
+  {
+    name: 'v3',
+    x: 255,
+    y: 110,
+    printedName: 'Potencia',
+    unit: 'W',
+    fixed: 1,
+  },
+  {
+    name: 'directCurrentVoltage',
+    x: 130,
+    y: 600,
+    printedName: 'Voltaje',
+    unit: 'Vcd',
+    fixed: 1,
+  },
+  {
+    name: 'controllerCurrent',
+    x: 130,
+    y: 625,
+    printedName: 'Corriente',
+    unit: 'Vcd',
+    fixed: 1,
+  },
+  {
+    name: 'controllerPower',
+    x: 130,
+    y: 650,
+    printedName: 'Potencia',
+    unit: 'W',
+    fixed: 1,
+  },
+  {
+    name: 'batteryStateOfCharge',
+    x: 410,
+    y: 50,
+    printedName: 'SOC',
+    unit: '%',
+    fixed: 3,
+  },
+  {
+    name: 'batteryVoltage',
+    x: 410,
+    y: 75,
+    printedName: 'Voltaje',
+    unit: 'Vcd',
+    fixed: 3,
+  },
+  {
+    name: 'batteryCurrent',
+    x: 410,
+    y: 100,
+    printedName: 'Corriente',
+    unit: 'Acd',
+    fixed: 1,
+  },
+  {
+    name: 'batteryPower',
+    x: 410,
+    y: 125,
+    printedName: 'Potencia',
+    unit: 'W',
+    fixed: 1,
+  },
+  {
+    name: 'v11',
+    x: 665,
+    y: 15,
+    printedName: 'Potencia',
+    unit: 'W',
+    fixed: 1,
+  },
+  {
+    name: 'v12',
+    x: 665,
+    y: 40,
+    printedName: 'Voltaje',
+    unit: 'Vca',
+    fixed: 1,
+  },
+  {
+    name: 'v13',
+    x: 665,
+    y: 65,
+    printedName: 'Corriente',
+    unit: 'Ica',
+    fixed: 1,
+  },
+  {
+    name: 'v14',
+    x: 665,
+    y: 90,
+    printedName: 'P. Aparente',
+    unit: 'VA',
+    fixed: 1,
+  },
+  {
+    name: 'v15',
+    x: 665,
+    y: 115,
+    printedName: 'P. Reactiva',
+    unit: 'var',
+    fixed: 1,
+  },
+  {
+    name: 'sinkLoadState',
+    x: 470,
+    y: 700,
+    printedName: 'Estado',
+    unit: '',
+    fixed: 1,
+  },
+  {
+    name: 'sinkLoadPower',
+    x: 470,
+    y: 725,
+    printedName: 'Potencia',
+    unit: 'W',
+    fixed: 1,
+  },
+];
 
 export const PELTON_TURBINE: InputType[] = [
   {
