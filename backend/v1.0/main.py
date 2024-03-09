@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api, Resource, request
 from flask_cors import CORS
-from models import Turbine
+from models import Turbine, Solar
 
 app = Flask(__name__)
 api = Api(app)
@@ -19,6 +19,8 @@ class ApiRunning(Resource):
 api.add_resource(ApiRunning, "/")
 
 api.add_resource(Turbine, "/models/turbine")
+
+api.add_resource(Solar, "/models/solar")
 
 if __name__ == "__main__":
   app.run(debug=True)
