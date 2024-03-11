@@ -17,9 +17,9 @@ class Turbine(Resource):
     P_CD = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     T_bat = 30.0 # Leen base de datos
     SOC = data["batteryStateOfCharge"]["value"]
-    print(SOC)
-    V_CD = 25.0 # Leen base de datos
-    # V_CD = data["directCurrentVoltage"]["value"]
+    print("SOCin= "+SOC)
+    V_CD = data["directCurrentVoltage"]["value"]
+    print("Vdcin= "+V_CD)
     V_bulk = data["controllerChargeVoltageBulk"]["value"]
     V_float = data["controllerChargeVoltageFloat"]["value"]
     V_charge = data["controllerChargingMinimunVoltage"]["value"]
@@ -56,9 +56,10 @@ class Turbine(Resource):
     turbine["turbineVoltage"] = results[3]
     turbine["inverterOutputVoltage"] = results[4]
     turbine["batteryStateOfCharge"] = results[5]
-    print(results[5])
+    print("SOCout= "+results[5])
     turbine["batteryVoltage"] = results[6]
     turbine["directCurrentVoltage"] = results[7]
+    print("Vdcout= "+results[7])
     turbine["sinkLoadState"] = results[8]
     turbine["sinkLoadPower"] = results[9]
     turbine["inverterApparentPower"] = results[10]
