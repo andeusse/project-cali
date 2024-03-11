@@ -72,7 +72,7 @@ class Hydro_twin:
     
     def optimal_n_controller(self, n_controller, P_h, P_CD, P_CC_meas):
         def controllerPowerOuput(n_controller, P_h, P_CD, P_CC_meas):
-            return (P_h * 1000 * n_controller / 100) - P_CD - P_CC_meas
+            return (P_h * n_controller / 100) - P_CD - P_CC_meas
         n_controller_0 = n_controller
         n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (80, 98), args = (P_h, P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]
@@ -101,7 +101,7 @@ class Hydro_twin:
             self.P_CA = 0.0
             self.inverterState = False
         
-        self.P_CC = (self.P_h * 1000 * self.n_controller / 100) - P_CD # Potencia a la salida de controlador
+        self.P_CC = (self.P_h * self.n_controller / 100) - P_CD # Potencia a la salida de controlador
         self.S_CA = (self.P_CA / abs(self.PF))
         self.Q_CA = (self.PF / abs(self.PF)) * ((self.S_CA**2 - self.P_CA**2)**(1/2))
         self.P_inv = self.S_CA / (self.n_inverter / 100) # Potencia a la entrada del inversor
@@ -158,4 +158,4 @@ class Hydro_twin:
         self.I_CA = self.S_CA / self.V_CA
         self.I_inv = self.P_inv / self.V_CD
         
-        return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), self.sinkState, round(self.P_sink,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.inverterState,  round(self.I_t,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2)
+        return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_t,2), round(self.V_CA,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), self.sinkState, round(self.P_sink,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.inverterState,  round(self.I_t,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2)
