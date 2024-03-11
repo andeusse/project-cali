@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   FormControl,
@@ -33,18 +33,20 @@ const TimeGraphs = (props: Props) => {
 
   const [availableGraphs, setAvailableGraphs] = useState([...graphs]);
 
+  useEffect(() => {
+    setAvailableGraphs([...graphs]);
+  }, [graphs]);
+
   const [selectedVariable, setSelectedVariable] = useState<string>('');
-  const [currentGraphs, setGraphs] = useState<GraphType[]>([]);
+
+  const [currentGraphs, setCurrentGraphs] = useState<GraphType[]>([]);
 
   const handleAddGraph = () => {
     const newGraph = availableGraphs.find(
       (g) => g.variable === selectedVariable
     );
     if (newGraph) {
-      setGraphs([...currentGraphs, newGraph]);
-      setAvailableGraphs([
-        ...availableGraphs.filter((g) => g.variable !== selectedVariable),
-      ]);
+      setCurrentGraphs([...currentGraphs, newGraph]);
       setSelectedVariable('');
     }
   };

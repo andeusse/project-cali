@@ -4,7 +4,7 @@ import { DiagramVariableType } from '../../types/models/common';
 type Props<T> = {
   diagram: string;
   variables: DiagramVariableType[];
-  data: T;
+  data: T | undefined;
   width: number;
   height: number;
 };
@@ -28,19 +28,25 @@ const Diagram = <T,>(props: Props<T>) => {
       >
         <image href={diagram}></image>
         <g>
-          {variables.map((v, index) => {
+          {variables.map((v) => {
+            let printValue: string = '';
+            if (data && typeof data[v.name as keyof T] === 'number') {
+              printValue = (data[v.name as keyof T] as number).toFixed(v.fixed);
+            } else if (data && typeof data[v.name as keyof T] === 'boolean') {
+              printValue = (data[v.name as keyof T] as boolean) ? 'On' : 'Off';
+            }
             return (
               <g key={v.name} transform={`translate(${v.x},${v.y})`}>
-                <text
-                  style={{
-                    alignmentBaseline: 'central',
-                    textAnchor: 'middle',
-                    fill: theme.palette.text.primary,
-                    fontSize: '13px',
-                  }}
-                >{`${v.printedName}: ${data[v.name as keyof T]} ${
-                  v.unit
-                }`}</text>
+                {data && (
+                  <text
+                    style={{
+                      alignmentBaseline: 'central',
+                      textAnchor: 'middle',
+                      fill: theme.palette.text.primary,
+                      fontSize: '13px',
+                    }}
+                  >{`${v.printedName}: ${printValue} ${v.unit}`}</text>
+                )}
               </g>
             );
           })}

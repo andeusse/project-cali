@@ -1,3 +1,4 @@
+import { CommonGraphType } from '../graph';
 import {
   CommonSystemParameter,
   DiagramVariableType,
@@ -42,6 +43,8 @@ export type TurbineParameters = CommonSystemParameter & {
 
 export type TurbineOutput = {
   turbineCurrent: number;
+  turbinePower: number;
+  turbineVoltage: number;
   directCurrentVoltage: number;
   controllerCurrent: number;
   controllerPower: number;
@@ -53,11 +56,35 @@ export type TurbineOutput = {
   inverterActivePower: number;
   inverterReactivePower: number;
   inverterState: boolean;
+  inverterOutputVoltage: number;
   inverterOutputCurrent: number;
   inverterInputCurrent: number;
   inverterInputPower: number;
   sinkLoadState: boolean;
   sinkLoadPower: number;
+};
+
+export type TurbineOutputHistoric = CommonGraphType & {
+  turbineCurrent: number[];
+  turbinePower: number[];
+  turbineVoltage: number[];
+  directCurrentVoltage: number[];
+  controllerCurrent: number[];
+  controllerPower: number[];
+  batteryStateOfCharge: number[];
+  batteryVoltage: number[];
+  batteryCurrent: number[];
+  batteryPower: number[];
+  inverterApparentPower: number[];
+  inverterActivePower: number[];
+  inverterReactivePower: number[];
+  inverterState: boolean[];
+  inverterOutputVoltage: number[];
+  inverterOutputCurrent: number[];
+  inverterInputCurrent: number[];
+  inverterInputPower: number[];
+  sinkLoadState: boolean[];
+  sinkLoadPower: number[];
 };
 
 export const TURBINE: TurbineParameters = {
@@ -125,7 +152,7 @@ export const TURBINE: TurbineParameters = {
   },
   batteryStateOfCharge: {
     disabled: false,
-    value: 100,
+    value: 50,
     tooltip: 'Estado de carga inicial',
     unit: '%',
     variableString: 'SOC',
@@ -235,7 +262,7 @@ export const TURBINE: TurbineParameters = {
 
 export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
-    name: 'v1',
+    name: 'turbineVoltage',
     x: 255,
     y: 60,
     printedName: 'Voltaje',
@@ -251,7 +278,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
   },
   {
-    name: 'v3',
+    name: 'turbinePower',
     x: 255,
     y: 110,
     printedName: 'Potencia',
@@ -315,43 +342,67 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
   },
   {
-    name: 'v11',
-    x: 665,
-    y: 15,
-    printedName: 'Potencia',
+    name: 'inverterInputPower',
+    x: 620,
+    y: 75,
+    printedName: 'P entrada',
     unit: 'W',
     fixed: 1,
   },
   {
-    name: 'v12',
-    x: 665,
-    y: 40,
-    printedName: 'Voltaje',
+    name: 'inverterInputCurrent',
+    x: 620,
+    y: 100,
+    printedName: 'I entrada',
     unit: 'Vca',
     fixed: 1,
   },
   {
-    name: 'v13',
-    x: 665,
-    y: 65,
-    printedName: 'Corriente',
+    name: 'inverterActivePower',
+    x: 550,
+    y: 350,
+    printedName: 'P activa',
     unit: 'Ica',
     fixed: 1,
   },
   {
-    name: 'v14',
-    x: 665,
-    y: 90,
-    printedName: 'P. Aparente',
+    name: 'inverterReactivePower',
+    x: 550,
+    y: 375,
+    printedName: 'P reactiva',
     unit: 'VA',
     fixed: 1,
   },
   {
-    name: 'v15',
-    x: 665,
-    y: 115,
-    printedName: 'P. Reactiva',
+    name: 'inverterApparentPower',
+    x: 550,
+    y: 400,
+    printedName: 'P aparente',
     unit: 'var',
+    fixed: 1,
+  },
+  {
+    name: 'inverterOutputVoltage',
+    x: 550,
+    y: 425,
+    printedName: 'Voltaje',
+    unit: 'var',
+    fixed: 1,
+  },
+  {
+    name: 'inverterOutputCurrent',
+    x: 550,
+    y: 450,
+    printedName: 'Corriente',
+    unit: 'var',
+    fixed: 1,
+  },
+  {
+    name: 'inverterState',
+    x: 550,
+    y: 475,
+    printedName: 'Estado',
+    unit: '',
     fixed: 1,
   },
   {

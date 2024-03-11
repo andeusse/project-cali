@@ -30,10 +30,8 @@ const Solar = (props: Props) => {
   const [solarModule, setSolarModule] =
     useState<SolarPanelParameters>(CUSTOM_SOLAR_PANEL);
 
-  const [data, isPlaying, error, onPlay, onPause, onStop] = useControlPlayer<
-    SolarPanelParameters,
-    string
-  >('solar', solarModule);
+  const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
+    useControlPlayer<SolarPanelParameters, String>('solar', solarModule);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<SolarPanelParameters>(
