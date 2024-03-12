@@ -267,7 +267,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 255,
     y: 60,
     diagramName: 'Voltaje',
-    unit: 'Vca',
+    unit: 'Vcd',
     fixed: 1,
   },
   {
@@ -276,7 +276,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 255,
     y: 85,
     diagramName: 'Corriente',
-    unit: 'Aca',
+    unit: 'Acd',
     fixed: 1,
   },
   {
@@ -303,7 +303,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 130,
     y: 625,
     diagramName: 'Corriente',
-    unit: 'Vcd',
+    unit: 'Acd',
     fixed: 1,
   },
   {
@@ -366,7 +366,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 620,
     y: 100,
     diagramName: 'I entrada',
-    unit: 'Vca',
+    unit: 'Acd',
     fixed: 1,
   },
   {
@@ -375,7 +375,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 550,
     y: 350,
     diagramName: 'P activa',
-    unit: 'Ica',
+    unit: 'W',
     fixed: 1,
   },
   {
@@ -384,7 +384,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 550,
     y: 375,
     diagramName: 'P reactiva',
-    unit: 'VA',
+    unit: 'var',
     fixed: 1,
   },
   {
@@ -393,7 +393,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 550,
     y: 400,
     diagramName: 'P aparente',
-    unit: 'var',
+    unit: 'VA',
     fixed: 1,
   },
   {
@@ -402,7 +402,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 550,
     y: 425,
     diagramName: 'Voltaje',
-    unit: 'var',
+    unit: 'Vca',
     fixed: 1,
   },
   {
@@ -411,7 +411,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 550,
     y: 450,
     diagramName: 'Corriente',
-    unit: 'var',
+    unit: 'Aca',
     fixed: 1,
   },
   {
