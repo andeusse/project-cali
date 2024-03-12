@@ -41,9 +41,18 @@ class Turbine(Resource):
     hydroSystem.turbineType(turbineType)
     P_h = hydroSystem.PowerOutput(pressure, flux)
     hydroSystem.twinParameters(n_controller, n_inverter)
+<<<<<<< Updated upstream
     hydroSystem.optimal_n_t(hydroSystem.n_t, P_h_meas, pressure, flux)
     P_h = hydroSystem.PowerOutput(pressure, flux)
     hydroSystem.optimal_n_controller(n_controller, P_h, P_CD, P_CC_meas)
+=======
+    
+    if not data["inputOfflineOperation"]:
+      hydroSystem.optimal_n_t(hydroSystem.n_t, P_h_meas, pressure, flux)
+      P_h = hydroSystem.PowerOutput(pressure, flux)
+      hydroSystem.optimal_n_controller(n_controller, P_h, P_CD, P_CC_meas)
+    
+>>>>>>> Stashed changes
     results = hydroSystem.twinOutput(P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC, 
                                      V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t,hydroSystem.V_t,V_CA)
 
