@@ -53,6 +53,10 @@ const TimeGraphs = (props: Props) => {
     }
   };
 
+  const handleRemoveGrahp = (e: string) => {
+    setCurrentGraphs(currentGraphs.filter((f) => f.variable !== e));
+  };
+
   return (
     <div>
       <h2>Gráficas de tiempo</h2>
@@ -108,6 +112,7 @@ const TimeGraphs = (props: Props) => {
                     title={
                       variables.find((v) => g.variable === v.variable)?.name
                     }
+                    handleDeleteChart={handleRemoveGrahp}
                   ></TimeGraph>
                 </Grid>
               );
