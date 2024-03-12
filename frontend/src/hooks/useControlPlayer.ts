@@ -73,7 +73,7 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
   const onStop = () => {
     setIsPlaying(false);
     setData(undefined);
-    setHistoricData(undefined);
+    setHistoricData({});
     setGraphs(undefined);
     setError('');
   };

@@ -105,7 +105,10 @@ const Solar = (props: Props) => {
           </Grid>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
-          <TimeGraphs graphs={GRAPH_TEST}></TimeGraphs>
+          <TimeGraphs
+            graphs={GRAPH_TEST}
+            variables={SOLAR_DIAGRAM_VARIABLES}
+          ></TimeGraphs>
         </Grid>
       </Grid>
     </Container>

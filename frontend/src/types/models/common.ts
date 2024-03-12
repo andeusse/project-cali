@@ -13,9 +13,10 @@ export type InputType = {
 
 export type DiagramVariableType = {
   name: string;
+  variable: string;
   x: number;
   y: number;
-  printedName: string;
+  diagramName: string;
   unit: string;
   fixed: number;
 };

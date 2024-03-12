@@ -30,13 +30,20 @@ const Diagram = <T,>(props: Props<T>) => {
         <g>
           {variables.map((v) => {
             let printValue: string = '';
-            if (data && typeof data[v.name as keyof T] === 'number') {
-              printValue = (data[v.name as keyof T] as number).toFixed(v.fixed);
-            } else if (data && typeof data[v.name as keyof T] === 'boolean') {
-              printValue = (data[v.name as keyof T] as boolean) ? 'On' : 'Off';
+            if (data && typeof data[v.variable as keyof T] === 'number') {
+              printValue = (data[v.variable as keyof T] as number).toFixed(
+                v.fixed
+              );
+            } else if (
+              data &&
+              typeof data[v.variable as keyof T] === 'boolean'
+            ) {
+              printValue = (data[v.variable as keyof T] as boolean)
+                ? 'On'
+                : 'Off';
             }
             return (
-              <g key={v.name} transform={`translate(${v.x},${v.y})`}>
+              <g key={v.variable} transform={`translate(${v.x},${v.y})`}>
                 {data && (
                   <text
                     style={{
@@ -45,7 +52,7 @@ const Diagram = <T,>(props: Props<T>) => {
                       fill: theme.palette.text.primary,
                       fontSize: '13px',
                     }}
-                  >{`${v.printedName}: ${printValue} ${v.unit}`}</text>
+                  >{`${v.diagramName}: ${printValue} ${v.unit}`}</text>
                 )}
               </g>
             );

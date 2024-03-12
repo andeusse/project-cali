@@ -14,10 +14,11 @@ import { GraphType } from '../../../types/graph';
 
 type Props = {
   graph: GraphType;
+  title: string | undefined;
 };
 
 const TimeGraph = (props: Props) => {
-  const { graph } = props;
+  const { graph, title } = props;
 
   ChartJS.register(
     CategoryScale,
@@ -34,11 +35,15 @@ const TimeGraph = (props: Props) => {
     plugins: {
       legend: {
         position: 'top' as const,
+        onClick: (e: any) => {},
       },
       title: {
         display: true,
-        text: graph.variable,
+        text: title ? title : graph.variable,
       },
+    },
+    animation: {
+      duration: 0,
     },
   };
 

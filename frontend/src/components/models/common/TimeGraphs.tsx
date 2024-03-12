@@ -12,9 +12,11 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { GraphType } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
+import { DiagramVariableType } from '../../../types/models/common';
 
 type Props = {
   graphs: GraphType[];
+  variables: DiagramVariableType[];
 };
 
 const marks = [
@@ -29,7 +31,7 @@ const marks = [
 ];
 
 const TimeGraphs = (props: Props) => {
-  const { graphs } = props;
+  const { graphs, variables } = props;
 
   const [availableGraphs, setAvailableGraphs] = useState([...graphs]);
 
@@ -81,7 +83,7 @@ const TimeGraphs = (props: Props) => {
             >
               {availableGraphs.map((g, index) => (
                 <MenuItem key={`${index}${g.variable}`} value={g.variable}>
-                  {g.variable}
+                  {variables.find((v) => g.variable === v.variable)?.name}
                 </MenuItem>
               ))}
             </Select>
@@ -98,10 +100,15 @@ const TimeGraphs = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={10} xl={10}>
           <Grid container spacing={2}>
-            {currentGraphs.map((graph, index) => {
+            {currentGraphs.map((g, index) => {
               return (
-                <Grid key={`${index}_${graph}`} item xs={12} md={6} xl={6}>
-                  <TimeGraph graph={graph}></TimeGraph>
+                <Grid key={`${index}_${g}`} item xs={12} md={6} xl={6}>
+                  <TimeGraph
+                    graph={g}
+                    title={
+                      variables.find((v) => g.variable === v.variable)?.name
+                    }
+                  ></TimeGraph>
                 </Grid>
               );
             })}

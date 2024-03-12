@@ -116,7 +116,12 @@ const Turbine = (props: Props) => {
           </Grid>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
-          <TimeGraphs graphs={graphs !== undefined ? graphs : []}></TimeGraphs>
+          {graphs !== undefined && (
+            <TimeGraphs
+              graphs={graphs}
+              variables={TURBINE_DIAGRAM_VARIABLES}
+            ></TimeGraphs>
+          )}
         </Grid>
       </Grid>
     </Container>
