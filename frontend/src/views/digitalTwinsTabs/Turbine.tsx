@@ -7,7 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import TurbineParams from '../../components/models/turbine/TurbineParams';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   TURBINE,
   TURBINE_DIAGRAM_VARIABLES,
@@ -30,15 +30,31 @@ import turgoDiagram from '../../assets/turgoTurbineDiagram.svg';
 type Props = {};
 
 const Turbine = (props: Props) => {
-  const [turbine, setUserTurbine] = useState<TurbineParameters>(TURBINE);
+  const [turbine, setTurbine] = useState<TurbineParameters>(TURBINE);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', turbine);
 
+  useEffect(() => {
+    if (data !== undefined) {
+      setTurbine((o) => ({
+        ...o,
+        simulatedBatteryStateOfCharge: data.batteryStateOfCharge,
+        simulatedDirectCurrentVoltage: data.directCurrentVoltage,
+      }));
+    } else {
+      setTurbine((o) => ({
+        ...o,
+        simulatedBatteryStateOfCharge: undefined,
+        simulatedDirectCurrentVoltage: undefined,
+      }));
+    }
+  }, [data]);
+
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<TurbineParameters>(e, turbine, variableName);
     if (newState) {
-      setUserTurbine(newState);
+      setTurbine(newState);
     }
   };
 

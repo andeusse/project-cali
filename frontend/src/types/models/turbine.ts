@@ -39,6 +39,8 @@ export type TurbineParameters = CommonSystemParameter & {
   inputDirectCurrentPower: boolean;
   inputActivePower: InputType;
   inputPowerFactor: InputType;
+  simulatedBatteryStateOfCharge?: number;
+  simulatedDirectCurrentVoltage?: number;
 };
 
 export type TurbineOutput = {
