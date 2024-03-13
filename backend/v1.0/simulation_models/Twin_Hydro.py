@@ -2,10 +2,7 @@ from scipy.optimize import minimize
 from scipy.optimize import Bounds
 from scipy.optimize import least_squares
 import numpy as np
-<<<<<<< Updated upstream
-=======
 import random
->>>>>>> Stashed changes
 
 class Hydro_twin:
     def __init__(self, systemName):
@@ -71,11 +68,7 @@ class Hydro_twin:
             return ((n_t/100) * Pressure * Flux) - P_h_meas
         n_t_0 = n_t
         n_t = least_squares(turbinePowerOutput, x0 = n_t_0, bounds = (50, 100), args = (P_h_meas, Pressure, Flux))
-<<<<<<< Updated upstream
-        self.n_t = n_t.x[0]
-=======
         self.n_t = n_t.x[0]*random.uniform(0.98,1.02)
->>>>>>> Stashed changes
         return n_t.x[0]
     
     def optimal_n_controller(self, n_controller, P_h, P_CD, P_CC_meas):
@@ -83,11 +76,7 @@ class Hydro_twin:
             return (P_h * n_controller / 100) - P_CD - P_CC_meas
         n_controller_0 = n_controller
         n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (80, 98), args = (P_h, P_CD, P_CC_meas))
-<<<<<<< Updated upstream
-        self.n_controller = n_controller.x[0]
-=======
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
->>>>>>> Stashed changes
 
         return n_controller.x[0]
     
