@@ -18,6 +18,7 @@ class Turbine(Resource):
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
       connectionState = influxDB.InfluxDBconnection()
+      print(connectionState)
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
@@ -35,13 +36,19 @@ class Turbine(Resource):
     
     SOC = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["batteryStateOfCharge"]["value"]
     V_CD  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
+    inverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
+    if "simulatedSinkLoadState" in data:
+      sinkState = data["simulatedSinkLoadState"]
+    elif data["sinkLoadInitialState"] == "Apagada":
+      sinkState = False
+    else:
+      sinkState = True
 
     V_bulk = data["controllerChargeVoltageBulk"]["value"]
     V_float = data["controllerChargeVoltageFloat"]["value"]
     V_charge = data["controllerChargingMinimunVoltage"]["value"]
     V_sink_on = data["controllerSinkOnVoltage"]["value"]
     V_sink_off = data["controllerSinkOffVoltage"]["value"]
-    sinkState = False if data["controllerInitialState"] == "Apagada" else True
     delta_t = 1.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
 
     n_controller = data["controllerEfficiency"]["value"]
@@ -60,18 +67,14 @@ class Turbine(Resource):
       V_t = round(values_df["Value"]['VG001'],2)
       V_CD = round(values_df["Value"]['VB001'],2)
       sinkState = bool(int(values_df["Value"]['ED001']))
+      inverterState = bool(int(values_df["Value"]['EI001']))
       turbine["batteryTemperature"] = T_bat
-      if data["inputPressure"]["disabled"]:
-        turbine["inputFlow"] = pressure
-      if data["inputFlow"]["disabled"]:
-        turbine["inputPressure"] = flux
-      if data["inputActivePower"]["disabled"]:
-        turbine["inputActivePower"] = P_CA
-      if data["inputPowerFactor"]["disabled"]:
-        turbine["inputPowerFactor"] = PF
+      if data["inputPressure"]["disabled"]: turbine["inputFlow"] = pressure
+      if data["inputFlow"]["disabled"]: turbine["inputPressure"] = flux
+      if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = P_CA
+      if data["inputPowerFactor"]["disabled"]: turbine["inputPowerFactor"] = PF
     else:
       T_bat = 30.0
-      inverterState = True
       V_CA = 0
       V_t = 0
 
