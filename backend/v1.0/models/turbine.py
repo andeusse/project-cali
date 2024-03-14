@@ -17,7 +17,9 @@ class Turbine(Resource):
       influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
-      msg = influxDB.InfluxDBconnection()
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
 
       for index in testValues_df.index:
           query = influxDB.QueryCreator(device= testValues_df["Device"][index], variable= testValues_df["Tag"][index], location= '', type= 0, forecastTime= 0)
@@ -31,15 +33,8 @@ class Turbine(Resource):
     PF = data["inputPowerFactor"]["value"] if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
     P_CD = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     
-    if "simulatedBatteryStateOfCharge" in data:
-      SOC = data["simulatedBatteryStateOfCharge"]
-    else:
-      SOC = data["batteryStateOfCharge"]["value"]
-    
-    if "simulatedDirectCurrentVoltage" in data:
-      V_CD = data["simulatedDirectCurrentVoltage"]
-    else:
-      V_CD = 25.0
+    SOC = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["batteryStateOfCharge"]["value"]
+    V_CD  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
 
     V_bulk = data["controllerChargeVoltageBulk"]["value"]
     V_float = data["controllerChargeVoltageFloat"]["value"]
@@ -47,12 +42,14 @@ class Turbine(Resource):
     V_sink_on = data["controllerSinkOnVoltage"]["value"]
     V_sink_off = data["controllerSinkOffVoltage"]["value"]
     sinkState = False if data["controllerInitialState"] == "Apagada" else True
-    delta_t = 5.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
+    delta_t = 1.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
 
     n_controller = data["controllerEfficiency"]["value"]
     n_inverter = data["inverterEfficiency"]["value"]
 
     hydroSystem = Twin_Hydro.Hydro_twin(name)
+
+    turbine = {}
 
     if not data["inputOfflineOperation"]:
       T_bat = round(values_df["Value"]['TE003'],2)
@@ -63,6 +60,15 @@ class Turbine(Resource):
       V_t = round(values_df["Value"]['VG001'],2)
       V_CD = round(values_df["Value"]['VB001'],2)
       sinkState = bool(int(values_df["Value"]['ED001']))
+      turbine["batteryTemperature"] = T_bat
+      if data["inputPressure"]["disabled"]:
+        turbine["inputFlow"] = pressure
+      if data["inputFlow"]["disabled"]:
+        turbine["inputPressure"] = flux
+      if data["inputActivePower"]["disabled"]:
+        turbine["inputActivePower"] = P_CA
+      if data["inputPowerFactor"]["disabled"]:
+        turbine["inputPowerFactor"] = PF
     else:
       T_bat = 30.0
       inverterState = True
@@ -80,8 +86,6 @@ class Turbine(Resource):
     
     results = hydroSystem.twinOutput(P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC, 
                                      V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA)
-
-    turbine = {}
 
     turbine["turbinePower"] = P_h
 

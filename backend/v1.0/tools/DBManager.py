@@ -5,6 +5,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 # %%  InfluxDB Model        
 class InfluxDBmodel:
     def __init__(self, server, org, bucket, token):
+        self.ERROR_MESSAGE = 'Un error ocurrió al conectarse con la base de datos de InfluxDB, revise que la base de datos exista o que los parámetros de conexión estén bien configurados.'
         self.server = server
         self.org = org
         self.token = token
@@ -14,9 +15,11 @@ class InfluxDBmodel:
     def InfluxDBconnection(self):
         try:
             self.influxDBclient = InfluxDBClient(url = self.server, token = self.token)
-            return 'Succesfully connected to the InfluxDB Database'
+            if self.influxDBclient.ping:
+              return False
+            return True
         except:
-            return 'An error ocurred connecting to the InfluxDB Database'    
+            return False
 
     # %%  InfluxDB Reader 
     def InfluxDBreader(self, query):
@@ -25,7 +28,7 @@ class InfluxDBmodel:
             self.influxReturndf = self.influxDBclient.query_api().query_data_frame(self.query, self.org)
             return self.influxReturndf
         except:
-            return 'An error ocurred reading the InfluxDB Database'
+            return self.ERROR_MESSAGE
 
     # %%  InfluxDB Writer         
     def InfluxDBwriter(self, load, variable, value, timestamp):

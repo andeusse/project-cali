@@ -1,3 +1,7 @@
 Flask
 Flask-RESTful
 Flask-Cors
+pandas
+influxdb_client
+scipy
+openpyxl
