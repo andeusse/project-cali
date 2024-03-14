@@ -24,7 +24,7 @@ const ControllerParams = (props: TurbineParamsType) => {
             <Select
               label="Estado inicial disipación"
               value={turbine.sinkLoadInitialState}
-              name="controllerInitialState"
+              name="sinkLoadInitialState"
               onChange={handleChange}
             >
               {Object.keys(ControllerStateType).map((key) => (
