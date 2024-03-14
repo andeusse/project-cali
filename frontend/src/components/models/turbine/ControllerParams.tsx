@@ -23,7 +23,7 @@ const ControllerParams = (props: TurbineParamsType) => {
             <InputLabel>Estado inicial disipación</InputLabel>
             <Select
               label="Estado inicial disipación"
-              value={turbine.controllerInitialState}
+              value={turbine.sinkLoadInitialState}
               name="controllerInitialState"
               onChange={handleChange}
             >

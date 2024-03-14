@@ -17,7 +17,7 @@ export enum ControllerStateType {
 
 export type TurbineParameters = CommonSystemParameter & {
   turbineType: TurbineType;
-  controllerInitialState: ControllerStateType;
+  sinkLoadInitialState: ControllerStateType;
   controllerCustomize: boolean;
   controllerEfficiency: InputType;
   controllerChargeVoltageBulk: InputType;
@@ -111,7 +111,7 @@ export const TURBINE: TurbineParameters = {
   },
   turbineType: TurbineType.Pelton,
   controllerCustomize: false,
-  controllerInitialState: ControllerStateType.Apagada,
+  sinkLoadInitialState: ControllerStateType.Apagada,
   controllerEfficiency: {
     disabled: true,
     value: 96,
