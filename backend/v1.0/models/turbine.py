@@ -69,8 +69,8 @@ class Turbine(Resource):
       sinkState = bool(int(values_df["Value"]['ED001']))
       inverterState = bool(int(values_df["Value"]['EI001']))
       turbine["batteryTemperature"] = T_bat
-      if data["inputPressure"]["disabled"]: turbine["inputFlow"] = pressure
-      if data["inputFlow"]["disabled"]: turbine["inputPressure"] = flux
+      if data["inputPressure"]["disabled"]: turbine["inputPressure"] = pressure
+      if data["inputFlow"]["disabled"]: turbine["inputFlow"] = flux
       if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = P_CA
       if data["inputPowerFactor"]["disabled"]: turbine["inputPowerFactor"] = PF
     else:
