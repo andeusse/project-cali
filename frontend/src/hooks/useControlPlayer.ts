@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import { useState, useCallback, useEffect } from 'react';
 import { updateModel } from '../api/digitalTwinsModels';
 import moment from 'moment';
-import { resp } from '../types/api';
+import { errorResp, resp } from '../types/api';
 import { GraphType } from '../types/graph';
 import { data2Graph } from '../utils/data2Graph';
 
@@ -43,8 +43,10 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
         });
         setError('');
       })
-      .catch((err: AxiosError) => {
-        setError(`Error al realizar la consulta con el mesaje: ${err.message}`);
+      .catch((err: AxiosError<errorResp>) => {
+        setError(
+          `Error al realizar la consulta con el código: ${err.response?.status} y con mensaje de error: ${err.response?.data.message}`
+        );
       })
       .finally(() => {});
   }, [historicData, model, url]);
@@ -54,7 +56,7 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
       if (isPlaying) {
         queryApi();
       }
-    }, 5000);
+    }, 1000);
     return () => {
       clearInterval(interval);
     };

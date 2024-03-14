@@ -26,6 +26,7 @@ import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import peltonDiagram from '../../assets/peltonTurbineDiagram.svg';
 import turgoDiagram from '../../assets/turgoTurbineDiagram.svg';
+import turgoDiagramNoCharge from '../../assets/turgoNoChargeDiagram.svg';
 
 type Props = {};
 
@@ -39,14 +40,40 @@ const Turbine = (props: Props) => {
     if (data !== undefined) {
       setTurbine((o) => ({
         ...o,
+        inputPressure: {
+          ...o.inputPressure,
+          value: data.inputPressure
+            ? data.inputPressure
+            : o.inputPressure.value,
+        },
+        inputFlow: {
+          ...o.inputFlow,
+          value: data.inputFlow ? data.inputFlow : o.inputFlow.value,
+        },
+        inputActivePower: {
+          ...o.inputActivePower,
+          value: data.inputActivePower
+            ? data.inputActivePower
+            : o.inputActivePower.value,
+        },
+        inputPowerFactor: {
+          ...o.inputPowerFactor,
+          value: data.inputPowerFactor
+            ? data.inputPowerFactor
+            : o.inputPowerFactor.value,
+        },
         simulatedBatteryStateOfCharge: data.batteryStateOfCharge,
         simulatedDirectCurrentVoltage: data.directCurrentVoltage,
+        simulatedInverterState: data.inverterState,
+        simulatedSinkLoadState: data.sinkLoadState,
       }));
     } else {
       setTurbine((o) => ({
         ...o,
         simulatedBatteryStateOfCharge: undefined,
         simulatedDirectCurrentVoltage: undefined,
+        simulatedInverterState: undefined,
+        simulatedSinkLoadState: undefined,
       }));
     }
   }, [data]);
@@ -57,6 +84,15 @@ const Turbine = (props: Props) => {
       setTurbine(newState);
     }
   };
+
+  const playerControl = (
+    <PlayerControls
+      isPlaying={isPlaying}
+      onPlay={onPlay}
+      onPause={onPause}
+      onStop={onStop}
+    ></PlayerControls>
+  );
 
   return (
     <Container maxWidth="xl">
@@ -112,16 +148,14 @@ const Turbine = (props: Props) => {
               ></InputParams>
             </Grid>
             <Grid item xs={12} md={9} xl={9}>
-              <PlayerControls
-                onPlay={onPlay}
-                onPause={onPause}
-                onStop={onStop}
-              ></PlayerControls>
+              {playerControl}
               <Diagram<TurbineOutput>
                 diagram={
                   turbine.turbineType === TurbineType.Pelton
                     ? peltonDiagram
-                    : turgoDiagram
+                    : turbine.inputDirectCurrentPower
+                    ? turgoDiagram
+                    : turgoDiagramNoCharge
                 }
                 data={data}
                 variables={TURBINE_DIAGRAM_VARIABLES}
@@ -131,14 +165,20 @@ const Turbine = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={12} xl={12}>
-          {graphs !== undefined && (
-            <TimeGraphs
-              graphs={graphs}
-              variables={TURBINE_DIAGRAM_VARIABLES}
-            ></TimeGraphs>
-          )}
-        </Grid>
+        {graphs !== undefined && turbine.timeMultiplier && (
+          <>
+            <Grid item xs={12} md={12} xl={12}>
+              <TimeGraphs
+                timeMultiplier={turbine.timeMultiplier}
+                handleChange={handleChange}
+                graphs={graphs}
+                variables={TURBINE_DIAGRAM_VARIABLES}
+                playerControl={playerControl}
+                isPlaying={isPlaying}
+              ></TimeGraphs>
+            </Grid>
+          </>
+        )}
       </Grid>
     </Container>
   );

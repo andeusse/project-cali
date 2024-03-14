@@ -5,30 +5,27 @@ import PauseIcon from '@mui/icons-material/Pause';
 import StopIcon from '@mui/icons-material/Stop';
 
 type PlayerControlsProps = {
+  isPlaying: boolean;
   onPlay: () => void;
   onPause: () => void;
   onStop: () => void;
 };
 
 const PlayerControls: React.FC<PlayerControlsProps> = ({
+  isPlaying,
   onPlay,
   onPause,
   onStop,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-
   const handlePlay = () => {
-    setIsPlaying(true);
     onPlay();
   };
 
   const handlePause = () => {
-    setIsPlaying(false);
     onPause();
   };
 
   const handleStop = () => {
-    setIsPlaying(false);
     onStop();
   };
 

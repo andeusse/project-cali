@@ -44,6 +44,15 @@ const Solar = (props: Props) => {
     }
   };
 
+  const playerControl = (
+    <PlayerControls
+      isPlaying={isPlaying}
+      onPlay={onPlay}
+      onPause={onPause}
+      onStop={onStop}
+    ></PlayerControls>
+  );
+
   return (
     <Container maxWidth="xl">
       {error !== '' && isPlaying && (
@@ -89,11 +98,7 @@ const Solar = (props: Props) => {
               ></InputParams>
             </Grid>
             <Grid item xs={12} md={9} xl={9}>
-              <PlayerControls
-                onPlay={onPlay}
-                onPause={onPause}
-                onStop={onStop}
-              ></PlayerControls>
+              {playerControl}
               <Diagram<{}>
                 diagram={solarDiagram}
                 data={{}}
@@ -104,12 +109,20 @@ const Solar = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} md={12} xl={12}>
-          <TimeGraphs
-            graphs={GRAPH_TEST}
-            variables={SOLAR_DIAGRAM_VARIABLES}
-          ></TimeGraphs>
-        </Grid>
+        {graphs !== undefined && solarModule.timeMultiplier && (
+          <>
+            <Grid item xs={12} md={12} xl={12}>
+              <TimeGraphs
+                timeMultiplier={solarModule.timeMultiplier}
+                handleChange={handleChange}
+                graphs={graphs}
+                variables={SOLAR_DIAGRAM_VARIABLES}
+                playerControl={playerControl}
+                isPlaying={isPlaying}
+              ></TimeGraphs>
+            </Grid>
+          </>
+        )}
       </Grid>
     </Container>
   );

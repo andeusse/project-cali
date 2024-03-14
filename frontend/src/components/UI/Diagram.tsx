@@ -44,7 +44,7 @@ const Diagram = <T,>(props: Props<T>) => {
             }
             return (
               <g key={v.variable} transform={`translate(${v.x},${v.y})`}>
-                {data && (
+                {data && printValue && (
                   <text
                     style={{
                       alignmentBaseline: 'central',

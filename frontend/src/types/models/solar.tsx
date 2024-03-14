@@ -36,6 +36,16 @@ export type SolarParamsType = {
 
 export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
   name: 'Nombre',
+  timeMultiplier: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Multiplicador de tiempo',
+    unit: '',
+    variableString: '',
+    variableSubString: '',
+    min: 1,
+    max: 10,
+  },
   panelType: SolarPanelModulesType.Custom,
   moduleNumber: {
     disabled: false,

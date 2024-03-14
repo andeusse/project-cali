@@ -23,6 +23,7 @@ export type DiagramVariableType = {
 
 export type CommonSystemParameter = {
   name: string;
+  timeMultiplier?: InputType;
 };
 
 export type SolarSystem = CommonSystemParameter & {};

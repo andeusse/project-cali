@@ -41,6 +41,8 @@ export type TurbineParameters = CommonSystemParameter & {
   inputPowerFactor: InputType;
   simulatedBatteryStateOfCharge?: number;
   simulatedDirectCurrentVoltage?: number;
+  simulatedSinkLoadState?: boolean;
+  simulatedInverterState?: boolean;
 };
 
 export type TurbineOutput = {
@@ -54,6 +56,7 @@ export type TurbineOutput = {
   batteryVoltage: number;
   batteryCurrent: number;
   batteryPower: number;
+  batteryTemperature?: number;
   inverterApparentPower: number;
   inverterActivePower: number;
   inverterReactivePower: number;
@@ -64,6 +67,10 @@ export type TurbineOutput = {
   inverterInputPower: number;
   sinkLoadState: boolean;
   sinkLoadPower: number;
+  inputPressure?: number;
+  inputFlow?: number;
+  inputActivePower?: number;
+  inputPowerFactor?: number;
 };
 
 export type TurbineOutputHistoric = CommonGraphType & {
@@ -77,6 +84,7 @@ export type TurbineOutputHistoric = CommonGraphType & {
   batteryVoltage: number[];
   batteryCurrent: number[];
   batteryPower: number[];
+  batteryTemperature?: number[];
   inverterApparentPower: number[];
   inverterActivePower: number[];
   inverterReactivePower: number[];
@@ -91,6 +99,16 @@ export type TurbineOutputHistoric = CommonGraphType & {
 
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
+  timeMultiplier: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Multiplicador de tiempo',
+    unit: '',
+    variableString: '',
+    variableSubString: '',
+    min: 1,
+    max: 10,
+  },
   turbineType: TurbineType.Pelton,
   controllerCustomize: false,
   controllerInitialState: ControllerStateType.Apagada,
@@ -351,6 +369,15 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 125,
     diagramName: 'Potencia',
     unit: 'W',
+    fixed: 1,
+  },
+  {
+    name: 'Temperatura batería',
+    variable: 'batteryTemperature',
+    x: 410,
+    y: 150,
+    diagramName: 'Temperatura',
+    unit: '°C',
     fixed: 1,
   },
   {

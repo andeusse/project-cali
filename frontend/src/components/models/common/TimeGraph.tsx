@@ -28,10 +28,11 @@ type Props = {
   graph: GraphType;
   title: string | undefined;
   handleDeleteChart: (e: string) => void;
+  isPlaying: boolean;
 };
 
 const TimeGraph = (props: Props) => {
-  const { graph, title, handleDeleteChart } = props;
+  const { graph, title, handleDeleteChart, isPlaying } = props;
 
   const chartRef = useRef<any>(undefined);
 
@@ -81,11 +82,11 @@ const TimeGraph = (props: Props) => {
   };
 
   const data = {
-    labels: graph.xValues,
+    labels: isPlaying ? graph.xValues.slice(-20) : graph.xValues,
     datasets: [
       {
         label: graph.variable,
-        data: graph.yValues,
+        data: isPlaying ? graph.yValues.slice(-20) : graph.yValues,
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
       },

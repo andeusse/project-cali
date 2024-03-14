@@ -12,11 +12,15 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { GraphType } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
-import { DiagramVariableType } from '../../../types/models/common';
+import { DiagramVariableType, InputType } from '../../../types/models/common';
 
 type Props = {
+  timeMultiplier: InputType;
+  handleChange: (e: any) => void;
   graphs: GraphType[];
   variables: DiagramVariableType[];
+  playerControl: React.ReactNode;
+  isPlaying: boolean;
 };
 
 const marks = [
@@ -31,7 +35,14 @@ const marks = [
 ];
 
 const TimeGraphs = (props: Props) => {
-  const { graphs, variables } = props;
+  const {
+    timeMultiplier,
+    handleChange,
+    graphs,
+    variables,
+    playerControl,
+    isPlaying,
+  } = props;
 
   const [availableGraphs, setAvailableGraphs] = useState([...graphs]);
 
@@ -58,21 +69,23 @@ const TimeGraphs = (props: Props) => {
   };
 
   return (
-    <div>
-      <h2>Gráficas de tiempo</h2>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12} md={2} xl={2}>
+          <h2>Gráficas de tiempo</h2>
           <Typography id="input-slider" gutterBottom>
             Multiplicador de velocidad:
           </Typography>
           <Slider
             aria-label="TimeMultiplier"
-            defaultValue={1}
+            value={timeMultiplier.value}
+            name="timeMultiplier"
             valueLabelDisplay="auto"
             step={1}
             marks={marks}
-            min={1}
-            max={10}
+            min={timeMultiplier.min}
+            max={timeMultiplier.max}
+            onChange={handleChange}
           />
           <FormControl
             fullWidth
@@ -103,6 +116,7 @@ const TimeGraphs = (props: Props) => {
           </Button>
         </Grid>
         <Grid item xs={12} md={10} xl={10}>
+          {playerControl}
           <Grid container spacing={2}>
             {currentGraphs.map((g, index) => {
               return (
@@ -113,6 +127,7 @@ const TimeGraphs = (props: Props) => {
                       variables.find((v) => g.variable === v.variable)?.name
                     }
                     handleDeleteChart={handleRemoveGrahp}
+                    isPlaying={isPlaying}
                   ></TimeGraph>
                 </Grid>
               );
@@ -120,7 +135,7 @@ const TimeGraphs = (props: Props) => {
           </Grid>
         </Grid>
       </Grid>
-    </div>
+    </>
   );
 };
 
