@@ -14,9 +14,12 @@ class Turbine(Resource):
       values_df = pd.DataFrame(columns=["Tag", "Value"])
       values_df["Tag"] = testValues_df["Tag"]
       values_df.set_index('Tag', inplace=True)
+
+      # Cambiar línea de modelo de DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse (?) = [2]
       influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
+      
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
@@ -88,7 +91,7 @@ class Turbine(Resource):
       hydroSystem.optimal_n_t(hydroSystem.n_t, P_h_meas, pressure, flux)
       P_h = hydroSystem.PowerOutput(pressure, flux)
       hydroSystem.optimal_n_controller(n_controller, P_h, P_CD, P_CC_meas)
-    print(sinkState)
+
     results = hydroSystem.twinOutput(P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC, 
                                      V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA)
 
@@ -103,7 +106,6 @@ class Turbine(Resource):
     turbine["batteryVoltage"] = results[6]
     turbine["directCurrentVoltage"] = results[7]
     turbine["sinkLoadState"] = results[8]
-    print(turbine["sinkLoadState"])
     turbine["sinkLoadPower"] = results[9]
     turbine["inverterApparentPower"] = results[10]
     turbine["inverterActivePower"] = results[11]
