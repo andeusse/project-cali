@@ -34,7 +34,7 @@ export type SolarParamsType = {
   handleChange: (e: any) => void;
 };
 
-export const CUSTOM_SOLAR_PANEL: SolarPanelParameters = {
+export const SOLAR_PANEL: SolarPanelParameters = {
   name: 'Nombre',
   timeMultiplier: {
     disabled: false,
@@ -174,6 +174,7 @@ export const SOLAR_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Irradiancia',
     unit: 'W / m²',
     fixed: 2,
+    isShown: true,
   },
   {
     name: '',
@@ -183,6 +184,7 @@ export const SOLAR_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'T_ambiente',
     unit: '°C',
     fixed: 1,
+    isShown: true,
   },
   {
     name: '',
@@ -192,6 +194,7 @@ export const SOLAR_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Potencia',
     unit: 'W',
     fixed: 1,
+    isShown: true,
   },
   {
     name: '',
@@ -201,5 +204,6 @@ export const SOLAR_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'T_modulo',
     unit: '°C',
     fixed: 2,
+    isShown: true,
   },
 ];

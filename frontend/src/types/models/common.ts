@@ -14,11 +14,12 @@ export type InputType = {
 export type DiagramVariableType = {
   name: string;
   variable: string;
-  x: number;
-  y: number;
-  diagramName: string;
+  x?: number;
+  y?: number;
+  diagramName?: string;
   unit: string;
-  fixed: number;
+  fixed?: number;
+  isShown: boolean;
 };
 
 export type CommonSystemParameter = {

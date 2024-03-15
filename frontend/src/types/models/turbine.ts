@@ -289,6 +289,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     unit: 'Vcd',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Corriente turbina',
@@ -298,6 +299,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Corriente',
     unit: 'Acd',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia turbina',
@@ -307,6 +309,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Potencia',
     unit: 'W',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Voltaje corriente directa',
@@ -316,6 +319,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     unit: 'Vcd',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Corriente controlador',
@@ -325,6 +329,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Corriente',
     unit: 'Acd',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia controlador',
@@ -334,6 +339,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Potencia',
     unit: 'W',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Estado de carga batería',
@@ -343,6 +349,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'SOC',
     unit: '%',
     fixed: 3,
+    isShown: true,
   },
   {
     name: 'Voltaje batería',
@@ -352,6 +359,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     unit: 'Vcd',
     fixed: 3,
+    isShown: true,
   },
   {
     name: 'Corriente batería',
@@ -361,6 +369,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Corriente',
     unit: 'Acd',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia batería',
@@ -370,6 +379,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Potencia',
     unit: 'W',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Temperatura batería',
@@ -379,6 +389,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     unit: '°C',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia de entrada inversor',
@@ -388,6 +399,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'P entrada',
     unit: 'W',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Corriente de entrada inversor',
@@ -397,6 +409,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'I entrada',
     unit: 'Acd',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia activa inversor',
@@ -406,6 +419,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'P activa',
     unit: 'W',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia reactiva inversor',
@@ -415,6 +429,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'P reactiva',
     unit: 'var',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia aparente inversor',
@@ -424,6 +439,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'P aparente',
     unit: 'VA',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Voltaje de salida inversor',
@@ -433,6 +449,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     unit: 'Vca',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Corriente de salida inversor',
@@ -442,6 +459,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Corriente',
     unit: 'Aca',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Estado inversor',
@@ -451,6 +469,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Estado',
     unit: '',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Estado carga disipadora',
@@ -460,6 +479,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Estado',
     unit: '',
     fixed: 1,
+    isShown: true,
   },
   {
     name: 'Potencia carga disipadora',
@@ -469,6 +489,31 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Potencia',
     unit: 'W',
     fixed: 1,
+    isShown: true,
+  },
+  {
+    name: 'Presión turbina',
+    variable: 'inputPressure',
+    unit: 'W',
+    isShown: false,
+  },
+  {
+    name: 'Flujo turbina',
+    variable: 'inputFlow',
+    unit: 'W',
+    isShown: false,
+  },
+  {
+    name: 'Potencia activa carga',
+    variable: 'inputActivePower',
+    unit: 'W',
+    isShown: false,
+  },
+  {
+    name: 'Factor de potencia carga',
+    variable: 'inputPowerFactor',
+    unit: 'W',
+    isShown: false,
   },
 ];
 

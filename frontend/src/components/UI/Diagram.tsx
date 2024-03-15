@@ -29,6 +29,7 @@ const Diagram = <T,>(props: Props<T>) => {
         <image href={diagram}></image>
         <g>
           {variables.map((v) => {
+            if (!v.isShown) return null;
             let printValue: string = '';
             if (data && typeof data[v.variable as keyof T] === 'number') {
               printValue = (data[v.variable as keyof T] as number).toFixed(

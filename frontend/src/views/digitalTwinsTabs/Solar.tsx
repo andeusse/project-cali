@@ -9,7 +9,7 @@ import {
 import { useState } from 'react';
 import SolarParams from '../../components/models/solar/SolarParams';
 import {
-  CUSTOM_SOLAR_PANEL,
+  SOLAR_PANEL,
   SOLAR_DIAGRAM_VARIABLES,
   SolarPanelParameters,
 } from '../../types/models/solar';
@@ -28,7 +28,7 @@ type Props = {};
 
 const Solar = (props: Props) => {
   const [solarModule, setSolarModule] =
-    useState<SolarPanelParameters>(CUSTOM_SOLAR_PANEL);
+    useState<SolarPanelParameters>(SOLAR_PANEL);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<SolarPanelParameters, String>('solar', solarModule);
