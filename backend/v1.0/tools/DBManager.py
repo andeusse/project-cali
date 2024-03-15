@@ -5,7 +5,7 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 # %%  InfluxDB Model        
 class InfluxDBmodel:
     def __init__(self, server, org, bucket, token):
-        self.ERROR_MESSAGE = 'Un error ocurrió al conectarse con la base de datos de InfluxDB, revise que la base de datos exista o que los parámetros de conexión estén bien configurados.'
+        self.ERROR_MESSAGE = 'Ocurrió un error al conectarse con la base de datos de InfluxDB, verifique que la base de datos exista y que los parámetros de conexión estén bien configurados.'
         self.server = server
         self.org = org
         self.token = token
@@ -15,9 +15,7 @@ class InfluxDBmodel:
     def InfluxDBconnection(self):
         try:
             self.influxDBclient = InfluxDBClient(url = self.server, token = self.token)
-            if self.influxDBclient.ping:
-              return False
-            return True
+            return self.influxDBclient.ping()
         except:
             return False
 
@@ -34,16 +32,16 @@ class InfluxDBmodel:
     def InfluxDBwriter(self, load, variable, value, timestamp):
         write_api = self.influxDBclient.write_api(write_options=SYNCHRONOUS)
         payload = influxdb_client.Point(load).field(variable, value)
-        # payload = {"measurement": analyzer,
-        #       "tags":{"_load": load},
-        #       "fields": {variable: value},
-        #      "time": timestamp}
         
         try:
             write_api.write(self.bucket, self.org, payload)
             
         except:
             return 'An error ocurred writing the InfluxDB Database'
+
+    # %% InfluxDB close connection
+    def InfluxDBclose(self):
+        self.influxDBclient.close()
 
     # %% InfluxDB query creator
     def QueryCreator(self, device, variable, location, type, forecastTime): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast

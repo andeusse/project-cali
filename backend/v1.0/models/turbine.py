@@ -18,7 +18,6 @@ class Turbine(Resource):
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
       connectionState = influxDB.InfluxDBconnection()
-      print(connectionState)
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
@@ -68,6 +67,9 @@ class Turbine(Resource):
       V_CD = round(values_df["Value"]['VB001'],2)
       sinkState = bool(int(values_df["Value"]['ED001']))
       inverterState = bool(int(values_df["Value"]['EI001']))
+
+      influxDB.InfluxDBclose()
+
       turbine["batteryTemperature"] = T_bat
       if data["inputPressure"]["disabled"]: turbine["inputPressure"] = pressure
       if data["inputFlow"]["disabled"]: turbine["inputFlow"] = flux
@@ -86,7 +88,7 @@ class Turbine(Resource):
       hydroSystem.optimal_n_t(hydroSystem.n_t, P_h_meas, pressure, flux)
       P_h = hydroSystem.PowerOutput(pressure, flux)
       hydroSystem.optimal_n_controller(n_controller, P_h, P_CD, P_CC_meas)
-    
+    print(sinkState)
     results = hydroSystem.twinOutput(P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC, 
                                      V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA)
 
@@ -101,6 +103,7 @@ class Turbine(Resource):
     turbine["batteryVoltage"] = results[6]
     turbine["directCurrentVoltage"] = results[7]
     turbine["sinkLoadState"] = results[8]
+    print(turbine["sinkLoadState"])
     turbine["sinkLoadPower"] = results[9]
     turbine["inverterApparentPower"] = results[10]
     turbine["inverterActivePower"] = results[11]
