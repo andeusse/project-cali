@@ -20,28 +20,30 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
   const queryApi = useCallback(() => {
     updateModel<T, resp<G>>(url, model)
       .then((resp) => {
-        setData((_) => {
-          const d = resp.data.model;
-          for (const key in d) {
+        if (isPlaying) {
+          setData((_) => {
+            const d = resp.data.model;
+            for (const key in d) {
+              setHistoricData((o: any) => {
+                if (o[key] === undefined) {
+                  o[key] = [];
+                }
+                o[key].push(d[key]);
+                return o;
+              });
+            }
             setHistoricData((o: any) => {
-              if (o[key] === undefined) {
-                o[key] = [];
+              if (o['time'] === undefined) {
+                o['time'] = [];
               }
-              o[key].push(d[key]);
+              o['time'].push(moment().format('LTS'));
               return o;
             });
-          }
-          setHistoricData((o: any) => {
-            if (o['time'] === undefined) {
-              o['time'] = [];
-            }
-            o['time'].push(moment().format('LTS'));
-            return o;
+            setGraphs(data2Graph(historicData));
+            return d;
           });
-          setGraphs(data2Graph(historicData));
-          return d;
-        });
-        setError('');
+          setError('');
+        }
       })
       .catch((err: AxiosError<errorResp>) => {
         setError(
@@ -49,7 +51,7 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
         );
       })
       .finally(() => {});
-  }, [historicData, model, url]);
+  }, [historicData, isPlaying, model, url]);
 
   useEffect(() => {
     const interval: NodeJS.Timer = setInterval(() => {
