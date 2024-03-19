@@ -4,13 +4,32 @@ from simulation_models import Twin_Hydro
 import pandas as pd
 from tools import DBManager
 
+class ExcelReader():
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+          cls._instance = super().__new__(cls)
+          cls._instance._data = None
+        return cls._instance
+    def read_excel(self, file_path, sheet):
+        if self._data is None:
+          self._data = pd.read_excel(file_path,sheet)
+    @property
+    def data(self):
+        if self._data is None:
+            raise ValueError("Excel file not read. Please call read_excel method first.")
+        return self._data
+
 class Turbine(Resource):
   def post(self):
     data = request.get_json()
 
     if not data["inputOfflineOperation"]:
-      database_df = pd.read_excel('./v1.0/tools/Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
-      testValues_df = pd.read_excel('./v1.0/tools/Hydro_test.xlsx', sheet_name = 'Hoja1')
+      excelReader = ExcelReader()
+      excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
+      database_dic = excelReader.data
+      database_df = database_dic['ConexionDB']
+      testValues_df = database_dic['InfluxDBVariables']
       values_df = pd.DataFrame(columns=["Tag", "Value"])
       values_df["Tag"] = testValues_df["Tag"]
       values_df.set_index('Tag', inplace=True)
