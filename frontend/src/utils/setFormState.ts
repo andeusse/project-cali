@@ -1,10 +1,9 @@
 import { InputType } from '../types/models/common';
-import { SmartCityParameters } from '../types/models/smartCity';
-import { SolarPanelParameters } from '../types/models/solar';
 import { TurbineParameters } from '../types/models/turbine';
+import { SolarPanelParameters } from '../types/models/solar';
 
 export const setFormState = <
-  T extends TurbineParameters | SolarPanelParameters | SmartCityParameters
+  T extends TurbineParameters | SolarPanelParameters
 >(
   e: any,
   oldState: T,
@@ -12,7 +11,7 @@ export const setFormState = <
 ) => {
   let newState = { ...oldState };
   if (e.target.name === 'controllerCustomize') {
-    if ('controllerCustomize' in newState) {
+    if ('turbineType' in newState) {
       newState.controllerCustomize = e.target.checked;
       newState.controllerChargeVoltageBulk.disabled = !e.target.checked;
       newState.controllerChargeVoltageFloat.disabled = !e.target.checked;
@@ -21,7 +20,7 @@ export const setFormState = <
       newState.controllerSinkOnVoltage.disabled = !e.target.checked;
     }
   } else if (e.target.name === 'inputOfflineOperation') {
-    if ('controllerCustomize' in newState) {
+    if ('turbineType' in newState) {
       newState.inputOfflineOperation = !newState.inputOfflineOperation;
       if (newState.inputOfflineOperation) {
         newState.inputPressure.disabled = false;
