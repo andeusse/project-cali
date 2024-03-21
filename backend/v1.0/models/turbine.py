@@ -3,6 +3,7 @@ from flask_restful import Resource
 from simulation_models import Twin_Hydro
 import pandas as pd
 from tools import DBManager
+import time
 
 class ExcelReader():
     _instance = None
@@ -17,7 +18,23 @@ class ExcelReader():
     @property
     def data(self):
         if self._data is None:
-            raise ValueError("Excel file not read. Please call read_excel method first.")
+          raise ValueError("Excel file not read. Please call read_excel method first.")
+        return self._data
+
+class InfluxDB_singleConnection():
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+          cls._instance = super().__new__(cls)
+          cls._instance._data = None
+        return cls._instance
+    def createConnection(self, server, org, bucket, token):
+        if self._data is None:
+          self._data = DBManager.InfluxDBmodel(server, org, bucket, token)
+    @property
+    def data(self):
+        if self._data is None:
+          raise ValueError("Database model not created. Please call createConnection method first.")
         return self._data
 
 class Turbine(Resource):
@@ -25,6 +42,7 @@ class Turbine(Resource):
     data = request.get_json()
 
     if not data["inputOfflineOperation"]:
+      timeStart = time.time()
       excelReader = ExcelReader()
       excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
       database_dic = excelReader.data
@@ -35,10 +53,14 @@ class Turbine(Resource):
       values_df.set_index('Tag', inplace=True)
 
       # Cambiar línea de modelo de DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse (?) = [2]
-      influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
+      # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
       
+      influxDB_Connection = InfluxDB_singleConnection()
+      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
+      influxDB = influxDB_Connection.data
+
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
@@ -46,6 +68,10 @@ class Turbine(Resource):
       for index in testValues_df.index:
           query = influxDB.QueryCreator(device= testValues_df["Device"][index], variable= testValues_df["Tag"][index], location= '', type= 0, forecastTime= 0)
           values_df.loc[testValues_df["Tag"][index], "Value"] = influxDB.InfluxDBreader(query)[testValues_df["Tag"][index]][0]
+      influxDB.InfluxDBclose()
+
+      timeFinish = time.time()
+      print((timeFinish-timeStart)*1000)
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
@@ -89,8 +115,6 @@ class Turbine(Resource):
       V_CD = round(values_df["Value"]['VB001'],2)
       sinkState = bool(int(values_df["Value"]['ED001']))
       inverterState = bool(int(values_df["Value"]['EI001']))
-
-      influxDB.InfluxDBclose()
 
       turbine["batteryTemperature"] = T_bat
       if data["inputPressure"]["disabled"]: turbine["inputPressure"] = pressure
