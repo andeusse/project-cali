@@ -18,7 +18,7 @@ const Monitoring = (props: Props) => {
     },
   ];
   return (
-    <Container maxWidth="xl">
+    <Container disableGutters maxWidth={false}>
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Monitoreo</h1>
       </Box>

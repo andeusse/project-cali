@@ -1,5 +1,6 @@
 import { CommonGraphType } from '../graph';
 import {
+  CommonDigitalTwinsParameter,
   CommonSystemParameter,
   DiagramVariableType,
   InputType,
@@ -15,35 +16,35 @@ export enum ControllerStateType {
   Apagada = 'Apagada',
 }
 
-export type TurbineParameters = CommonSystemParameter & {
-  turbineType: TurbineType;
-  sinkLoadInitialState: ControllerStateType;
-  controllerCustomize: boolean;
-  controllerEfficiency: InputType;
-  controllerChargeVoltageBulk: InputType;
-  controllerChargeVoltageFloat: InputType;
-  controllerChargingMinimunVoltage: InputType;
-  controllerSinkOffVoltage: InputType;
-  controllerSinkOnVoltage: InputType;
-  batteryStateOfCharge: InputType;
-  batteryTemperatureCoefficient: InputType;
-  batteryCapacity: InputType;
-  batterySelfDischargeCoefficient: InputType;
-  batteryChargeDischargeEfficiency: InputType;
-  batteryTemperatureCompensationCoefficient: InputType;
-  inverterEfficiency: InputType;
-  inverterNominalPower: InputType;
-  inputOfflineOperation: boolean;
-  inputPressure: InputType;
-  inputFlow: InputType;
-  inputDirectCurrentPower: boolean;
-  inputActivePower: InputType;
-  inputPowerFactor: InputType;
-  simulatedBatteryStateOfCharge?: number;
-  simulatedDirectCurrentVoltage?: number;
-  simulatedSinkLoadState?: boolean;
-  simulatedInverterState?: boolean;
-};
+export type TurbineParameters = CommonSystemParameter &
+  CommonDigitalTwinsParameter & {
+    turbineType: TurbineType;
+    sinkLoadInitialState: ControllerStateType;
+    controllerCustomize: boolean;
+    controllerEfficiency: InputType;
+    controllerChargeVoltageBulk: InputType;
+    controllerChargeVoltageFloat: InputType;
+    controllerChargingMinimunVoltage: InputType;
+    controllerSinkOffVoltage: InputType;
+    controllerSinkOnVoltage: InputType;
+    batteryStateOfCharge: InputType;
+    batteryTemperatureCoefficient: InputType;
+    batteryCapacity: InputType;
+    batterySelfDischargeCoefficient: InputType;
+    batteryChargeDischargeEfficiency: InputType;
+    batteryTemperatureCompensationCoefficient: InputType;
+    inverterEfficiency: InputType;
+    inverterNominalPower: InputType;
+    inputPressure: InputType;
+    inputFlow: InputType;
+    inputDirectCurrentPower: boolean;
+    inputActivePower: InputType;
+    inputPowerFactor: InputType;
+    simulatedBatteryStateOfCharge?: number;
+    simulatedDirectCurrentVoltage?: number;
+    simulatedSinkLoadState?: boolean;
+    simulatedInverterState?: boolean;
+  };
 
 export type TurbineOutput = {
   turbineCurrent: number;
@@ -105,7 +106,6 @@ export const TURBINE: TurbineParameters = {
     tooltip: 'Multiplicador de tiempo',
     unit: '',
     variableString: '',
-    variableSubString: '',
     min: 1,
     max: 10,
   },
@@ -236,14 +236,13 @@ export const TURBINE: TurbineParameters = {
     variableString: 'P',
     variableSubString: 'inverter',
   },
-  inputOfflineOperation: false,
+  inputOfflineOperation: true,
   inputPressure: {
     disabled: true,
     value: 100,
     tooltip: 'Presión',
     unit: 'kPa',
     variableString: 'Presión',
-    variableSubString: '',
     min: 0,
     max: 1000,
   },
@@ -251,9 +250,8 @@ export const TURBINE: TurbineParameters = {
     disabled: true,
     value: 8,
     tooltip: 'Flujo',
-    unit: 'l / s',
+    unit: 'L / s',
     variableString: 'Flujo',
-    variableSubString: '',
     min: 0,
     max: 10,
   },
@@ -264,7 +262,6 @@ export const TURBINE: TurbineParameters = {
     tooltip: 'Potencia activa',
     unit: 'W',
     variableString: 'Potencia activa',
-    variableSubString: '',
     min: 0,
     max: 100000,
   },
@@ -274,9 +271,9 @@ export const TURBINE: TurbineParameters = {
     tooltip: 'Factor de potencia',
     unit: '',
     variableString: 'Factor de potencia',
-    variableSubString: '',
     min: -1,
     max: 1,
+    step: 0.1,
   },
 };
 

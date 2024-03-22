@@ -1,7 +1,7 @@
 import { FormControl, Grid, InputLabel, MenuItem, Select } from '@mui/material';
 import React from 'react';
 import {
-  OperationModeType,
+  SmartCityOperationModesType,
   SmartCityParameters,
   StepUnitType,
 } from '../../../types/models/smartCity';
@@ -25,9 +25,9 @@ const InputParams = (props: Props) => {
               name="operationMode"
               onChange={handleChange}
             >
-              {Object.keys(OperationModeType).map((key) => (
+              {Object.keys(SmartCityOperationModesType).map((key) => (
                 <MenuItem key={key} value={key}>
-                  {getValueByKey(OperationModeType, key)}
+                  {getValueByKey(SmartCityOperationModesType, key)}
                 </MenuItem>
               ))}
             </Select>
@@ -37,7 +37,6 @@ const InputParams = (props: Props) => {
           <CustomNumberField
             variable={smartHome.steps}
             name="steps"
-            step={1}
             handleChange={handleChange}
           ></CustomNumberField>
         </Grid>
@@ -45,7 +44,6 @@ const InputParams = (props: Props) => {
           <CustomNumberField
             variable={smartHome.stepTime}
             name="stepTime"
-            step={1}
             handleChange={handleChange}
           ></CustomNumberField>
         </Grid>

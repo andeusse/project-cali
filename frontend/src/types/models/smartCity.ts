@@ -6,7 +6,7 @@ import {
   SolarSystem,
 } from './common';
 
-export enum OperationModeType {
+export enum SmartCityOperationModesType {
   Manual = 'Manual',
   Automatic = 'Automático',
 }
@@ -19,7 +19,7 @@ export enum StepUnitType {
 }
 
 export type SmartCityParameters = {
-  operationMode: OperationModeType;
+  operationMode: SmartCityOperationModesType;
   steps: InputType;
   stepTime: InputType;
   stepUnit: StepUnitType;
@@ -50,14 +50,13 @@ export const LOAD_SYSTEM: LoadSystem = {
 };
 
 export const SMART_CITY: SmartCityParameters = {
-  operationMode: OperationModeType.Manual,
+  operationMode: SmartCityOperationModesType.Manual,
   steps: {
     disabled: false,
     value: 1,
     tooltip: 'Número de pasos a simular',
     unit: '',
     variableString: 'Número de pasos',
-    variableSubString: '',
     min: 1,
   },
   stepTime: {
@@ -66,7 +65,6 @@ export const SMART_CITY: SmartCityParameters = {
     tooltip: 'Tiempo por paso',
     unit: '',
     variableString: 'Tiempo por paso',
-    variableSubString: '',
     min: 1,
   },
   stepUnit: StepUnitType.Second,
@@ -76,7 +74,6 @@ export const SMART_CITY: SmartCityParameters = {
     tooltip: 'Número de sistemas solares',
     unit: '',
     variableString: 'Sistemas solares',
-    variableSubString: '',
     min: 0,
   },
   batterySystemNumber: {
@@ -85,7 +82,6 @@ export const SMART_CITY: SmartCityParameters = {
     tooltip: 'Número de sistemas de baterías',
     unit: '',
     variableString: 'Sistemas de baterías',
-    variableSubString: '',
     min: 0,
   },
   BiogasSystemNumber: {
@@ -94,7 +90,6 @@ export const SMART_CITY: SmartCityParameters = {
     tooltip: 'Número de sistemas de biogás',
     unit: '',
     variableString: 'Sistemas de biogás',
-    variableSubString: '',
     min: 0,
   },
   LoadSystemNumber: {
@@ -103,7 +98,6 @@ export const SMART_CITY: SmartCityParameters = {
     tooltip: '',
     unit: '',
     variableString: '',
-    variableSubString: '',
     min: 0,
   },
   solarSystems: [SOLAR_SYSTEM],

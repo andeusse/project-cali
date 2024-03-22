@@ -1,9 +1,15 @@
 import { InputType } from '../types/models/common';
 import { TurbineParameters } from '../types/models/turbine';
 import { SolarPanelParameters } from '../types/models/solar';
+import { BiogasParameters } from '../types/models/biogas';
+import { SmartCityParameters } from '../types/models/smartCity';
 
 export const setFormState = <
-  T extends TurbineParameters | SolarPanelParameters
+  T extends
+    | TurbineParameters
+    | SolarPanelParameters
+    | BiogasParameters
+    | SmartCityParameters
 >(
   e: any,
   oldState: T,
@@ -28,6 +34,9 @@ export const setFormState = <
         newState.inputActivePower.disabled = false;
         newState.inputPowerFactor.disabled = false;
       }
+    }
+    if ('anaerobicReactorVolume1' in newState) {
+      newState.inputOfflineOperation = !newState.inputOfflineOperation;
     }
   } else if (
     e.target.type === 'checkbox' &&

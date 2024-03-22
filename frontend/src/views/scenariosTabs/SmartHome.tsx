@@ -22,7 +22,7 @@ const SmartHome = (props: Props) => {
   };
 
   return (
-    <Container maxWidth="xl">
+    <>
       {error !== '' && (
         <Alert severity="error" variant="filled">
           {error}
@@ -37,7 +37,7 @@ const SmartHome = (props: Props) => {
           handleChange={handleChange}
         ></InputParams>
       </Grid>
-    </Container>
+    </>
   );
 };
 

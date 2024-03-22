@@ -6,9 +6,10 @@ export type InputType = {
   tooltip: string;
   unit: string;
   variableString: string;
-  variableSubString: string;
+  variableSubString?: string;
   min?: number;
   max?: number;
+  step?: number;
 };
 
 export type DiagramVariableType = {
@@ -24,7 +25,11 @@ export type DiagramVariableType = {
 
 export type CommonSystemParameter = {
   name: string;
-  timeMultiplier?: InputType;
+};
+
+export type CommonDigitalTwinsParameter = {
+  inputOfflineOperation: boolean;
+  timeMultiplier: InputType;
 };
 
 export type SolarSystem = CommonSystemParameter & {};
@@ -34,8 +39,3 @@ export type BatterySystem = CommonSystemParameter & {};
 export type BiogasSystem = CommonSystemParameter & {};
 
 export type LoadSystem = CommonSystemParameter & {};
-
-export type TurbineParamsType = {
-  turbine: TurbineParameters;
-  handleChange: (e: any) => void;
-};

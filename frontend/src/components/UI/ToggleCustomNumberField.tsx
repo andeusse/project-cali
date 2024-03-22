@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  CustomTextFieldType,
-  ToggleCustomTextFieldType,
-} from '../../types/customTextField';
+import { ToggleCustomTextFieldType } from '../../types/customTextField';
 import { FormControlLabel, Grid, Switch } from '@mui/material';
 import CustomNumberField from './CustomNumberField';
 
-const ToggleCustomNumberField = (
-  props: CustomTextFieldType & ToggleCustomTextFieldType
-) => {
+const ToggleCustomNumberField = (props: ToggleCustomTextFieldType) => {
   const {
     variable,
     name,
@@ -23,7 +18,7 @@ const ToggleCustomNumberField = (
       <Grid item xs={7} md={7} xl={7}>
         <CustomNumberField {...props}></CustomNumberField>
       </Grid>
-      <Grid item xs={5} md={5} xl={5} sx={{ marginTop: '10px' }}>
+      <Grid item xs={5} md={5} xl={5} sx={{ alignContent: 'center' }}>
         <FormControlLabel
           control={
             <Switch

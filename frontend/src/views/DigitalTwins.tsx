@@ -3,6 +3,7 @@ import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
 import Turbine from './digitalTwinsTabs/Turbine';
 import Solar from './digitalTwinsTabs/Solar';
+import Biogas from './digitalTwinsTabs/Biogas';
 
 type Props = {};
 
@@ -22,7 +23,7 @@ const DigitalTwins = (props: Props) => {
     },
     {
       title: 'Planta de Biogás',
-      children: <></>,
+      children: <Biogas></Biogas>,
     },
     {
       title: 'Torre de refrigeración',
@@ -35,7 +36,7 @@ const DigitalTwins = (props: Props) => {
   ];
 
   return (
-    <Container maxWidth="xl">
+    <Container disableGutters maxWidth={false}>
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Gemelos digitales</h1>
       </Box>

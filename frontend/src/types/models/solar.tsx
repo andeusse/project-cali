@@ -1,4 +1,5 @@
 import {
+  CommonDigitalTwinsParameter,
   CommonSystemParameter,
   DiagramVariableType,
   InputType,
@@ -12,27 +13,23 @@ export enum SolarPanelModulesType {
   CadmiumTelluride = 'Telururo de Cadmio',
 }
 
-export type SolarPanelParameters = CommonSystemParameter & {
-  panelType: SolarPanelModulesType;
-  moduleNumber: InputType;
-  modulePeakPower: InputType;
-  moduleReductionPowerFactor: InputType;
-  moduleEfficiency: InputType;
-  moduleStandardTestIrradiation: InputType;
-  moduleStantardTestTemperature: InputType;
-  moduleStandardIrradiation: InputType;
-  moduleStandardTemperature: InputType;
-  moduleEnvironmentTemperature: InputType;
-  moduleCoefficientPowerVariation: InputType;
-  inputOfflineOperation: boolean;
-  inputIrradiation: InputType;
-  inputTemperature: InputType;
-};
-
-export type SolarParamsType = {
-  solarModule: SolarPanelParameters;
-  handleChange: (e: any) => void;
-};
+export type SolarPanelParameters = CommonSystemParameter &
+  CommonDigitalTwinsParameter & {
+    panelType: SolarPanelModulesType;
+    moduleNumber: InputType;
+    modulePeakPower: InputType;
+    moduleReductionPowerFactor: InputType;
+    moduleEfficiency: InputType;
+    moduleStandardTestIrradiation: InputType;
+    moduleStantardTestTemperature: InputType;
+    moduleStandardIrradiation: InputType;
+    moduleStandardTemperature: InputType;
+    moduleEnvironmentTemperature: InputType;
+    moduleCoefficientPowerVariation: InputType;
+    inputOfflineOperation: boolean;
+    inputIrradiation: InputType;
+    inputTemperature: InputType;
+  };
 
 export const SOLAR_PANEL: SolarPanelParameters = {
   name: 'Nombre',
@@ -42,7 +39,6 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     tooltip: 'Multiplicador de tiempo',
     unit: '',
     variableString: '',
-    variableSubString: '',
     min: 1,
     max: 10,
   },
@@ -53,7 +49,6 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     tooltip: 'Cantidad de módulos solares',
     unit: '',
     variableString: 'Número de módulos',
-    variableSubString: '',
     min: 1,
   },
   modulePeakPower: {
@@ -62,8 +57,8 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     tooltip: 'Potencia pico de cada módulo',
     unit: 'W',
     variableString: 'Potencia pico / módulo',
-    variableSubString: '',
     min: 0,
+    step: 10,
   },
   moduleReductionPowerFactor: {
     disabled: false,
@@ -75,6 +70,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableSubString: 'pu',
     min: 0,
     max: 1,
+    step: 0.01,
   },
   moduleEfficiency: {
     disabled: false,
@@ -85,6 +81,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableSubString: 'C',
     min: 0.01,
     max: 100,
+    step: 0.01,
   },
   moduleStandardTestIrradiation: {
     disabled: false,
@@ -95,6 +92,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableString: 'G',
     variableSubString: 'STC',
     min: 0,
+    step: 10,
   },
   moduleStantardTestTemperature: {
     disabled: false,
@@ -105,6 +103,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableString: 'Tc',
     variableSubString: 'STC',
     min: 0,
+    step: 0.01,
   },
   moduleStandardIrradiation: {
     disabled: false,
@@ -114,6 +113,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableString: 'G',
     variableSubString: 'NOCT',
     min: 0,
+    step: 10,
   },
   moduleStandardTemperature: {
     disabled: false,
@@ -124,6 +124,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableString: 'Tc',
     variableSubString: 'NOCT',
     min: 0,
+    step: 0.01,
   },
   moduleEnvironmentTemperature: {
     disabled: false,
@@ -134,6 +135,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     variableString: 'Ta',
     variableSubString: 'NOCT',
     min: 0,
+    step: 0.01,
   },
   moduleCoefficientPowerVariation: {
     disabled: false,
@@ -143,6 +145,7 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     unit: '% / °C',
     variableString: 'μ',
     variableSubString: 'pm',
+    step: 0.01,
   },
   inputOfflineOperation: false,
   inputIrradiation: {
@@ -151,7 +154,6 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     tooltip: 'Irradiancia de los módulos',
     unit: 'W / m²',
     variableString: 'Irradiancia',
-    variableSubString: '',
     min: 0,
   },
   inputTemperature: {
@@ -160,7 +162,6 @@ export const SOLAR_PANEL: SolarPanelParameters = {
     tooltip: 'Temperatura de los módulos',
     unit: '°C',
     variableString: 'Temperatura',
-    variableSubString: '',
     min: 0,
   },
 };
