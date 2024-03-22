@@ -22,7 +22,7 @@ import {
 } from '../../types/models/biogas';
 import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
-import peltonDiagram from '../../assets/peltonTurbineDiagram.svg';
+import biogasDiagram from '../../assets/biogasPlant.svg';
 import { setFormState } from '../../utils/setFormState';
 import PlayerControls from '../../components/UI/PlayerControls';
 import CustomNumberField from '../../components/UI/CustomNumberField';
@@ -483,7 +483,7 @@ const Biogas = (props: Props) => {
             <Grid item xs={12} md={9} xl={9}>
               {playerControl}
               <Diagram<BiogasOutput>
-                diagram={peltonDiagram}
+                diagram={biogasDiagram}
                 data={data}
                 variables={BIOGAS_DIAGRAM_VARIABLES}
                 width={800}
