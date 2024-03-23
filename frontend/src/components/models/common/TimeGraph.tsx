@@ -23,16 +23,17 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { GraphType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import { array2CSV } from '../../../utils/array2CSV';
+import { DiagramVariableType } from '../../../types/models/common';
 
 type Props = {
   graph: GraphType;
-  title: string | undefined;
+  variable?: DiagramVariableType;
   handleDeleteChart: (e: string) => void;
   isPlaying: boolean;
 };
 
 const TimeGraph = (props: Props) => {
-  const { graph, title, handleDeleteChart, isPlaying } = props;
+  const { graph, variable, handleDeleteChart, isPlaying } = props;
 
   const chartRef = useRef<any>(undefined);
 
@@ -53,6 +54,14 @@ const TimeGraph = (props: Props) => {
     animation: {
       duration: 200,
     },
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: `${variable?.name} (${variable?.unit})`,
+        },
+      },
+    },
     plugins: {
       legend: {
         position: 'top' as const,
@@ -60,7 +69,7 @@ const TimeGraph = (props: Props) => {
       },
       title: {
         display: true,
-        text: title ? title.toUpperCase() : graph.variable,
+        text: variable?.name.toUpperCase(),
       },
       zoom: {
         pan: {
@@ -99,7 +108,12 @@ const TimeGraph = (props: Props) => {
 
   const handleSaveCSV = () => {
     var blob = new Blob(
-      [array2CSV([graph.xValues, graph.yValues], ['Time', title ? title : ''])],
+      [
+        array2CSV(
+          [graph.xValues, graph.yValues],
+          ['Time', variable?.name ? variable?.name : '']
+        ),
+      ],
       {
         type: 'text/csv;charset=utf-8',
       }

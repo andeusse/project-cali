@@ -1,5 +1,4 @@
 import {
-  Container,
   Alert,
   Box,
   Grid,
@@ -36,7 +35,7 @@ const Solar = (props: Props) => {
   const [solarModule, setSolarModule] =
     useState<SolarPanelParameters>(SOLAR_PANEL);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
+  const [, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<SolarPanelParameters, String>('solar', solarModule);
 
   const handleChange = (e: any, variableName?: string) => {

@@ -85,6 +85,7 @@ const TimeGraphs = (props: Props) => {
             marks={marks}
             min={timeMultiplier.min}
             max={timeMultiplier.max}
+            disabled={timeMultiplier.disabled}
             onChange={handleChange}
           />
           <FormControl
@@ -119,13 +120,12 @@ const TimeGraphs = (props: Props) => {
           {playerControl}
           <Grid container spacing={2}>
             {currentGraphs.map((g, index) => {
+              const variable = variables.find((v) => g.variable === v.variable);
               return (
                 <Grid key={`${index}_${g}`} item xs={12} md={6} xl={6}>
                   <TimeGraph
                     graph={g}
-                    title={
-                      variables.find((v) => g.variable === v.variable)?.name
-                    }
+                    variable={variable}
                     handleDeleteChart={handleRemoveGrahp}
                     isPlaying={isPlaying}
                   ></TimeGraph>

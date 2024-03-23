@@ -1,7 +1,6 @@
 import {
   Alert,
   Box,
-  Container,
   FormControl,
   FormControlLabel,
   Grid,
@@ -17,7 +16,7 @@ import {
   BIOGAS_DIAGRAM_VARIABLES,
   BiogasOutput,
   BiogasParameters,
-  OperationModesType,
+  OperationModeType,
   SpeedLawOrderType,
 } from '../../types/models/biogas';
 import Diagram from '../../components/UI/Diagram';
@@ -132,7 +131,7 @@ const Biogas = (props: Props) => {
                     color="default"
                   />
                 }
-                label={biogas.inputDigitalTwin ? 'Manual' : 'Auto'}
+                label={biogas.inputDigitalTwin ? 'Gemelo on' : 'Gemelo off'}
               />
             </Grid>
             <Grid item xs={12} md={12} xl={12}>
@@ -177,6 +176,7 @@ const Biogas = (props: Props) => {
                   value={biogas.inputSpeedLawOrder}
                   name="inputSpeedLawOrder"
                   onChange={(e: any) => handleChange(e)}
+                  disabled={biogas.inputDigitalTwin}
                 >
                   {Object.values(SpeedLawOrderType).map((key) => (
                     <MenuItem key={key} value={key}>
@@ -214,7 +214,7 @@ const Biogas = (props: Props) => {
                   name="inputOperationMode"
                   onChange={(e: any) => handleChange(e)}
                 >
-                  {Object.values(OperationModesType).map((key) => (
+                  {Object.values(OperationModeType).map((key) => (
                     <MenuItem key={key} value={key}>
                       {key}
                     </MenuItem>
@@ -246,6 +246,7 @@ const Biogas = (props: Props) => {
                     name="inputSubstrateConditions"
                     onChange={(e: any) => handleChange(e)}
                     color="default"
+                    disabled={biogas.inputOfflineOperation}
                   />
                 }
                 label={biogas.inputSubstrateConditions ? 'Manual' : 'Auto'}
@@ -344,6 +345,7 @@ const Biogas = (props: Props) => {
                         name="inputPump104"
                         onChange={(e: any) => handleChange(e)}
                         color="default"
+                        disabled={biogas.inputOfflineOperation}
                       />
                     }
                     label={biogas.inputPump104 ? 'Manual' : 'Auto'}
@@ -389,6 +391,7 @@ const Biogas = (props: Props) => {
                         name="inputPump101"
                         onChange={(e: any) => handleChange(e)}
                         color="default"
+                        disabled={biogas.inputOfflineOperation}
                       />
                     }
                     label={biogas.inputPump101 ? 'Manual' : 'Auto'}
@@ -434,6 +437,7 @@ const Biogas = (props: Props) => {
                         name="inputPump102"
                         onChange={(e: any) => handleChange(e)}
                         color="default"
+                        disabled={biogas.inputOfflineOperation}
                       />
                     }
                     label={biogas.inputPump102 ? 'Manual' : 'Auto'}

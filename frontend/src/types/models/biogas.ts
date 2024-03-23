@@ -6,7 +6,7 @@ import {
   InputType,
 } from './common';
 
-export enum OperationModesType {
+export enum OperationModeType {
   Modo1 = 'Modo1',
   Modo2 = 'Modo2',
   Modo3 = 'Modo3',
@@ -25,7 +25,7 @@ export type BiogasParameters = CommonSystemParameter &
     biogasTankVolume1: InputType;
     biogasTankVolume2: InputType;
     biogasTankVolume3: InputType;
-    inputOperationMode: OperationModesType;
+    inputOperationMode: OperationModeType;
     inputSubstrateConditions: boolean;
     inputElementalAnalysisCarbonContent: InputType;
     inputElementalAnalysisHydrogenContent: InputType;
@@ -126,7 +126,7 @@ export const BIOGAS: BiogasParameters = {
     max: 50000,
   },
   inputOfflineOperation: true,
-  inputOperationMode: OperationModesType.Modo1,
+  inputOperationMode: OperationModeType.Modo1,
   inputSubstrateConditions: false,
   inputElementalAnalysisCarbonContent: {
     disabled: false,
@@ -217,7 +217,7 @@ export const BIOGAS: BiogasParameters = {
     max: 60,
   },
   inputDigitalTwinTrainingTime: {
-    disabled: false,
+    disabled: true,
     value: 0.1,
     tooltip: 'Tiempo de entrenamiento del gemelo digital',
     unit: 'h',
@@ -231,13 +231,13 @@ export const BIOGAS: BiogasParameters = {
     value: 1,
     tooltip: 'Tiempo de predicción del gemelo digital',
     unit: 'h',
-    variableString: '',
+    variableString: 'Tiempo de predicción',
     min: 0.1,
     max: 72,
     step: 0.1,
   },
   inputKineticParameterInitialValue: {
-    disabled: false,
+    disabled: true,
     value: 1,
     tooltip: 'Valor inicial del parámetro cinético del gemelo digital',
     unit: '',
@@ -260,7 +260,7 @@ export const BIOGAS: BiogasParameters = {
     unit: 'J / mol',
     variableString: 'Energía de activación',
   },
-  inputPump104: false,
+  inputPump104: true,
   inputPump104HydraulicRetentionTime: {
     disabled: false,
     value: 30,
@@ -288,9 +288,9 @@ export const BIOGAS: BiogasParameters = {
     min: 0,
     max: 20,
   },
-  inputPump102: false,
+  inputPump102: true,
   inputPump102Flow: {
-    disabled: false,
+    disabled: true,
     value: 0,
     tooltip: 'Caudal de la bomba',
     unit: 'LPM',
@@ -300,7 +300,7 @@ export const BIOGAS: BiogasParameters = {
     step: 0.01,
   },
   inputPump102StartTime: {
-    disabled: false,
+    disabled: true,
     value: 0,
     tooltip: 'Tiempo de encendido de la bomba',
     unit: 'min',
@@ -309,7 +309,7 @@ export const BIOGAS: BiogasParameters = {
     max: 1440,
   },
   inputPump102StartsPerDay: {
-    disabled: false,
+    disabled: true,
     value: 0,
     tooltip: 'Encendidos por día de la bomba',
     unit: '',
@@ -317,9 +317,9 @@ export const BIOGAS: BiogasParameters = {
     min: 0,
     max: 100,
   },
-  inputPump101: false,
+  inputPump101: true,
   inputPump101Flow: {
-    disabled: false,
+    disabled: true,
     value: 0,
     tooltip: 'Caudal de la bomba',
     unit: 'LPM',
@@ -329,7 +329,7 @@ export const BIOGAS: BiogasParameters = {
     step: 0.01,
   },
   inputPump101StartTime: {
-    disabled: false,
+    disabled: true,
     value: 0,
     tooltip: 'Tiempo de encendido de la bomba',
     unit: 'min',
@@ -338,7 +338,7 @@ export const BIOGAS: BiogasParameters = {
     max: 1440,
   },
   inputPump101StartsPerDay: {
-    disabled: false,
+    disabled: true,
     value: 0,
     tooltip: 'Encendidos por día de la bomba',
     unit: '',
@@ -356,7 +356,7 @@ export const BIOGAS: BiogasParameters = {
     max: 60,
   },
   inputTemperature102: {
-    disabled: false,
+    disabled: true,
     value: 1,
     tooltip: 'Temperatura reactor 102',
     unit: '°C',

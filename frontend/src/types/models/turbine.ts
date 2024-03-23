@@ -238,7 +238,7 @@ export const TURBINE: TurbineParameters = {
   },
   inputOfflineOperation: true,
   inputPressure: {
-    disabled: true,
+    disabled: false,
     value: 100,
     tooltip: 'Presión',
     unit: 'kPa',
@@ -247,7 +247,7 @@ export const TURBINE: TurbineParameters = {
     max: 1000,
   },
   inputFlow: {
-    disabled: true,
+    disabled: false,
     value: 8,
     tooltip: 'Flujo',
     unit: 'L / s',
@@ -257,7 +257,7 @@ export const TURBINE: TurbineParameters = {
   },
   inputDirectCurrentPower: false,
   inputActivePower: {
-    disabled: true,
+    disabled: false,
     value: 200,
     tooltip: 'Potencia activa',
     unit: 'W',
@@ -266,7 +266,7 @@ export const TURBINE: TurbineParameters = {
     max: 100000,
   },
   inputPowerFactor: {
-    disabled: true,
+    disabled: false,
     value: 1,
     tooltip: 'Factor de potencia',
     unit: '',
