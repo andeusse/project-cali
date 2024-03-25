@@ -373,98 +373,102 @@ const Biogas = (props: Props) => {
                   ></CustomNumberField>
                 </Grid>
               </Grid>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={6}>
-                  <h3>Bomba P-101</h3>
+              {biogas.inputOperationMode !== OperationModeType.Modo1 && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6} xl={6}>
+                    <h3>Bomba P-101</h3>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    xl={6}
+                    sx={{ alignContent: 'center' }}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={biogas.inputPump101}
+                          name="inputPump101"
+                          onChange={(e: any) => handleChange(e)}
+                          color="default"
+                          disabled={biogas.inputOfflineOperation}
+                        />
+                      }
+                      label={biogas.inputPump101 ? 'Manual' : 'Auto'}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={biogas.inputPump101Flow}
+                      name="inputPump101Flow"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={biogas.inputPump101StartTime}
+                      name="inputPump101StartTime"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={biogas.inputPump101StartsPerDay}
+                      name="inputPump101StartsPerDay"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
                 </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  xl={6}
-                  sx={{ alignContent: 'center' }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={biogas.inputPump101}
-                        name="inputPump101"
-                        onChange={(e: any) => handleChange(e)}
-                        color="default"
-                        disabled={biogas.inputOfflineOperation}
-                      />
-                    }
-                    label={biogas.inputPump101 ? 'Manual' : 'Auto'}
-                  />
+              )}
+              {biogas.inputOperationMode === OperationModeType.Modo4 && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6} xl={6}>
+                    <h3>Bomba P-102</h3>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    xl={6}
+                    sx={{ alignContent: 'center' }}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={biogas.inputPump102}
+                          name="inputPump102"
+                          onChange={(e: any) => handleChange(e)}
+                          color="default"
+                          disabled={biogas.inputOfflineOperation}
+                        />
+                      }
+                      label={biogas.inputPump102 ? 'Manual' : 'Auto'}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={biogas.inputPump102Flow}
+                      name="inputPump102Flow"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={biogas.inputPump102StartTime}
+                      name="inputPump102StartTime"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={biogas.inputPump102StartsPerDay}
+                      name="inputPump102StartsPerDay"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={biogas.inputPump101Flow}
-                    name="inputPump101Flow"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={biogas.inputPump101StartTime}
-                    name="inputPump101StartTime"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={biogas.inputPump101StartsPerDay}
-                    name="inputPump101StartsPerDay"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-              </Grid>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={6}>
-                  <h3>Bomba P-102</h3>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  xl={6}
-                  sx={{ alignContent: 'center' }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={biogas.inputPump102}
-                        name="inputPump102"
-                        onChange={(e: any) => handleChange(e)}
-                        color="default"
-                        disabled={biogas.inputOfflineOperation}
-                      />
-                    }
-                    label={biogas.inputPump102 ? 'Manual' : 'Auto'}
-                  />
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={biogas.inputPump102Flow}
-                    name="inputPump102Flow"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={biogas.inputPump102StartTime}
-                    name="inputPump102StartTime"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={biogas.inputPump102StartsPerDay}
-                    name="inputPump102StartsPerDay"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-              </Grid>
+              )}
               <Grid item xs={12} md={12} xl={12}>
                 <h3>Temperatura R-101</h3>
                 <ToggleCustomNumberField
@@ -474,15 +478,18 @@ const Biogas = (props: Props) => {
                   offlineOperation={biogas.inputOfflineOperation}
                 ></ToggleCustomNumberField>
               </Grid>
-              <Grid item xs={12} md={12} xl={12}>
-                <h3>Temperatura R-102</h3>
-                <ToggleCustomNumberField
-                  variable={biogas.inputTemperature102}
-                  name="inputTemperature102"
-                  handleChange={handleChange}
-                  offlineOperation={biogas.inputOfflineOperation}
-                ></ToggleCustomNumberField>
-              </Grid>
+              {(biogas.inputOperationMode === OperationModeType.Modo3 ||
+                biogas.inputOperationMode === OperationModeType.Modo4) && (
+                <Grid item xs={12} md={12} xl={12}>
+                  <h3>Temperatura R-102</h3>
+                  <ToggleCustomNumberField
+                    variable={biogas.inputTemperature102}
+                    name="inputTemperature102"
+                    handleChange={handleChange}
+                    offlineOperation={biogas.inputOfflineOperation}
+                  ></ToggleCustomNumberField>
+                </Grid>
+              )}
             </Grid>
             <Grid item xs={12} md={9} xl={9}>
               {playerControl}

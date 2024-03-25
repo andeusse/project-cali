@@ -290,7 +290,7 @@ export const BIOGAS: BiogasParameters = {
   },
   inputPump102: true,
   inputPump102Flow: {
-    disabled: true,
+    disabled: false,
     value: 0,
     tooltip: 'Caudal de la bomba',
     unit: 'LPM',
@@ -300,7 +300,7 @@ export const BIOGAS: BiogasParameters = {
     step: 0.01,
   },
   inputPump102StartTime: {
-    disabled: true,
+    disabled: false,
     value: 0,
     tooltip: 'Tiempo de encendido de la bomba',
     unit: 'min',
@@ -309,7 +309,7 @@ export const BIOGAS: BiogasParameters = {
     max: 1440,
   },
   inputPump102StartsPerDay: {
-    disabled: true,
+    disabled: false,
     value: 0,
     tooltip: 'Encendidos por día de la bomba',
     unit: '',
@@ -319,7 +319,7 @@ export const BIOGAS: BiogasParameters = {
   },
   inputPump101: true,
   inputPump101Flow: {
-    disabled: true,
+    disabled: false,
     value: 0,
     tooltip: 'Caudal de la bomba',
     unit: 'LPM',
@@ -329,7 +329,7 @@ export const BIOGAS: BiogasParameters = {
     step: 0.01,
   },
   inputPump101StartTime: {
-    disabled: true,
+    disabled: false,
     value: 0,
     tooltip: 'Tiempo de encendido de la bomba',
     unit: 'min',
@@ -338,7 +338,7 @@ export const BIOGAS: BiogasParameters = {
     max: 1440,
   },
   inputPump101StartsPerDay: {
-    disabled: true,
+    disabled: false,
     value: 0,
     tooltip: 'Encendidos por día de la bomba',
     unit: '',
@@ -356,7 +356,7 @@ export const BIOGAS: BiogasParameters = {
     max: 60,
   },
   inputTemperature102: {
-    disabled: true,
+    disabled: false,
     value: 1,
     tooltip: 'Temperatura reactor 102',
     unit: '°C',

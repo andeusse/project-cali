@@ -29,27 +29,25 @@ export const setFormState = <
   } else if (e.target.name === 'inputOfflineOperation') {
     if ('turbineType' in newState) {
       newState.inputOfflineOperation = !newState.inputOfflineOperation;
-      if (newState.inputOfflineOperation) {
-        newState.inputPressure.disabled = false;
-        newState.inputFlow.disabled = false;
-        newState.inputActivePower.disabled = false;
-        newState.inputPowerFactor.disabled = false;
-        newState.timeMultiplier.disabled = false;
-      } else {
-        newState.timeMultiplier.value = 1;
-        newState.timeMultiplier.disabled = true;
-      }
+      newState.inputPressure.disabled = !newState.inputOfflineOperation;
+      newState.inputFlow.disabled = !newState.inputOfflineOperation;
+      newState.inputActivePower.disabled = !newState.inputOfflineOperation;
+      newState.inputPowerFactor.disabled = !newState.inputOfflineOperation;
     }
     if ('anaerobicReactorVolume1' in newState) {
       newState.inputOfflineOperation = !newState.inputOfflineOperation;
+      newState.inputSubstrateConditions = newState.inputOfflineOperation;
 
-      newState.inputSubstrateConditions = true;
-      newState.inputPump104 = true;
-      newState.inputPump102 = true;
-      newState.inputPump101 = true;
-
-      (newState as BiogasParameters) = setSubstrateConditions(newState);
-      (newState as BiogasParameters) = setModes(newState);
+      (newState as BiogasParameters) = setSubstrateConditions(
+        newState,
+        !newState.inputOfflineOperation
+      );
+    }
+    if ('timeMultiplier' in newState) {
+      newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+      if (!newState.inputOfflineOperation) {
+        newState.timeMultiplier.value = 1;
+      }
     }
   } else if (e.target.name === 'inputDigitalTwin') {
     if ('anaerobicReactorVolume1' in newState) {
@@ -100,7 +98,6 @@ export const setFormState = <
         OperationModeType,
         e.target.value
       );
-      (newState as BiogasParameters) = setModes(newState);
     }
   } else if (
     e.target.type === 'checkbox' &&
@@ -139,75 +136,5 @@ function setSubstrateConditions(
   newState.inputProximateAnalysisVolatileSolids.disabled = value;
   newState.inputProximateAnalysisDensity.disabled = value;
 
-  return newState;
-}
-
-function setModes(newState: BiogasParameters): BiogasParameters {
-  switch (newState.inputOperationMode) {
-    case OperationModeType.Modo1:
-      newState.inputPump102Flow.disabled = true;
-      newState.inputPump102StartTime.disabled = true;
-      newState.inputPump102StartsPerDay.disabled = true;
-
-      newState.inputPump101Flow.disabled = true;
-      newState.inputPump101StartTime.disabled = true;
-      newState.inputPump101StartsPerDay.disabled = true;
-
-      newState.inputTemperature101.disabled = false;
-      newState.inputTemperature102.disabled = true;
-      break;
-    case OperationModeType.Modo2:
-      newState.inputPump101Flow.disabled = false;
-      newState.inputPump101StartTime.disabled = false;
-      newState.inputPump101StartsPerDay.disabled = false;
-
-      newState.inputPump102Flow.disabled = true;
-      newState.inputPump102StartTime.disabled = true;
-      newState.inputPump102StartsPerDay.disabled = true;
-
-      newState.inputTemperature101.disabled = false;
-      newState.inputTemperature102.disabled = true;
-      break;
-    case OperationModeType.Modo3:
-      newState.inputPump101Flow.disabled = false;
-      newState.inputPump101StartTime.disabled = false;
-      newState.inputPump101StartsPerDay.disabled = false;
-
-      newState.inputPump102Flow.disabled = true;
-      newState.inputPump102StartTime.disabled = true;
-      newState.inputPump102StartsPerDay.disabled = true;
-
-      newState.inputTemperature101.disabled = false;
-      newState.inputTemperature102.disabled = false;
-      break;
-    case OperationModeType.Modo4:
-      newState.inputPump101Flow.disabled = false;
-      newState.inputPump101StartTime.disabled = false;
-      newState.inputPump101StartsPerDay.disabled = false;
-
-      newState.inputPump102Flow.disabled = false;
-      newState.inputPump102StartTime.disabled = false;
-      newState.inputPump102StartsPerDay.disabled = false;
-
-      newState.inputTemperature101.disabled = false;
-      newState.inputTemperature102.disabled = false;
-      break;
-    default:
-      newState.inputPump104HydraulicRetentionTime.disabled = false;
-      newState.inputPump104StartTime.disabled = false;
-      newState.inputPump104StartsPerDay.disabled = false;
-
-      newState.inputPump101Flow.disabled = false;
-      newState.inputPump101StartTime.disabled = false;
-      newState.inputPump101StartsPerDay.disabled = false;
-
-      newState.inputPump102Flow.disabled = false;
-      newState.inputPump102StartTime.disabled = false;
-      newState.inputPump102StartsPerDay.disabled = false;
-
-      newState.inputTemperature101.disabled = false;
-      newState.inputTemperature102.disabled = false;
-      break;
-  }
   return newState;
 }
