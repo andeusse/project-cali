@@ -98,6 +98,18 @@ export const setFormState = <
         OperationModeType,
         e.target.value
       );
+      if (
+        newState.inputOperationMode === OperationModeType.Modo3 ||
+        newState.inputOperationMode === OperationModeType.Modo4
+      ) {
+        newState.inputPump101Flow.disabled = true;
+        newState.inputPump101StartTime.disabled = true;
+        newState.inputPump101StartsPerDay.disabled = true;
+      } else {
+        newState.inputPump101Flow.disabled = false;
+        newState.inputPump101StartTime.disabled = false;
+        newState.inputPump101StartsPerDay.disabled = false;
+      }
     }
   } else if (
     e.target.type === 'checkbox' &&

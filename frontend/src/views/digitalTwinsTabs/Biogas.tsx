@@ -392,7 +392,13 @@ const Biogas = (props: Props) => {
                           name="inputPump101"
                           onChange={(e: any) => handleChange(e)}
                           color="default"
-                          disabled={biogas.inputOfflineOperation}
+                          disabled={
+                            biogas.inputOfflineOperation ||
+                            biogas.inputOperationMode ===
+                              OperationModeType.Modo3 ||
+                            biogas.inputOperationMode ===
+                              OperationModeType.Modo4
+                          }
                         />
                       }
                       label={biogas.inputPump101 ? 'Manual' : 'Auto'}

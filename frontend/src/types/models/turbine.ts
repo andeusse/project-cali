@@ -129,6 +129,7 @@ export const TURBINE: TurbineParameters = {
     variableSubString: 'bulk',
     min: 20,
     max: 35,
+    step: 0.1,
   },
   controllerChargeVoltageFloat: {
     disabled: true,
@@ -139,6 +140,7 @@ export const TURBINE: TurbineParameters = {
     variableSubString: 'float',
     min: 20,
     max: 35,
+    step: 0.1,
   },
   controllerChargingMinimunVoltage: {
     disabled: true,
@@ -149,6 +151,7 @@ export const TURBINE: TurbineParameters = {
     variableSubString: 'bat_min',
     min: 24,
     max: 35,
+    step: 0.1,
   },
   controllerSinkOffVoltage: {
     disabled: true,
@@ -159,6 +162,7 @@ export const TURBINE: TurbineParameters = {
     variableSubString: 'sink_off',
     min: 24,
     max: 35,
+    step: 0.1,
   },
   controllerSinkOnVoltage: {
     disabled: true,
@@ -169,6 +173,7 @@ export const TURBINE: TurbineParameters = {
     variableSubString: 'sink_on',
     min: 24,
     max: 35,
+    step: 0.1,
   },
   batteryStateOfCharge: {
     disabled: false,
