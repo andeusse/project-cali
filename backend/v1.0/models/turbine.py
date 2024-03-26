@@ -1,41 +1,10 @@
 from flask import request
 from flask_restful import Resource
-from simulation_models import Twin_Hydro
+from simulation_models import TwinHydro
 import pandas as pd
-from tools import DBManager
 import time
-
-class ExcelReader():
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-          cls._instance = super().__new__(cls)
-          cls._instance._data = None
-        return cls._instance
-    def read_excel(self, file_path, sheet):
-        if self._data is None:
-          self._data = pd.read_excel(file_path,sheet)
-    @property
-    def data(self):
-        if self._data is None:
-          raise ValueError("Excel file not read. Please call read_excel method first.")
-        return self._data
-
-class InfluxDB_singleConnection():
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-          cls._instance = super().__new__(cls)
-          cls._instance._data = None
-        return cls._instance
-    def createConnection(self, server, org, bucket, token):
-        if self._data is None:
-          self._data = DBManager.InfluxDBmodel(server, org, bucket, token)
-    @property
-    def data(self):
-        if self._data is None:
-          raise ValueError("Database model not created. Please call createConnection method first.")
-        return self._data
+from utils import ExcelReader
+from utils import InfluxDbConnection
 
 class Turbine(Resource):
   def post(self):
@@ -57,7 +26,7 @@ class Turbine(Resource):
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
       # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
       
-      influxDB_Connection = InfluxDB_singleConnection()
+      influxDB_Connection = InfluxDbConnection()
       influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
       influxDB = influxDB_Connection.data
 
@@ -101,7 +70,7 @@ class Turbine(Resource):
     n_controller = data["controllerEfficiency"]["value"]
     n_inverter = data["inverterEfficiency"]["value"]
 
-    hydroSystem = Twin_Hydro.Hydro_twin(name)
+    hydroSystem = TwinHydro(name)
 
     turbine = {}
 

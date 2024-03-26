@@ -4,7 +4,7 @@ from scipy.optimize import least_squares
 import numpy as np
 import random
 
-class Hydro_twin:
+class TwinHydro:
     def __init__(self, systemName):
         self.systemName = systemName # Nombre del sistema
 
