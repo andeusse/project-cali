@@ -21,7 +21,7 @@ import {
 } from '../../types/models/biogas';
 import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
-import biogasDiagram from '../../assets/biogasPlant.svg';
+import biogasDiagram from '../../assets/biogasPlantDiagram.svg';
 import { setFormState } from '../../utils/setFormState';
 import PlayerControls from '../../components/UI/PlayerControls';
 import CustomNumberField from '../../components/UI/CustomNumberField';
@@ -503,8 +503,8 @@ const Biogas = (props: Props) => {
                 diagram={biogasDiagram}
                 data={data}
                 variables={BIOGAS_DIAGRAM_VARIABLES}
-                width={800}
-                height={800}
+                width={255}
+                height={150}
               ></Diagram>
             </Grid>
           </Grid>
