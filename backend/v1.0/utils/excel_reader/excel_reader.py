@@ -1,3 +1,5 @@
+import pandas as pd
+
 class ExcelReader():
     _instance = None
     def __new__(cls, *args, **kwargs):

@@ -65,6 +65,7 @@ class Turbine(Resource):
     controllerChargingMinimunVoltage = data["controllerChargingMinimunVoltage"]["value"]
     controllerSinkOnVoltage = data["controllerSinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controllerSinkOffVoltage"]["value"]
+    timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = 1.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
 
     controllerEfficiency = data["controllerEfficiency"]["value"]
@@ -105,7 +106,7 @@ class Turbine(Resource):
       twinHydro.optimal_n_controller(controllerEfficiency, P_h, inputDirectCurrentPower, P_CC_meas)
 
     results = twinHydro.twinOutput(inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
-                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, delta_t, V_t, V_CA)
+                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, delta_t*timeMultiplier, V_t, V_CA)
 
     turbine["turbinePower"] = P_h
 
