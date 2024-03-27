@@ -1,16 +1,20 @@
-import DBManager
+import os
+import sys
+import inspect
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+from tools import DBManager
 import pandas as pd
 import time
 from datetime import datetime
 import random
 
-
-
-
 while True:
-    
-    database_df = pd.read_excel('.\Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
-    testValues_dfs = pd.read_excel('.\Devices_test.xlsx', sheet_name = None)
+    database_df = pd.read_excel('v1.0\mockDB\Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
+    testValues_dfs = pd.read_excel('v1.0\mockDB\Devices_test.xlsx', sheet_name = None)
     
     for device in list(testValues_dfs.keys()):
         testValues_df = testValues_dfs[device]
