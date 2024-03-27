@@ -44,8 +44,8 @@ class Turbine(Resource):
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
-    inputPressure = data["inputPressure"]["value"] if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT001'],2)
-    inputFlow = data["inputFlow"]["value"] if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FIT001'],2)
+    inputPressure = (data["inputPressure"]["value"] if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT001'],2)) * 6.89476 # psi to kPa conversion
+    inputFlow = (data["inputFlow"]["value"] if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FIT001'],2)) / 60 # L/min to L/s conversion
     inputActivePower = data["inputActivePower"]["value"] if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW001'],2)
     inputPowerFactor = data["inputPowerFactor"]["value"] if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
