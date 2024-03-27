@@ -245,21 +245,21 @@ export const TURBINE: TurbineParameters = {
   inputOfflineOperation: true,
   inputPressure: {
     disabled: false,
-    value: 100,
+    value: 31,
     tooltip: 'Presión',
     unit: 'psi',
     variableString: 'Presión',
-    min: 0,
-    max: 1000,
+    min: 4.2,
+    max: 185,
   },
   inputFlow: {
     disabled: false,
-    value: 8,
+    value: 360,
     tooltip: 'Flujo',
     unit: 'L / m',
     variableString: 'Flujo',
-    min: 0,
-    max: 10,
+    min: 6,
+    max: 600,
   },
   inputDirectCurrentPower: false,
   inputActivePower: {
@@ -524,7 +524,7 @@ export const PELTON_TURBINE: InputType[] = [
   {
     disabled: true,
     value: 0.623,
-    tooltip: 'Potencia nominal de la turbin',
+    tooltip: 'Potencia nominal de la turbina',
     unit: 'kW',
     variableString: 'P',
     variableSubString: 'tn',
@@ -621,3 +621,50 @@ export const TURGO_TURBINE: InputType[] = [
     variableSubString: 'max',
   },
 ];
+
+type TurbineConsts = {
+  inputPressure: InputType;
+  inputFlow: InputType;
+};
+
+export const PELTON_TURBINE_CONST: TurbineConsts = {
+  inputPressure: {
+    disabled: false,
+    value: 31,
+    tooltip: 'Presión',
+    unit: 'psi',
+    variableString: 'Presión',
+    min: 4.2,
+    max: 185,
+  },
+  inputFlow: {
+    disabled: false,
+    value: 360,
+    tooltip: 'Flujo',
+    unit: 'L / m',
+    variableString: 'Flujo',
+    min: 6,
+    max: 600,
+  },
+};
+
+export const TURGO_TURBINE_CONST: TurbineConsts = {
+  inputPressure: {
+    disabled: false,
+    value: 27,
+    tooltip: 'Presión',
+    unit: 'psi',
+    variableString: 'Presión',
+    min: 2.8,
+    max: 43,
+  },
+  inputFlow: {
+    disabled: false,
+    value: 678,
+    tooltip: 'Flujo',
+    unit: 'L / m',
+    variableString: 'Flujo',
+    min: 480,
+    max: 960,
+  },
+};

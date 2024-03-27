@@ -1,5 +1,10 @@
 import { InputType } from '../types/models/common';
-import { TurbineParameters } from '../types/models/turbine';
+import {
+  PELTON_TURBINE_CONST,
+  TURGO_TURBINE_CONST,
+  TurbineParameters,
+  TurbineType,
+} from '../types/models/turbine';
 import { SolarPanelParameters } from '../types/models/solar';
 import { BiogasParameters, OperationModeType } from '../types/models/biogas';
 import { SmartCityParameters } from '../types/models/smartCity';
@@ -17,7 +22,22 @@ export const setFormState = <
   variableName?: string
 ) => {
   let newState = { ...oldState };
-  if (e.target.name === 'controllerCustomize') {
+  if (e.target.name === 'turbineType') {
+    if ('turbineType' in newState) {
+      const turbineType = getKeyByValue(
+        TurbineType,
+        e.target.value
+      ) as TurbineType;
+      newState.turbineType = turbineType;
+      if (turbineType === TurbineType.Pelton) {
+        newState.inputPressure = PELTON_TURBINE_CONST.inputPressure;
+        newState.inputFlow = PELTON_TURBINE_CONST.inputFlow;
+      } else {
+        newState.inputPressure = TURGO_TURBINE_CONST.inputPressure;
+        newState.inputFlow = TURGO_TURBINE_CONST.inputFlow;
+      }
+    }
+  } else if (e.target.name === 'controllerCustomize') {
     if ('turbineType' in newState) {
       newState.controllerCustomize = e.target.checked;
       newState.controllerChargeVoltageBulk.disabled = !e.target.checked;

@@ -74,8 +74,10 @@ const Biogas = (props: Props) => {
           </FormControl>
         </Grid>
         <Grid item xs={12} md={6} xl={3}>
-          <h3>Reactores Anaerobios</h3>
           <Grid container spacing={2}>
+            <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+              <h3>Operación planta</h3>
+            </Grid>
             <Grid item xs={12} md={12} xl={12}>
               <CustomNumberField
                 variable={biogas.anaerobicReactorVolume1}
