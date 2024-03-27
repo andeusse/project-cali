@@ -13,6 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { GraphType } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
 import { DiagramVariableType, InputType } from '../../../types/models/common';
+import CustomNumberField from '../../UI/CustomNumberField';
 
 type Props = {
   timeMultiplier: InputType;
@@ -22,17 +23,6 @@ type Props = {
   playerControl: React.ReactNode;
   isPlaying: boolean;
 };
-
-const marks = [
-  {
-    value: 1,
-    label: '1',
-  },
-  {
-    value: 10,
-    label: '10',
-  },
-];
 
 const TimeGraphs = (props: Props) => {
   const {
@@ -45,6 +35,17 @@ const TimeGraphs = (props: Props) => {
   } = props;
 
   const [availableGraphs, setAvailableGraphs] = useState([...graphs]);
+
+  const marks = [
+    {
+      value: timeMultiplier.min ? timeMultiplier.min : 1,
+      label: timeMultiplier.min ? timeMultiplier.min.toString() : 'Min',
+    },
+    {
+      value: timeMultiplier.max ? timeMultiplier.max : 10,
+      label: timeMultiplier.max ? timeMultiplier.max.toString() : 'Max',
+    },
+  ];
 
   useEffect(() => {
     setAvailableGraphs([...graphs]);
@@ -76,18 +77,29 @@ const TimeGraphs = (props: Props) => {
           <Typography id="input-slider" gutterBottom>
             Multiplicador de velocidad:
           </Typography>
-          <Slider
-            aria-label="TimeMultiplier"
-            value={timeMultiplier.value}
-            name="timeMultiplier"
-            valueLabelDisplay="auto"
-            step={1}
-            marks={marks}
-            min={timeMultiplier.min}
-            max={timeMultiplier.max}
-            disabled={timeMultiplier.disabled}
-            onChange={handleChange}
-          />
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={12} xl={8}>
+              <Slider
+                aria-label="TimeMultiplier"
+                value={timeMultiplier.value}
+                name="timeMultiplier"
+                valueLabelDisplay="auto"
+                step={timeMultiplier.step}
+                marks={marks}
+                min={timeMultiplier.min}
+                max={timeMultiplier.max}
+                disabled={timeMultiplier.disabled}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={12} xl={4}>
+              <CustomNumberField
+                variable={timeMultiplier}
+                name="timeMultiplier"
+                handleChange={handleChange}
+              ></CustomNumberField>
+            </Grid>
+          </Grid>
           <FormControl
             fullWidth
             sx={{ marginBottom: '10px', marginTop: '10px' }}

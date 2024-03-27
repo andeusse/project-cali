@@ -5,8 +5,12 @@ import moment from 'moment';
 import { errorResp, resp } from '../types/api';
 import { GraphType } from '../types/graph';
 import { data2Graph } from '../utils/data2Graph';
+import { CommonDigitalTwinsParameter } from '../types/models/common';
 
-export const useControlPlayer = <T, G>(url: string, model: T) => {
+export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
+  url: string,
+  model: T
+) => {
   const [data, setData] = useState<G | undefined>();
 
   const [historicData, setHistoricData] = useState<any>({});
@@ -24,20 +28,27 @@ export const useControlPlayer = <T, G>(url: string, model: T) => {
           setData((_) => {
             const d = resp.data.model;
             for (const key in d) {
-              setHistoricData((o: any) => {
-                if (o[key] === undefined) {
-                  o[key] = [];
+              setHistoricData((oldState: any) => {
+                if (oldState[key] === undefined) {
+                  oldState[key] = [];
                 }
-                o[key].push(d[key]);
-                return o;
+                oldState[key].push(d[key]);
+                return oldState;
               });
             }
-            setHistoricData((o: any) => {
-              if (o['time'] === undefined) {
-                o['time'] = [];
+            setHistoricData((oldState: any) => {
+              if (oldState['time'] === undefined) {
+                const newDate = moment();
+                oldState['time'] = [newDate.format('LTS')];
+                oldState['timeMoment'] = [newDate];
+              } else {
+                const newDate = moment(
+                  oldState['timeMoment'][oldState['timeMoment'].length - 1]
+                ).add(model.timeMultiplier.value, 's');
+                oldState['time'].push(newDate.format('LTS'));
+                oldState['timeMoment'] = [newDate];
               }
-              o['time'].push(moment().format('LTS'));
-              return o;
+              return oldState;
             });
             setGraphs(data2Graph(historicData));
             return d;

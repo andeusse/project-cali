@@ -2,6 +2,7 @@ import { CommonGraphType, GraphType } from '../types/graph';
 
 export const data2Graph = <T extends CommonGraphType>(data: T): GraphType[] => {
   const graphs: GraphType[] = [];
+
   for (const key in data) {
     if (key !== 'time') {
       const graph: GraphType = {

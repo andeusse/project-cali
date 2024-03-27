@@ -1,5 +1,3 @@
-import { TurbineParameters } from './turbine';
-
 export type InputType = {
   disabled: boolean;
   value: number;
