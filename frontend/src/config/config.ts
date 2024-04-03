@@ -3,6 +3,8 @@ import { ConfigType } from '../types/config';
 export default class Config {
   private static instance: Config;
 
+  public static QUERY_TIME: number = 1000;
+
   public params: ConfigType;
 
   private constructor() {

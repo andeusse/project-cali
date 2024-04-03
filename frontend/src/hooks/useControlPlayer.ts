@@ -6,6 +6,7 @@ import { errorResp, resp } from '../types/api';
 import { GraphType } from '../types/graph';
 import { data2Graph } from '../utils/data2Graph';
 import { CommonDigitalTwinsParameter } from '../types/models/common';
+import Config from '../config/config';
 
 export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   url: string,
@@ -44,7 +45,11 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
               } else {
                 const newDate = moment(
                   oldState['timeMoment'][oldState['timeMoment'].length - 1]
-                ).add(model.timeMultiplier.value, 's');
+                ).add(
+                  model.timeMultiplier.value *
+                    Math.floor(Config.QUERY_TIME / 1000),
+                  's'
+                );
                 oldState['time'].push(newDate.format('LTS'));
                 oldState['timeMoment'] = [newDate];
               }
@@ -69,7 +74,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
       if (isPlaying) {
         queryApi();
       }
-    }, 1000);
+    }, Config.QUERY_TIME);
     return () => {
       clearInterval(interval);
     };
