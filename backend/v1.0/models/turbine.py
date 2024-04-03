@@ -21,13 +21,9 @@ class Turbine(Resource):
       values_df["Tag"] = testValues_df["Tag"]
       values_df.set_index('Tag', inplace=True)
 
-      # Cambiar línea de modelo de DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse (?) = [2]
-      # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
-      # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][1]) + ':' +  str(database_df['Port'][1]) + '/', org = database_df['Organization'][1], bucket = database_df['Bucket'][1], token = str(database_df['Token'][1]))
-      # influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
-      
       influxDB_Connection = InfluxDbConnection()
-      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][2]) + ':' +  str(database_df['Port'][2]) + '/', org = database_df['Organization'][2], bucket = database_df['Bucket'][2], token = str(database_df['Token'][2]))
+      # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
+      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
       influxDB = influxDB_Connection.data
 
       connectionState = influxDB.InfluxDBconnection()
@@ -40,7 +36,7 @@ class Turbine(Resource):
       influxDB.InfluxDBclose()
 
       timeFinish = time.time()
-      print((timeFinish-timeStart)*1000)
+      # print((timeFinish-timeStart)*1000)
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
@@ -87,8 +83,8 @@ class Turbine(Resource):
       simulatedInverterState = bool(int(values_df["Value"]['EI001']))
 
       turbine["batteryTemperature"] = T_bat
-      if data["inputPressure"]["disabled"]: turbine["inputPressure"] = inputPressure
-      if data["inputFlow"]["disabled"]: turbine["inputFlow"] = inputFlow
+      if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 6.89476, 2) # kPa to psi conversion
+      if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow * 60, 2) # L/s to L/min conversion
       if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = inputActivePower
       if data["inputPowerFactor"]["disabled"]: turbine["inputPowerFactor"] = inputPowerFactor
     else:
