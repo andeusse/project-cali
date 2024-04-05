@@ -46,25 +46,28 @@ class Turbine(Resource):
     inputPowerFactor = data["inputPowerFactor"]["value"] if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     
-    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["batteryStateOfCharge"]["value"]
+    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
     simulatedDirectCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
     simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
     if "simulatedSinkLoadState" in data:
       simulatedSinkLoadState = data["simulatedSinkLoadState"]
-    elif data["sinkLoadInitialState"] == "Apagada":
+    elif data["controller"]["sinkLoadInitialState"] == "Apagada":
       simulatedSinkLoadState = False
     else:
       simulatedSinkLoadState = True
 
-    controllerChargeVoltageBulk = data["controllerChargeVoltageBulk"]["value"]
-    controllerChargeVoltageFloat = data["controllerChargeVoltageFloat"]["value"]
-    controllerChargingMinimunVoltage = data["controllerChargingMinimunVoltage"]["value"]
-    controllerSinkOnVoltage = data["controllerSinkOnVoltage"]["value"]
-    controllerSinkOffVoltage = data["controllerSinkOffVoltage"]["value"]
+    controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
+    controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
+    controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
+    controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
+    controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
+    controllerEfficiency = data["controller"]["efficiency"]["value"]
+
+    print(batteryStateOfCharge, controllerChargeVoltageBulk,controllerChargeVoltageFloat)
+
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = 1.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
 
-    controllerEfficiency = data["controllerEfficiency"]["value"]
     inverterEfficiency = data["inverterEfficiency"]["value"]
 
     twinHydro = TwinHydro(name)
