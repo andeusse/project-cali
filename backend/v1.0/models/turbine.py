@@ -23,7 +23,8 @@ class Turbine(Resource):
 
       influxDB_Connection = InfluxDbConnection()
       # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
-      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][0]) + ':' +  str(database_df['Port'][0]) + '/', org = database_df['Organization'][0], bucket = database_df['Bucket'][0], token = str(database_df['Token'][0]))
+      db = 1
+      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
       influxDB = influxDB_Connection.data
 
       connectionState = influxDB.InfluxDBconnection()
