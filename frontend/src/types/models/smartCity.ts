@@ -1,10 +1,4 @@
-import {
-  BatterySystem,
-  BiogasSystem,
-  InputType,
-  LoadSystem,
-  SolarSystem,
-} from './common';
+import { InputType } from './common';
 
 export enum SmartCityOperationModesType {
   Manual = 'Manual',
@@ -27,26 +21,6 @@ export type SmartCityParameters = {
   batterySystemNumber: InputType;
   BiogasSystemNumber: InputType;
   LoadSystemNumber: InputType;
-  solarSystems: SolarSystem[];
-  batterySystems: BatterySystem[];
-  BiogasSystems: BiogasSystem[];
-  LoadSystems: LoadSystem[];
-};
-
-export const SOLAR_SYSTEM: SolarSystem = {
-  name: 'Solar system',
-};
-
-export const BATTERY_SYSTEM: BatterySystem = {
-  name: 'Battery system',
-};
-
-export const BIOGAS_SYSTEM: BiogasSystem = {
-  name: 'Biogas system',
-};
-
-export const LOAD_SYSTEM: LoadSystem = {
-  name: 'Load system',
 };
 
 export const SMART_CITY: SmartCityParameters = {
@@ -100,8 +74,4 @@ export const SMART_CITY: SmartCityParameters = {
     variableString: '',
     min: 0,
   },
-  solarSystems: [SOLAR_SYSTEM],
-  batterySystems: [BATTERY_SYSTEM],
-  BiogasSystems: [BIOGAS_SYSTEM],
-  LoadSystems: [LOAD_SYSTEM],
 };

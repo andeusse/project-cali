@@ -1,19 +1,15 @@
 import { InputType } from '../types/models/common';
-import {
-  PELTON_TURBINE_CONST,
-  TURGO_TURBINE_CONST,
-  TurbineParameters,
-  TurbineType,
-} from '../types/models/turbine';
-import { SolarPanelParameters } from '../types/models/solar';
-import { BiogasParameters, OperationModeType } from '../types/models/biogas';
+import { TurbineParameters } from '../types/models/turbine';
+import { SolarWindParameters } from '../types/models/solar';
+import { BiogasParameters } from '../types/models/biogas';
 import { SmartCityParameters } from '../types/models/smartCity';
-import { getKeyByValue } from './getKeyByValue';
+import { setTurbine } from './models/setTurbine';
+import { setBiogas } from './models/setBiogas';
 
 export const setFormState = <
   T extends
     | TurbineParameters
-    | SolarPanelParameters
+    | SolarWindParameters
     | BiogasParameters
     | SmartCityParameters
 >(
@@ -22,151 +18,75 @@ export const setFormState = <
   variableName?: string
 ) => {
   let newState = { ...oldState };
-  if (e.target.name === 'turbineType') {
-    if ('turbineType' in newState) {
-      const turbineType = getKeyByValue(
-        TurbineType,
-        e.target.value
-      ) as TurbineType;
-      newState.turbineType = turbineType;
-      if (turbineType === TurbineType.Pelton) {
-        newState.inputPressure = PELTON_TURBINE_CONST.inputPressure;
-        newState.inputFlow = PELTON_TURBINE_CONST.inputFlow;
+
+  const name = e.target.name as string;
+  const type = e.target.type as string;
+
+  if ('turbineType' in oldState) {
+    if (
+      name === 'turbineType' ||
+      name === 'controller.customize' ||
+      name === 'inputOfflineOperation'
+    ) {
+      return setTurbine(e, oldState);
+    }
+  }
+  if ('anaerobicReactorVolume1' in oldState) {
+    if (
+      name === 'inputOfflineOperation' ||
+      name === 'inputDigitalTwin' ||
+      name === 'inputSubstrateConditions' ||
+      name === 'inputPump104' ||
+      name === 'inputPump102' ||
+      name === 'inputPump101' ||
+      name === 'inputOperationMode'
+    ) {
+      return setBiogas(e, oldState);
+    }
+  }
+
+  const splitName = name.split('.');
+  if (splitName.length !== 1) {
+    if (splitName.length === 2) {
+      const s: any = oldState[splitName[0] as keyof T];
+      if (typeof s[splitName[1]] === 'object') {
+        newState = {
+          ...oldState,
+          [splitName[0]]: {
+            ...s,
+            [splitName[1]]: {
+              ...(s[splitName[1]] as InputType),
+              value: e.target.value,
+            },
+          },
+        };
       } else {
-        newState.inputPressure = TURGO_TURBINE_CONST.inputPressure;
-        newState.inputFlow = TURGO_TURBINE_CONST.inputFlow;
+        newState = {
+          ...oldState,
+          [splitName[0]]: {
+            ...s,
+            [splitName[1]]: e.target.value,
+          },
+        };
       }
     }
-  } else if (e.target.name === 'controllerCustomize') {
-    if ('turbineType' in newState) {
-      newState.controllerCustomize = e.target.checked;
-      newState.controllerChargeVoltageBulk.disabled = !e.target.checked;
-      newState.controllerChargeVoltageFloat.disabled = !e.target.checked;
-      newState.controllerChargingMinimunVoltage.disabled = !e.target.checked;
-      newState.controllerSinkOffVoltage.disabled = !e.target.checked;
-      newState.controllerSinkOnVoltage.disabled = !e.target.checked;
-    }
-  } else if (e.target.name === 'inputOfflineOperation') {
-    if ('turbineType' in newState) {
-      newState.inputOfflineOperation = !newState.inputOfflineOperation;
-      newState.inputPressure.disabled = !newState.inputOfflineOperation;
-      newState.inputFlow.disabled = !newState.inputOfflineOperation;
-      newState.inputActivePower.disabled = !newState.inputOfflineOperation;
-      newState.inputPowerFactor.disabled = !newState.inputOfflineOperation;
-    }
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputOfflineOperation = !newState.inputOfflineOperation;
-      newState.inputSubstrateConditions = newState.inputOfflineOperation;
-
-      (newState as BiogasParameters) = setSubstrateConditions(
-        newState,
-        !newState.inputOfflineOperation
-      );
-    }
-    if ('timeMultiplier' in newState) {
-      newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
-      if (!newState.inputOfflineOperation) {
-        newState.timeMultiplier.value = 1;
-      }
-    }
-  } else if (e.target.name === 'inputDigitalTwin') {
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputDigitalTwin = !newState.inputDigitalTwin;
-
-      newState.inputDigitalTwinTrainingTime.disabled =
-        !newState.inputDigitalTwin;
-      newState.inputKineticParameterInitialValue.disabled =
-        !newState.inputDigitalTwin;
-
-      newState.inputSpeedLawExponentialFactor.disabled =
-        newState.inputDigitalTwin;
-      newState.inputSpeedLawStartEnergy.disabled = newState.inputDigitalTwin;
-    }
-  } else if (e.target.name === 'inputSubstrateConditions') {
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputSubstrateConditions = !newState.inputSubstrateConditions;
-      (newState as BiogasParameters) = setSubstrateConditions(
-        newState,
-        !newState.inputSubstrateConditions
-      );
-    }
-  } else if (e.target.name === 'inputPump104') {
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputPump104 = !newState.inputPump104;
-      newState.inputPump104HydraulicRetentionTime.disabled =
-        !newState.inputPump104;
-      newState.inputPump104StartTime.disabled = !newState.inputPump104;
-      newState.inputPump104StartsPerDay.disabled = !newState.inputPump104;
-    }
-  } else if (e.target.name === 'inputPump102') {
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputPump102 = !newState.inputPump102;
-      newState.inputPump102Flow.disabled = !newState.inputPump102;
-      newState.inputPump102StartTime.disabled = !newState.inputPump102;
-      newState.inputPump102StartsPerDay.disabled = !newState.inputPump102;
-    }
-  } else if (e.target.name === 'inputPump101') {
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputPump101 = !newState.inputPump101;
-      newState.inputPump101Flow.disabled = !newState.inputPump101;
-      newState.inputPump101StartTime.disabled = !newState.inputPump101;
-      newState.inputPump101StartsPerDay.disabled = !newState.inputPump101;
-    }
-  } else if (e.target.name === 'inputOperationMode') {
-    if ('anaerobicReactorVolume1' in newState) {
-      newState.inputOperationMode = getKeyByValue(
-        OperationModeType,
-        e.target.value
-      );
-      if (
-        newState.inputOperationMode === OperationModeType.Modo3 ||
-        newState.inputOperationMode === OperationModeType.Modo4
-      ) {
-        newState.inputPump101Flow.disabled = true;
-        newState.inputPump101StartTime.disabled = true;
-        newState.inputPump101StartsPerDay.disabled = true;
-      } else {
-        newState.inputPump101Flow.disabled = false;
-        newState.inputPump101StartTime.disabled = false;
-        newState.inputPump101StartsPerDay.disabled = false;
-      }
-    }
-  } else if (
-    e.target.type === 'checkbox' &&
-    e.target.name === 'variableCustomize'
-  ) {
+  } else if (type === 'checkbox' && name === 'variableCustomize') {
     if (variableName) {
       (newState[variableName as keyof T] as InputType).disabled =
         !e.target.checked;
     }
-  } else if (typeof oldState[e.target.name as keyof T] === 'object') {
+  } else if (typeof oldState[name as keyof T] === 'object') {
     newState = {
       ...oldState,
-      [e.target.name]: {
-        ...(oldState[e.target.name as keyof T] as InputType),
+      [name]: {
+        ...(oldState[name as keyof T] as InputType),
         value: parseFloat(e.target.value),
       },
     };
-  } else if (e.target.type === 'checkbox') {
-    newState = { ...oldState, [e.target.name]: e.target.checked };
+  } else if (type === 'checkbox') {
+    newState = { ...oldState, [name]: e.target.checked };
   } else {
-    newState = { ...oldState, [e.target.name]: e.target.value };
+    newState = { ...oldState, [name]: e.target.value };
   }
   return newState;
 };
-
-function setSubstrateConditions(
-  newState: BiogasParameters,
-  value: boolean = false
-): BiogasParameters {
-  newState.inputElementalAnalysisCarbonContent.disabled = value;
-  newState.inputElementalAnalysisHydrogenContent.disabled = value;
-  newState.inputElementalAnalysisOxygenContent.disabled = value;
-  newState.inputElementalAnalysisNitrogenContent.disabled = value;
-  newState.inputElementalAnalysisSulfurContent.disabled = value;
-  newState.inputProximateAnalysisTotalSolids.disabled = value;
-  newState.inputProximateAnalysisVolatileSolids.disabled = value;
-  newState.inputProximateAnalysisDensity.disabled = value;
-
-  return newState;
-}

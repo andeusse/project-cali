@@ -32,7 +32,7 @@ const SmartHome = (props: Props) => {
       variableName
     );
     if (newState) {
-      setSmartHome(newState);
+      setSmartHome(newState as SmartCityParameters);
     }
   };
 

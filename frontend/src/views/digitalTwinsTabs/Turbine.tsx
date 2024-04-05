@@ -85,7 +85,7 @@ const Turbine = (props: Props) => {
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<TurbineParameters>(e, turbine, variableName);
     if (newState) {
-      setTurbine(newState);
+      setTurbine(newState as TurbineParameters);
     }
   };
 
@@ -115,12 +115,13 @@ const Turbine = (props: Props) => {
               label="Nombre"
               value={turbine.name}
               name="name"
+              autoComplete="off"
               onChange={handleChange}
             />
           </FormControl>
         </Grid>
         <Grid item xs={12} md={6} xl={3.5}>
-          <h3>Turbinas</h3>
+          <h3>Turbina</h3>
           <Grid container spacing={2}>
             <Grid item xs={12} md={12} xl={12}>
               <FormControl fullWidth>
@@ -174,8 +175,8 @@ const Turbine = (props: Props) => {
                 <InputLabel>Estado inicial disipación</InputLabel>
                 <Select
                   label="Estado inicial disipación"
-                  value={turbine.sinkLoadInitialState}
-                  name="sinkLoadInitialState"
+                  value={turbine.controller.sinkLoadInitialState}
+                  name="controller.sinkLoadInitialState"
                   onChange={(e: any) => handleChange(e)}
                 >
                   {Object.keys(ControllerStateType).map((key) => (
@@ -190,53 +191,53 @@ const Turbine = (props: Props) => {
               <FormControlLabel
                 control={
                   <Switch
-                    checked={turbine.controllerCustomize}
-                    name="controllerCustomize"
+                    checked={turbine.controller.customize}
+                    name="controller.customize"
                     onChange={(e: any) => handleChange(e)}
                     color="default"
                   />
                 }
-                label={turbine.controllerCustomize ? 'Manual' : 'Auto'}
+                label={turbine.controller.customize ? 'Manual' : 'Auto'}
               />
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.controllerEfficiency}
-                name="controllerEfficiency"
+                variable={turbine.controller.efficiency}
+                name="controller.efficiency"
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.controllerChargeVoltageBulk}
-                name="controllerChargeVoltageBulk"
+                variable={turbine.controller.chargeVoltageBulk}
+                name="controller.chargeVoltageBulk"
                 handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.controllerChargeVoltageFloat}
-                name="controllerChargeVoltageFloat"
+                variable={turbine.controller.chargeVoltageFloat}
+                name="controller.chargeVoltageFloat"
                 handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.controllerChargingMinimunVoltage}
-                name="controllerChargingMinimunVoltage"
+                variable={turbine.controller.chargingMinimunVoltage}
+                name="controller.chargingMinimunVoltage"
                 handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.controllerSinkOffVoltage}
-                name="controllerSinkOffVoltage"
+                variable={turbine.controller.sinkOffVoltage}
+                name="controller.sinkOffVoltage"
                 handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.controllerSinkOnVoltage}
-                name="controllerSinkOnVoltage"
+                variable={turbine.controller.sinkOnVoltage}
+                name="controller.sinkOnVoltage"
                 handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
@@ -247,39 +248,40 @@ const Turbine = (props: Props) => {
           <Grid container spacing={2}>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.batteryStateOfCharge}
-                name="batteryStateOfCharge"
+                variable={turbine.battery.stateOfCharge}
+                name="battery.stateOfCharge"
                 handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.batteryTemperatureCoefficient}
-                name="batteryTemperatureCoefficient"
+                variable={turbine.battery.temperatureCoefficient}
+                name="battery.temperatureCoefficient"
+                handleChange={handleChange}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.batteryCapacity}
-                name="batteryCapacity"
+                variable={turbine.battery.capacity}
+                name="battery.capacity"
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.batterySelfDischargeCoefficient}
-                name="batterySelfDischargeCoefficient"
+                variable={turbine.battery.selfDischargeCoefficient}
+                name="battery.selfDischargeCoefficient"
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.batteryChargeDischargeEfficiency}
-                name="batteryChargeDischargeEfficiency"
+                variable={turbine.battery.chargeDischargeEfficiency}
+                name="battery.chargeDischargeEfficiency"
               ></CustomNumberField>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
-                variable={turbine.batteryTemperatureCompensationCoefficient}
-                name="batteryTemperatureCompensationCoefficient"
+                variable={turbine.battery.temperatureCompensationCoefficient}
+                name="battery.temperatureCompensationCoefficient"
               ></CustomNumberField>
             </Grid>
           </Grid>

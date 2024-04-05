@@ -39,7 +39,7 @@ const Biogas = (props: Props) => {
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiogasParameters>(e, biogas, variableName);
     if (newState) {
-      setBiogas(newState);
+      setBiogas(newState as BiogasParameters);
     }
   };
 
@@ -69,6 +69,7 @@ const Biogas = (props: Props) => {
               label="Nombre"
               value={biogas.name}
               name="name"
+              autoComplete="off"
               onChange={handleChange}
             />
           </FormControl>

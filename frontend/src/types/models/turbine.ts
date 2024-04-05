@@ -1,5 +1,7 @@
 import { CommonGraphType } from '../graph';
 import {
+  BATTERY,
+  Battery,
   CommonDigitalTwinsParameter,
   CommonSystemParameter,
   DiagramVariableType,
@@ -16,23 +18,22 @@ export enum ControllerStateType {
   Apagada = 'Apagada',
 }
 
+export type Controller = {
+  sinkLoadInitialState: ControllerStateType;
+  customize: boolean;
+  efficiency: InputType;
+  chargeVoltageBulk: InputType;
+  chargeVoltageFloat: InputType;
+  chargingMinimunVoltage: InputType;
+  sinkOffVoltage: InputType;
+  sinkOnVoltage: InputType;
+};
+
 export type TurbineParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
     turbineType: TurbineType;
-    sinkLoadInitialState: ControllerStateType;
-    controllerCustomize: boolean;
-    controllerEfficiency: InputType;
-    controllerChargeVoltageBulk: InputType;
-    controllerChargeVoltageFloat: InputType;
-    controllerChargingMinimunVoltage: InputType;
-    controllerSinkOffVoltage: InputType;
-    controllerSinkOnVoltage: InputType;
-    batteryStateOfCharge: InputType;
-    batteryTemperatureCoefficient: InputType;
-    batteryCapacity: InputType;
-    batterySelfDischargeCoefficient: InputType;
-    batteryChargeDischargeEfficiency: InputType;
-    batteryTemperatureCompensationCoefficient: InputType;
+    controller: Controller;
+    battery: Battery;
     inverterEfficiency: InputType;
     inverterNominalPower: InputType;
     inputPressure: InputType;
@@ -98,6 +99,74 @@ export type TurbineOutputHistoric = CommonGraphType & {
   sinkLoadPower: number[];
 };
 
+export const CONTROLLER: Controller = {
+  customize: false,
+  sinkLoadInitialState: ControllerStateType.Apagada,
+  efficiency: {
+    disabled: true,
+    value: 96,
+    tooltip: 'Eficiencia del controlador de carga',
+    unit: '%',
+    variableString: 'η',
+    variableSubString: 'controller',
+  },
+  chargeVoltageBulk: {
+    disabled: true,
+    value: 27.2,
+    tooltip: 'Voltaje de carga bulk',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'bulk',
+    min: 20,
+    max: 35,
+    step: 0.1,
+  },
+  chargeVoltageFloat: {
+    disabled: true,
+    value: 27.8,
+    tooltip: 'Voltaje de carga flotante',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'float',
+    min: 20,
+    max: 35,
+    step: 0.1,
+  },
+  chargingMinimunVoltage: {
+    disabled: true,
+    value: 24,
+    tooltip: 'Voltaje mínimo de inicio de carga',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'bat_min',
+    min: 24,
+    max: 35,
+    step: 0.1,
+  },
+  sinkOffVoltage: {
+    disabled: true,
+    value: 24.75,
+    tooltip: 'Voltaje de apagado de carga disipadora',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'sink_off',
+    min: 24,
+    max: 35,
+    step: 0.1,
+  },
+  sinkOnVoltage: {
+    disabled: true,
+    value: 28,
+    tooltip: 'Voltaje de encendido de carga disipadora',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'sink_on',
+    min: 24,
+    max: 35,
+    step: 0.1,
+  },
+};
+
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
   timeMultiplier: {
@@ -111,121 +180,8 @@ export const TURBINE: TurbineParameters = {
     step: 1,
   },
   turbineType: TurbineType.Pelton,
-  controllerCustomize: false,
-  sinkLoadInitialState: ControllerStateType.Apagada,
-  controllerEfficiency: {
-    disabled: true,
-    value: 96,
-    tooltip: 'Eficiencia del controlador de carga',
-    unit: '%',
-    variableString: 'η',
-    variableSubString: 'controller',
-  },
-  controllerChargeVoltageBulk: {
-    disabled: true,
-    value: 27.2,
-    tooltip: 'Voltaje de carga bulk',
-    unit: 'V',
-    variableString: 'V',
-    variableSubString: 'bulk',
-    min: 20,
-    max: 35,
-    step: 0.1,
-  },
-  controllerChargeVoltageFloat: {
-    disabled: true,
-    value: 27.8,
-    tooltip: 'Voltaje de carga flotante',
-    unit: 'V',
-    variableString: 'V',
-    variableSubString: 'float',
-    min: 20,
-    max: 35,
-    step: 0.1,
-  },
-  controllerChargingMinimunVoltage: {
-    disabled: true,
-    value: 24,
-    tooltip: 'Voltaje mínimo de inicio de carga',
-    unit: 'V',
-    variableString: 'V',
-    variableSubString: 'bat_min',
-    min: 24,
-    max: 35,
-    step: 0.1,
-  },
-  controllerSinkOffVoltage: {
-    disabled: true,
-    value: 24.75,
-    tooltip: 'Voltaje de apagado de carga disipadora',
-    unit: 'V',
-    variableString: 'V',
-    variableSubString: 'sink_off',
-    min: 24,
-    max: 35,
-    step: 0.1,
-  },
-  controllerSinkOnVoltage: {
-    disabled: true,
-    value: 28,
-    tooltip: 'Voltaje de encendido de carga disipadora',
-    unit: 'V',
-    variableString: 'V',
-    variableSubString: 'sink_on',
-    min: 24,
-    max: 35,
-    step: 0.1,
-  },
-  batteryStateOfCharge: {
-    disabled: false,
-    value: 50,
-    tooltip: 'Estado de carga inicial',
-    unit: '%',
-    variableString: 'SOC',
-    variableSubString: 'inicial',
-    min: 0,
-    max: 100,
-  },
-  batteryTemperatureCoefficient: {
-    disabled: true,
-    value: 0.6,
-    tooltip: 'Coeficiente de temperatura',
-    unit: '% / °C',
-    variableString: 'δ',
-    variableSubString: 'C',
-  },
-  batteryCapacity: {
-    disabled: true,
-    value: 150,
-    tooltip: 'Capacidad',
-    unit: 'Ah',
-    variableString: 'Capacidad',
-    variableSubString: 'bat',
-  },
-  batterySelfDischargeCoefficient: {
-    disabled: true,
-    value: 2.5,
-    tooltip: 'Coeficiente de autodescarga',
-    unit: '% / dia',
-    variableString: 'σ',
-    variableSubString: 'bat',
-  },
-  batteryChargeDischargeEfficiency: {
-    disabled: true,
-    value: 98,
-    tooltip: 'Eficiencia de carga y descarga',
-    unit: '% / mes',
-    variableString: 'η',
-    variableSubString: 'bat',
-  },
-  batteryTemperatureCompensationCoefficient: {
-    disabled: true,
-    value: -0.06,
-    tooltip: 'Coeficiente de compensación de temperatura',
-    unit: 'V / °C',
-    variableString: 'δ',
-    variableSubString: 'V',
-  },
+  controller: CONTROLLER,
+  battery: BATTERY,
   inverterEfficiency: {
     disabled: true,
     value: 90,
