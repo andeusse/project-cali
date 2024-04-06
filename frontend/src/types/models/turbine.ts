@@ -1,7 +1,7 @@
 import { CommonGraphType } from '../graph';
 import {
-  BATTERY,
   Battery,
+  CommonController,
   CommonDigitalTwinsParameter,
   CommonSystemParameter,
   DiagramVariableType,
@@ -18,13 +18,8 @@ export enum ControllerStateType {
   Apagada = 'Apagada',
 }
 
-export type Controller = {
+export type Controller = CommonController & {
   sinkLoadInitialState: ControllerStateType;
-  customize: boolean;
-  efficiency: InputType;
-  chargeVoltageBulk: InputType;
-  chargeVoltageFloat: InputType;
-  chargingMinimunVoltage: InputType;
   sinkOffVoltage: InputType;
   sinkOnVoltage: InputType;
 };
@@ -99,7 +94,7 @@ export type TurbineOutputHistoric = CommonGraphType & {
   sinkLoadPower: number[];
 };
 
-export const CONTROLLER: Controller = {
+const CONTROLLER: Controller = {
   customize: false,
   sinkLoadInitialState: ControllerStateType.Apagada,
   efficiency: {
@@ -164,6 +159,59 @@ export const CONTROLLER: Controller = {
     min: 24,
     max: 35,
     step: 0.1,
+  },
+};
+
+const BATTERY: Battery = {
+  stateOfCharge: {
+    disabled: false,
+    value: 50,
+    tooltip: 'Estado de carga inicial',
+    unit: '%',
+    variableString: 'SOC',
+    variableSubString: 'inicial',
+    min: 0,
+    max: 100,
+  },
+  temperatureCoefficient: {
+    disabled: true,
+    value: 0.6,
+    tooltip: 'Coeficiente de temperatura',
+    unit: '% / °C',
+    variableString: 'δ',
+    variableSubString: 'C',
+  },
+  capacity: {
+    disabled: true,
+    value: 150,
+    tooltip: 'Capacidad',
+    unit: 'Ah',
+    variableString: 'Capacidad',
+    variableSubString: 'bat',
+  },
+  selfDischargeCoefficient: {
+    disabled: true,
+    value: 2.5,
+    tooltip: 'Coeficiente de autodescarga',
+    unit: '% / dia',
+    variableString: 'σ',
+    variableSubString: 'bat',
+  },
+  chargeDischargeEfficiency: {
+    disabled: true,
+    value: 98,
+    tooltip: 'Eficiencia de carga y descarga',
+    unit: '% / mes',
+    variableString: 'η',
+    variableSubString: 'bat',
+  },
+  temperatureCompensationCoefficient: {
+    disabled: true,
+    value: -0.06,
+    tooltip: 'Coeficiente de compensación de temperatura',
+    unit: 'V / °C',
+    variableString: 'δ',
+    variableSubString: 'V',
   },
 };
 

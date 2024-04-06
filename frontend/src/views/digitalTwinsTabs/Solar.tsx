@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import {
-  SOLAR_PANEL,
+  SOLAR_WIND,
   SOLAR_DIAGRAM_VARIABLES,
   SolarWindParameters,
 } from '../../types/models/solar';
@@ -32,7 +32,7 @@ type Props = {};
 
 const Solar = (props: Props) => {
   const [solarModule, setSolarModule] =
-    useState<SolarWindParameters>(SOLAR_PANEL);
+    useState<SolarWindParameters>(SOLAR_WIND);
 
   const [, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<SolarWindParameters, String>('solar', solarModule);

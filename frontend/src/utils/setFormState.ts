@@ -5,14 +5,15 @@ import { BiogasParameters } from '../types/models/biogas';
 import { SmartCityParameters } from '../types/models/smartCity';
 import { setTurbine } from './models/setTurbine';
 import { setBiogas } from './models/setBiogas';
+import { setSolar } from './models/setSolar';
 
-export const setFormState = <
-  T extends
-    | TurbineParameters
-    | SolarWindParameters
-    | BiogasParameters
-    | SmartCityParameters
->(
+type formType =
+  | TurbineParameters
+  | SolarWindParameters
+  | BiogasParameters
+  | SmartCityParameters;
+
+export const setFormState = <T extends formType>(
   e: any,
   oldState: T,
   variableName?: string
@@ -42,6 +43,11 @@ export const setFormState = <
       name === 'inputOperationMode'
     ) {
       return setBiogas(e, oldState);
+    }
+  }
+  if ('monocrystallinePanel' in oldState) {
+    if (true) {
+      return setSolar(e, oldState);
     }
   }
 

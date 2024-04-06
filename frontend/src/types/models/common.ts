@@ -1,5 +1,3 @@
-import { ControllerStateType } from './turbine';
-
 export type InputType = {
   disabled: boolean;
   value: number;
@@ -54,6 +52,14 @@ export type WindTurbine = {
   upperCutoffWindSpeed: InputType;
 };
 
+export type CommonController = {
+  customize: boolean;
+  efficiency: InputType;
+  chargeVoltageBulk: InputType;
+  chargeVoltageFloat: InputType;
+  chargingMinimunVoltage: InputType;
+};
+
 export type Battery = {
   stateOfCharge: InputType;
   temperatureCoefficient: InputType;
@@ -63,55 +69,8 @@ export type Battery = {
   temperatureCompensationCoefficient: InputType;
 };
 
-export const BATTERY: Battery = {
-  stateOfCharge: {
-    disabled: false,
-    value: 50,
-    tooltip: 'Estado de carga inicial',
-    unit: '%',
-    variableString: 'SOC',
-    variableSubString: 'inicial',
-    min: 0,
-    max: 100,
-  },
-  temperatureCoefficient: {
-    disabled: true,
-    value: 0.6,
-    tooltip: 'Coeficiente de temperatura',
-    unit: '% / °C',
-    variableString: 'δ',
-    variableSubString: 'C',
-  },
-  capacity: {
-    disabled: true,
-    value: 150,
-    tooltip: 'Capacidad',
-    unit: 'Ah',
-    variableString: 'Capacidad',
-    variableSubString: 'bat',
-  },
-  selfDischargeCoefficient: {
-    disabled: true,
-    value: 2.5,
-    tooltip: 'Coeficiente de autodescarga',
-    unit: '% / dia',
-    variableString: 'σ',
-    variableSubString: 'bat',
-  },
-  chargeDischargeEfficiency: {
-    disabled: true,
-    value: 98,
-    tooltip: 'Eficiencia de carga y descarga',
-    unit: '% / mes',
-    variableString: 'η',
-    variableSubString: 'bat',
-  },
-  temperatureCompensationCoefficient: {
-    disabled: true,
-    value: -0.06,
-    tooltip: 'Coeficiente de compensación de temperatura',
-    unit: 'V / °C',
-    variableString: 'δ',
-    variableSubString: 'V',
-  },
+export type Inverter = {
+  isConnected: boolean;
+  efficiency: InputType;
+  nominalPower: InputType;
 };
