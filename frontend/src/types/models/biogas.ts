@@ -127,7 +127,7 @@ export const BIOGAS: BiogasParameters = {
   },
   inputOfflineOperation: true,
   inputOperationMode: OperationModeType.Modo1,
-  inputSubstrateConditions: false,
+  inputSubstrateConditions: true,
   inputElementalAnalysisCarbonContent: {
     disabled: false,
     value: 40.48,

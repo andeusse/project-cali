@@ -2,12 +2,10 @@ import {
   Alert,
   Box,
   FormControl,
-  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  Switch,
   TextField,
 } from '@mui/material';
 import React, { useState } from 'react';
@@ -27,6 +25,7 @@ import PlayerControls from '../../components/UI/PlayerControls';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
+import CustomToggle from '../../components/UI/CustomToggle';
 
 type Props = {};
 
@@ -125,17 +124,13 @@ const Biogas = (props: Props) => {
               <h3>Parámetros gemelo</h3>
             </Grid>
             <Grid item xs={12} md={6} xl={6} sx={{ alignContent: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={biogas.inputDigitalTwin}
-                    name="inputDigitalTwin"
-                    onChange={(e: any) => handleChange(e)}
-                    color="default"
-                  />
-                }
-                label={biogas.inputDigitalTwin ? 'Gemelo on' : 'Gemelo off'}
-              />
+              <CustomToggle
+                name="inputDigitalTwin"
+                value={biogas.inputDigitalTwin}
+                handleChange={handleChange}
+                trueString="Gemelo on"
+                falseString="Gemelo off"
+              ></CustomToggle>
             </Grid>
             <Grid item xs={12} md={12} xl={12}>
               <CustomNumberField
@@ -228,34 +223,24 @@ const Biogas = (props: Props) => {
               </FormControl>
             </Grid>
             <Grid item xs={12} md={6} xl={6} sx={{ alignContent: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={biogas.inputOfflineOperation}
-                    name="inputOfflineOperation"
-                    onChange={(e: any) => handleChange(e)}
-                    color="default"
-                  />
-                }
-                label={biogas.inputOfflineOperation ? 'Offline' : 'Online'}
-              />
+              <CustomToggle
+                name="inputOfflineOperation"
+                value={biogas.inputOfflineOperation}
+                handleChange={handleChange}
+                trueString="Offline"
+                falseString="Online"
+              ></CustomToggle>
             </Grid>
             <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
               <h3>Condiciones del sustrato</h3>
             </Grid>
             <Grid item xs={12} md={6} xl={6} sx={{ alignContent: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={biogas.inputSubstrateConditions}
-                    name="inputSubstrateConditions"
-                    onChange={(e: any) => handleChange(e)}
-                    color="default"
-                    disabled={biogas.inputOfflineOperation}
-                  />
-                }
-                label={biogas.inputSubstrateConditions ? 'Manual' : 'Auto'}
-              />
+              <CustomToggle
+                name="inputSubstrateConditions"
+                value={biogas.inputSubstrateConditions}
+                handleChange={handleChange}
+                disabled={biogas.inputOfflineOperation}
+              ></CustomToggle>
             </Grid>
             <Grid item xs={12} md={6} xl={6}>
               <Grid container spacing={2}>
@@ -336,25 +321,13 @@ const Biogas = (props: Props) => {
                 <Grid item xs={12} md={6} xl={6}>
                   <h3>Bomba P-104</h3>
                 </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  md={6}
-                  xl={6}
-                  sx={{ alignContent: 'center' }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={biogas.inputPump104}
-                        name="inputPump104"
-                        onChange={(e: any) => handleChange(e)}
-                        color="default"
-                        disabled={biogas.inputOfflineOperation}
-                      />
-                    }
-                    label={biogas.inputPump104 ? 'Manual' : 'Auto'}
-                  />
+                <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                  <CustomToggle
+                    name="inputPump104"
+                    value={biogas.inputPump104}
+                    handleChange={handleChange}
+                    disabled={biogas.inputOfflineOperation}
+                  ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <CustomNumberField
@@ -383,31 +356,17 @@ const Biogas = (props: Props) => {
                   <Grid item xs={12} md={6} xl={6}>
                     <h3>Bomba P-101</h3>
                   </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={6}
-                    xl={6}
-                    sx={{ alignContent: 'center' }}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={biogas.inputPump101}
-                          name="inputPump101"
-                          onChange={(e: any) => handleChange(e)}
-                          color="default"
-                          disabled={
-                            biogas.inputOfflineOperation ||
-                            biogas.inputOperationMode ===
-                              OperationModeType.Modo3 ||
-                            biogas.inputOperationMode ===
-                              OperationModeType.Modo4
-                          }
-                        />
+                  <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                    <CustomToggle
+                      name="inputPump101"
+                      value={biogas.inputPump101}
+                      handleChange={handleChange}
+                      disabled={
+                        biogas.inputOfflineOperation ||
+                        biogas.inputOperationMode === OperationModeType.Modo3 ||
+                        biogas.inputOperationMode === OperationModeType.Modo4
                       }
-                      label={biogas.inputPump101 ? 'Manual' : 'Auto'}
-                    />
+                    ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
@@ -437,25 +396,13 @@ const Biogas = (props: Props) => {
                   <Grid item xs={12} md={6} xl={6}>
                     <h3>Bomba P-102</h3>
                   </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={6}
-                    xl={6}
-                    sx={{ alignContent: 'center' }}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={biogas.inputPump102}
-                          name="inputPump102"
-                          onChange={(e: any) => handleChange(e)}
-                          color="default"
-                          disabled={biogas.inputOfflineOperation}
-                        />
-                      }
-                      label={biogas.inputPump102 ? 'Manual' : 'Auto'}
-                    />
+                  <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                    <CustomToggle
+                      name="inputPump102"
+                      value={biogas.inputPump102}
+                      handleChange={handleChange}
+                      disabled={biogas.inputOfflineOperation}
+                    ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField

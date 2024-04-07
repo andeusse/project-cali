@@ -1,3 +1,4 @@
+import { CommonGraphType } from '../graph';
 import {
   Battery,
   CommonController,
@@ -6,6 +7,7 @@ import {
   DiagramVariableType,
   InputType,
   Inverter,
+  IsConnected,
   SolarPanel,
   WindTurbine,
 } from './common';
@@ -34,10 +36,10 @@ export type SolarWindParameters = CommonSystemParameter &
     flexPanel: SolarPanel;
     cadmiumTelluridePanel: SolarPanel;
     windTurbine: WindTurbine;
-    battery1: Battery;
+    battery1: IsConnected & Battery;
     isBattery2: boolean;
-    battery2: Battery;
-    controller: CommonController;
+    battery2: IsConnected & Battery;
+    controller: IsConnected & CommonController;
     offgridInverter: Inverter;
     hybridInverter: Inverter;
     solarRadiation1: InputType;
@@ -69,7 +71,7 @@ const MONOCRYSTALLINE_PANEL: SolarPanel = {
     variableSubString: 'pu',
     min: 0.7,
     max: 1,
-    step: 0.1,
+    step: 0.01,
   },
   efficiency: {
     disabled: true,
@@ -147,7 +149,7 @@ const POLICRYSTALLINE_PANEL: SolarPanel = {
     variableSubString: 'pu',
     min: 0.7,
     max: 1,
-    step: 0.1,
+    step: 0.01,
   },
   efficiency: {
     disabled: true,
@@ -225,7 +227,7 @@ const FLEX_PANEL: SolarPanel = {
     variableSubString: 'pu',
     min: 0.7,
     max: 1,
-    step: 0.1,
+    step: 0.01,
   },
   efficiency: {
     disabled: true,
@@ -303,7 +305,7 @@ const CADMIUM_TELLURIDE_PANEL: SolarPanel = {
     variableSubString: 'pu',
     min: 0.7,
     max: 1,
-    step: 0.1,
+    step: 0.01,
   },
   efficiency: {
     disabled: true,
@@ -364,6 +366,7 @@ const CADMIUM_TELLURIDE_PANEL: SolarPanel = {
 };
 
 const WIND_TURBINE: WindTurbine = {
+  isConnected: true,
   peakPower: {
     disabled: true,
     value: 200,
@@ -419,7 +422,8 @@ const WIND_TURBINE: WindTurbine = {
   },
 };
 
-const BATTERY: Battery = {
+const BATTERY: IsConnected & Battery = {
+  isConnected: true,
   stateOfCharge: {
     disabled: false,
     value: 50,
@@ -472,7 +476,8 @@ const BATTERY: Battery = {
   },
 };
 
-const CONTROLLER: CommonController = {
+const CONTROLLER: IsConnected & CommonController = {
+  isConnected: true,
   customize: false,
   efficiency: {
     disabled: true,
@@ -556,6 +561,10 @@ const HYBRID_INVERTER: Inverter = {
     variableSubString: 'Inversor',
   },
 };
+
+export type SolarWindOutput = {};
+
+export type SolarWindOutputHistoric = CommonGraphType & {};
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',

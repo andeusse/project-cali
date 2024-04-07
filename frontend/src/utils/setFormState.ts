@@ -46,7 +46,7 @@ export const setFormState = <T extends formType>(
     }
   }
   if ('monocrystallinePanel' in oldState) {
-    if (true) {
+    if (e.target.name === 'controller.customize') {
       return setSolar(e, oldState);
     }
   }
@@ -67,11 +67,15 @@ export const setFormState = <T extends formType>(
           },
         };
       } else {
+        let newValue = e.target.value;
+        if (type === 'checkbox') {
+          newValue = e.target.checked;
+        }
         newState = {
           ...oldState,
           [splitName[0]]: {
             ...s,
-            [splitName[1]]: e.target.value,
+            [splitName[1]]: newValue,
           },
         };
       }

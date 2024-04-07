@@ -2,12 +2,10 @@ import {
   Alert,
   Box,
   FormControl,
-  FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  Switch,
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -31,6 +29,8 @@ import turgoDiagram from '../../assets/turgoTurbineDiagram.svg';
 import turgoDiagramNoCharge from '../../assets/turgoNoChargeDiagram.svg';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
+import Battery from '../../components/models/Battery';
+import CustomToggle from '../../components/UI/CustomToggle';
 
 type Props = {};
 
@@ -187,18 +187,12 @@ const Turbine = (props: Props) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} md={6} xl={6} sx={{ alignContent: 'center' }}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={turbine.controller.customize}
-                    name="controller.customize"
-                    onChange={(e: any) => handleChange(e)}
-                    color="default"
-                  />
-                }
-                label={turbine.controller.customize ? 'Manual' : 'Auto'}
-              />
+            <Grid item xs={6} md={6} xl={6} alignContent={'center'}>
+              <CustomToggle
+                name="controller.customize"
+                value={turbine.controller.customize}
+                handleChange={handleChange}
+              ></CustomToggle>
             </Grid>
             <Grid item xs={6} md={6} xl={6}>
               <CustomNumberField
@@ -245,46 +239,11 @@ const Turbine = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={6} xl={3.5}>
           <h3>Baterías</h3>
-          <Grid container spacing={2}>
-            <Grid item xs={6} md={6} xl={6}>
-              <CustomNumberField
-                variable={turbine.battery.stateOfCharge}
-                name="battery.stateOfCharge"
-                handleChange={handleChange}
-              ></CustomNumberField>
-            </Grid>
-            <Grid item xs={6} md={6} xl={6}>
-              <CustomNumberField
-                variable={turbine.battery.temperatureCoefficient}
-                name="battery.temperatureCoefficient"
-                handleChange={handleChange}
-              ></CustomNumberField>
-            </Grid>
-            <Grid item xs={6} md={6} xl={6}>
-              <CustomNumberField
-                variable={turbine.battery.capacity}
-                name="battery.capacity"
-              ></CustomNumberField>
-            </Grid>
-            <Grid item xs={6} md={6} xl={6}>
-              <CustomNumberField
-                variable={turbine.battery.selfDischargeCoefficient}
-                name="battery.selfDischargeCoefficient"
-              ></CustomNumberField>
-            </Grid>
-            <Grid item xs={6} md={6} xl={6}>
-              <CustomNumberField
-                variable={turbine.battery.chargeDischargeEfficiency}
-                name="battery.chargeDischargeEfficiency"
-              ></CustomNumberField>
-            </Grid>
-            <Grid item xs={6} md={6} xl={6}>
-              <CustomNumberField
-                variable={turbine.battery.temperatureCompensationCoefficient}
-                name="battery.temperatureCompensationCoefficient"
-              ></CustomNumberField>
-            </Grid>
-          </Grid>
+          <Battery
+            propertyName="battery"
+            battery={turbine.battery}
+            handleChange={handleChange}
+          ></Battery>
         </Grid>
         <Grid item xs={12} md={6} xl={1.5}>
           <h3>Inversor</h3>
@@ -312,18 +271,14 @@ const Turbine = (props: Props) => {
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Operación planta</h2>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={turbine.inputOfflineOperation}
-                        name="inputOfflineOperation"
-                        onChange={(e: any) => handleChange(e)}
-                        color="default"
-                      />
-                    }
-                    label={turbine.inputOfflineOperation ? 'Offline' : 'Online'}
-                  />
+                <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                  <CustomToggle
+                    name="inputOfflineOperation"
+                    value={turbine.inputOfflineOperation}
+                    handleChange={handleChange}
+                    trueString="Offline"
+                    falseString="Online"
+                  ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros turbina</h3>
@@ -349,25 +304,15 @@ const Turbine = (props: Props) => {
                     <Grid item xs={12} md={12} xl={12}>
                       <h3>Parámetros carga CD</h3>
                     </Grid>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={turbine.inputDirectCurrentPower}
-                          name="inputDirectCurrentPower"
-                          onChange={(e) => {
-                            if (handleChange) {
-                              handleChange(e);
-                            }
-                          }}
-                          color="default"
-                        />
-                      }
-                      label={
-                        turbine.inputDirectCurrentPower
-                          ? 'Conectado: 2.4 W'
-                          : 'Desconectado: 0.0 W'
-                      }
-                    />
+                    <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                      <CustomToggle
+                        name="inputDirectCurrentPower"
+                        value={turbine.inputDirectCurrentPower}
+                        handleChange={handleChange}
+                        trueString="Conectado: 2.4 W"
+                        falseString="Desconectado: 0.0 W"
+                      ></CustomToggle>
+                    </Grid>
                   </>
                 )}
                 <Grid item xs={12} md={12} xl={12}>
