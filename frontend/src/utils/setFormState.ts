@@ -6,8 +6,9 @@ import { SmartCityParameters } from '../types/models/smartCity';
 import { setTurbine } from './models/setTurbine';
 import { setBiogas } from './models/setBiogas';
 import { setSolar } from './models/setSolar';
+import { setFormObjectValue } from './setFormObjectValue';
 
-type formType =
+export type formType =
   | TurbineParameters
   | SolarWindParameters
   | BiogasParameters
@@ -22,6 +23,7 @@ export const setFormState = <T extends formType>(
 
   const name = e.target.name as string;
   const type = e.target.type as string;
+  const splitName = name.split('.');
 
   if ('turbineType' in oldState) {
     if (
@@ -46,39 +48,23 @@ export const setFormState = <T extends formType>(
     }
   }
   if ('monocrystallinePanel' in oldState) {
-    if (e.target.name === 'controller.customize') {
+    if (
+      e.target.name === 'controller.customize' ||
+      e.target.name === 'inputOfflineOperation' ||
+      e.target.name === 'inputOperationMode' ||
+      (splitName.length !== 1 && splitName[1] === 'isConnected')
+    ) {
       return setSolar(e, oldState);
     }
   }
 
-  const splitName = name.split('.');
   if (splitName.length !== 1) {
     if (splitName.length === 2) {
-      const s: any = oldState[splitName[0] as keyof T];
-      if (typeof s[splitName[1]] === 'object') {
-        newState = {
-          ...oldState,
-          [splitName[0]]: {
-            ...s,
-            [splitName[1]]: {
-              ...(s[splitName[1]] as InputType),
-              value: e.target.value,
-            },
-          },
-        };
-      } else {
-        let newValue = e.target.value;
-        if (type === 'checkbox') {
-          newValue = e.target.checked;
-        }
-        newState = {
-          ...oldState,
-          [splitName[0]]: {
-            ...s,
-            [splitName[1]]: newValue,
-          },
-        };
+      let newValue = e.target.value;
+      if (type === 'checkbox') {
+        newValue = e.target.checked;
       }
+      newState = setFormObjectValue<T>(oldState, splitName, newValue);
     }
   } else if (type === 'checkbox' && name === 'variableCustomize') {
     if (variableName) {

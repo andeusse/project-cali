@@ -10,7 +10,7 @@ const ToggleCustomNumberField = (props: ToggleCustomTextFieldType) => {
     handleChange,
     falseText = 'Auto',
     trueText = 'Manual',
-    offlineOperation,
+    disabled,
   } = props;
 
   return (
@@ -24,7 +24,7 @@ const ToggleCustomNumberField = (props: ToggleCustomTextFieldType) => {
             <Switch
               checked={!variable.disabled}
               name="variableCustomize"
-              disabled={offlineOperation}
+              disabled={disabled}
               onChange={(e) => {
                 if (handleChange) {
                   handleChange(e, name);

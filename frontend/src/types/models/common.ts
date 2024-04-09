@@ -30,7 +30,10 @@ export type CommonDigitalTwinsParameter = {
   timeMultiplier: InputType;
 };
 
-export type IsConnected = { isConnected: boolean };
+export type IsConnected = {
+  isConnected: boolean;
+  isConnectedDisabled: boolean;
+};
 
 export type SolarPanel = IsConnected & {
   peakPower: InputType;
@@ -44,7 +47,7 @@ export type SolarPanel = IsConnected & {
   temperatureVariationCoefficient: InputType;
 };
 
-export type WindTurbine = IsConnected & {
+export type WindTurbine = {
   peakPower: InputType;
   rotorHeight: InputType;
   anemometerHeight: InputType;

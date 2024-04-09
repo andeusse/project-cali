@@ -32,6 +32,7 @@ const SolarPanel = (props: Props) => {
             handleChange={handleChange}
             trueString="Conectado"
             falseString="Desconectado"
+            disabled={panel.isConnectedDisabled}
           ></CustomToggle>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>

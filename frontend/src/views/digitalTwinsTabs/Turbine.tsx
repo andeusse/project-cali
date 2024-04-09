@@ -288,7 +288,7 @@ const Turbine = (props: Props) => {
                     variable={turbine.inputPressure}
                     name="inputPressure"
                     handleChange={handleChange}
-                    offlineOperation={turbine.inputOfflineOperation}
+                    disabled={turbine.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -296,7 +296,7 @@ const Turbine = (props: Props) => {
                     variable={turbine.inputFlow}
                     name="inputFlow"
                     handleChange={handleChange}
-                    offlineOperation={turbine.inputOfflineOperation}
+                    disabled={turbine.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
                 {turbine.turbineType === TurbineType.Turgo && (
@@ -323,7 +323,7 @@ const Turbine = (props: Props) => {
                     variable={turbine.inputActivePower}
                     name="inputActivePower"
                     handleChange={handleChange}
-                    offlineOperation={turbine.inputOfflineOperation}
+                    disabled={turbine.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -331,7 +331,7 @@ const Turbine = (props: Props) => {
                     variable={turbine.inputPowerFactor}
                     name="inputPowerFactor"
                     handleChange={handleChange}
-                    offlineOperation={turbine.inputOfflineOperation}
+                    disabled={turbine.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
               </Grid>
@@ -348,8 +348,8 @@ const Turbine = (props: Props) => {
                 }
                 data={data}
                 variables={TURBINE_DIAGRAM_VARIABLES}
-                width={800}
-                height={800}
+                width={150}
+                height={150}
               ></Diagram>
             </Grid>
           </Grid>

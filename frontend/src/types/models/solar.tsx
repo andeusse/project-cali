@@ -55,6 +55,7 @@ export type SolarWindParameters = CommonSystemParameter &
 
 const MONOCRYSTALLINE_PANEL: SolarPanel = {
   isConnected: true,
+  isConnectedDisabled: false,
   peakPower: {
     disabled: true,
     value: 100,
@@ -132,7 +133,8 @@ const MONOCRYSTALLINE_PANEL: SolarPanel = {
 };
 
 const POLICRYSTALLINE_PANEL: SolarPanel = {
-  isConnected: true,
+  isConnected: false,
+  isConnectedDisabled: false,
   peakPower: {
     disabled: true,
     value: 100,
@@ -210,7 +212,8 @@ const POLICRYSTALLINE_PANEL: SolarPanel = {
 };
 
 const FLEX_PANEL: SolarPanel = {
-  isConnected: true,
+  isConnected: false,
+  isConnectedDisabled: false,
   peakPower: {
     disabled: true,
     value: 100,
@@ -288,7 +291,8 @@ const FLEX_PANEL: SolarPanel = {
 };
 
 const CADMIUM_TELLURIDE_PANEL: SolarPanel = {
-  isConnected: true,
+  isConnected: false,
+  isConnectedDisabled: false,
   peakPower: {
     disabled: true,
     value: 77.5,
@@ -366,7 +370,6 @@ const CADMIUM_TELLURIDE_PANEL: SolarPanel = {
 };
 
 const WIND_TURBINE: WindTurbine = {
-  isConnected: true,
   peakPower: {
     disabled: true,
     value: 200,
@@ -424,6 +427,7 @@ const WIND_TURBINE: WindTurbine = {
 
 const BATTERY: IsConnected & Battery = {
   isConnected: true,
+  isConnectedDisabled: false,
   stateOfCharge: {
     disabled: false,
     value: 50,
@@ -478,6 +482,7 @@ const BATTERY: IsConnected & Battery = {
 
 const CONTROLLER: IsConnected & CommonController = {
   isConnected: true,
+  isConnectedDisabled: false,
   customize: false,
   efficiency: {
     disabled: true,
@@ -524,6 +529,7 @@ const CONTROLLER: IsConnected & CommonController = {
 
 const OFFGRID_INVERTER: Inverter = {
   isConnected: true,
+  isConnectedDisabled: false,
   efficiency: {
     disabled: true,
     value: 90,
@@ -544,6 +550,7 @@ const OFFGRID_INVERTER: Inverter = {
 
 const HYBRID_INVERTER: Inverter = {
   isConnected: true,
+  isConnectedDisabled: false,
   efficiency: {
     disabled: true,
     value: 90,
@@ -615,7 +622,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     value: 25,
     tooltip: 'Temperatura ambiente',
     unit: '°C',
-    variableString: 'Radiación solar 2',
+    variableString: 'Temperatura ambiente',
     min: -10,
     max: 50,
   },

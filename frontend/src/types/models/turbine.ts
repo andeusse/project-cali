@@ -240,9 +240,9 @@ export const TURBINE: TurbineParameters = {
   },
   inverterNominalPower: {
     disabled: true,
-    value: 90,
+    value: 1500,
     tooltip: 'Potencia nominal',
-    unit: 'kW',
+    unit: 'W',
     variableString: 'P',
     variableSubString: 'inverter',
   },

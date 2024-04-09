@@ -433,7 +433,7 @@ const Biogas = (props: Props) => {
                   variable={biogas.inputTemperature101}
                   name="inputTemperature101"
                   handleChange={handleChange}
-                  offlineOperation={biogas.inputOfflineOperation}
+                  disabled={biogas.inputOfflineOperation}
                 ></ToggleCustomNumberField>
               </Grid>
               {(biogas.inputOperationMode === OperationModeType.Modo3 ||
@@ -444,7 +444,7 @@ const Biogas = (props: Props) => {
                     variable={biogas.inputTemperature102}
                     name="inputTemperature102"
                     handleChange={handleChange}
-                    offlineOperation={biogas.inputOfflineOperation}
+                    disabled={biogas.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
               )}
