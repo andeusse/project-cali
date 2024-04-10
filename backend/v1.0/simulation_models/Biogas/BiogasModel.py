@@ -10,10 +10,9 @@ import statistics as st
 
 class BiogasPlant:
 
-    def __init__(self, Operation=1, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, t_prediction = 1, timetrain=1, K_ini=1):
+    def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, t_prediction = 1, timetrain=1, Kini=1):
 
         #Interface Inputs
-        self.Operation = Operation
         self.VR1 = VR1
         self.VR2 = VR2
         self.VG1 = VG1
@@ -27,7 +26,7 @@ class BiogasPlant:
         self.t_prediction = t_prediction * 3600
         self.timetrain = timetrain * 3600
         self.validation_time = timetrain * 3600
-        self.K_ini = K_ini
+        self.Kini = Kini
         
         #Initial values
         self.TotalTime = 0
@@ -333,7 +332,10 @@ class BiogasPlant:
 
             self.t_train = np.linspace(self.TotalTime, self.TotalTime+self.timetrain, int(round(len(self.Msus_exp_train),0)))
             self.t_val = np.linspace(self.TotalTime+self.timetrain+self.tp, self.TotalTime+self.timetrain+self.validation_time, int(round(len(self.Msus_exp_val),0)))
-              
+            
+            self.PredictionPoints = int(round(self.t_prediction/self.tp,0))
+            self.t_predictionv = np.linspace(self.TotalTime+self.timetrain+self.validation_time+self.tp, self.TotalTime+self.timetrain+self.validation_time+self.t_prediction, self.PredictionPoints)
+
             #Train function
             def Optimization (K, t, Csus_exp, Q):
                 Q = Q[0]
@@ -364,4 +366,66 @@ class BiogasPlant:
                 Co = C[0]
                 self.res_val = odeint(DiferentialEquation, Co, t)
                 return self.res_val
+            
+            #Run train model
+            self.K_optimizadav = []
+            self.Csus_model_train = []
 
+            for i in range (len(self.t_train)):
+                self.tv = self.t_train[i : i+2]
+                self.C_train = self.Csus_exp_train [i : i+2]
+                self.Q_train = self.Q_P104_train [i : i+2]
+
+                self.Ko = self.Kini
+                self.Optimizacion = Optimization(K=self.Ko, t=self.tv, Csus_exp = self.C_train, Q = self.Q_train)
+
+                self.K_optimizadav.append(float(self.Optimizacion[0]))
+                self.Kini = float(self.Optimizacion[0])
+                self.Csus_model_train.append(float(self.Optimizacion[1][0]))
+
+            self.K_mean = st.mean(self.K_optimizadav)
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = self.K_mean, timestamp = self.timestamp)
+            print(self.K_optimizadav)
+
+            #Run validation
+            self.Validationv = []
+            for i in range (len(self.t_val)):
+                self.tvv = self.t_val[i : i+2]
+                self.C_val = self.Csus_exp_val[i : i+2]
+                self.Q_val = self.Q_P104_val[i : i+2]
+
+                self.validation = ValidationModel1(K = self.K_mean, t = self.tvv, Q = self.Q_val, C = self.C_val)
+                self.Validationv.append(float(self.validation[-1]))
+
+            #Run Prediction
+            #Prediction pump behavior
+
+            self.Q_P104_predv = []
+            self.Co = float(self.Validationv[-1])
+            self.Csus_model_prediction = []
+            
+            for i in range (len(self.t_predictionv)):
+                    
+                #timers
+                self.t_prediction1v = self.t_predictionv[i : i+2]
+                self.TimeCounterPump_pred = self.TimeCounterPump + self.tp
+                
+                #pump control
+                if self.TimeCounterPump_pred<self.TTO_P104*60:
+                    self.Q_P104_pred = (self.Q_time/self.TTO_P104)*60
+                
+                else:
+                    self.Q_P104_pred= float(0)    
+                self.Q_P104_predv.append(self.Q_P104_pred)
+            
+                self.Csus_model_prediction.append(self.Co)
+                self.prediction = ValidationModel1(K=self.K_mean, t=self.t_prediction1v, Q=[self.Q_P104_pred], C=[self.Co])
+                self.Co = float(self.prediction[-1])
+                self.Csus_model_prediction.append(self.Co)
+                
+
+
+
+        self.TotalTime = self.TotalTime + self.tp
+        time.sleep(self.tp)
