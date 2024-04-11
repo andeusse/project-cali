@@ -4,7 +4,7 @@ import BiogasModel as BM
 DT = 1
 
 tp=30
-Biogas_Plant = BM.DTBiogasPlant(Operation=1, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, t_prediction = 1, timetrain=0.05, K_ini=1)
+Biogas_Plant = BM.BiogasPlant(VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, t_prediction = 1, timetrain=0.05, Kini=1)
 
 while True:
     
