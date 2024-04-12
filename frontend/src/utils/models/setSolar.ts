@@ -48,6 +48,8 @@ export const setSolar = (
         newState.cadmiumTelluridePanel.isConnectedDisabled = false;
 
         newState.isBattery2 = false;
+
+        newState.hybridInverter.isConnected = false;
         break;
       case OperationModeType.Mode2:
         newState.monocrystallinePanel.isConnected = true;
@@ -77,6 +79,8 @@ export const setSolar = (
         newState.flexPanel.isConnectedDisabled = true;
 
         newState.isBattery2 = false;
+
+        newState.hybridInverter.isConnected = false;
         break;
       case OperationModeType.Mode4:
         newState.monocrystallinePanel.isConnected = false;
@@ -85,6 +89,8 @@ export const setSolar = (
         newState.cadmiumTelluridePanel.isConnected = false;
 
         newState.isBattery2 = false;
+
+        newState.hybridInverter.isConnected = false;
         break;
       case OperationModeType.Mode5:
         newState.monocrystallinePanel.isConnected = true;
@@ -97,6 +103,8 @@ export const setSolar = (
         newState.flexPanel.isConnectedDisabled = true;
 
         newState.isBattery2 = false;
+
+        newState.hybridInverter.isConnected = false;
         break;
     }
   }
@@ -163,20 +171,52 @@ export const setSolar = (
             newState.policrystallinePanel.isConnected = false;
             newState.flexPanel.isConnected = false;
 
+            newState.battery1.isConnected = true;
+            newState.battery2.isConnected = true;
             newState.isBattery2 = true;
           }
           break;
         case 'offgridInverter':
-          newState.offgridInverter.isConnectedDisabled =
-            !newState.offgridInverter.isConnected;
-          newState.hybridInverter.isConnected = true;
-          newState.hybridInverter.isConnectedDisabled = false;
+          if (!newState.offgridInverter.isConnected) {
+            newState.offgridInverter.isConnectedDisabled =
+              !newState.offgridInverter.isConnectedDisabled;
+            newState.hybridInverter.isConnectedDisabled = false;
+            newState.offgridInverter.isConnectedDisabled = false;
+          } else {
+            newState.hybridInverter.isConnectedDisabled = true;
+          }
+          newState.offgridInverter.isConnected = e.target.checked;
           break;
         case 'hybridInverter':
-          newState.hybridInverter.isConnectedDisabled =
-            !newState.hybridInverter.isConnectedDisabled;
-          newState.offgridInverter.isConnected = true;
-          newState.offgridInverter.isConnectedDisabled = false;
+          if (!newState.hybridInverter.isConnected) {
+            newState.hybridInverter.isConnectedDisabled =
+              !newState.hybridInverter.isConnectedDisabled;
+            newState.offgridInverter.isConnectedDisabled = false;
+            newState.hybridInverter.isConnectedDisabled = false;
+          } else {
+            newState.offgridInverter.isConnectedDisabled = true;
+          }
+          newState.hybridInverter.isConnected = e.target.checked;
+          break;
+        case 'battery1':
+          newState.battery1.isConnected = e.target.checked;
+          if (
+            (newState.inputOperationMode === OperationModeType.Mode1 &&
+              newState.cadmiumTelluridePanel.isConnected) ||
+            newState.inputOperationMode === OperationModeType.Mode2
+          ) {
+            newState.battery2.isConnected = newState.battery1.isConnected;
+          }
+          break;
+        case 'battery2':
+          newState.battery2.isConnected = e.target.checked;
+          if (
+            (newState.inputOperationMode === OperationModeType.Mode1 &&
+              newState.cadmiumTelluridePanel.isConnected) ||
+            newState.inputOperationMode === OperationModeType.Mode2
+          ) {
+            newState.battery1.isConnected = newState.battery2.isConnected;
+          }
           break;
       }
       const allFalse =
