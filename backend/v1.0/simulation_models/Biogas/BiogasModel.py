@@ -172,9 +172,14 @@ class BiogasPlant:
         self.s_H2S = self.d
         
         self.MW_sustrato = self.n*12.01+self.a*1.01+self.b*16+self.c*14+self.d*32
+        #print("pesomolecular del sustrato" + str(self.MW_sustrato))
         
         self.Csus_ini = (self.rho*self.SV)/self.MW_sustrato
-        self.Csus_ini_total = (self.rho*self.ST)/self.MW_sustrato
+        #print("Concentración inicial de solidos volátiles" + str(self.Csus_ini))
+        self.Csus_ini_ST = (self.rho*self.ST)/self.MW_sustrato
+        #print("Concnetración de sólidos totales" + str(self.Csus_ini_ST))
+        self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini
+        #print("Concentración de sólidos fijos" + str(self.Csus_fixed))
         self.Ch2o_ini = (self.rho*(1-self.ST))/18
 
     def DTOperationModel1 (self, manual_P104=0, manual_temp_R101=0,  TRH=30, FT_P104=5, TTO_P104=10, Temp_R101 = 35):
@@ -287,14 +292,32 @@ class BiogasPlant:
         if self.SE104v[-1] == 0:
             self.Msus_exp = (self.Csus_ini*self.VR1 - (1/self.s_CH4)*self.mol_CH4)
         else:
-            self.Msus_exp = (self.SE104v[-1]*self.Csus_ini*self.tp/60)-(self.SE104v[-1]*(self.Csus_ini*self.VR1 - (1/self.s_CH4)*self.mol_CH4)*self.tp/60) + (self.Csus_ini*self.VR1 - (1/self.s_CH4)*self.mol_CH4)
+            self.Msus_exp = (self.SE104v[-1]*self.Csus_ini*self.tp/60)-(self.SE104v[-1]*((1/self.s_CH4)*self.mol_CH4)*self.tp/60) + (self.Csus_ini*self.VR1 - (1/self.s_CH4)*self.mol_CH4)
         
+        # print("moles de sustrato acumulado" + str(self.Msus_exp))
+        # self.v1 = (self.SE104v[-1]*self.Csus_ini*self.tp/60)
+        # self.v = (self.SE104v[-1]*((1/self.s_CH4)*self.mol_CH4)*self.tp/60)
+        # self.v2 = (self.Csus_ini*self.VR1 - (1/self.s_CH4)*self.mol_CH4)
+        # print(str(self.v))
+        # print(str(self.v1))
+        # print(str(self.v2))
+              
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][98], variable = self.database_df["Tag"][98], value = self.Msus_exp, timestamp = self.timestamp)
        
         self.Csus_exp = self.Msus_exp/self.VR1
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][99], variable = self.database_df["Tag"][99], value = self.Csus_exp, timestamp = self.timestamp)
+
+        self.SV_exp = (self.Csus_exp)*self.MW_sustrato/self.rho
+        print("Concentracion de SV: "+str(self.SV_exp))
+        self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = self.SV_exp, timestamp = self.timestamp)
+
+        self.ST_exp = (self.Csus_exp+self.Csus_fixed)*self.MW_sustrato/self.rho
+        print("Concentracion de ST: "+str(self.ST_exp))
+        self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = self.ST_exp, timestamp = self.timestamp)
       
         self.query_Msus_exp = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Msus_exp", location=1, type=0, forecastTime=1)
         self.Msus_expv = self.InfluxDB.InfluxDBreader(self.query_Msus_exp)
@@ -395,7 +418,7 @@ class BiogasPlant:
 
             self.K_mean = st.mean(self.K_optimizadav)
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = self.K_mean, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][102], variable = self.database_df["Tag"][102], value = self.K_mean, timestamp = self.timestamp)
             print(self.K_optimizadav)
 
             #Run validation
@@ -448,16 +471,16 @@ class BiogasPlant:
             self.SV_trainv = []
             self.ST_trainv=[]
             
-            #Train Data Visualization
+            #Train Data Interface Visualization
             for i in range (len(self.t_train)):
-                self.SV_train = (self.Csus_model_train[i]*self.MW_sustrato)/self.rho
+                self.SV_train = (self.Csus_model_train[i])*self.MW_sustrato/self.rho
                 self.Nsus_train = self.Csus_model_train[i]*self.VR1
                 self.Nsus_ini = self.Csus_ini*self.VR1
                 self.x_train = (self.Nsus_ini - self.Nsus_train)/self.Nsus_ini
 
                 self.CH2O_train = self.Ch2o_ini - self.s_H2O*self.Csus_ini*self.x_train
 
-                self.ST_train = 1 - (self.CH2O_train*18)/self.rho
+                self.ST_train = (self.Csus_model_train[i]+self.Csus_fixed)*self.MW_sustrato/self.rho
 
                 self.NCH4_model_train = self.s_CH4*self.Nsus_ini*self.x_train
                 self.NCO2_model_train = self.s_CO2*self.Nsus_ini*self.x_train
@@ -489,8 +512,6 @@ class BiogasPlant:
                 
                 self.SV_trainv.append(self.SV_train)
                 self.ST_trainv.append(self.ST_train)
-
-
 
         self.TotalTime = self.TotalTime + self.tp
         time.sleep(self.tp)
