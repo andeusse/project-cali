@@ -136,11 +136,8 @@ const NavigationBar = (props: Props) => {
                   <MenuItem key={page.text} onClick={handleCloseNavMenu}>
                     <LinkButton
                       startIcon={page.icon}
-                      sx={{
-                        marginRight: 2,
-                        color: 'inherit',
-                      }}
                       to={`${page.to}`}
+                      variant="text"
                     >
                       {page.text}
                     </LinkButton>
@@ -167,7 +164,9 @@ const NavigationBar = (props: Props) => {
                 {userTheme === ThemeType.Dark && (
                   <LightModeIcon></LightModeIcon>
                 )}
-                {userTheme === ThemeType.Light && <DarkModeIcon></DarkModeIcon>}
+                {userTheme === ThemeType.Light && (
+                  <DarkModeIcon sx={{ color: 'white' }}></DarkModeIcon>
+                )}
               </IconButton>
             </Box>
           </Toolbar>

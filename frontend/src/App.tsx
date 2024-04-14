@@ -20,11 +20,36 @@ function App() {
     }
   }, [dispatch]);
 
-  const themeMode = createTheme({
-    palette: {
-      mode: userTheme,
-    },
-  });
+  const themeMode =
+    userTheme === 'light'
+      ? createTheme({
+          palette: {
+            mode: userTheme,
+            primary: {
+              main: '#002D71',
+            },
+            background: {
+              default: '#f0f4fa',
+            },
+            text: {
+              primary: '#002D71',
+            },
+          },
+          typography: {
+            fontFamily: `"Lucida Sans Unicode","Roboto","Helvetica","Arial",sans-serif`,
+            allVariants: {
+              color: '#002D71',
+            },
+          },
+        })
+      : createTheme({
+          palette: {
+            mode: userTheme,
+          },
+          typography: {
+            fontFamily: `"Lucida Sans Unicode","Roboto","Helvetica","Arial",sans-serif`,
+          },
+        });
 
   return (
     <ThemeProvider theme={themeMode}>

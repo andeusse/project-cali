@@ -12,7 +12,6 @@ const LinkButton: FunctionComponent<Props & ButtonProps> = (props) => {
 
 LinkButton.defaultProps = {
   variant: 'text',
-  color: 'primary',
   component: RouterLink,
 };
 
