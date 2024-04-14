@@ -245,17 +245,10 @@ const Solar = (props: Props) => {
                 solarWind.cadmiumTelluridePanel.isConnected) ||
                 solarWind.inputOperationMode === OperationModeType.Mode2) && (
                 <>
-                  <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                  <Grid item xs={12} md={6} xl={6}>
                     <h3>Inversor offgrid</h3>
                   </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={12}
-                    xl={12}
-                    alignContent={'center'}
-                    height={'72px'}
-                  >
+                  <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
                     <CustomToggle
                       name="offgridInverter.isConnected"
                       value={solarWind.offgridInverter.isConnected}
@@ -323,26 +316,25 @@ const Solar = (props: Props) => {
           </Grid>
         )}
         <Grid item xs={12} md={6} xl={3}>
-          <h3>Batería 1</h3>
-          <Battery
-            propertyName="battery1"
-            battery={solarWind.battery1}
-            handleChange={handleChange}
-          ></Battery>
+          <Grid container>
+            <Grid item xs={12} md={12} xl={12}>
+              <h3>Batería 1:</h3>
+            </Grid>
+            <Grid item xs={12} md={12} xl={12}>
+              <Battery
+                propertyName="battery1"
+                battery={solarWind.battery1}
+                handleChange={handleChange}
+              ></Battery>
+            </Grid>{' '}
+          </Grid>
         </Grid>
         <Grid item xs={12} md={6} xl={3}>
           <Grid container>
-            <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+            <Grid item xs={12} md={6} xl={6}>
               <h3>Batería 2:</h3>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              xl={6}
-              alignContent={'center'}
-              height={'72px'}
-            >
+            <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
               <CustomToggle
                 name="isBattery2"
                 value={solarWind.isBattery2}
