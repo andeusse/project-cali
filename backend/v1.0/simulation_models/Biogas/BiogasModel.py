@@ -48,79 +48,79 @@ class BiogasPlant:
         self.msg = self.InfluxDB.InfluxDBconnection()
 
         #Get total solids from real biogas plant interface (HMI)
-        self.queryST = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-ST", location=1, type=0, forecastTime=1) 
+        self.queryST = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-ST", location=1, type=1, forecastTime=1) 
         self.ST = self.InfluxDB.InfluxDBreader(self.queryST)
 
         #Get volatile solids from real biogas plant interface (HMI)
-        self.querySV = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-SV", location=1, type=0, forecastTime=1) 
+        self.querySV = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-SV", location=1, type=1, forecastTime=1) 
         self.SV = self.InfluxDB.InfluxDBreader(self.querySV)
 
         #Get Carbon concentration from real biogas plant interface (HMI)
-        self.queryCc = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cc", location=1, type=0, forecastTime=1) 
+        self.queryCc = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cc", location=1, type=1, forecastTime=1) 
         self.Cc = self.InfluxDB.InfluxDBreader(self.queryCc)
 
         #Get Hydrogen concentration from real biogas plant interface (HMI)
-        self.queryCh = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Ch", location=1, type=0, forecastTime=1)
+        self.queryCh = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Ch", location=1, type=1, forecastTime=1)
         self.Ch = self.InfluxDB.InfluxDBreader(self.queryCh)
 
         #Get Oxygen concentration from real biogas plant interface (HMI)
-        self.queryCo = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Co", location=1, type=0, forecastTime=1)
+        self.queryCo = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Co", location=1, type=1, forecastTime=1)
         self.Co = self.InfluxDB.InfluxDBreader(self.queryCo)
 
         #Get nitrogen concentration from real biogas plant interface (HMI)
-        self.queryCn = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cn", location=1, type=0, forecastTime=1)
+        self.queryCn = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cn", location=1, type=1, forecastTime=1)
         self.Cn = self.InfluxDB.InfluxDBreader(self.queryCn)
 
         #Get sulfide concentration from real biogas plant interface (HMI)
-        self.queryCs = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cs", location=1, type=0, forecastTime=1)
+        self.queryCs = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cs", location=1, type=1, forecastTime=1)
         self.Cs = self.InfluxDB.InfluxDBreader(self.queryCs)
 
         #Get density of substract from real biogas plant interface (HMI)
-        self.query_rho = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-d", location=1, type=0, forecastTime=1)
+        self.query_rho = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-d", location=1, type=1, forecastTime=1)
         self.rho = self.InfluxDB.InfluxDBreader(self.query_rho)
         
         #Get pump-104 flow from real biogas plant
-        self.query_SE104 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-104", location=1, type=0, forecastTime=1)
+        self.query_SE104 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-104", location=1, type=1, forecastTime=1)
         self.SE104v = self.InfluxDB.InfluxDBreader(self.query_SE104)
         
         #Get Temperature from TE101A from real biogas plant
-        self.query_TE101A = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-101A", location=1, type=0, forecastTime=1)
+        self.query_TE101A = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-101A", location=1, type=1, forecastTime=1)
         self.TE_101Av = self.InfluxDB.InfluxDBreader(self.query_TE101A)
         
         #Get Temperature from TE101B from real biogas plant
-        self.query_TE101B = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-101B", location=1, type=0, forecastTime=1)
+        self.query_TE101B = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-101B", location=1, type=1, forecastTime=1)
         self.TE_101Bv = self.InfluxDB.InfluxDBreader(self.query_TE101B)
         
         #Get pump-101 flow from real biogas plant
-        self.query_SE101 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-101", location=1, type=0, forecastTime=1)
+        self.query_SE101 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-101", location=1, type=1, forecastTime=1)
         self.SE101v = self.InfluxDB.InfluxDBreader(self.query_SE101)
         
         #get pump-102 flow from real biogas plant
-        self.query_SE102 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-102", location=1, type=0, forecastTime=1)
+        self.query_SE102 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-102", location=1, type=1, forecastTime=1)
         self.SE102v = self.InfluxDB.InfluxDBreader(self.query_SE102)
         
         #get methane concentration from real biogas plant
-        self.query_AT103A1 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A1", location=1, type=0, forecastTime=1)
+        self.query_AT103A1 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A1", location=1, type=1, forecastTime=1)
         self.AT103A1v = self.InfluxDB.InfluxDBreader(self.query_AT103A1)
         
         #get pressure from V-101 in real biogas plant
-        self.query_PT103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "PT-103", location=1, type=0, forecastTime=1)
+        self.query_PT103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "PT-103", location=1, type=1, forecastTime=1)
         self.PT103v = self.InfluxDB.InfluxDBreader(self.query_PT103)
         
         #get Temperature from V-101 in real biogas plant
-        self.query_TT103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TT-103", location=1, type=0, forecastTime=1)
+        self.query_TT103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TT-103", location=1, type=1, forecastTime=1)
         self.TT103v = self.InfluxDB.InfluxDBreader(self.query_TT103)
 
         #get valve V-101 state
-        self.query_SV103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-103", location=1, type=0, forecastTime=1)
+        self.query_SV103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-103", location=1, type=1, forecastTime=1)
         self.SV103v = self.InfluxDB.InfluxDBreader(self.query_SV103)
 
         #get valve V-102 state
-        self.query_SV108 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-108", location=1, type=0, forecastTime=1)
+        self.query_SV108 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-108", location=1, type=1, forecastTime=1)
         self.SV108v = self.InfluxDB.InfluxDBreader(self.query_SV108)
 
         #get valve V-107 state
-        self.query_SV109 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-109", location=1, type=0, forecastTime=1)
+        self.query_SV109 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-109", location=1, type=1, forecastTime=1)
         self.SV109v = self.InfluxDB.InfluxDBreader(self.query_SV109)
 
     def RxnParameters (self,  Online = 1, manual_sustrate=0, ST=10, SV=1, Cc=40.48, Ch=5.29, Co=29.66, Cn=1.37, Cs=0.211, rho = 1000): 
@@ -183,6 +183,8 @@ class BiogasPlant:
         self.Ch2o_ini = (self.rho*(1-self.ST))/18
 
     def DTOperationModel1 (self, manual_P104=0, manual_temp_R101=0,  TRH=30, FT_P104=5, TTO_P104=10, Temp_R101 = 35):
+        
+        #%%Obtención de las variables que no tienen sensores
         self.manual_P104 = manual_P104
         self.manual_temp_R101 = manual_temp_R101
 
@@ -217,7 +219,7 @@ class BiogasPlant:
             print("Caudal de la bomba"+ str(self.Q_P104))
                     
             #Get data from DT
-            self.query_SE104v = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "SE-104v", location=1, type=0, forecastTime=1) 
+            self.query_SE104v = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "SE-104v", location=1, type=1, forecastTime=1) 
             self.SE104v = self.InfluxDB.InfluxDBreader(self.query_SE104v)
             self.SE104v = self.SE104v["SE-104v"].tolist()
         
@@ -231,7 +233,7 @@ class BiogasPlant:
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
             self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][92], variable = self.database_df["Tag"][92], value = self.Temp_R101, timestamp = self.timestamp)
             
-            self.query_TE101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=0, forecastTime=1) 
+            self.query_TE101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=1, forecastTime=1) 
             self.TE_101v = self.InfluxDB.InfluxDBreader(self.query_TE101)
             self.TE_101v = self.TE_101v["TE-101v"].tolist()
         
@@ -247,7 +249,7 @@ class BiogasPlant:
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
             self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][92], variable = self.database_df["Tag"][92], value = Tf, timestamp = self.timestamp)
 
-            self.query_TE101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=1, forecastTime=1) 
+            self.query_TE101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=0, forecastTime=1) 
             self.TE_101v = self.InfluxDB.InfluxDBreader(self.query_TE101)
             self.TE_101v = self.TE_101v["TE-101v"]
 
@@ -275,11 +277,11 @@ class BiogasPlant:
 
         P_iniv = []
         if len(self.PT103v)>1:
-            if self.SV103v.iloc[-1] == 1 or self.PT103v.iloc[-1] < (self.PT103v.iloc[-2]-0.5):
+            if self.SV103v.iloc[-1] == 1 or self.PT103v.iloc[-1] < (self.PT103v.iloc[-2]-0.01):
                 P_iniv.append(self.PT103v.iloc[-1])
-                
-        if len(P_iniv)>0:
-            self.P_ini =self.Pacum + max(P_iniv)
+                self.P_ini =self.Pacum
+        #print(self.P_ini)
+        #print(self.Pacum)
         
         self.Pacum = self.PT103v.iloc[-1] + self.P_ini
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -319,25 +321,28 @@ class BiogasPlant:
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = self.ST_exp, timestamp = self.timestamp)
       
-        self.query_Msus_exp = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Msus_exp", location=1, type=0, forecastTime=1)
+        self.query_Msus_exp = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Msus_exp", location=1, type=1, forecastTime=1)
         self.Msus_expv = self.InfluxDB.InfluxDBreader(self.query_Msus_exp)
         self.Msus_expv = self.Msus_expv["Msus_exp"].tolist()
 
         self.Q_P104v = self.SE104v
 
-        self.query_molCH4 = self.InfluxDB.QueryCreator(device = "DTPlantaBiogas", variable = "M-molA_CH4", location=1, type=0, forecastTime=1)
+        self.query_molCH4 = self.InfluxDB.QueryCreator(device = "DTPlantaBiogas", variable = "M-molA_CH4", location=1, type=1, forecastTime=1)
         self.mol_CH4v = self.InfluxDB.InfluxDBreader(self.query_molCH4)
         self.mol_CH4v = self.mol_CH4v["M-molA_CH4"].tolist()
         
-        self.query_VN_biogas = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable="M-VGA", location=1, type=0, forecastTime=1)
+        self.query_VN_biogas = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable="M-VGA", location=1, type=1, forecastTime=1)
         self.VN_biogasv = self.InfluxDB.InfluxDBreader(self.query_VN_biogas)
         self.VN_biogasv = self.VN_biogasv["M-VGA"].tolist()
         
         self.points = int(round(2*(self.timetrain/self.tp),0))
-
+        print("Puntos para sustrato experimental "+str(len(self.Msus_expv)))
+        print("Puntos que debe tener para entrenarse "+str(self.points))
+        
+        #%% Optimización
         #Model train        
         if len(self.Msus_expv) >= self.points:
-
+            
             if len(self.Msus_expv) % 2 == 0:
                 self.Msus_exp_train = self.Msus_expv[0 : int(len(self.Msus_expv)/2)]
                 self.Csus_exp_train = [x / self.VR1 for x in self.Msus_exp_train]
@@ -458,6 +463,7 @@ class BiogasPlant:
                 self.Co = float(self.prediction[-1])
                 self.Csus_model_prediction.append(self.Co)
                 
+            #%%Puede ser otra función
             self.CH2O_trainv=[]
             self.NCH4_model_trainv=[]
             self.NCO2_model_trainv=[]
@@ -470,7 +476,7 @@ class BiogasPlant:
             self.VN_biogas_model_trainv=[]
             self.SV_trainv = []
             self.ST_trainv=[]
-            
+
             #Train Data Interface Visualization
             for i in range (len(self.t_train)):
                 self.SV_train = (self.Csus_model_train[i])*self.MW_sustrato/self.rho
@@ -487,14 +493,14 @@ class BiogasPlant:
                 self.NH3_model_train = self.s_NH3*self.Nsus_ini*self.x_train
                 self.NH2S_model_train = self.s_H2S*self.Nsus_ini*self.x_train
 
-                self.Nbiogas = self.NCH4_model_train + self.NCO2_model_train + self.NH3_model_train + self.NH2S_model_train
+                self.Nbiogas_train = self.NCH4_model_train + self.NCO2_model_train + self.NH3_model_train + self.NH2S_model_train
                     
-                self.x_CH4_model_train = self.NCH4_model_train/self.Nbiogas
-                self.x_CO2_model_train = self.NCO2_model_train/self.Nbiogas
-                self.x_NH3_model_train = self.NH3_model_train/self.Nbiogas
-                self.x_H2S_model_train = self.NH2S_model_train/self.Nbiogas
+                self.x_CH4_model_train = self.NCH4_model_train/self.Nbiogas_train
+                self.x_CO2_model_train = self.NCO2_model_train/self.Nbiogas_train
+                self.x_NH3_model_train = self.NH3_model_train/self.Nbiogas_train
+                self.x_H2S_model_train = self.NH2S_model_train/self.Nbiogas_train
 
-                self.VN_biogas_model_train = (self.Nbiogas*8.314*self.T_std)/self.P_std
+                self.VN_biogas_model_train = (self.Nbiogas_train*8.314*self.T_std)/self.P_std
 
                 self.CH2O_trainv.append(self.CH2O_train)
                 
@@ -512,6 +518,117 @@ class BiogasPlant:
                 
                 self.SV_trainv.append(self.SV_train)
                 self.ST_trainv.append(self.ST_train)
+            
+            #Validation data Interface visualization
+            self.CH2O_valv=[]
+            self.NCH4_model_valv=[]
+            self.NCO2_model_valv=[]
+            self.NH2S_model_valv=[]
+            self.NH3_model_valv=[]
+            self.xCH4_model_valv=[]
+            self.xCO2_model_valv=[]
+            self.xH2S_model_valv=[]
+            self.xNH3_model_valv=[]
+            self.VN_biogas_model_valv=[]
+            self.SV_valv = []
+            self.ST_valv=[]
+
+            for i in range (len(self.t_val)):
+                self.SV_val = (self.Validationv[i])*self.MW_sustrato/self.rho
+                self.Nsus_val = self.Validationv[i]*self.VR1
+                self.Nsus_ini = self.Csus_ini*self.VR1
+                self.x_val = (self.Nsus_ini - self.Nsus_val)/self.Nsus_ini
+
+                self.CH2O_val = self.Ch2o_ini - self.s_H2O*self.Csus_ini*self.x_val
+
+                self.ST_val = (self.Validationv[i]+self.Csus_fixed)*self.MW_sustrato/self.rho
+
+                self.NCH4_model_val = self.s_CH4*self.Nsus_ini*self.x_val
+                self.NCO2_model_val = self.s_CO2*self.Nsus_ini*self.x_val
+                self.NH3_model_val = self.s_NH3*self.Nsus_ini*self.x_val
+                self.NH2S_model_val = self.s_H2S*self.Nsus_ini*self.x_val
+
+                self.Nbiogas_val = self.NCH4_model_val + self.NCO2_model_val + self.NH3_model_val + self.NH2S_model_val
+                    
+                self.x_CH4_model_val = self.NCH4_model_val/self.Nbiogas_val
+                self.x_CO2_model_val = self.NCO2_model_val/self.Nbiogas_val
+                self.x_NH3_model_val = self.NH3_model_train/self.Nbiogas_val
+                self.x_H2S_model_val = self.NH2S_model_train/self.Nbiogas_val
+
+                self.VN_biogas_model_val = (self.Nbiogas_val*8.314*self.T_std)/self.P_std
+
+                
+                self.NCH4_model_valv.append(self.NCH4_model_val)
+                self.NCO2_model_valv.append(self.NCO2_model_val)
+                self.NH2S_model_valv.append(self.NH2S_model_val)
+                self.NH3_model_valv.append(self.NH3_model_val)
+                
+                self.VN_biogas_model_valv.append(self.VN_biogas_model_val)
+                
+                self.xCH4_model_valv.append(self.x_CH4_model_val)
+                self.xCO2_model_valv.append(self.x_CO2_model_val)
+                self.xH2S_model_valv.append(self.x_H2S_model_val)
+                self.xNH3_model_valv.append(self.x_NH3_model_val)
+                
+                self.SV_valv.append(self.SV_val)
+                self.ST_trainv.append(self.ST_train)
+            
+            #Prediction data Interface visualization
+            self.CH2O_predv=[]
+            self.NCH4_model_predv=[]
+            self.NCO2_model_predv=[]
+            self.NH2S_model_predv=[]
+            self.NH3_model_predv=[]
+            self.xCH4_model_predv=[]
+            self.xCO2_model_predv=[]
+            self.xH2S_model_predv=[]
+            self.xNH3_model_predv=[]
+            self.VN_biogas_model_predv=[]
+            self.SV_predv = []
+            self.ST_predv=[]
+
+            for i in range (len(self.t_prediction)):
+                self.SV_pred = (self.Csus_model_prediction[i])*self.MW_sustrato/self.rho
+                self.Nsus_pred = self.Csus_model_prediction[i]*self.VR1
+                self.Nsus_ini = self.Csus_ini*self.VR1
+                self.x_pred = (self.Nsus_ini - self.Nsus_pred)/self.Nsus_ini
+
+                self.CH2O_pred = self.Ch2o_ini - self.s_H2O*self.Csus_ini*self.x_pred
+
+                self.ST_pred = (self.Csus_model_prediction[i]+self.Csus_fixed)*self.MW_sustrato/self.rho
+
+                self.NCH4_model_pred = self.s_CH4*self.Nsus_ini*self.x_pred
+                self.NCO2_model_pred = self.s_CO2*self.Nsus_ini*self.x_pred
+                self.NH3_model_pred = self.s_NH3*self.Nsus_ini*self.x_pred
+                self.NH2S_model_pred = self.s_H2S*self.Nsus_ini*self.x_pred
+
+                self.Nbiogas_pred = self.NCH4_model_pred + self.NCO2_model_pred + self.NH3_model_pred + self.NH2S_model_pred
+                    
+                self.x_CH4_model_pred = self.NCH4_model_pred/self.Nbiogas_pred
+                self.x_CO2_model_pred = self.NCO2_model_pred/self.Nbiogas_pred
+                self.x_NH3_model_pred = self.NH3_model_train/self.Nbiogas_pred
+                self.x_H2S_model_pred = self.NH2S_model_train/self.Nbiogas_pred
+
+                self.VN_biogas_model_pred = (self.Nbiogas_pred*8.314*self.T_std)/self.P_std
+
+                
+                self.NCH4_model_predv.append(self.NCH4_model_pred)
+                self.NCO2_model_predv.append(self.NCO2_model_pred)
+                self.NH2S_model_predv.append(self.NH2S_model_pred)
+                self.NH3_model_predv.append(self.NH3_model_pred)
+                
+                self.VN_biogas_model_predv.append(self.VN_biogas_model_pred)
+                
+                self.xCH4_model_predv.append(self.x_CH4_model_pred)
+                self.xCO2_model_predv.append(self.x_CO2_model_pred)
+                self.xH2S_model_predv.append(self.x_H2S_model_pred)
+                self.xNH3_model_predv.append(self.x_NH3_model_pred)
+                
+                self.SV_predv.append(self.SV_pred)
+                self.ST_predv.append(self.ST_pred)
+
+
+
 
         self.TotalTime = self.TotalTime + self.tp
         time.sleep(self.tp)
