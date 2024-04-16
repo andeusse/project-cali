@@ -16,14 +16,15 @@ class Turbine(Resource):
       excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
       database_dic = excelReader.data
       database_df = database_dic['ConexionDB']
-      testValues_df = database_dic['InfluxDBVariables']
+      variables_df = database_dic['InfluxDBVariables']
+      variables_df = variables_df.drop(variables_df[variables_df['Device'] != 'Módulo de turbinas'].index)
       values_df = pd.DataFrame(columns=["Tag", "Value"])
-      values_df["Tag"] = testValues_df["Tag"]
+      values_df["Tag"] = variables_df["Tag"]
       values_df.set_index('Tag', inplace=True)
 
       influxDB_Connection = InfluxDbConnection()
       # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
-      db = 1
+      db = 0
       influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
       influxDB = influxDB_Connection.data
 
@@ -31,13 +32,12 @@ class Turbine(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
-      for index in testValues_df.index:
-          query = influxDB.QueryCreator(device= testValues_df["Device"][index], variable= testValues_df["Tag"][index], location= '', type= 0, forecastTime= 0)
-          values_df.loc[testValues_df["Tag"][index], "Value"] = influxDB.InfluxDBreader(query)[testValues_df["Tag"][index]][0]
+      for index in variables_df.index:
+          query = influxDB.QueryCreator(device= variables_df["Device"][index], variable= variables_df["Tag"][index], location= '', type= 0, forecastTime= 0)
+          values_df.loc[variables_df["Tag"][index], "Value"] = influxDB.InfluxDBreader(query)[variables_df["Tag"][index]][0]
       influxDB.InfluxDBclose()
 
       timeFinish = time.time()
-      # print((timeFinish-timeStart)*1000)
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
@@ -63,8 +63,6 @@ class Turbine(Resource):
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
     controllerEfficiency = data["controller"]["efficiency"]["value"]
-
-    print(batteryStateOfCharge, controllerChargeVoltageBulk,controllerChargeVoltageFloat)
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = 1.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
