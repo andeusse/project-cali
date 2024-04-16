@@ -99,9 +99,29 @@ class BiogasPlant:
         self.query_SE102 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-102", location=1, type=1, forecastTime=1)
         self.SE102v = self.InfluxDB.InfluxDBreader(self.query_SE102)
         
-        #get methane concentration from real biogas plant
+        #get methane concentration from real biogas plant reactor 1
         self.query_AT103A1 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A1", location=1, type=1, forecastTime=1)
         self.AT103A1v = self.InfluxDB.InfluxDBreader(self.query_AT103A1)
+
+        #Get Carbon dioxide Concentration from real biogas plant reactor 1    
+        self.query_AT103A2 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A2", location=1, type=1, forecastTime=1)
+        self.AT103A2v = self.InfluxDB.InfluxDBreader(self.query_AT103A2)
+
+        #Get hydrogen sulphide Concentration from real biogas plant reactor 1
+        self.query_AT103A3 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A3", location=1, type=1, forecastTime=1)
+        self.AT103A3v = self.InfluxDB.InfluxDBreader(self.query_AT103A3)
+
+        #Get Oxygen Concentration from real biogas plant reactor 1
+        self.query_AT103A4 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A4", location=1, type=1, forecastTime=1)
+        self.AT103A4v = self.InfluxDB.InfluxDBreader(self.query_AT103A4)
+
+        #Get Hydrogen H2 concentration from real biogas plant reactor 1
+        self.query_AT103A5 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103A5", location=1, type=1, forecastTime=1)
+        self.AT103A5v = self.InfluxDB.InfluxDBreader(self.query_AT103A5)
+
+        #Get Biogas relative Humidity from rela biogas plant reactor 1
+        self.query_AT103B = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-103B", location=1, type=1, forecastTime=1)
+        self.AT103Bv = self.InfluxDB.InfluxDBreader(self.query_AT103B)
         
         #get pressure from V-101 in real biogas plant
         self.query_PT103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "PT-103", location=1, type=1, forecastTime=1)
@@ -110,6 +130,38 @@ class BiogasPlant:
         #get Temperature from V-101 in real biogas plant
         self.query_TT103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TT-103", location=1, type=1, forecastTime=1)
         self.TT103v = self.InfluxDB.InfluxDBreader(self.query_TT103)
+
+        #get methane concentration from real biogas plant V-102
+        self.query_AT104A1 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-104A1", location=1, type=1, forecastTime=1)
+        self.AT104A1v = self.InfluxDB.InfluxDBreader(self.query_AT104A1)
+
+        #Get Carbon dioxide Concentration from real biogas plant V-102   
+        self.query_AT104A2 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-104A2", location=1, type=1, forecastTime=1)
+        self.AT104A2v = self.InfluxDB.InfluxDBreader(self.query_AT104A2)
+
+        #Get hydrogen sulphide Concentration from real biogas plant V-102
+        self.query_AT104A3 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-104A3", location=1, type=1, forecastTime=1)
+        self.AT104A3v = self.InfluxDB.InfluxDBreader(self.query_AT104A3)
+
+        #Get Oxygen Concentration from real biogas plant V-102
+        self.query_AT104A4 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-104A4", location=1, type=1, forecastTime=1)
+        self.AT104A4v = self.InfluxDB.InfluxDBreader(self.query_AT104A4)
+
+        #Get Hydrogen H2 concentration from real biogas plant V-102
+        self.query_AT104A5 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-104A5", location=1, type=1, forecastTime=1)
+        self.AT104A5v = self.InfluxDB.InfluxDBreader(self.query_AT104A5)
+
+        #Get Biogas relative Humidity from rela biogas plant V-102
+        self.query_AT104B = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "AT-104B", location=1, type=1, forecastTime=1)
+        self.AT104Bv = self.InfluxDB.InfluxDBreader(self.query_AT104B)
+
+        #Get Pressure from V-102 in real biogas plant
+        self.query_PT104 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "PT-104", location=1, type=1, forecastTime=1)
+        self.PT104v = self.InfluxDB.InfluxDBreader(self.query_PT104)
+
+        #Get Temperature from V-102 in real biogas plant
+        self.query_TT104 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TT-104", location=1, type=1, forecastTime=1)
+        self.TT104v = self.InfluxDB.InfluxDBreader(self.query_TT104)
 
         #get valve V-101 state
         self.query_SV103 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SV-103", location=1, type=1, forecastTime=1)
