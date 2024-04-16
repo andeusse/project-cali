@@ -6,7 +6,6 @@ import { errorResp, resp } from '../types/api';
 import { GraphType } from '../types/graph';
 import { data2Graph } from '../utils/data2Graph';
 import { CommonDigitalTwinsParameter } from '../types/models/common';
-import Config from '../config/config';
 
 export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   url: string,
@@ -15,6 +14,8 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   const [data, setData] = useState<G | undefined>();
 
   const [historicData, setHistoricData] = useState<any>({});
+
+  const [lastTime, setLastTime] = useState<moment.Moment | null>();
 
   const [graphs, setGraphs] = useState<GraphType[]>();
 
@@ -40,18 +41,16 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
             setHistoricData((oldState: any) => {
               if (oldState['time'] === undefined) {
                 const newDate = moment();
+                setLastTime(newDate);
                 oldState['time'] = [newDate.format('LTS')];
-                oldState['timeMoment'] = [newDate];
               } else {
-                const newDate = moment(
-                  oldState['timeMoment'][oldState['timeMoment'].length - 1]
-                ).add(
+                const newDate = moment(lastTime).add(
                   model.timeMultiplier.value *
-                    Math.floor(Config.QUERY_TIME / 1000),
+                    Math.floor(model.queryTime / 1000),
                   's'
                 );
+                setLastTime(newDate);
                 oldState['time'].push(newDate.format('LTS'));
-                oldState['timeMoment'] = [newDate];
               }
               return oldState;
             });
@@ -67,14 +66,18 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         );
       })
       .finally(() => {});
-  }, [historicData, isPlaying, model, url]);
+  }, [historicData, isPlaying, model, url, lastTime]);
+
+  useEffect(() => {
+    setLastTime(moment());
+  }, [isPlaying]);
 
   useEffect(() => {
     const interval: NodeJS.Timer = setInterval(() => {
       if (isPlaying) {
         queryApi();
       }
-    }, Config.QUERY_TIME);
+    }, model.queryTime);
     return () => {
       clearInterval(interval);
     };

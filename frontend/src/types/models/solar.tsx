@@ -1,3 +1,4 @@
+import Config from '../../config/config';
 import { CommonGraphType } from '../graph';
 import {
   Battery,
@@ -549,7 +550,7 @@ const OFFGRID_INVERTER: Inverter = {
 };
 
 const HYBRID_INVERTER: Inverter = {
-  isConnected: true,
+  isConnected: false,
   isConnectedDisabled: false,
   efficiency: {
     disabled: true,
@@ -575,6 +576,8 @@ export type SolarWindOutputHistoric = CommonGraphType & {};
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
+  lockParameters: false,
+  queryTime: Config.QUERY_TIME_OFFLINE,
   timeMultiplier: {
     disabled: false,
     value: 1,

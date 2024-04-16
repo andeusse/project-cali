@@ -1,3 +1,4 @@
+import Config from '../../config/config';
 import { BiogasParameters, OperationModeType } from '../../types/models/biogas';
 import { getKeyByValue } from '../getKeyByValue';
 
@@ -9,12 +10,20 @@ export const setBiogas = (
 
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE
+      : Config.QUERY_TIME_ONLINE;
     newState.inputSubstrateConditions = newState.inputOfflineOperation;
 
     (newState as BiogasParameters) = setSubstrateConditions(
       newState,
       !newState.inputOfflineOperation
     );
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
   }
 
   if (e.target.name === 'inputDigitalTwin') {

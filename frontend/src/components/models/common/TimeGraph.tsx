@@ -52,7 +52,7 @@ const TimeGraph = (props: Props) => {
   const options: ChartOptions<'line'> = {
     responsive: true,
     animation: {
-      duration: 200,
+      duration: 0,
     },
     scales: {
       y: {

@@ -1,3 +1,4 @@
+import Config from '../../config/config';
 import { CommonGraphType } from '../graph';
 import {
   CommonDigitalTwinsParameter,
@@ -65,6 +66,8 @@ export type BiogasOutputHistoric = CommonGraphType & {};
 
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
+  lockParameters: false,
+  queryTime: Config.QUERY_TIME_OFFLINE,
   timeMultiplier: {
     disabled: false,
     value: 1,

@@ -4,6 +4,7 @@ import {
 } from '../../types/models/solar';
 import { setFormObjectValue } from '../setFormObjectValue';
 import { getKeyByValue } from '../getKeyByValue';
+import Config from '../../config/config';
 
 export const setSolar = (
   e: any,
@@ -22,6 +23,9 @@ export const setSolar = (
   }
   if (name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE
+      : Config.QUERY_TIME_ONLINE;
     newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
     newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
     newState.temperature.disabled = !newState.inputOfflineOperation;
@@ -31,6 +35,11 @@ export const setSolar = (
     newState.alternCurrentLoadPowerFactor.disabled =
       !newState.inputOfflineOperation;
     newState.directCurrentLoadPower.disabled = !newState.inputOfflineOperation;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
   }
   if (name === 'inputOperationMode') {
     const operationMode = getKeyByValue(OperationModeType, e.target.value);
@@ -48,7 +57,7 @@ export const setSolar = (
         newState.cadmiumTelluridePanel.isConnectedDisabled = false;
 
         newState.isBattery2 = false;
-
+        newState.offgridInverter.isConnectedDisabled = false;
         newState.hybridInverter.isConnected = false;
         break;
       case OperationModeType.Mode2:

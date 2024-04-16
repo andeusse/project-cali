@@ -1,3 +1,4 @@
+import Config from '../../config/config';
 import {
   PELTON_TURBINE_CONST,
   TURGO_TURBINE_CONST,
@@ -35,14 +36,19 @@ export const setTurbine = (
   }
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE
+      : Config.QUERY_TIME_ONLINE;
     newState.inputPressure.disabled = !newState.inputOfflineOperation;
     newState.inputFlow.disabled = !newState.inputOfflineOperation;
     newState.inputActivePower.disabled = !newState.inputOfflineOperation;
     newState.inputPowerFactor.disabled = !newState.inputOfflineOperation;
+
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
     }
+    console.log(newState.queryTime);
   }
   return newState;
 };

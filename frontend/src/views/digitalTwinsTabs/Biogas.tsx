@@ -58,9 +58,11 @@ const Biogas = (props: Props) => {
           {error}
         </Alert>
       )}
-      <Box display="flex" justifyContent="center" alignItems="center">
-        <h2>Parámetros del sistema</h2>
-      </Box>
+      <Grid item xs={12} md={12} xl={12}>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <h2>Parámetros del sistema</h2>
+        </Box>
+      </Grid>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <FormControl fullWidth>

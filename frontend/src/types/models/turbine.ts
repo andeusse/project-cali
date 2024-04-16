@@ -1,3 +1,4 @@
+import Config from '../../config/config';
 import { CommonGraphType } from '../graph';
 import {
   Battery,
@@ -217,6 +218,8 @@ const BATTERY: Battery = {
 
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
+  lockParameters: false,
+  queryTime: Config.QUERY_TIME_OFFLINE,
   timeMultiplier: {
     disabled: false,
     value: 1,
@@ -527,9 +530,9 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
 export const PELTON_TURBINE: InputType[] = [
   {
     disabled: true,
-    value: 0.623,
+    value: 623,
     tooltip: 'Potencia nominal de la turbina',
-    unit: 'kW',
+    unit: 'W',
     variableString: 'P',
     variableSubString: 'tn',
   },
@@ -578,9 +581,9 @@ export const PELTON_TURBINE: InputType[] = [
 export const TURGO_TURBINE: InputType[] = [
   {
     disabled: true,
-    value: 1.042,
+    value: 1042,
     tooltip: 'Potencia nominal de la turbina',
-    unit: 'kW',
+    unit: 'W',
     variableString: 'P',
     variableSubString: 'tn',
   },

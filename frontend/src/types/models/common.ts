@@ -28,6 +28,8 @@ export type CommonSystemParameter = {
 export type CommonDigitalTwinsParameter = {
   inputOfflineOperation: boolean;
   timeMultiplier: InputType;
+  lockParameters: boolean;
+  queryTime: number;
 };
 
 export type IsConnected = {

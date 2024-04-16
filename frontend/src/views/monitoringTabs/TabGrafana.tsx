@@ -9,7 +9,7 @@ type Props = {};
 const TabGrafana = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Turbinas',
+      title: 'Tablero Eléctrico',
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[0]}
@@ -17,7 +17,7 @@ const TabGrafana = (props: Props) => {
       ),
     },
     {
-      title: 'Solar - Eólico',
+      title: 'Turbinas',
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[1]}
@@ -25,7 +25,7 @@ const TabGrafana = (props: Props) => {
       ),
     },
     {
-      title: 'Celda de Hidrógeno',
+      title: 'Solar - Eólico',
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[2]}
@@ -33,7 +33,7 @@ const TabGrafana = (props: Props) => {
       ),
     },
     {
-      title: 'Planta de Biogás',
+      title: 'Celda de Hidrógeno',
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[3]}
@@ -41,10 +41,18 @@ const TabGrafana = (props: Props) => {
       ),
     },
     {
-      title: 'Torre de refrigeración',
+      title: 'Planta de Biogás',
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[4]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Torre de refrigeración',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[5]}
         ></IframeFull>
       ),
     },
