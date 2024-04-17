@@ -208,6 +208,21 @@ class ThermoProperties:
             self.xO2*self.vO2 + self.xH2O*self.vH2O + self.xH2S*self.vH2S + self.xH2*self.vH2  # [m^3/kmol]
 
         return self.Hbiogasmolar, self.Hbiogasmas, self.Volumenespbio
+    
+    def BiogasAbsoluteHumidity (self, RH, T):
+         #Antoine Equation for saturation pressure estimation
+         self.RH = RH
+         self.T = T
+
+         A = 8.140191
+         B = 1810.94
+         C = 244.485
+
+         self.P_sat = 10**(A - B/(self.T + C))
+
+         self.AH = (self.RH * self.P_sat)/(461.5 * self.T * 100)
+
+         return self.AH
         
         
     
