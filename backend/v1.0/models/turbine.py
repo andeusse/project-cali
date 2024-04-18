@@ -2,7 +2,6 @@ from flask import request
 from flask_restful import Resource
 from simulation_models import TwinHydro
 import pandas as pd
-import time
 from utils import ExcelReader
 from utils import InfluxDbConnection
 
@@ -11,7 +10,6 @@ class Turbine(Resource):
     data = request.get_json()
 
     if not data["inputOfflineOperation"]:
-      timeStart = time.time()
       excelReader = ExcelReader()
       excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
       database_dic = excelReader.data
@@ -36,8 +34,6 @@ class Turbine(Resource):
           query = influxDB.QueryCreator(device= variables_df["Device"][index], variable= variables_df["Tag"][index], location= '', type= 0, forecastTime= 0)
           values_df.loc[variables_df["Tag"][index], "Value"] = influxDB.InfluxDBreader(query)[variables_df["Tag"][index]][0]
       influxDB.InfluxDBclose()
-
-      timeFinish = time.time()
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
@@ -65,7 +61,7 @@ class Turbine(Resource):
     controllerEfficiency = data["controller"]["efficiency"]["value"]
 
     timeMultiplier = data["timeMultiplier"]["value"]
-    delta_t = 1.0 # Delta de tiempo de la simulación en s -> se define un valor por defecto
+    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     inverterEfficiency = data["inverterEfficiency"]["value"]
 
@@ -104,7 +100,8 @@ class Turbine(Resource):
       twinHydro.optimal_n_controller(controllerEfficiency, P_h, inputDirectCurrentPower, P_CC_meas)
 
     results = twinHydro.twinOutput(inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
-                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, delta_t*timeMultiplier, V_t, V_CA)
+                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
+                                     delta_t*timeMultiplier, V_t, V_CA)
 
     turbine["turbinePower"] = P_h
 
