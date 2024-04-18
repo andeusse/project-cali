@@ -360,8 +360,8 @@ const Solar = (props: Props) => {
                     name="isBattery2"
                     value={solarWind.isBattery2}
                     handleChange={handleChange}
-                    trueString="On"
-                    falseString="Off"
+                    trueString="Conectado"
+                    falseString="Desconectado"
                     disabled={
                       (solarWind.inputOperationMode ===
                         OperationModeType.Mode1 &&
@@ -430,7 +430,7 @@ const Solar = (props: Props) => {
                     </Grid>
                   )}
                   {solarWind.inputOperationMode !== OperationModeType.Mode4 && (
-                    <Grid item xs={12} md={12} xl={12}>
+                    <Grid item xs={7} md={7} xl={7}>
                       <CustomNumberField
                         variable={solarWind.temperature}
                         name="temperature"
@@ -450,7 +450,7 @@ const Solar = (props: Props) => {
                         disabled={solarWind.inputOfflineOperation}
                       ></ToggleCustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
+                    <Grid item xs={7} md={7} xl={7}>
                       <CustomNumberField
                         variable={solarWind.windDensity}
                         name="windDensity"

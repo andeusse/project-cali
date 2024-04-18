@@ -11,8 +11,8 @@ export const setBiogas = (
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Config.QUERY_TIME_OFFLINE_BIOGAS
+      : Config.QUERY_TIME_ONLINE_BIOGAS;
     newState.inputSubstrateConditions = newState.inputOfflineOperation;
 
     (newState as BiogasParameters) = setSubstrateConditions(

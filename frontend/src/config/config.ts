@@ -6,6 +6,9 @@ export default class Config {
   public static QUERY_TIME_OFFLINE: number = 1000;
   public static QUERY_TIME_ONLINE: number = 3000;
 
+  public static QUERY_TIME_OFFLINE_BIOGAS: number = 30000;
+  public static QUERY_TIME_ONLINE_BIOGAS: number = 30000;
+
   public params: ConfigType;
 
   private constructor() {

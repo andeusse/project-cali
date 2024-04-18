@@ -37,9 +37,9 @@ export type SolarWindParameters = CommonSystemParameter &
     flexPanel: SolarPanel;
     cadmiumTelluridePanel: SolarPanel;
     windTurbine: WindTurbine;
-    battery1: IsConnected & Battery;
+    battery1: Battery;
     isBattery2: boolean;
-    battery2: IsConnected & Battery;
+    battery2: Battery;
     controller: IsConnected & CommonController;
     offgridInverter: Inverter;
     hybridInverter: Inverter;
@@ -426,9 +426,7 @@ const WIND_TURBINE: WindTurbine = {
   },
 };
 
-const BATTERY: IsConnected & Battery = {
-  isConnected: true,
-  isConnectedDisabled: false,
+const BATTERY: Battery = {
   stateOfCharge: {
     disabled: false,
     value: 50,
