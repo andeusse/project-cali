@@ -1,11 +1,14 @@
 from flask import request
 from flask_restful import Resource
+from simulation_models.Biogas import BiogasModel
+import pandas as pd
 
 class Biogas(Resource):
   def post(self):
     data = request.get_json()
     
     biogas_input = {}
+    biogas_output = {}
 
     biogas_input["name"] = data["name"]
     biogas_input["anaerobicReactorVolume1"]=data["anaerobicReactorVolume1"]["value"]
@@ -46,6 +49,18 @@ class Biogas(Resource):
     biogas_input["inputTemperature101"]=data["inputTemperature101"]["value"]
     biogas_input["inputTemperature102"]=data["inputTemperature102"]["value"]
 
+    if biogas_input["inputOperationMode"] == 1:
+      pass
+    elif biogas_input["inputOperationMode"] == 2:
+      pass
+    elif biogas_input["inputOperationMode"] == 3:
+      pass
+    elif biogas_input["inputOperationMode"] == 4:
+      pass
+    else:
+      pass
+    
     print(biogas_input)
+    print(biogas_output)
 
     return {}, 200
