@@ -37,12 +37,6 @@ class Solar(Resource):
       influxDB.InfluxDBclose()
 
     name = data["name"]
-    if data["inputOperationMode"] == 'Mode3' or data["inputOperationMode"] == 'Mode5':
-      isParallel = True
-    else:
-      isParallel = False
-    
-    batteries = int(data["battery1"]["isConnected"]) + int(data["battery2"]["isConnected"])
 
     monoModuleState = data["monocrystallinePanel"]["isConnected"]
     polyModuleState = data["policrystallinePanel"]["isConnected"]
@@ -53,12 +47,18 @@ class Solar(Resource):
     else:
       turbineState = False
 
+    batteries = int(data["battery1"]["isConnected"]) + int(data["battery2"]["isConnected"])
+    if data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
+      isParallel = False
+    else:
+      isParallel = True
+
     controllerEfficiency = data["controller"]["efficiency"]["value"]
     inverterEfficiency = data["offgridInverter"]["efficiency"]["value"]
     hybridEfficiency = data["hybridInverter"]["efficiency"]["value"]
 
     inverterState = data["offgridInverter"]["isConnected"]
-    hybridstate = data["hybridInverter"]["isConnected"]
+    hybridState = data["hybridInverter"]["isConnected"]
     gridState = data["externalGridState"]
     chargeCycle = data["chargeCycle"]
 
@@ -68,33 +68,52 @@ class Solar(Resource):
     windSpeed = (data["windSpeed"]["value"] if not data["windSpeed"]["disabled"] else round(values_df["Value"][''],2))
     windDensity = data["windDensity"]["value"]
 
-    if inverterState or hybridstate:
+    if inverterState or hybridState:
       inputActivePower = data["alternCurrentLoadPower"]["value"] if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"][''],2)
       inputPowerFactor = data["alternCurrentLoadPowerFactor"]["value"] if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"][''],2)
     else:
       inputActivePower = 0.0
       inputPowerFactor = 1.0
 
-    if hybridstate:
+    if data["inputOperationMode"] == 'Mode2' and hybridState:
       inputDirectCurrentPower = 0.0
     else:
       inputDirectCurrentPower = data["directCurrentLoadPower"]["value"] if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"][''],2)
     
-    # batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
-    # simulatedDirectCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
-    # simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
+    if inverterState:
+      simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else inverterState
 
-    # controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
-    # controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
-    # controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
-    # controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
-    # controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
-    # controllerEfficiency = data["controller"]["efficiency"]["value"]
+    simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
+    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
+    directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
+    
 
-    # timeMultiplier = data["timeMultiplier"]["value"]
-    # delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
+    controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
+    controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
+    controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
 
-    # twinPVWF = TwinPVWF(name)
+
+    timeMultiplier = data["timeMultiplier"]["value"]
+    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
+
+    twinPVWF = TwinPVWF(name)
+
+    twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+    # system.optimal_f_PV(P_PV_meas)
+    
+    twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
+    # system.optimal_n_WT(P_WT_meas)
+    
+    twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+    twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
+    
+    twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries)
+
+    # if data["inputOperationMode"] == 'Mode2' and hybridState:
+    #   twinPVWF.ongridTwinOutput(gridState, inputActivePower, inputPowerFactor, T_bat, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedChargeCycle, V_PV, V_grid, V_CA, delta_t*timeMultiplier)
+    # else:
+    #   twinPVWF.offgridTwinOutput(inverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, T_bat, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, V_PV, V_WT, V_CDload, V_CA, delta_t*timeMultiplier)
+    
 
     # turbine = {}
 
