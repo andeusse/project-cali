@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import {
   SOLAR_WIND,
-  SOLAR_DIAGRAM_VARIABLES,
+  SOLAR_WIND_DIAGRAM_VARIABLES,
   SolarWindParameters,
   OperationModeType,
   OperationModeText,
@@ -542,7 +542,7 @@ const Solar = (props: Props) => {
               <Diagram<{}>
                 diagram={solarDiagram}
                 data={data}
-                variables={SOLAR_DIAGRAM_VARIABLES}
+                variables={SOLAR_WIND_DIAGRAM_VARIABLES}
                 width={800}
                 height={400}
               ></Diagram>
@@ -556,7 +556,7 @@ const Solar = (props: Props) => {
                 timeMultiplier={solarWind.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
-                variables={SOLAR_DIAGRAM_VARIABLES}
+                variables={SOLAR_WIND_DIAGRAM_VARIABLES}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
               ></TimeGraphs>
