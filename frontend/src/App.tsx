@@ -41,6 +41,17 @@ function App() {
               color: '#002D71',
             },
           },
+          components: {
+            MuiAccordion: {
+              styleOverrides: {
+                root: () => ({
+                  backgroundColor: '#f0f4fa',
+                  boxShadow:
+                    '0px 5px 5px 0px rgba(0,45,113,0.2), 0px 2px 2px 0px rgba(0,45,113,0.15), 0px 1px 5px 0px rgba(0,45,113,0.15)',
+                }),
+              },
+            },
+          },
         })
       : createTheme({
           palette: {
