@@ -8,7 +8,7 @@ from utils import InfluxDbConnection
 class Solar(Resource):
   def post(self):
     data = request.get_json()
-    solar = {}
+    solarWind = {}
     
     if not data["inputOfflineOperation"]:
       excelReader = ExcelReader()
@@ -16,7 +16,7 @@ class Solar(Resource):
       database_dic = excelReader.data
       database_df = database_dic['ConexionDB']
       variables_df = database_dic['InfluxDBVariables']
-      variables_df = variables_df.drop(variables_df[variables_df['Device'] != 'Módulo solar eólico'].index)
+      variables_df = variables_df.drop(variables_df[variables_df['Device'] != 'Módulo solar-eólico'].index)
       values_df = pd.DataFrame(columns=["Tag", "Value"])
       values_df["Tag"] = variables_df["Tag"]
       values_df.set_index('Tag', inplace=True)
@@ -82,74 +82,86 @@ class Solar(Resource):
     
     if inverterState:
       simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else inverterState
+    else:
+      simulatedInverterState = False
 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
     directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
-    
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
     controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
-
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     twinPVWF = TwinPVWF(name)
 
+    if not data["inputOfflineOperation"]:
+      batteryTemperature = round(values_df["Value"][''],2)
+      simulatedInverterState = bool(int(values_df["Value"]['']))
+      measuredPV_Power = round(values_df["Value"][''],2)
+      measuredWT_Power = round(values_df["Value"][''],2)
+      measuredControllerDC_Power = round(values_df["Value"][''],2)
+      PV_Voltage = round(values_df["Value"][''],2)
+      gridVoltage = round(values_df["Value"][''],2)
+      WT_Voltage = round(values_df["Value"][''],2)
+      directCurrentVoltage = round(values_df["Value"][''],2)
+      inverterVoltage = round(values_df["Value"][''],2)
+      directCurrentLoadVoltage = round(values_df["Value"][''],2)
+      hybridInverterVoltage = round(values_df["Value"][''],2)
+
+      solarWind["batteryTemperature"] = batteryTemperature
+      if data["solarRadiation1"]["disabled"]: solarWind["solarRadiation1"] = solarRadiation1
+      if data["solarRadiation2"]["disabled"]: solarWind["solarRadiation2"] = solarRadiation2
+      if data["windSpeed"]["disabled"]: solarWind["windSpeed"] = windSpeed
+      if data["alternCurrentLoadPower"]["disabled"]: solarWind["alternCurrentLoadPower"] = inputActivePower
+      if data["alternCurrentLoadPowerFactor"]["disabled"]: solarWind["alternCurrentLoadPowerFactor"] = inputPowerFactor
+      if data["directCurrentLoadPower"]["disabled"]: solarWind["directCurrentLoadPower"] = inputDirectCurrentPower
+    else:
+      batteryTemperature = 30.0
+      PV_Voltage = 0.0
+      gridVoltage = 0.0
+      WT_Voltage = 0.0
+      inverterVoltage = 0.0
+      directCurrentLoadVoltage = 0.0
+      hybridInverterVoltage = 0.0
+
     twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
-    # system.optimal_f_PV(P_PV_meas)
-    
     twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
-    # system.optimal_n_WT(P_WT_meas)
-    
-    twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
-    twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
-    
     twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries)
-
-    # if data["inputOperationMode"] == 'Mode2' and hybridState:
-    #   twinPVWF.ongridTwinOutput(gridState, inputActivePower, inputPowerFactor, T_bat, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedChargeCycle, V_PV, V_grid, V_CA, delta_t*timeMultiplier)
-    # else:
-    #   twinPVWF.offgridTwinOutput(inverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, T_bat, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, V_PV, V_WT, V_CDload, V_CA, delta_t*timeMultiplier)
     
+    if monoModuleState or polyModuleState:
+      if not data["inputOfflineOperation"] and data["solarRadiation1"]["disabled"]:
+        twinPVWF.optimal_f_PV(measuredPV_Power)
+        twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+        if not (data["inputOperationMode"] == 'Mode2' and hybridState):
+          twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
+    elif flexiModuleState or cdteModuleState:
+      if not data["inputOfflineOperation"] and data["solarRadiation2"]["disabled"]:
+        twinPVWF.optimal_f_PV(measuredPV_Power)
+        twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+        if not (data["inputOperationMode"] == 'Mode2' and hybridState):
+          twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
-    # turbine = {}
+    if turbineState and not data["inputOfflineOperation"] and data["windSpeed"]["disabled"]:
+      twinPVWF.optimal_n_WT(measuredWT_Power)
+      twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
+      twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
-    # if not data["inputOfflineOperation"]:
-    #   T_bat = round(values_df["Value"]['TE003'],2)
-    #   simulatedInverterState = bool(int(values_df["Value"]['EI001']))
-    #   P_h_meas = round(values_df["Value"]['PG001'],2)
-    #   P_CC_meas = round(values_df["Value"]['VB001'] * values_df["Value"]['IC001'],2)
-    #   V_CA = round(values_df["Value"]['VAC001'],2)
-    #   V_t = round(values_df["Value"]['VG001'],2)
-    #   simulatedDirectCurrentVoltage = round(values_df["Value"]['VB001'],2)
-    #   simulatedSinkLoadState = bool(int(values_df["Value"]['ED001']))
-    #   simulatedInverterState = bool(int(values_df["Value"]['EI001']))
-
-    #   turbine["batteryTemperature"] = T_bat
-    #   if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 6.89476, 2) # kPa to psi conversion
-    #   if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow * 60, 2) # L/s to L/min conversion
-    #   if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = inputActivePower
-    #   if data["inputPowerFactor"]["disabled"]: turbine["inputPowerFactor"] = inputPowerFactor
-    # else:
-    #   T_bat = 30.0
-    #   V_CA = 0
-    #   V_t = 0
-
-    # twinHydro.turbineType(turbineType)
-    # P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
-    # twinHydro.twinParameters(controllerEfficiency, inverterEfficiency)
+    if data["inputOperationMode"] == 'Mode2' and hybridState:
+      twinPVWF.ongridTwinOutput(gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
+                                batteryStateOfCharge, controllerChargeVoltageBulk, controllerChargeVoltageFloat, 
+                                controllerChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
+                                hybridInverterVoltage, delta_t*timeMultiplier)
+    else:
+      twinPVWF.offgridTwinOutput(simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
+                                 batteryTemperature, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, 
+                                 controllerChargeVoltageFloat, controllerChargingMinimunVoltage, PV_Voltage, WT_Voltage, 
+                                 directCurrentLoadVoltage, inverterVoltage, delta_t*timeMultiplier)
     
-    # if not data["inputOfflineOperation"] and not data["inputPressure"]["disabled"] and data["inputFlow"]["disabled"]:
-    #   twinHydro.optimal_n_t(twinHydro.n_t, P_h_meas, inputPressure, inputFlow)
-    #   P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
-    #   twinHydro.optimal_n_controller(controllerEfficiency, P_h, inputDirectCurrentPower, P_CC_meas)
-
-    # results = twinHydro.twinOutput(inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
-    #                                  controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
-    #                                  delta_t*timeMultiplier, V_t, V_CA)
+    # solarWInd[""] = twinResults[]
 
     # turbine["turbinePower"] = P_h
 
@@ -173,4 +185,4 @@ class Solar(Resource):
     # turbine["inverterOutputCurrent"] = results[17]
     # turbine["inverterInputCurrent"] = results[18]
 
-    return {"model": solar}
+    return {"model": solarWind}

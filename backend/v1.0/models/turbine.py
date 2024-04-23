@@ -94,7 +94,7 @@ class Turbine(Resource):
     P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
     twinHydro.twinParameters(controllerEfficiency, inverterEfficiency)
     
-    if not data["inputOfflineOperation"] and not data["inputPressure"]["disabled"] and data["inputFlow"]["disabled"]:
+    if not data["inputOfflineOperation"] and data["inputPressure"]["disabled"] and data["inputFlow"]["disabled"]:
       twinHydro.optimal_n_t(twinHydro.n_t, P_h_meas, inputPressure, inputFlow)
       P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
       twinHydro.optimal_n_controller(controllerEfficiency, P_h, inputDirectCurrentPower, P_CC_meas)
