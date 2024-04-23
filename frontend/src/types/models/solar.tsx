@@ -624,7 +624,6 @@ export type SolarWindOutputHistoric = CommonGraphType & {
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
-  lockParameters: false,
   queryTime: Config.QUERY_TIME_OFFLINE,
   timeMultiplier: {
     disabled: false,

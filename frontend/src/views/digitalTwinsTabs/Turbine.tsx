@@ -32,6 +32,8 @@ import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import turbineIllustration from '../../assets/illustrations/turbine.jpg';
+
 type Props = {};
 
 const Turbine = (props: Props) => {
@@ -112,174 +114,180 @@ const Turbine = (props: Props) => {
         </Alert>
       )}
       <Grid container spacing={2}>
-        {turbine.lockParameters && (
-          <>
-            <Grid item xs={12} md={12} xl={12}>
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <h2>Parámetros del sistema</h2>
-              </Box>
+        <Grid item xs={12} md={12} xl={12}>
+          <img
+            style={{
+              width: '500px',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+            src={turbineIllustration}
+            alt="turbineIllustration"
+          ></img>
+        </Grid>
+        <>
+          <Grid item xs={12} md={12} xl={12}>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <h2>Parámetros del sistema</h2>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={12} xl={12}>
+            <FormControl fullWidth>
+              <TextField
+                label="Nombre"
+                value={turbine.name}
+                name="name"
+                autoComplete="off"
+                onChange={handleChange}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6} xl={3.5}>
+            <h3>Turbina</h3>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12} xl={12}>
+                <FormControl fullWidth>
+                  <InputLabel id="turbine-type">Tipo de turbina</InputLabel>
+                  <Select
+                    labelId="turbine-type"
+                    label="Tipo de turbina"
+                    value={turbine.turbineType}
+                    name="turbineType"
+                    onChange={(e: any) => handleChange(e)}
+                  >
+                    {Object.keys(TurbineType).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {key}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              {turbine.turbineType === TurbineType.Pelton &&
+                PELTON_TURBINE.map((variable) => (
+                  <Grid
+                    key={variable.variableString + variable.variableSubString}
+                    item
+                    xs={6}
+                    md={6}
+                    xl={6}
+                  >
+                    <CustomNumberField variable={variable}></CustomNumberField>
+                  </Grid>
+                ))}
+              {turbine.turbineType === TurbineType.Turgo &&
+                TURGO_TURBINE.map((variable) => (
+                  <Grid
+                    key={variable.variableString + variable.variableSubString}
+                    item
+                    xs={6}
+                    md={6}
+                    xl={6}
+                  >
+                    <CustomNumberField variable={variable}></CustomNumberField>
+                  </Grid>
+                ))}
             </Grid>
-            <Grid item xs={12} md={12} xl={12}>
-              <FormControl fullWidth>
-                <TextField
-                  label="Nombre"
-                  value={turbine.name}
-                  name="name"
-                  autoComplete="off"
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={6} xl={3.5}>
-              <h3>Turbina</h3>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={12} xl={12}>
-                  <FormControl fullWidth>
-                    <InputLabel id="turbine-type">Tipo de turbina</InputLabel>
-                    <Select
-                      labelId="turbine-type"
-                      label="Tipo de turbina"
-                      value={turbine.turbineType}
-                      name="turbineType"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(TurbineType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {key}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                {turbine.turbineType === TurbineType.Pelton &&
-                  PELTON_TURBINE.map((variable) => (
-                    <Grid
-                      key={variable.variableString + variable.variableSubString}
-                      item
-                      xs={6}
-                      md={6}
-                      xl={6}
-                    >
-                      <CustomNumberField
-                        variable={variable}
-                      ></CustomNumberField>
-                    </Grid>
-                  ))}
-                {turbine.turbineType === TurbineType.Turgo &&
-                  TURGO_TURBINE.map((variable) => (
-                    <Grid
-                      key={variable.variableString + variable.variableSubString}
-                      item
-                      xs={6}
-                      md={6}
-                      xl={6}
-                    >
-                      <CustomNumberField
-                        variable={variable}
-                      ></CustomNumberField>
-                    </Grid>
-                  ))}
+          </Grid>
+          <Grid item xs={12} md={6} xl={3.5}>
+            <h3>Controlador de carga</h3>
+            <Grid container spacing={2}>
+              <Grid item xs={6} md={6} xl={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Estado inicial disipación</InputLabel>
+                  <Select
+                    label="Estado inicial disipación"
+                    value={turbine.controller.sinkLoadInitialState}
+                    name="controller.sinkLoadInitialState"
+                    onChange={(e: any) => handleChange(e)}
+                  >
+                    {Object.keys(ControllerStateType).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {key}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6} alignContent={'center'}>
+                <CustomToggle
+                  name="controller.customize"
+                  value={turbine.controller.customize}
+                  handleChange={handleChange}
+                ></CustomToggle>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6}>
+                <CustomNumberField
+                  variable={turbine.controller.efficiency}
+                  name="controller.efficiency"
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6}>
+                <CustomNumberField
+                  variable={turbine.controller.chargeVoltageBulk}
+                  name="controller.chargeVoltageBulk"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6}>
+                <CustomNumberField
+                  variable={turbine.controller.chargeVoltageFloat}
+                  name="controller.chargeVoltageFloat"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6}>
+                <CustomNumberField
+                  variable={turbine.controller.chargingMinimunVoltage}
+                  name="controller.chargingMinimunVoltage"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6}>
+                <CustomNumberField
+                  variable={turbine.controller.sinkOffVoltage}
+                  name="controller.sinkOffVoltage"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={6} md={6} xl={6}>
+                <CustomNumberField
+                  variable={turbine.controller.sinkOnVoltage}
+                  name="controller.sinkOnVoltage"
+                  handleChange={handleChange}
+                ></CustomNumberField>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={6} xl={3.5}>
-              <h3>Controlador de carga</h3>
-              <Grid container spacing={2}>
-                <Grid item xs={6} md={6} xl={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>Estado inicial disipación</InputLabel>
-                    <Select
-                      label="Estado inicial disipación"
-                      value={turbine.controller.sinkLoadInitialState}
-                      name="controller.sinkLoadInitialState"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(ControllerStateType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {key}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6} alignContent={'center'}>
-                  <CustomToggle
-                    name="controller.customize"
-                    value={turbine.controller.customize}
-                    handleChange={handleChange}
-                  ></CustomToggle>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6}>
-                  <CustomNumberField
-                    variable={turbine.controller.efficiency}
-                    name="controller.efficiency"
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6}>
-                  <CustomNumberField
-                    variable={turbine.controller.chargeVoltageBulk}
-                    name="controller.chargeVoltageBulk"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6}>
-                  <CustomNumberField
-                    variable={turbine.controller.chargeVoltageFloat}
-                    name="controller.chargeVoltageFloat"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6}>
-                  <CustomNumberField
-                    variable={turbine.controller.chargingMinimunVoltage}
-                    name="controller.chargingMinimunVoltage"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6}>
-                  <CustomNumberField
-                    variable={turbine.controller.sinkOffVoltage}
-                    name="controller.sinkOffVoltage"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={6} md={6} xl={6}>
-                  <CustomNumberField
-                    variable={turbine.controller.sinkOnVoltage}
-                    name="controller.sinkOnVoltage"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
+          </Grid>
+          <Grid item xs={12} md={6} xl={3.5}>
+            <h3>Baterías</h3>
+            <Battery
+              propertyName="battery"
+              battery={turbine.battery}
+              handleChange={handleChange}
+            ></Battery>
+          </Grid>
+          <Grid item xs={12} md={6} xl={1.5}>
+            <h3>Inversor</h3>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={12} xl={12}>
+                <CustomNumberField
+                  variable={turbine.inverterEfficiency}
+                  name="inverterEfficiency"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={12} md={12} xl={12}>
+                <CustomNumberField
+                  variable={turbine.inverterNominalPower}
+                  name="inverterNominalPower"
+                  handleChange={handleChange}
+                ></CustomNumberField>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={6} xl={3.5}>
-              <h3>Baterías</h3>
-              <Battery
-                propertyName="battery"
-                battery={turbine.battery}
-                handleChange={handleChange}
-              ></Battery>
-            </Grid>
-            <Grid item xs={12} md={6} xl={1.5}>
-              <h3>Inversor</h3>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={turbine.inverterEfficiency}
-                    name="inverterEfficiency"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={turbine.inverterNominalPower}
-                    name="inverterNominalPower"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-              </Grid>
-            </Grid>
-          </>
-        )}
+          </Grid>
+        </>
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={3} xl={3}>

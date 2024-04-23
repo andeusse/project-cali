@@ -218,7 +218,6 @@ const BATTERY: Battery = {
 
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
-  lockParameters: false,
   queryTime: Config.QUERY_TIME_OFFLINE,
   timeMultiplier: {
     disabled: false,

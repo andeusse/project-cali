@@ -27,6 +27,8 @@ import TimeGraphs from '../../components/models/common/TimeGraphs';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import biogasIllustration from '../../assets/illustrations/biogas.jpg';
+
 type Props = {};
 
 const Biogas = (props: Props) => {
@@ -58,12 +60,24 @@ const Biogas = (props: Props) => {
           {error}
         </Alert>
       )}
-      <Grid item xs={12} md={12} xl={12}>
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <h2>Parámetros del sistema</h2>
-        </Box>
-      </Grid>
       <Grid container spacing={2}>
+        <Grid item xs={12} md={12} xl={12}>
+          <img
+            style={{
+              width: '500px',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+            src={biogasIllustration}
+            alt="biogasIllustration"
+          ></img>
+        </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <h2>Parámetros del sistema</h2>
+          </Box>
+        </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <FormControl fullWidth>
             <TextField

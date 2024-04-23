@@ -32,6 +32,8 @@ import SolarPanel from '../../components/models/SolarPanel';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import solarIllustration from '../../assets/illustrations/solar.jpg';
+
 type Props = {};
 
 const Solar = (props: Props) => {
@@ -74,315 +76,313 @@ const Solar = (props: Props) => {
         </Alert>
       )}
       <Grid container spacing={2}>
-        {solarWind.lockParameters && (
-          <>
-            <Grid item xs={12} md={12} xl={12}>
-              <Box display="flex" justifyContent="center" alignItems="center">
-                <h2>Parámetros del sistema</h2>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={6} xl={4}>
-              <FormControl fullWidth>
-                <InputLabel>Modo de operación</InputLabel>
-                <Select
-                  label="Modo de operación"
-                  value={solarWind.inputOperationMode}
-                  name="inputOperationMode"
-                  onChange={(e: any) => handleChange(e)}
-                >
-                  {Object.keys(OperationModeType).map((key) => (
-                    <MenuItem key={key} value={key}>
-                      {getValueByKey(OperationModeText, key)}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={6} xl={8}>
-              <FormControl fullWidth>
-                <TextField
-                  label="Nombre"
-                  value={solarWind.name}
-                  name="name"
-                  autoComplete="off"
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </Grid>
-            {solarWind.inputOperationMode !== OperationModeType.Mode4 && (
-              <>
-                <Grid item xs={12} md={6} xl={3}>
-                  <SolarPanel
-                    name="monocristalino"
-                    propertyName="monocrystallinePanel"
-                    handleChange={handleChange}
-                    panel={solarWind.monocrystallinePanel}
-                  ></SolarPanel>
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <SolarPanel
-                    name="policristalino"
-                    propertyName="policrystallinePanel"
-                    handleChange={handleChange}
-                    panel={solarWind.policrystallinePanel}
-                  ></SolarPanel>
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <SolarPanel
-                    name="monocristalino flexible"
-                    propertyName="flexPanel"
-                    handleChange={handleChange}
-                    panel={solarWind.flexPanel}
-                  ></SolarPanel>
-                </Grid>
-              </>
-            )}
-            {solarWind.inputOperationMode === OperationModeType.Mode1 && (
+        <Grid item xs={12} md={12} xl={12}>
+          <img
+            style={{
+              height: '300px',
+              display: 'block',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+            src={solarIllustration}
+            alt="solarIllustration"
+          ></img>
+        </Grid>
+        <>
+          <Grid item xs={12} md={12} xl={12}>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <h2>Parámetros del sistema</h2>
+            </Box>
+          </Grid>
+          <Grid item xs={12} md={6} xl={4}>
+            <FormControl fullWidth>
+              <InputLabel>Modo de operación</InputLabel>
+              <Select
+                label="Modo de operación"
+                value={solarWind.inputOperationMode}
+                name="inputOperationMode"
+                onChange={(e: any) => handleChange(e)}
+              >
+                {Object.keys(OperationModeType).map((key) => (
+                  <MenuItem key={key} value={key}>
+                    {getValueByKey(OperationModeText, key)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6} xl={8}>
+            <FormControl fullWidth>
+              <TextField
+                label="Nombre"
+                value={solarWind.name}
+                name="name"
+                autoComplete="off"
+                onChange={handleChange}
+              />
+            </FormControl>
+          </Grid>
+          {solarWind.inputOperationMode !== OperationModeType.Mode4 && (
+            <>
               <Grid item xs={12} md={6} xl={3}>
                 <SolarPanel
-                  name="telururo de cadmio"
-                  propertyName="cadmiumTelluridePanel"
+                  name="monocristalino"
+                  propertyName="monocrystallinePanel"
                   handleChange={handleChange}
-                  panel={solarWind.cadmiumTelluridePanel}
+                  panel={solarWind.monocrystallinePanel}
                 ></SolarPanel>
               </Grid>
-            )}
-            {(solarWind.inputOperationMode === OperationModeType.Mode4 ||
-              solarWind.inputOperationMode === OperationModeType.Mode5) && (
               <Grid item xs={12} md={6} xl={3}>
-                <h3>Aerogenerador</h3>
-                <Grid container spacing={2}>
-                  <Grid item xs={6} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={solarWind.windTurbine.peakPower}
-                      name="windTurbine.peakPower"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={12} xl={6}>
-                    <CustomNumberField
-                      variable={solarWind.windTurbine.rotorHeight}
-                      name="windTurbine.rotorHeight"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={12} xl={6}>
-                    <CustomNumberField
-                      variable={solarWind.windTurbine.anemometerHeight}
-                      name="windTurbine.anemometerHeight"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={12}>
-                    <CustomNumberField
-                      variable={solarWind.windTurbine.ratedWindSpeed}
-                      name="windTurbine.ratedWindSpeed"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={12}>
-                    <CustomNumberField
-                      variable={solarWind.windTurbine.lowerCutoffWindSpeed}
-                      name="windTurbine.lowerCutoffWindSpeed"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={12}>
-                    <CustomNumberField
-                      variable={solarWind.windTurbine.upperCutoffWindSpeed}
-                      name="windTurbine.upperCutoffWindSpeed"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                </Grid>
+                <SolarPanel
+                  name="policristalino"
+                  propertyName="policrystallinePanel"
+                  handleChange={handleChange}
+                  panel={solarWind.policrystallinePanel}
+                ></SolarPanel>
               </Grid>
-            )}
-            {!solarWind.hybridInverter.isConnected && (
               <Grid item xs={12} md={6} xl={3}>
-                <h3>Controlador carga</h3>
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    xs={12}
-                    md={12}
-                    xl={12}
-                    alignContent={'center'}
-                    height={'72px'}
-                  >
-                    <CustomToggle
-                      name="controller.customize"
-                      value={solarWind.controller.customize}
-                      handleChange={handleChange}
-                    ></CustomToggle>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={6}>
-                    <CustomNumberField
-                      variable={solarWind.controller.efficiency}
-                      name="controller.efficiency"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={6}>
-                    <CustomNumberField
-                      variable={solarWind.controller.chargeVoltageBulk}
-                      name="controller.chargeVoltageBulk"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={6}>
-                    <CustomNumberField
-                      variable={solarWind.controller.chargeVoltageFloat}
-                      name="controller.chargeVoltageFloat"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={6} md={6} xl={6}>
-                    <CustomNumberField
-                      variable={solarWind.controller.chargingMinimunVoltage}
-                      name="controller.chargingMinimunVoltage"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                </Grid>
+                <SolarPanel
+                  name="monocristalino flexible"
+                  propertyName="flexPanel"
+                  handleChange={handleChange}
+                  panel={solarWind.flexPanel}
+                ></SolarPanel>
               </Grid>
-            )}
-            {((solarWind.inputOperationMode === OperationModeType.Mode1 &&
-              solarWind.cadmiumTelluridePanel.isConnected) ||
-              solarWind.inputOperationMode === OperationModeType.Mode2) && (
-              <Grid item xs={12} md={6} xl={3}>
-                <Grid container spacing={2}>
-                  {((solarWind.inputOperationMode === OperationModeType.Mode1 &&
-                    solarWind.cadmiumTelluridePanel.isConnected) ||
-                    solarWind.inputOperationMode ===
-                      OperationModeType.Mode2) && (
-                    <>
-                      <Grid item xs={12} md={6} xl={6}>
-                        <h3>Inversor offgrid</h3>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        md={12}
-                        xl={12}
-                        alignContent={'center'}
-                      >
-                        <CustomToggle
-                          name="offgridInverter.isConnected"
-                          value={solarWind.offgridInverter.isConnected}
-                          handleChange={handleChange}
-                          trueString="Conectado"
-                          falseString="Desconectado"
-                          disabled={
-                            solarWind.offgridInverter.isConnectedDisabled
-                          }
-                        ></CustomToggle>
-                      </Grid>
-                      <Grid item xs={6} md={6} xl={6}>
-                        <CustomNumberField
-                          variable={solarWind.offgridInverter.efficiency}
-                          name="offgridInverter.efficiency"
-                          handleChange={handleChange}
-                        ></CustomNumberField>
-                      </Grid>
-                      <Grid item xs={6} md={6} xl={6}>
-                        <CustomNumberField
-                          variable={solarWind.offgridInverter.nominalPower}
-                          name="offgridInverter.nominalPower"
-                          handleChange={handleChange}
-                        ></CustomNumberField>
-                      </Grid>
-                    </>
-                  )}
-                  {solarWind.inputOperationMode === OperationModeType.Mode2 && (
-                    <>
-                      <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                        <h3>Inversor híbrido</h3>
-                      </Grid>
-                      <Grid
-                        item
-                        xs={12}
-                        md={12}
-                        xl={12}
-                        alignContent={'center'}
-                        height={'72px'}
-                      >
-                        <CustomToggle
-                          name="hybridInverter.isConnected"
-                          value={solarWind.hybridInverter.isConnected}
-                          handleChange={handleChange}
-                          trueString="Conectado"
-                          falseString="Desconectado"
-                          disabled={
-                            solarWind.hybridInverter.isConnectedDisabled
-                          }
-                        ></CustomToggle>
-                      </Grid>
-                      <Grid item xs={6} md={6} xl={6}>
-                        <CustomNumberField
-                          variable={solarWind.hybridInverter.efficiency}
-                          name="hybridInverter.efficiency"
-                          handleChange={handleChange}
-                        ></CustomNumberField>
-                      </Grid>
-                      <Grid item xs={6} md={6} xl={6}>
-                        <CustomNumberField
-                          variable={solarWind.hybridInverter.nominalPower}
-                          name="hybridInverter.nominalPower"
-                          handleChange={handleChange}
-                        ></CustomNumberField>
-                      </Grid>
-                    </>
-                  )}
-                </Grid>
-              </Grid>
-            )}
+            </>
+          )}
+          {solarWind.inputOperationMode === OperationModeType.Mode1 && (
             <Grid item xs={12} md={6} xl={3}>
-              <Grid container>
-                <Grid item xs={12} md={12} xl={12}>
-                  <h3>Batería 1:</h3>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <Battery
-                    propertyName="battery1"
-                    battery={solarWind.battery1}
+              <SolarPanel
+                name="telururo de cadmio"
+                propertyName="cadmiumTelluridePanel"
+                handleChange={handleChange}
+                panel={solarWind.cadmiumTelluridePanel}
+              ></SolarPanel>
+            </Grid>
+          )}
+          {(solarWind.inputOperationMode === OperationModeType.Mode4 ||
+            solarWind.inputOperationMode === OperationModeType.Mode5) && (
+            <Grid item xs={12} md={6} xl={3}>
+              <h3>Aerogenerador</h3>
+              <Grid container spacing={2}>
+                <Grid item xs={6} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={solarWind.windTurbine.peakPower}
+                    name="windTurbine.peakPower"
                     handleChange={handleChange}
-                  ></Battery>
-                </Grid>{' '}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={12} xl={6}>
+                  <CustomNumberField
+                    variable={solarWind.windTurbine.rotorHeight}
+                    name="windTurbine.rotorHeight"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={12} xl={6}>
+                  <CustomNumberField
+                    variable={solarWind.windTurbine.anemometerHeight}
+                    name="windTurbine.anemometerHeight"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={6} xl={12}>
+                  <CustomNumberField
+                    variable={solarWind.windTurbine.ratedWindSpeed}
+                    name="windTurbine.ratedWindSpeed"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={6} xl={12}>
+                  <CustomNumberField
+                    variable={solarWind.windTurbine.lowerCutoffWindSpeed}
+                    name="windTurbine.lowerCutoffWindSpeed"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={6} xl={12}>
+                  <CustomNumberField
+                    variable={solarWind.windTurbine.upperCutoffWindSpeed}
+                    name="windTurbine.upperCutoffWindSpeed"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
               </Grid>
             </Grid>
+          )}
+          {!solarWind.hybridInverter.isConnected && (
             <Grid item xs={12} md={6} xl={3}>
-              <Grid container>
-                <Grid item xs={12} md={6} xl={6}>
-                  <h3>Batería 2:</h3>
-                </Grid>
-                <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+              <h3>Controlador carga</h3>
+              <Grid container spacing={2}>
+                <Grid
+                  item
+                  xs={12}
+                  md={12}
+                  xl={12}
+                  alignContent={'center'}
+                  height={'72px'}
+                >
                   <CustomToggle
-                    name="isBattery2"
-                    value={solarWind.isBattery2}
+                    name="controller.customize"
+                    value={solarWind.controller.customize}
                     handleChange={handleChange}
-                    trueString="Conectado"
-                    falseString="Desconectado"
-                    disabled={
-                      (solarWind.inputOperationMode ===
-                        OperationModeType.Mode1 &&
-                        solarWind.cadmiumTelluridePanel.isConnected) ||
-                      solarWind.inputOperationMode === OperationModeType.Mode2
-                    }
                   ></CustomToggle>
                 </Grid>
-                {solarWind.isBattery2 && (
-                  <Grid item xs={12} md={12} xl={12}>
-                    <Battery
-                      propertyName="battery2"
-                      battery={solarWind.battery2}
-                      handleChange={handleChange}
-                    ></Battery>
-                  </Grid>
+                <Grid item xs={6} md={6} xl={6}>
+                  <CustomNumberField
+                    variable={solarWind.controller.efficiency}
+                    name="controller.efficiency"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={6} xl={6}>
+                  <CustomNumberField
+                    variable={solarWind.controller.chargeVoltageBulk}
+                    name="controller.chargeVoltageBulk"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={6} xl={6}>
+                  <CustomNumberField
+                    variable={solarWind.controller.chargeVoltageFloat}
+                    name="controller.chargeVoltageFloat"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={6} md={6} xl={6}>
+                  <CustomNumberField
+                    variable={solarWind.controller.chargingMinimunVoltage}
+                    name="controller.chargingMinimunVoltage"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
+          {((solarWind.inputOperationMode === OperationModeType.Mode1 &&
+            solarWind.cadmiumTelluridePanel.isConnected) ||
+            solarWind.inputOperationMode === OperationModeType.Mode2) && (
+            <Grid item xs={12} md={6} xl={3}>
+              <Grid container spacing={2}>
+                {((solarWind.inputOperationMode === OperationModeType.Mode1 &&
+                  solarWind.cadmiumTelluridePanel.isConnected) ||
+                  solarWind.inputOperationMode === OperationModeType.Mode2) && (
+                  <>
+                    <Grid item xs={12} md={6} xl={6}>
+                      <h3>Inversor offgrid</h3>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                      <CustomToggle
+                        name="offgridInverter.isConnected"
+                        value={solarWind.offgridInverter.isConnected}
+                        handleChange={handleChange}
+                        trueString="Conectado"
+                        falseString="Desconectado"
+                        disabled={solarWind.offgridInverter.isConnectedDisabled}
+                      ></CustomToggle>
+                    </Grid>
+                    <Grid item xs={6} md={6} xl={6}>
+                      <CustomNumberField
+                        variable={solarWind.offgridInverter.efficiency}
+                        name="offgridInverter.efficiency"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={6} md={6} xl={6}>
+                      <CustomNumberField
+                        variable={solarWind.offgridInverter.nominalPower}
+                        name="offgridInverter.nominalPower"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                  </>
+                )}
+                {solarWind.inputOperationMode === OperationModeType.Mode2 && (
+                  <>
+                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                      <h3>Inversor híbrido</h3>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      md={12}
+                      xl={12}
+                      alignContent={'center'}
+                      height={'72px'}
+                    >
+                      <CustomToggle
+                        name="hybridInverter.isConnected"
+                        value={solarWind.hybridInverter.isConnected}
+                        handleChange={handleChange}
+                        trueString="Conectado"
+                        falseString="Desconectado"
+                        disabled={solarWind.hybridInverter.isConnectedDisabled}
+                      ></CustomToggle>
+                    </Grid>
+                    <Grid item xs={6} md={6} xl={6}>
+                      <CustomNumberField
+                        variable={solarWind.hybridInverter.efficiency}
+                        name="hybridInverter.efficiency"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={6} md={6} xl={6}>
+                      <CustomNumberField
+                        variable={solarWind.hybridInverter.nominalPower}
+                        name="hybridInverter.nominalPower"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                  </>
                 )}
               </Grid>
             </Grid>
-          </>
-        )}
+          )}
+          <Grid item xs={12} md={6} xl={3}>
+            <Grid container>
+              <Grid item xs={12} md={12} xl={12}>
+                <h3>Batería 1:</h3>
+              </Grid>
+              <Grid item xs={12} md={12} xl={12}>
+                <Battery
+                  propertyName="battery1"
+                  battery={solarWind.battery1}
+                  handleChange={handleChange}
+                ></Battery>
+              </Grid>{' '}
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={6} xl={3}>
+            <Grid container>
+              <Grid item xs={12} md={6} xl={6}>
+                <h3>Batería 2:</h3>
+              </Grid>
+              <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                <CustomToggle
+                  name="isBattery2"
+                  value={solarWind.isBattery2}
+                  handleChange={handleChange}
+                  trueString="Conectado"
+                  falseString="Desconectado"
+                  disabled={
+                    (solarWind.inputOperationMode === OperationModeType.Mode1 &&
+                      solarWind.cadmiumTelluridePanel.isConnected) ||
+                    solarWind.inputOperationMode === OperationModeType.Mode2
+                  }
+                ></CustomToggle>
+              </Grid>
+              {solarWind.isBattery2 && (
+                <Grid item xs={12} md={12} xl={12}>
+                  <Battery
+                    propertyName="battery2"
+                    battery={solarWind.battery2}
+                    handleChange={handleChange}
+                  ></Battery>
+                </Grid>
+              )}
+            </Grid>
+          </Grid>
+        </>
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={3} xl={3}>
