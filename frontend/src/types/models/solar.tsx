@@ -37,9 +37,9 @@ export type SolarWindParameters = CommonSystemParameter &
     flexPanel: SolarPanel;
     cadmiumTelluridePanel: SolarPanel;
     windTurbine: WindTurbine;
-    battery1: IsConnected & Battery;
+    battery1: Battery;
     isBattery2: boolean;
-    battery2: IsConnected & Battery;
+    battery2: Battery;
     controller: IsConnected & CommonController;
     offgridInverter: Inverter;
     hybridInverter: Inverter;
@@ -426,9 +426,7 @@ const WIND_TURBINE: WindTurbine = {
   },
 };
 
-const BATTERY: IsConnected & Battery = {
-  isConnected: true,
-  isConnectedDisabled: false,
+const BATTERY: Battery = {
   stateOfCharge: {
     disabled: false,
     value: 50,
@@ -570,13 +568,62 @@ const HYBRID_INVERTER: Inverter = {
   },
 };
 
-export type SolarWindOutput = {};
+export type SolarWindOutput = {
+  batteryTemperature: number;
+  batteryVoltage: number;
+  directCurrentLoadVoltage: number;
+  externalGridVoltage: number;
+  hybridInverterActivePower: number;
+  hybridInverterApparentPower: number;
+  hybridInverterOutputCurrent: number;
+  hybridInverterReactivePower: number;
+  hybridInverterVoltage: number;
+  inverterActivePower: number;
+  inverterApparentPower: number;
+  inverterOutputCurrent: number;
+  inverterReactivePower: number;
+  inverterVoltage: number;
+  solarPanelCurrent: number;
+  solarPanelGeneratedEnergy: number;
+  solarPanelPower: number;
+  solarPanelTemperature: number;
+  solarPanelVoltage: number;
+  windTurbineCurrent: number;
+  windTurbineGeneratedEnergy: number;
+  windTurbinePower: number;
+  windTurbineRevolutions: number;
+  windTurbineVoltage: number;
+};
 
-export type SolarWindOutputHistoric = CommonGraphType & {};
+export type SolarWindOutputHistoric = CommonGraphType & {
+  batteryTemperature: number[];
+  batteryVoltage: number[];
+  directCurrentLoadVoltage: number[];
+  externalGridVoltage: number[];
+  hybridInverterActivePower: number[];
+  hybridInverterApparentPower: number[];
+  hybridInverterOutputCurrent: number[];
+  hybridInverterReactivePower: number[];
+  hybridInverterVoltage: number[];
+  inverterActivePower: number[];
+  inverterApparentPower: number[];
+  inverterOutputCurrent: number[];
+  inverterReactivePower: number[];
+  inverterVoltage: number[];
+  solarPanelCurrent: number[];
+  solarPanelGeneratedEnergy: number[];
+  solarPanelPower: number[];
+  solarPanelTemperature: number[];
+  solarPanelVoltage: number[];
+  windTurbineCurrent: number[];
+  windTurbineGeneratedEnergy: number[];
+  windTurbinePower: number[];
+  windTurbineRevolutions: number[];
+  windTurbineVoltage: number[];
+};
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
-  lockParameters: false,
   queryTime: Config.QUERY_TIME_OFFLINE,
   timeMultiplier: {
     disabled: false,
@@ -681,4 +728,245 @@ export const SOLAR_WIND: SolarWindParameters = {
   externalGridState: false,
 };
 
-export const SOLAR_DIAGRAM_VARIABLES: DiagramVariableType[] = [];
+export const SOLAR_WIND_DIAGRAM_VARIABLES: DiagramVariableType[] = [
+  {
+    name: 'Temperatura de batería',
+    variable: 'batteryTemperature',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje de las baterías (Controlador)',
+    variable: 'batteryVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje carga CD',
+    variable: 'directCurrentLoadVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje de la red externa',
+    variable: 'externalGridVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia Activa salida del inversor hibrido (inversor o analizador)',
+    variable: 'hybridInverterActivePower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia Aparente salida del inversor hibrido (inversor o analizador)',
+    variable: 'hybridInverterApparentPower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Corriente a la salida del inversor hibrido (inversor o analizador)',
+    variable: 'hybridInverterOutputCurrent',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia Reactiva salida del inversor hibrido (analizador)',
+    variable: 'hybridInverterReactivePower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje AC a la salida del inversor hibrido (inversor o analizador)',
+    variable: 'hybridInverterVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia Activa salida del inversor (inversor o analizador)',
+    variable: 'inverterActivePower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia Aparente salida del inversor (inversor o analizador)',
+    variable: 'inverterApparentPower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Corriente a la salida del inversor (inversor o analizador)',
+    variable: 'inverterOutputCurrent',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia Reactiva salida del inversor (analizador)',
+    variable: 'inverterReactivePower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje AC a la salida del inversor (inversor o analizador)',
+    variable: 'inverterVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Corriente paneles (pv) (Controlador)',
+    variable: 'solarPanelCurrent',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Energía generada por paneles (kWh) (pv) (Controlador)',
+    variable: 'solarPanelGeneratedEnergy',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia paneles (pv) (Controlador)',
+    variable: 'solarPanelPower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Temperatura para los 4 Paneles (pv)',
+    variable: 'solarPanelTemperature',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje paneles solares (pv) (Controlador)',
+    variable: 'solarPanelVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Corriente Aerogenerador (fan) (Controlador)',
+    variable: 'windTurbineCurrent',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Energía generada por aerogenerador (kWh)(fan) (Controlador)',
+    variable: 'windTurbineGeneratedEnergy',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Potencia aerogenerador (fan)(Controlador)',
+    variable: 'windTurbinePower',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'RPMs aerogenerador (fan)',
+    variable: 'windTurbineRevolutions',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+  {
+    name: 'Voltaje aerogenerador (fan) (Controlador)',
+    variable: 'windTurbineVoltage',
+    unit: '',
+    isShown: false,
+    diagramName: '',
+    fixed: 1,
+    x: 0,
+    y: 0,
+  },
+];

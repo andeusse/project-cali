@@ -180,8 +180,6 @@ export const setSolar = (
             newState.policrystallinePanel.isConnected = false;
             newState.flexPanel.isConnected = false;
 
-            newState.battery1.isConnected = true;
-            newState.battery2.isConnected = true;
             newState.isBattery2 = true;
           }
           break;
@@ -206,26 +204,6 @@ export const setSolar = (
             newState.offgridInverter.isConnectedDisabled = true;
           }
           newState.hybridInverter.isConnected = e.target.checked;
-          break;
-        case 'battery1':
-          newState.battery1.isConnected = e.target.checked;
-          if (
-            (newState.inputOperationMode === OperationModeType.Mode1 &&
-              newState.cadmiumTelluridePanel.isConnected) ||
-            newState.inputOperationMode === OperationModeType.Mode2
-          ) {
-            newState.battery2.isConnected = newState.battery1.isConnected;
-          }
-          break;
-        case 'battery2':
-          newState.battery2.isConnected = e.target.checked;
-          if (
-            (newState.inputOperationMode === OperationModeType.Mode1 &&
-              newState.cadmiumTelluridePanel.isConnected) ||
-            newState.inputOperationMode === OperationModeType.Mode2
-          ) {
-            newState.battery1.isConnected = newState.battery2.isConnected;
-          }
           break;
       }
       const allFalse =

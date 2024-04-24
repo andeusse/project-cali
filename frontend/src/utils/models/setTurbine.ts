@@ -48,7 +48,6 @@ export const setTurbine = (
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
     }
-    console.log(newState.queryTime);
   }
   return newState;
 };

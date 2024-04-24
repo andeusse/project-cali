@@ -1,8 +1,6 @@
 import { Grid } from '@mui/material';
-import React from 'react';
 import CustomNumberField from '../UI/CustomNumberField';
 import { Battery as Bat, IsConnected } from '../../types/models/common';
-import CustomToggle from '../UI/CustomToggle';
 
 type Props = {
   propertyName: string;
@@ -15,24 +13,6 @@ const Battery = (props: Props) => {
   return (
     <>
       <Grid container spacing={2}>
-        {'isConnected' in battery && (
-          <Grid
-            item
-            xs={12}
-            md={12}
-            xl={12}
-            alignContent={'center'}
-            height={'72px'}
-          >
-            <CustomToggle
-              name={`${propertyName}.isConnected`}
-              value={battery.isConnected}
-              handleChange={handleChange}
-              trueString="Conectado"
-              falseString="Desconectado"
-            ></CustomToggle>
-          </Grid>
-        )}
         <Grid item xs={6} md={6} xl={6}>
           <CustomNumberField
             variable={battery.stateOfCharge}
