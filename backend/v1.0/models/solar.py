@@ -23,7 +23,7 @@ class Solar(Resource):
 
       influxDB_Connection = InfluxDbConnection()
       # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
-      db = 0
+      db = 2
       influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
       influxDB = influxDB_Connection.data
 
@@ -47,7 +47,7 @@ class Solar(Resource):
     else:
       turbineState = False
 
-    batteries = int(data["battery1"]["isConnected"]) + int(data["battery2"]["isConnected"])
+    batteries = 1 + int(data["isBattery2"])
     if data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
       isParallel = False
     else:
@@ -87,7 +87,7 @@ class Solar(Resource):
       inputDirectCurrentPower = data["directCurrentLoadPower"]["value"] if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC001'],2)
 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
-    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
+    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery1"]["stateOfCharge"]["value"]
     directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
