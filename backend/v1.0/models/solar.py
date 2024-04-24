@@ -163,10 +163,10 @@ class Solar(Resource):
                                 controllerChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
       solarWind['solarPanelPower'] = PV_Results[0]
-      solarWind['monoModuleTemperature'] = PV_Results[1]
-      solarWind['polyModuleTemperature'] = PV_Results[2]
-      solarWind['flexiModuleTemperature'] = PV_Results[3]
-      solarWind['cdteModuleTemperature'] = PV_Results[4]
+      solarWind['monocrystallinePanelTemperature'] = PV_Results[1]
+      solarWind['policrystallinePanelTemperature'] = PV_Results[2]
+      solarWind['flexPanelTemperature'] = PV_Results[3]
+      solarWind['cadmiumTelluridePanelTemperature'] = PV_Results[4]
       
       solarWind["externalGridPower"] = twinResults[0]
       solarWind["inverterInputPower"] = twinResults[1]
