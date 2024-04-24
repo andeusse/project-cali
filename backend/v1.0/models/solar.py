@@ -119,12 +119,12 @@ class Solar(Resource):
       solarWind['windTurbineRevolutions'] = round(values_df["Value"]['RPM001'],2)
 
       solarWind["batteryTemperature"] = batteryTemperature
-      if data["solarRadiation1"]["disabled"]: solarWind["solarRadiation1"] = solarRadiation1
-      if data["solarRadiation2"]["disabled"]: solarWind["solarRadiation2"] = solarRadiation2
-      if data["windSpeed"]["disabled"]: solarWind["windSpeed"] = windSpeed
-      if data["alternCurrentLoadPower"]["disabled"]: solarWind["alternCurrentLoadPower"] = inputActivePower
-      if data["alternCurrentLoadPowerFactor"]["disabled"]: solarWind["alternCurrentLoadPowerFactor"] = inputPowerFactor
-      if data["directCurrentLoadPower"]["disabled"]: solarWind["directCurrentLoadPower"] = inputDirectCurrentPower
+      if data["solarRadiation1"]["disabled"]: solarWind["inputSolarRadiation1"] = solarRadiation1
+      if data["solarRadiation2"]["disabled"]: solarWind["inputSolarRadiation2"] = solarRadiation2
+      if data["windSpeed"]["disabled"]: solarWind["inputWindSpeed"] = windSpeed
+      if data["alternCurrentLoadPower"]["disabled"]: solarWind["inputAlternCurrentLoadPower"] = inputActivePower
+      if data["alternCurrentLoadPowerFactor"]["disabled"]: solarWind["inputAlternCurrentLoadPowerFactor"] = inputPowerFactor
+      if data["directCurrentLoadPower"]["disabled"]: solarWind["inputDirectCurrentLoadPower"] = inputDirectCurrentPower
     else:
       batteryTemperature = 30.0
       PV_Voltage = 0.0
