@@ -83,11 +83,10 @@ class Solar(Resource):
     else:
       inputActivePower = 0.0
       inputPowerFactor = 1.0
-      #############################################################
       inputDirectCurrentPower = data["directCurrentLoadPower"]["value"] if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC001'],2)
 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
-    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery1"]["stateOfCharge"]["value"]
+    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + data["battery2"]["stateOfCharge"]["value"]) / 2
     directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
@@ -100,20 +99,16 @@ class Solar(Resource):
     twinPVWF = TwinPVWF(name)
 
     if not data["inputOfflineOperation"]:
-      ############################################################
       batteryTemperature = round(values_df["Value"]['TB001'],2)
       simulatedInverterState = bool(int(values_df["Value"]['EI001']))
       measuredPV_Power = round(values_df["Value"]['PG001'],2)
       measuredWT_Power = round(values_df["Value"]['PG005'],2)
-      ############################################################
       measuredControllerDC_Power = round(values_df["Value"]['PB001'],2)
       PV_Voltage = round(values_df["Value"]['VG001'],2)
-      ############################################################
       gridVoltage = round(values_df["Value"]['VGR001'],2)
       WT_Voltage = round(values_df["Value"]['VG002'],2)
       directCurrentVoltage = round(values_df["Value"]['VB001'],2)
       inverterVoltage = round(values_df["Value"]['VAC001'],2)
-      ############################################################
       directCurrentLoadVoltage = round(values_df["Value"]['VDC001'],2)
       hybridInverterVoltage = round(values_df["Value"]['VAC002'],2)
       solarWind['windTurbineRevolutions'] = round(values_df["Value"]['RPM001'],2)

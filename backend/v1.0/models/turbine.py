@@ -70,13 +70,20 @@ class Turbine(Resource):
     turbine = {}
 
     if not data["inputOfflineOperation"]:
-      T_bat = round(values_df["Value"]['TE003'],2)
-      simulatedInverterState = bool(int(values_df["Value"]['EI001']))
-      P_h_meas = round(values_df["Value"]['PG001'],2)
-      P_CC_meas = round(values_df["Value"]['VB001'] * values_df["Value"]['IC001'],2)
+      if data["turbineType"] == "Pelton":
+        T_bat = round(values_df["Value"]['TE003'],2)
+        P_h_meas = round(values_df["Value"]['PG001'],2)
+        P_CC_meas = round(values_df["Value"]['PB001'],2)
+        V_t = round(values_df["Value"]['VG001'],2)
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB001'],2)
+      else:
+        T_bat = round(values_df["Value"]['TE004'],2)
+        P_h_meas = round(values_df["Value"]['PG002'],2)
+        P_CC_meas = round(values_df["Value"]['PB002'],2)
+        V_t = round(values_df["Value"]['VG002'],2)
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB002'],2)
+
       V_CA = round(values_df["Value"]['VAC001'],2)
-      V_t = round(values_df["Value"]['VG001'],2)
-      simulatedDirectCurrentVoltage = round(values_df["Value"]['VB001'],2)
       simulatedSinkLoadState = bool(int(values_df["Value"]['ED001']))
       simulatedInverterState = bool(int(values_df["Value"]['EI001']))
 
@@ -124,5 +131,8 @@ class Turbine(Resource):
     turbine["batteryCurrent"] = results[16]
     turbine["inverterOutputCurrent"] = results[17]
     turbine["inverterInputCurrent"] = results[18]
+    turbine["directCurrentLoadPower"] = results[19]
+    turbine["directCurrentLoadVoltage"] = results[20]
+    turbine["directCurrentLoadCurrent"] = results[21]
 
     return {"model": turbine}
