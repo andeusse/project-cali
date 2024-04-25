@@ -52,6 +52,10 @@ export type SolarWindParameters = CommonSystemParameter &
     alternCurrentLoadPowerFactor: InputType;
     directCurrentLoadPower: InputType;
     externalGridState: boolean;
+    simulatedBatteryStateOfCharge?: number;
+    simulatedDirectCurrentVoltage?: number;
+    simulatedInverterState?: boolean;
+    simulatedChargeCycle?: number;
   };
 
 const MONOCRYSTALLINE_PANEL: SolarPanel = {
@@ -569,10 +573,26 @@ const HYBRID_INVERTER: Inverter = {
 };
 
 export type SolarWindOutput = {
+  monocrystallinePanelTemperature: number;
+  policrystallinePanelTemperature: number;
+  flexPanelTemperature: number;
+  cadmiumTelluridePanelTemperature: number;
+  batteryCurrent: number;
+  batteryPower: number;
+  batteryStateOfCharge: number;
   batteryTemperature: number;
   batteryVoltage: number;
+  chargeCycle: number;
+  controllerPower: number;
+  controllerCurrent: number;
   directCurrentLoadVoltage: number;
+  directCurrentVoltage: number;
+  directCurrentLoadPower: number;
+  directCurrentLoadCurrent: number;
   externalGridVoltage: number;
+  externalGridPower: number;
+  externalGridState: number;
+  externalGridCurrent: number;
   hybridInverterActivePower: number;
   hybridInverterApparentPower: number;
   hybridInverterOutputCurrent: number;
@@ -583,6 +603,9 @@ export type SolarWindOutput = {
   inverterOutputCurrent: number;
   inverterReactivePower: number;
   inverterVoltage: number;
+  inverterInputPower: number;
+  inverterState: number;
+  inverterInputCurrent: number;
   solarPanelCurrent: number;
   solarPanelGeneratedEnergy: number;
   solarPanelPower: number;
@@ -593,13 +616,35 @@ export type SolarWindOutput = {
   windTurbinePower: number;
   windTurbineRevolutions: number;
   windTurbineVoltage: number;
+  inputSolarRadiation1?: number;
+  inputSolarRadiation2?: number;
+  inputWindSpeed?: number;
+  inputAlternCurrentLoadPower?: number;
+  inputAlternCurrentLoadPowerFactor?: number;
+  inputDirectCurrentLoadPower?: number;
 };
 
 export type SolarWindOutputHistoric = CommonGraphType & {
+  monocrystallinePanelTemperature: number[];
+  policrystallinePanelTemperature: number[];
+  flexPanelTemperature: number[];
+  cadmiumTelluridePanelTemperature: number[];
+  batteryCurrent: number[];
+  batteryPower: number[];
+  batteryStateOfCharge: number[];
   batteryTemperature: number[];
   batteryVoltage: number[];
+  chargeCycle: number[];
+  controllerPower: number[];
+  controllerCurrent: number[];
   directCurrentLoadVoltage: number[];
+  directCurrentVoltage: number[];
+  directCurrentLoadPower: number[];
+  directCurrentLoadCurrent: number[];
   externalGridVoltage: number[];
+  externalGridPower: number[];
+  externalGridState: number[];
+  externalGridCurrent: number[];
   hybridInverterActivePower: number[];
   hybridInverterApparentPower: number[];
   hybridInverterOutputCurrent: number[];
@@ -610,6 +655,9 @@ export type SolarWindOutputHistoric = CommonGraphType & {
   inverterOutputCurrent: number[];
   inverterReactivePower: number[];
   inverterVoltage: number[];
+  inverterInputPower: number[];
+  inverterState: number[];
+  inverterInputCurrent: number[];
   solarPanelCurrent: number[];
   solarPanelGeneratedEnergy: number[];
   solarPanelPower: number[];

@@ -3,7 +3,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Alert,
-  Box,
   FormControl,
   Grid,
   InputLabel,
@@ -24,7 +23,6 @@ import {
 } from '../../types/models/biogas';
 import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
-import biogasDiagram from '../../assets/biogasPlantDiagram.svg';
 import { setFormState } from '../../utils/setFormState';
 import PlayerControls from '../../components/UI/PlayerControls';
 import CustomNumberField from '../../components/UI/CustomNumberField';
@@ -32,6 +30,7 @@ import TimeGraphs from '../../components/models/common/TimeGraphs';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import biogasDiagram from '../../assets/biogas/biogasPlantDiagram.svg';
 import biogasIllustration from '../../assets/illustrations/biogas.jpg';
 
 type Props = {};
@@ -43,11 +42,6 @@ const Biogas = (props: Props) => {
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<BiogasParameters, BiogasOutput>('biogas', biogas);
-
-  useEffect(() => {
-    setIsImageExpanded(!isPlaying);
-    setIsParametersExpanded(!isPlaying);
-  }, [isPlaying]);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiogasParameters>(e, biogas, variableName);
@@ -94,7 +88,7 @@ const Biogas = (props: Props) => {
             <AccordionDetails>
               <img
                 style={{
-                  width: '500px',
+                  width: '1000px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',

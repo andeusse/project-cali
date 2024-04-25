@@ -1,6 +1,5 @@
 import {
   Alert,
-  Box,
   Grid,
   FormControl,
   TextField,
@@ -29,7 +28,6 @@ import TimeGraphs from '../../components/models/common/TimeGraphs';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import Diagram from '../../components/UI/Diagram';
-import solarDiagram from '../../assets/solarDiagram.svg';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import { getValueByKey } from '../../utils/getValueByKey';
@@ -37,6 +35,7 @@ import SolarPanel from '../../components/models/SolarPanel';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import solarDiagram from '../../assets/solar/solarDiagram.svg';
 import solarIllustration from '../../assets/illustrations/solar.jpg';
 
 type Props = {};
@@ -50,9 +49,9 @@ const Solar = (props: Props) => {
     useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', solarWind);
 
   useEffect(() => {
-    setIsImageExpanded(!isPlaying);
-    setIsParametersExpanded(!isPlaying);
-  }, [isPlaying]);
+    if (data !== undefined) {
+    }
+  }, [data]);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<SolarWindParameters>(
@@ -103,7 +102,7 @@ const Solar = (props: Props) => {
             <AccordionDetails>
               <img
                 style={{
-                  height: '300px',
+                  height: '500px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',

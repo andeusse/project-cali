@@ -3,7 +3,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Alert,
-  Box,
   FormControl,
   Grid,
   InputLabel,
@@ -27,17 +26,14 @@ import {
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { setFormState } from '../../utils/setFormState';
-import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
-import peltonDiagram from '../../assets/peltonTurbineDiagram.svg';
-import turgoDiagram from '../../assets/turgoTurbineDiagram.svg';
-import turgoDiagramNoCharge from '../../assets/turgoNoChargeDiagram.svg';
 import turbineIllustration from '../../assets/illustrations/turbine.jpg';
+import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
 
 type Props = {};
 
@@ -48,11 +44,6 @@ const Turbine = (props: Props) => {
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', turbine);
-
-  useEffect(() => {
-    setIsImageExpanded(!isPlaying);
-    setIsParametersExpanded(!isPlaying);
-  }, [isPlaying]);
 
   useEffect(() => {
     if (data !== undefined) {
@@ -141,7 +132,7 @@ const Turbine = (props: Props) => {
             <AccordionDetails>
               <img
                 style={{
-                  width: '500px',
+                  width: '1000px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',
@@ -410,19 +401,12 @@ const Turbine = (props: Props) => {
             </Grid>
             <Grid item xs={12} md={9} xl={9}>
               {playerControl}
-              <Diagram<TurbineOutput>
-                diagram={
-                  turbine.turbineType === TurbineType.Pelton
-                    ? peltonDiagram
-                    : turbine.inputDirectCurrentPower
-                    ? turgoDiagram
-                    : turgoDiagramNoCharge
-                }
+              <TurbineDiagram
+                turbine={turbine}
                 data={data}
                 variables={TURBINE_DIAGRAM_VARIABLES}
-                width={150}
-                height={150}
-              ></Diagram>
+                isPlaying={isPlaying}
+              ></TurbineDiagram>
             </Grid>
           </Grid>
         </Grid>
