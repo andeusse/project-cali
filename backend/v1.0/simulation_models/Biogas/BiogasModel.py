@@ -1,9 +1,10 @@
-#import sys
+import sys
 import os
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 current_directory = os.getcwd()
-excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory, '..', '..')), "tools", "DB_Mapping.xlsx")
+print(current_directory)
+excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory)), "v1.0", "tools", "DB_Mapping.xlsx")
 print(excel_file_path)
 
 import pandas as pd
@@ -14,7 +15,7 @@ from scipy.integrate import odeint
 from scipy.optimize import minimize
 import numpy as np
 import statistics as st
-from  tools import DBManager
+from tools import DBManager
 
 
 class BiogasPlant:
