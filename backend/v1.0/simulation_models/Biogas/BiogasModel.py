@@ -1,7 +1,7 @@
-import sys
+#import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 current_directory = os.getcwd()
 excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory, '..', '..')), "tools", "DB_Mapping.xlsx")
 print(excel_file_path)
@@ -9,7 +9,7 @@ print(excel_file_path)
 import pandas as pd
 import time
 from datetime import datetime
-from .ThermoProperties import ThermoProperties as TP
+import ThermoProperties as TP
 from scipy.integrate import odeint
 from scipy.optimize import minimize
 import numpy as np
