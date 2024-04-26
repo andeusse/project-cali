@@ -9,7 +9,7 @@ class Solar(Resource):
   def post(self):
     data = request.get_json()
     solarWind = {}
-    
+
     if not data["inputOfflineOperation"]:
       excelReader = ExcelReader()
       excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
@@ -23,7 +23,7 @@ class Solar(Resource):
 
       influxDB_Connection = InfluxDbConnection()
       # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
-      db = 2
+      db = 0
       influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
       influxDB = influxDB_Connection.data
 
@@ -66,24 +66,21 @@ class Solar(Resource):
     temperature = data["temperature"]["value"]
     windSpeed = (data["windSpeed"]["value"] if not data["windSpeed"]["disabled"] else round(values_df["Value"]['VV001'],2))
     windDensity = data["windDensity"]["value"]
+    inputDirectCurrentPower = data["directCurrentLoadPower"]["value"] if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC001'],2)
 
     if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState)) and inverterState:
       inputActivePower = data["alternCurrentLoadPower"]["value"] if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW001'],2)
       inputPowerFactor = data["alternCurrentLoadPowerFactor"]["value"] if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
       simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else inverterState
+    elif data["inputOperationMode"] == 'Mode2' and hybridState:
+      inputActivePower = data["alternCurrentLoadPower"]["value"] if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW002'],2)
+      inputPowerFactor = data["alternCurrentLoadPowerFactor"]["value"] if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP002'],2)
+      inputDirectCurrentPower = 0.0
+      simulatedInverterState = False
     else:
       inputActivePower = 0.0
       inputPowerFactor = 1.0
       simulatedInverterState = False
-
-    if data["inputOperationMode"] == 'Mode2' and hybridState:
-      inputActivePower = data["alternCurrentLoadPower"]["value"] if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW002'],2)
-      inputPowerFactor = data["alternCurrentLoadPowerFactor"]["value"] if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP002'],2)
-      inputDirectCurrentPower = 0.0
-    else:
-      inputActivePower = 0.0
-      inputPowerFactor = 1.0
-      inputDirectCurrentPower = data["directCurrentLoadPower"]["value"] if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC001'],2)
 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + data["battery2"]["stateOfCharge"]["value"]) / 2
@@ -106,7 +103,7 @@ class Solar(Resource):
       measuredControllerDC_Power = round(values_df["Value"]['PB001'],2)
       PV_Voltage = round(values_df["Value"]['VG001'],2)
       gridVoltage = round(values_df["Value"]['VGR001'],2)
-      WT_Voltage = round(values_df["Value"]['VG002'],2)
+      WT_Voltage = round(values_df["Value"]['VG005'],2)
       directCurrentVoltage = round(values_df["Value"]['VB001'],2)
       inverterVoltage = round(values_df["Value"]['VAC001'],2)
       directCurrentLoadVoltage = round(values_df["Value"]['VDC001'],2)
@@ -130,20 +127,20 @@ class Solar(Resource):
       hybridInverterVoltage = 0.0
       solarWind['windTurbineRevolutions'] = 0.0
 
-    PV_Results = twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+    twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries, isParallel)
+    PV_Results = twinPVWF.arrayPowerOutput(monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
     WT_Results = twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
-    twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries)
     
     if monoModuleState or polyModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation1"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
-        PV_Results = twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+        PV_Results = twinPVWF.arrayPowerOutput(monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
     elif flexiModuleState or cdteModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation2"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
-        PV_Results = twinPVWF.arrayPowerOutput(isParallel, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+        PV_Results = twinPVWF.arrayPowerOutput(monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 

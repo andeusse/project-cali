@@ -103,10 +103,9 @@ class TwinPVWF:
                 P_wtSTP = 0
             # Ajuste de potencia por densidad de aire
             self.P_WT = (self.ro / 1.225) * P_wtSTP
-        return self.P_WT
+        return round(self.P_WT,2)
     
-    def arrayPowerOutput(self, parallel, monoModule, polyModule, flexiModule, cdteModule, T_a, G_1, G_2):
-        self.parallel = parallel
+    def arrayPowerOutput(self, monoModule, polyModule, flexiModule, cdteModule, T_a, G_1, G_2):
         self.monoModule = monoModule
         self.polyModule = polyModule
         self.flexiModule = flexiModule
@@ -148,7 +147,8 @@ class TwinPVWF:
         return self.P_PV, self.Tc_mono, self.Tc_poly, self.Tc_flexi, self.Tc_cdte
 
     # Parametrizacion de gemelo 
-    def twinParameters (self, n_controller, n_inverter, n_hybrid, batteries):
+    def twinParameters (self, n_controller, n_inverter, n_hybrid, batteries, parallel):
+        self.parallel = parallel
         self.n_controller = n_controller # Eficiencia controlador en % -> se optomiza con medidas de potencia
         self.n_inverter = n_inverter # Eficiencia de inversor en %
         self.n_hybrid = n_hybrid # Eficiencia de inversor hibrido en %
@@ -181,7 +181,7 @@ class TwinPVWF:
     def optimal_f_PV(self, P_PV_meas):
         def optimal_PV_PowerOutput(f_PV, P_PV_meas):
             self.f_PV = f_PV[0]
-            return self.arrayPowerOutput(self.parallel, self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
+            return self.arrayPowerOutput(self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
         f_PV_0 = 1.0
         f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.8, 1.2), args = [P_PV_meas])
         self.f_PV = f_PV.x[0]*random.uniform(0.98,1.02)
@@ -246,8 +246,8 @@ class TwinPVWF:
             self.P_CA = 0.0
             self.inverterState = False
         
-        if ((self.P_PV + self.P_WT) * self.n_controller / 100) < (self.P_CD / (self.n_controller / 100)):
-            self.P_CD = 0.0
+        # if ((self.P_PV + self.P_WT) * self.n_controller / 100) < (self.P_CD / (self.n_controller / 100)):
+        #     self.P_CD = 0.0
         
         self.P_CC = ((self.P_PV + self.P_WT) * self.n_controller / 100) - (self.P_CD / (self.n_controller / 100)) # Potencia a la salida de controlador
         self.S_CA = (self.P_CA / abs(self.PF)) # Potencia aparente a la salida del inversor
