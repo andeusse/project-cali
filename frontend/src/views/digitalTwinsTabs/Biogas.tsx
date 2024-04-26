@@ -128,6 +128,7 @@ const Biogas = (props: Props) => {
                       name="name"
                       autoComplete="off"
                       onChange={handleChange}
+                      disabled={biogas.disableParameters}
                     />
                   </FormControl>
                 </Grid>
@@ -141,6 +142,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.anaerobicReactorVolume1}
                         name="anaerobicReactorVolume1"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -148,6 +150,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.anaerobicReactorVolume2}
                         name="anaerobicReactorVolume2"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
@@ -158,6 +161,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.biogasTankVolume1}
                         name="biogasTankVolume1"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -165,6 +169,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.biogasTankVolume2}
                         name="biogasTankVolume2"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -172,6 +177,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.biogasTankVolume3}
                         name="biogasTankVolume3"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                   </Grid>
@@ -194,6 +200,7 @@ const Biogas = (props: Props) => {
                         handleChange={handleChange}
                         trueString="Gemelo on"
                         falseString="Gemelo off"
+                        disabled={biogas.disableParameters}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -201,6 +208,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.inputDigitalTwinStepTime}
                         name="inputDigitalTwinStepTime"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -208,6 +216,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.inputDigitalTwinTrainingTime}
                         name="inputDigitalTwinTrainingTime"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -215,6 +224,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.inputDigitalTwinForecastTime}
                         name="inputDigitalTwinForecastTime"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
@@ -225,6 +235,7 @@ const Biogas = (props: Props) => {
                         variable={biogas.inputKineticParameterInitialValue}
                         name="inputKineticParameterInitialValue"
                         handleChange={handleChange}
+                        disabled={biogas.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
@@ -299,6 +310,7 @@ const Biogas = (props: Props) => {
                         handleChange={handleChange}
                         trueString="Offline"
                         falseString="Online"
+                        disabled={biogas.disableParameters}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>

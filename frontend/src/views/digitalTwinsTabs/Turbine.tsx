@@ -357,6 +357,7 @@ const Turbine = (props: Props) => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                    disabled={turbine.disableParameters}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
