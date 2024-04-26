@@ -55,6 +55,9 @@ export type TurbineOutput = {
   batteryCurrent: number;
   batteryPower: number;
   batteryTemperature?: number;
+  directCurrentLoadPower: number;
+  directCurrentLoadVoltage: number;
+  directCurrentLoadCurrent: number;
   inverterApparentPower: number;
   inverterActivePower: number;
   inverterReactivePower: number;
@@ -83,6 +86,9 @@ export type TurbineOutputHistoric = CommonGraphType & {
   batteryCurrent: number[];
   batteryPower: number[];
   batteryTemperature?: number[];
+  directCurrentLoadPower: number[];
+  directCurrentLoadVoltage: number[];
+  directCurrentLoadCurrent: number[];
   inverterApparentPower: number[];
   inverterActivePower: number[];
   inverterReactivePower: number[];
@@ -293,7 +299,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Voltaje turbina',
     variable: 'turbineVoltage',
-    x: 255,
+    x: 225,
     y: 60,
     diagramName: 'Voltaje',
     unit: 'Vcd',
@@ -303,7 +309,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Corriente turbina',
     variable: 'turbineCurrent',
-    x: 255,
+    x: 225,
     y: 85,
     diagramName: 'Corriente',
     unit: 'Acd',
@@ -313,7 +319,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Potencia turbina',
     variable: 'turbinePower',
-    x: 255,
+    x: 225,
     y: 110,
     diagramName: 'Potencia',
     unit: 'W',
@@ -409,6 +415,39 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     unit: 'W',
     fixed: 1,
     isShown: true,
+  },
+  {
+    name: 'Potencia carga CD',
+    variable: 'directCurrentLoadPower',
+    x: 200,
+    y: 700,
+    diagramName: 'Potencia',
+    unit: 'W',
+    fixed: 1,
+    isShown: true,
+    hasAdditionalCondition: true,
+  },
+  {
+    name: 'Voltaje carga CD',
+    variable: 'directCurrentLoadVoltage',
+    x: 200,
+    y: 725,
+    diagramName: 'Voltaje',
+    unit: 'V',
+    fixed: 1,
+    isShown: true,
+    hasAdditionalCondition: true,
+  },
+  {
+    name: 'Corriente carga CD',
+    variable: 'directCurrentLoadCurrent',
+    x: 200,
+    y: 750,
+    diagramName: 'Corriente',
+    unit: 'A',
+    fixed: 1,
+    isShown: true,
+    hasAdditionalCondition: true,
   },
   {
     name: 'Corriente de entrada inversor',

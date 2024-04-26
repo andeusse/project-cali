@@ -1,10 +1,10 @@
 import { useTheme } from '@mui/material';
 import {
+  TURBINE_DIAGRAM_VARIABLES,
   TurbineOutput,
   TurbineParameters,
   TurbineType,
 } from '../../../types/models/turbine';
-import { DiagramVariableType } from '../../../types/models/common';
 
 import peltonDiagram from '../../../assets/turbine/peltonDiagram.png';
 import turgoDiagram from '../../../assets/turbine/turgoDiagram.png';
@@ -18,17 +18,16 @@ import cargaACOff from '../../../assets/common/cargaACOff.png';
 import cargaACOn from '../../../assets/common/cargaACOn.png';
 import cargaDCOff from '../../../assets/common/cargaDCOff.png';
 import cargaDCOn from '../../../assets/common/cargaDCOn.png';
+import DiagramVariables from '../common/DiagramVariables';
 
 type Props = {
   turbine: TurbineParameters;
   data: TurbineOutput | undefined;
-  variables: DiagramVariableType[];
   isPlaying: boolean;
 };
 
 const TurbineDiagram = (props: Props) => {
-  const { turbine, data, variables, isPlaying } = props;
-  const theme = useTheme();
+  const { turbine, data, isPlaying } = props;
 
   return (
     <div
@@ -84,62 +83,11 @@ const TurbineDiagram = (props: Props) => {
             transform="translate(-50 600) scale(0.5 0.5)"
           ></image>
         )}
-        <g>
-          {variables.map((v) => {
-            if (!v.isShown) return null;
-            let printValue: string = '';
-            if (
-              data &&
-              typeof data[v.variable as keyof TurbineOutput] === 'number'
-            ) {
-              printValue = (
-                data[v.variable as keyof TurbineOutput] as number
-              ).toFixed(v.fixed);
-            } else if (
-              data &&
-              typeof data[v.variable as keyof TurbineOutput] === 'boolean'
-            ) {
-              printValue = (data[v.variable as keyof TurbineOutput] as boolean)
-                ? 'On'
-                : 'Off';
-            }
-            return (
-              <g key={v.variable}>
-                {data && printValue && (
-                  <g transform={`translate(${v.x},${v.y})`}>
-                    <text
-                      style={{
-                        alignmentBaseline: 'central',
-                        textAnchor: 'middle',
-                        fontSize: '13px',
-                        fontWeight: 'bold',
-                      }}
-                    >{`${v.diagramName}`}</text>
-                    <g transform={`translate(75,0)`}>
-                      <rect
-                        width="80"
-                        height="20"
-                        x="-40"
-                        y="-10"
-                        rx="5"
-                        ry="5"
-                        fill="blue"
-                      ></rect>
-                      <text
-                        style={{
-                          alignmentBaseline: 'central',
-                          textAnchor: 'middle',
-                          fontSize: '13px',
-                          fill: 'white',
-                        }}
-                      >{`${printValue} ${v.unit}`}</text>
-                    </g>
-                  </g>
-                )}
-              </g>
-            );
-          })}
-        </g>
+        <DiagramVariables
+          data={data}
+          variables={TURBINE_DIAGRAM_VARIABLES}
+          additionalCondition={turbine.turbineType === TurbineType.Turgo}
+        ></DiagramVariables>
       </svg>
     </div>
   );

@@ -88,7 +88,7 @@ const Biogas = (props: Props) => {
             <AccordionDetails>
               <img
                 style={{
-                  width: '1000px',
+                  height: '500px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',

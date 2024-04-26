@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
 import StopIcon from '@mui/icons-material/Stop';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 type PlayerControlsProps = {
   isPlaying: boolean;
@@ -59,6 +60,15 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
         sx={{ width: '120px', margin: '5px' }}
       >
         Detener
+      </Button>
+      <Button
+        variant="contained"
+        onClick={handleStop}
+        disabled={isPlaying}
+        startIcon={<RestartAltIcon />}
+        sx={{ width: '120px', margin: '5px' }}
+      >
+        Reiniciar
       </Button>
     </div>
   );

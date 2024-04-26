@@ -132,7 +132,7 @@ const Turbine = (props: Props) => {
             <AccordionDetails>
               <img
                 style={{
-                  width: '1000px',
+                  height: '500px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',
@@ -404,7 +404,6 @@ const Turbine = (props: Props) => {
               <TurbineDiagram
                 turbine={turbine}
                 data={data}
-                variables={TURBINE_DIAGRAM_VARIABLES}
                 isPlaying={isPlaying}
               ></TurbineDiagram>
             </Grid>
