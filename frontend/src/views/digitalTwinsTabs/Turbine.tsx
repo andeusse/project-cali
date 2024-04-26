@@ -46,6 +46,12 @@ const Turbine = (props: Props) => {
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', turbine);
 
   useEffect(() => {
+    setTurbine((o) => {
+      return { ...o, disableParameters: isPlaying };
+    });
+  }, [isPlaying]);
+
+  useEffect(() => {
     if (data !== undefined) {
       setTurbine((o) => ({
         ...o,
@@ -166,6 +172,7 @@ const Turbine = (props: Props) => {
                       name="name"
                       autoComplete="off"
                       onChange={handleChange}
+                      disabled={turbine.disableParameters}
                     />
                   </FormControl>
                 </Grid>
@@ -183,6 +190,7 @@ const Turbine = (props: Props) => {
                           value={turbine.turbineType}
                           name="turbineType"
                           onChange={(e: any) => handleChange(e)}
+                          disabled={turbine.disableParameters}
                         >
                           {Object.keys(TurbineType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -237,6 +245,7 @@ const Turbine = (props: Props) => {
                           value={turbine.controller.sinkLoadInitialState}
                           name="controller.sinkLoadInitialState"
                           onChange={(e: any) => handleChange(e)}
+                          disabled={turbine.disableParameters}
                         >
                           {Object.keys(ControllerStateType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -251,6 +260,7 @@ const Turbine = (props: Props) => {
                         name="controller.customize"
                         value={turbine.controller.customize}
                         handleChange={handleChange}
+                        disabled={turbine.disableParameters}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
@@ -264,6 +274,7 @@ const Turbine = (props: Props) => {
                         variable={turbine.controller.chargeVoltageBulk}
                         name="controller.chargeVoltageBulk"
                         handleChange={handleChange}
+                        disabled={turbine.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
@@ -271,6 +282,7 @@ const Turbine = (props: Props) => {
                         variable={turbine.controller.chargeVoltageFloat}
                         name="controller.chargeVoltageFloat"
                         handleChange={handleChange}
+                        disabled={turbine.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
@@ -278,6 +290,7 @@ const Turbine = (props: Props) => {
                         variable={turbine.controller.chargingMinimunVoltage}
                         name="controller.chargingMinimunVoltage"
                         handleChange={handleChange}
+                        disabled={turbine.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
@@ -285,6 +298,7 @@ const Turbine = (props: Props) => {
                         variable={turbine.controller.sinkOffVoltage}
                         name="controller.sinkOffVoltage"
                         handleChange={handleChange}
+                        disabled={turbine.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
@@ -292,6 +306,7 @@ const Turbine = (props: Props) => {
                         variable={turbine.controller.sinkOnVoltage}
                         name="controller.sinkOnVoltage"
                         handleChange={handleChange}
+                        disabled={turbine.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                   </Grid>
@@ -302,6 +317,7 @@ const Turbine = (props: Props) => {
                     propertyName="battery"
                     battery={turbine.battery}
                     handleChange={handleChange}
+                    disabled={turbine.disableParameters}
                   ></Battery>
                 </Grid>
                 <Grid item xs={12} md={6} xl={1.5}>

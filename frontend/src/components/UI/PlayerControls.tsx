@@ -55,20 +55,10 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
       <Button
         variant="contained"
         onClick={handleStop}
-        disabled={!isPlaying}
-        startIcon={<StopIcon />}
+        startIcon={isPlaying ? <StopIcon /> : <RestartAltIcon />}
         sx={{ width: '120px', margin: '5px' }}
       >
-        Detener
-      </Button>
-      <Button
-        variant="contained"
-        onClick={handleStop}
-        disabled={isPlaying}
-        startIcon={<RestartAltIcon />}
-        sx={{ width: '120px', margin: '5px' }}
-      >
-        Reiniciar
+        {isPlaying ? 'Detener' : 'Reiniciar'}
       </Button>
     </div>
   );

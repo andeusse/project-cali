@@ -43,6 +43,12 @@ const Biogas = (props: Props) => {
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<BiogasParameters, BiogasOutput>('biogas', biogas);
 
+  useEffect(() => {
+    setBiogas((o) => {
+      return { ...o, disableParameters: isPlaying };
+    });
+  }, [isPlaying]);
+
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiogasParameters>(e, biogas, variableName);
     if (newState) {

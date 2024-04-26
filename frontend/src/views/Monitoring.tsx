@@ -1,22 +1,71 @@
 import { Box, Container } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
-import TabGrafana from './monitoringTabs/TabGrafana';
-import TabRealTime from './monitoringTabs/TabRealTime';
+import IframeFull from '../components/UI/IframeFull';
+import Config from '../config/config';
 
 type Props = {};
 
 const Monitoring = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Históricos - Grafana',
-      children: <TabGrafana></TabGrafana>,
+      title: 'Planta de Biogás',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[0]}
+        ></IframeFull>
+      ),
     },
     {
-      title: 'Tiempo real - Node-RED',
-      children: <TabRealTime></TabRealTime>,
+      title: 'Turbinas',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[1]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Solar - Eólico',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[2]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Celda de Hidrógeno',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[3]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Torre de refrigeración',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[5]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Potencial Bioquímico (Metano)',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[5]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Tablero Eléctrico',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[0]}
+        ></IframeFull>
+      ),
     },
   ];
+
   return (
     <Container disableGutters maxWidth={false}>
       <Box display="flex" justifyContent="center" alignItems="center">

@@ -2,7 +2,7 @@ import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
 
 const CustomNumberField = (props: CustomTextFieldType) => {
-  const { variable, name, handleChange } = props;
+  const { variable, name, handleChange, disabled: disabledProp } = props;
   const { disabled, value, tooltip, unit, variableString, variableSubString } =
     variable;
 
@@ -33,7 +33,7 @@ const CustomNumberField = (props: CustomTextFieldType) => {
               <sub>{variableSubString}</sub>
             </>
           }
-          disabled={disabled}
+          disabled={disabled || disabledProp}
           value={value}
           name={name}
           onChange={handleChange}

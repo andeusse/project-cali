@@ -30,6 +30,7 @@ export type CommonDigitalTwinsParameter = {
   inputOfflineOperation: boolean;
   timeMultiplier: InputType;
   queryTime: number;
+  disableParameters: boolean;
 };
 
 export type IsConnected = {

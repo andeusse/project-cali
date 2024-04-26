@@ -9,10 +9,11 @@ type Props = {
   propertyName: string;
   panel: Panel;
   handleChange: (e: any) => void;
+  disabled?: boolean;
 };
 
 const SolarPanel = (props: Props) => {
-  const { name, propertyName, panel, handleChange } = props;
+  const { name, propertyName, panel, handleChange, disabled } = props;
 
   return (
     <>
@@ -32,7 +33,7 @@ const SolarPanel = (props: Props) => {
             handleChange={handleChange}
             trueString="Conectado"
             falseString="Desconectado"
-            disabled={panel.isConnectedDisabled}
+            disabled={panel.isConnectedDisabled || disabled}
           ></CustomToggle>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
@@ -43,6 +44,7 @@ const SolarPanel = (props: Props) => {
             variable={panel.deratingFactor}
             name={`${propertyName}.deratingFactor`}
             handleChange={handleChange}
+            disabled={disabled}
           ></CustomNumberField>
         </Grid>
         <Grid item xs={12} md={12} xl={6}>

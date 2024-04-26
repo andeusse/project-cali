@@ -1,4 +1,3 @@
-import { useTheme } from '@mui/material';
 import {
   TURBINE_DIAGRAM_VARIABLES,
   TurbineOutput,

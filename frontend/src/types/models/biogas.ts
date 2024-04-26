@@ -67,6 +67,7 @@ export type BiogasOutputHistoric = CommonGraphType & {};
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
   queryTime: Config.QUERY_TIME_OFFLINE,
+  disableParameters: false,
   timeMultiplier: {
     disabled: false,
     value: 1,

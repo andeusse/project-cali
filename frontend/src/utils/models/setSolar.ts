@@ -28,9 +28,7 @@ export const setSolar = (
       : Config.QUERY_TIME_ONLINE;
     newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
     newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
-    newState.temperature.disabled = !newState.inputOfflineOperation;
     newState.windSpeed.disabled = !newState.inputOfflineOperation;
-    newState.windDensity.disabled = !newState.inputOfflineOperation;
     newState.alternCurrentLoadPower.disabled = !newState.inputOfflineOperation;
     newState.alternCurrentLoadPowerFactor.disabled =
       !newState.inputOfflineOperation;
