@@ -161,4 +161,4 @@ class TwinHydro:
         self.I_inv = self.P_inv / self.V_CD
         I_CDload = P_CD / V_CDload
         
-        return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_t,2), round(self.V_CA,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), self.sinkState, round(self.P_sink,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.inverterState,  round(self.I_t,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2), round(P_CD,2), round(V_CDload,2), round(I_CDload)
+        return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_t,2), round(self.V_CA,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), self.sinkState, round(self.P_sink,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.inverterState,  round(self.I_t,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2), round(P_CD,2), round(V_CDload,2), I_CDload

@@ -133,6 +133,6 @@ class Turbine(Resource):
     turbine["inverterInputCurrent"] = results[18]
     turbine["directCurrentLoadPower"] = results[19]
     turbine["directCurrentLoadVoltage"] = results[20]
-    turbine["directCurrentLoadCurrent"] = results[21]
+    turbine["directCurrentLoadCurrent"] = results[21]*1000
 
     return {"model": turbine}
