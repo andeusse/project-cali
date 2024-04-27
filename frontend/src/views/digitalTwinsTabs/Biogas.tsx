@@ -310,7 +310,6 @@ const Biogas = (props: Props) => {
                         handleChange={handleChange}
                         trueString="Offline"
                         falseString="Online"
-                        disabled={biogas.disableParameters}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>

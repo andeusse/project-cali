@@ -13,10 +13,12 @@ const ToggleCustomNumberField = (props: ToggleCustomTextFieldType) => {
     disabled,
   } = props;
 
+  const { disabled: _, ...otherProps } = props;
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={7} md={7} xl={7}>
-        <CustomNumberField {...props}></CustomNumberField>
+        <CustomNumberField {...otherProps}></CustomNumberField>
       </Grid>
       <Grid item xs={5} md={5} xl={5} sx={{ alignContent: 'center' }}>
         <FormControlLabel

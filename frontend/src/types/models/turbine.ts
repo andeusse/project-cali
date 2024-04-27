@@ -445,7 +445,7 @@ export const TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 200,
     y: 750,
     diagramName: 'Corriente',
-    unit: 'A',
+    unit: 'mA',
     fixed: 1,
     isShown: true,
     hasAdditionalCondition: true,

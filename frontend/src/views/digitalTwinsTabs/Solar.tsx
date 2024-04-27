@@ -478,7 +478,6 @@ const Solar = (props: Props) => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
-                    disabled={solarWind.disableParameters}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
