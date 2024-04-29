@@ -17,7 +17,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
       {variables.map((v) => {
         if (!v.isShown) return null;
         if (v.hasAdditionalCondition && !additionalCondition) return null;
-        let printValue: string = '';
+        let printValue: string = '-';
         if (data && typeof data[v.variable as keyof T] === 'number') {
           printValue = (data[v.variable as keyof T] as number).toFixed(v.fixed);
         } else if (data && typeof data[v.variable as keyof T] === 'boolean') {
@@ -25,7 +25,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
         }
         return (
           <g key={v.variable}>
-            {data && printValue && (
+            {printValue && (
               <g transform={`translate(${v.x},${v.y})`}>
                 <text
                   style={{
@@ -35,7 +35,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                     fill: theme.palette.text.primary,
                   }}
                 >{`${v.diagramName}`}</text>
-                <g transform={`translate(360,0)`}>
+                <g transform={`translate(400,0)`}>
                   <rect
                     width="240"
                     height="60"
@@ -52,7 +52,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                       fontSize: '40px',
                       fill: 'white',
                     }}
-                  >{`${printValue} ${v.unit}`}</text>
+                  >{`${printValue} ${printValue !== '-' ? v.unit : ''}`}</text>
                 </g>
               </g>
             )}
