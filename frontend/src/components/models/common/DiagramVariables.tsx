@@ -27,17 +27,16 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                 <text
                   style={{
                     alignmentBaseline: 'central',
-                    textAnchor: 'middle',
-                    fontSize: '13px',
+                    fontSize: '20px',
                     fontWeight: 'bold',
                   }}
                 >{`${v.diagramName}`}</text>
-                <g transform={`translate(75,0)`}>
+                <g transform={`translate(180,0)`}>
                   <rect
-                    width="80"
-                    height="20"
-                    x="-40"
-                    y="-10"
+                    width="120"
+                    height="30"
+                    x="-60"
+                    y="-15"
                     rx="5"
                     ry="5"
                     fill="blue"
@@ -46,7 +45,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                     style={{
                       alignmentBaseline: 'central',
                       textAnchor: 'middle',
-                      fontSize: '13px',
+                      fontSize: '20px',
                       fill: 'white',
                     }}
                   >{`${printValue} ${v.unit}`}</text>

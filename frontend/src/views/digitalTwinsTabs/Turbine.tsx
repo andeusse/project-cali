@@ -17,7 +17,7 @@ import {
   ControllerStateType,
   PELTON_TURBINE,
   TURBINE,
-  TURBINE_DIAGRAM_VARIABLES,
+  PELTON_TURBINE_DIAGRAM_VARIABLES,
   TURGO_TURBINE,
   TurbineOutput,
   TurbineParameters,
@@ -432,7 +432,7 @@ const Turbine = (props: Props) => {
                 timeMultiplier={turbine.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
-                variables={TURBINE_DIAGRAM_VARIABLES}
+                variables={PELTON_TURBINE_DIAGRAM_VARIABLES}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
               ></TimeGraphs>

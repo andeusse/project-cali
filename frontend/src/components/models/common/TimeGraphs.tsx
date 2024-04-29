@@ -78,7 +78,7 @@ const TimeGraphs = (props: Props) => {
             Multiplicador de velocidad:
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={12} xl={8}>
+            <Grid item xs={12} md={12} xl={7}>
               <Slider
                 aria-label="TimeMultiplier"
                 value={timeMultiplier.value}
@@ -92,7 +92,7 @@ const TimeGraphs = (props: Props) => {
                 onChange={handleChange}
               />
             </Grid>
-            <Grid item xs={12} md={12} xl={4}>
+            <Grid item xs={12} md={12} xl={5}>
               <CustomNumberField
                 variable={timeMultiplier}
                 name="timeMultiplier"
