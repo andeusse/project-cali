@@ -111,11 +111,15 @@ const TimeGraphs = (props: Props) => {
               value={selectedVariable}
               onChange={(e) => setSelectedVariable(e.target.value)}
             >
-              {availableGraphs.map((g, index) => (
-                <MenuItem key={`${index}${g.variable}`} value={g.variable}>
-                  {variables.find((v) => g.variable === v.variable)?.name}
-                </MenuItem>
-              ))}
+              {variables.map((v, index) => {
+                if (v.isShown) {
+                  return (
+                    <MenuItem key={`${index}${v.name}`} value={v.variable}>
+                      {v.name}
+                    </MenuItem>
+                  );
+                }
+              })}
             </Select>
           </FormControl>
           <Button
