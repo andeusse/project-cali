@@ -2,7 +2,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Alert,
   FormControl,
   Grid,
   InputLabel,
@@ -32,6 +31,7 @@ import CustomToggle from '../../components/UI/CustomToggle';
 
 import biogasDiagram from '../../assets/biogas/biogasPlantDiagram.svg';
 import biogasIllustration from '../../assets/illustrations/biogas.jpg';
+import ErrorDialog from '../../components/UI/ErrorDialog';
 
 type Props = {};
 
@@ -39,6 +39,7 @@ const Biogas = (props: Props) => {
   const [biogas, setBiogas] = useState<BiogasParameters>(BIOGAS);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<BiogasParameters, BiogasOutput>('biogas', biogas);
@@ -48,6 +49,12 @@ const Biogas = (props: Props) => {
       return { ...o, disableParameters: isPlaying };
     });
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (error !== '') {
+      setIsOpen(true);
+    }
+  }, [error]);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiogasParameters>(e, biogas, variableName);
@@ -75,11 +82,11 @@ const Biogas = (props: Props) => {
 
   return (
     <>
-      {error !== '' && isPlaying && (
-        <Alert severity="error" variant="filled">
-          {error}
-        </Alert>
-      )}
+      <ErrorDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        error={error}
+      ></ErrorDialog>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion expanded={isImageExpanded} onChange={handleImageExpanded}>

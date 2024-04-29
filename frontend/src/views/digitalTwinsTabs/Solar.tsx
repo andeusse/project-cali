@@ -1,5 +1,4 @@
 import {
-  Alert,
   Grid,
   FormControl,
   TextField,
@@ -37,6 +36,7 @@ import CustomToggle from '../../components/UI/CustomToggle';
 
 import solarDiagram from '../../assets/solar/solarDiagram.svg';
 import solarIllustration from '../../assets/illustrations/solar.jpg';
+import ErrorDialog from '../../components/UI/ErrorDialog';
 
 type Props = {};
 
@@ -44,6 +44,7 @@ const Solar = (props: Props) => {
   const [solarWind, setSolarWind] = useState<SolarWindParameters>(SOLAR_WIND);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', solarWind);
@@ -53,6 +54,12 @@ const Solar = (props: Props) => {
       return { ...o, disableParameters: isPlaying };
     });
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (error !== '') {
+      setIsOpen(true);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (data !== undefined) {
@@ -89,11 +96,11 @@ const Solar = (props: Props) => {
 
   return (
     <>
-      {error !== '' && isPlaying && (
-        <Alert severity="error" variant="filled">
-          {error}
-        </Alert>
-      )}
+      <ErrorDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        error={error}
+      ></ErrorDialog>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion expanded={isImageExpanded} onChange={handleImageExpanded}>

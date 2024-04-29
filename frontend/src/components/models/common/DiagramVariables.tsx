@@ -1,5 +1,6 @@
 import React from 'react';
 import { DiagramVariableType } from '../../../types/models/common';
+import { useTheme } from '@mui/material';
 
 type Props<T> = {
   data: T;
@@ -9,6 +10,8 @@ type Props<T> = {
 
 const DiagramVariables = <T,>(props: Props<T>) => {
   const { data, variables, additionalCondition } = props;
+  const theme = useTheme();
+
   return (
     <g>
       {variables.map((v) => {
@@ -27,16 +30,17 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                 <text
                   style={{
                     alignmentBaseline: 'central',
-                    fontSize: '20px',
+                    fontSize: '40px',
                     fontWeight: 'bold',
+                    fill: theme.palette.text.primary,
                   }}
                 >{`${v.diagramName}`}</text>
-                <g transform={`translate(180,0)`}>
+                <g transform={`translate(360,0)`}>
                   <rect
-                    width="120"
-                    height="30"
-                    x="-60"
-                    y="-15"
+                    width="240"
+                    height="60"
+                    x="-120"
+                    y="-30"
                     rx="5"
                     ry="5"
                     fill="blue"
@@ -45,7 +49,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                     style={{
                       alignmentBaseline: 'central',
                       textAnchor: 'middle',
-                      fontSize: '20px',
+                      fontSize: '40px',
                       fill: 'white',
                     }}
                   >{`${printValue} ${v.unit}`}</text>

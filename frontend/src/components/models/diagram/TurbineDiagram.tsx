@@ -20,8 +20,8 @@ import cargaDCOff from '../../../assets/common/cargaDCOff.png';
 import cargaDCOn from '../../../assets/common/cargaDCOn.png';
 import DiagramVariables from '../common/DiagramVariables';
 
-import battery from '../../../assets/common/battery-empty.svg';
 import { useEffect, useState } from 'react';
+import BatteryStateOfCharge from '../common/BatteryStateOfCharge';
 
 type Props = {
   turbine: TurbineParameters;
@@ -57,17 +57,8 @@ const TurbineDiagram = (props: Props) => {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox={`0 0 2100 1260`}
+        viewBox={`0 0 4200 2520`}
       >
-        <rect
-          width="2100"
-          height="1260"
-          x="0"
-          y="0"
-          rx="20"
-          ry="20"
-          fill="white"
-        />
         <image
           href={
             turbine.turbineType === TurbineType.Pelton
@@ -75,72 +66,43 @@ const TurbineDiagram = (props: Props) => {
               : turgoDiagram
           }
         ></image>
-        {turbine.turbineType === TurbineType.Pelton && (
-          <g>
-            <rect
-              width="110"
-              height={2 * batteryStateOfCharge}
-              x="873"
-              y={-2 * batteryStateOfCharge + 888}
-              rx="20"
-              ry="20"
-              fill="green"
-            />
-            <image
-              href={battery}
-              transform="translate(800 650) scale(0.5 0.5)"
-            ></image>
-          </g>
-        )}
-        {turbine.turbineType === TurbineType.Turgo && (
-          <g>
-            <rect
-              width="110"
-              height={2 * batteryStateOfCharge}
-              x="873"
-              y={-2 * batteryStateOfCharge + 388}
-              rx="20"
-              ry="20"
-              fill="green"
-            />
-            <image
-              href={battery}
-              transform="translate(800 150) scale(0.5 0.5)"
-            ></image>
-          </g>
-        )}
+        <g transform="translate(2300,1500) scale(0.5,0.5)">
+          <BatteryStateOfCharge
+            batteryStateOfCharge={batteryStateOfCharge}
+          ></BatteryStateOfCharge>
+        </g>
         {turbine.turbineType === TurbineType.Pelton && !isPlaying && (
           <image
             href={peltonTurbineOff}
-            transform="translate(310 220) scale(0.1 0.1)"
+            transform="translate(620 440) scale(0.2 0.2)"
           ></image>
         )}
         {turbine.turbineType === TurbineType.Turgo && !isPlaying && (
           <image
             href={turgoTurbineOff}
-            transform="translate(325 800) scale(0.1 0.1)"
+            transform="translate(650 1600) scale(0.2 0.2)"
           ></image>
         )}
         {turbine.turbineType === TurbineType.Pelton && isPlaying && (
           <image
             href={peltonTurbine}
-            transform="translate(310 220) scale(0.1 0.1)"
+            transform="translate(620 440) scale(0.2 0.2)"
           ></image>
         )}
         {turbine.turbineType === TurbineType.Turgo && isPlaying && (
           <image
             href={isPlaying ? turgoTurbine : turgoTurbineOff}
-            transform="translate(325 800) scale(0.1 0.1)"
+            transform="translate(650 1600) scale(0.2 0.2)"
           ></image>
         )}
         <image
           href={turbine.inputActivePower.value !== 0 ? cargaACOn : cargaACOff}
-          transform="translate(1500 770) scale(0.5 0.5)"
+          transform="translate(3000 1540) scale(1 1)"
         ></image>
         {turbine.turbineType === TurbineType.Turgo && (
           <image
             href={turbine.inputDirectCurrentPower ? cargaDCOn : cargaDCOff}
-            transform="translate(940 975) scale(0.4 0.4)"
+            transform="translate(1880 1950) scale(0.8 0.8)"
           ></image>
         )}
         <DiagramVariables

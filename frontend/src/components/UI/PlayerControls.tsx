@@ -36,6 +36,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
     >
       <Button
         variant="contained"
+        color="success"
         onClick={handlePlay}
         disabled={isPlaying}
         startIcon={<PlayArrowIcon />}
@@ -45,6 +46,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
       </Button>
       <Button
         variant="contained"
+        color="info"
         onClick={handlePause}
         disabled={!isPlaying}
         startIcon={<PauseIcon />}
@@ -54,6 +56,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
       </Button>
       <Button
         variant="contained"
+        color="error"
         onClick={handleStop}
         startIcon={isPlaying ? <StopIcon /> : <RestartAltIcon />}
         sx={{ width: '120px', margin: '5px' }}

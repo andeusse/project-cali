@@ -15,7 +15,7 @@ export const setFormObjectValue = <T extends formType>(
         ...s,
         [splitName[1]]: {
           ...(s[splitName[1]] as InputType),
-          value: newValue,
+          value: parseFloat(newValue),
         },
       },
     };

@@ -2,7 +2,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Alert,
   FormControl,
   Grid,
   InputLabel,
@@ -34,6 +33,7 @@ import CustomToggle from '../../components/UI/CustomToggle';
 
 import turbineIllustration from '../../assets/illustrations/turbine.jpg';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
+import ErrorDialog from '../../components/UI/ErrorDialog';
 
 type Props = {};
 
@@ -41,6 +41,7 @@ const Turbine = (props: Props) => {
   const [turbine, setTurbine] = useState<TurbineParameters>(TURBINE);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', turbine);
@@ -50,6 +51,12 @@ const Turbine = (props: Props) => {
       return { ...o, disableParameters: isPlaying };
     });
   }, [isPlaying]);
+
+  useEffect(() => {
+    if (error !== '') {
+      setIsOpen(true);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (data !== undefined) {
@@ -119,11 +126,11 @@ const Turbine = (props: Props) => {
 
   return (
     <>
-      {error !== '' && isPlaying && (
-        <Alert severity="error" variant="filled">
-          {error}
-        </Alert>
-      )}
+      <ErrorDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        error={error}
+      ></ErrorDialog>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion expanded={isImageExpanded} onChange={handleImageExpanded}>

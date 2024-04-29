@@ -61,8 +61,13 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         }
       })
       .catch((err: AxiosError<errorResp>) => {
+        setIsPlaying(false);
         setError(
-          `Error al realizar la consulta con el código: ${err.response?.status} y con mensaje de error: ${err.response?.data.message}`
+          `Error al realizar la consulta con el código: ${
+            err.response?.status
+          } y con mensaje de error: ${
+            err.response?.data.message
+          } y fecha ${moment()}`
         );
       })
       .finally(() => {});
