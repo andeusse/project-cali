@@ -81,9 +81,10 @@ class Solar(Resource):
       inputActivePower = 0.0
       inputPowerFactor = 1.0
       simulatedInverterState = False
-
+    if "simulatedBatteryStateOfCharge" in data:
+      print(data["simulatedBatteryStateOfCharge"]) 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
-    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + data["battery2"]["stateOfCharge"]["value"]) / 2
+    batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + int(data["isBattery2"]) * data["battery2"]["stateOfCharge"]["value"]) / (1 + int(data["isBattery2"]))
     directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]

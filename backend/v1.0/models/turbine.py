@@ -87,7 +87,6 @@ class Turbine(Resource):
       simulatedSinkLoadState = bool(int(values_df["Value"]['ED001']))
       simulatedInverterState = bool(int(values_df["Value"]['EI001']))
 
-      turbine["batteryTemperature"] = T_bat
       if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 6.89476, 2) # kPa to psi conversion
       if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow * 60, 2) # L/s to L/min conversion
       if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = inputActivePower
@@ -96,6 +95,8 @@ class Turbine(Resource):
       T_bat = 30.0
       V_CA = 0
       V_t = 0
+    
+    turbine["batteryTemperature"] = T_bat
 
     twinHydro.turbineType(turbineType)
     P_h = twinHydro.PowerOutput(inputPressure, inputFlow)

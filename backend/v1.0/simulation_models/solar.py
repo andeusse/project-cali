@@ -99,7 +99,7 @@ class TwinPVWF:
                 P_wtSTP = self.n_WT * self.P_WM * (((self.V_r**2) - (self.V_C**2)) / ((self.V_N**2) - (self.V_C**2)))
             elif (self.V_r >= self.V_N and self.V_r < self.V_F):
                 P_wtSTP = self.n_WT * self.P_WM
-            elif (self.V_r <= self.V_C or self.V_r > self.V_F):
+            elif (self.V_r <= self.V_C or self.V_r >= self.V_F):
                 P_wtSTP = 0
             # Ajuste de potencia por densidad de aire
             self.P_WT = (self.ro / 1.225) * P_wtSTP
