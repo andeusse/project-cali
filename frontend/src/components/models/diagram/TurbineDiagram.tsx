@@ -5,6 +5,7 @@ import {
   TurbineParameters,
   TurbineType,
 } from '../../../types/models/turbine';
+import DiagramVariables from '../common/DiagramVariables';
 
 import peltonDiagram from '../../../assets/turbine/peltonDiagram.png';
 import turgoDiagram from '../../../assets/turbine/turgoDiagram.png';
@@ -18,7 +19,6 @@ import cargaACOff from '../../../assets/common/cargaACOff.png';
 import cargaACOn from '../../../assets/common/cargaACOn.png';
 import cargaDCOff from '../../../assets/common/cargaDCOff.png';
 import cargaDCOn from '../../../assets/common/cargaDCOn.png';
-import DiagramVariables from '../common/DiagramVariables';
 
 import { useEffect, useState } from 'react';
 import BatteryStateOfCharge from '../common/BatteryStateOfCharge';

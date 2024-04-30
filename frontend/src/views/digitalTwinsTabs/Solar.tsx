@@ -19,6 +19,7 @@ import {
   OperationModeType,
   OperationModeText,
   SolarWindOutput,
+  SOLAR_DIAGRAM_VARIABLES,
 } from '../../types/models/solar';
 import { setFormState } from '../../utils/setFormState';
 import Iframe from 'react-iframe';
@@ -26,7 +27,6 @@ import Config from '../../config/config';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
-import Diagram from '../../components/UI/Diagram';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import { getValueByKey } from '../../utils/getValueByKey';
@@ -34,9 +34,9 @@ import SolarPanel from '../../components/models/SolarPanel';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
-import solarDiagram from '../../assets/solar/solarDiagram.svg';
 import solarIllustration from '../../assets/illustrations/solar.jpg';
 import ErrorDialog from '../../components/UI/ErrorDialog';
+import SolarDiagram from '../../components/models/diagram/SolarDiagram';
 
 type Props = {};
 
@@ -627,13 +627,11 @@ const Solar = (props: Props) => {
                 url={Config.getInstance().params.windyUrl}
               ></Iframe>
               {playerControl}
-              <Diagram<{}>
-                diagram={solarDiagram}
+              <SolarDiagram
+                solarWind={solarWind}
                 data={data}
-                variables={SOLAR_WIND_DIAGRAM_VARIABLES}
-                width={800}
-                height={400}
-              ></Diagram>
+                isPlaying={isPlaying}
+              ></SolarDiagram>
             </Grid>
           </Grid>
         </Grid>
@@ -644,7 +642,12 @@ const Solar = (props: Props) => {
                 timeMultiplier={solarWind.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
-                variables={SOLAR_WIND_DIAGRAM_VARIABLES}
+                variables={
+                  solarWind.inputOperationMode === OperationModeType.Mode2 &&
+                  solarWind.hybridInverter.isConnected
+                    ? SOLAR_DIAGRAM_VARIABLES
+                    : SOLAR_WIND_DIAGRAM_VARIABLES
+                }
                 playerControl={playerControl}
                 isPlaying={isPlaying}
               ></TimeGraphs>
