@@ -32,8 +32,14 @@ export default class Config {
       projectName: process.env.REACT_APP_TITLE
         ? process.env.REACT_APP_TITLE
         : 'Project',
-      windyUrl: process.env.REACT_APP_WINDY_URL
-        ? process.env.REACT_APP_WINDY_URL
+      windyUrlRadiation: process.env.REACT_APP_WINDY_URL_RADIATION
+        ? process.env.REACT_APP_WINDY_URL_RADIATION
+        : '',
+      windyUrlTemperature: process.env.REACT_APP_WINDY_URL_TEMPERATURE
+        ? process.env.REACT_APP_WINDY_URL_TEMPERATURE
+        : '',
+      windyUrlWindSpeed: process.env.REACT_APP_WINDY_URL_WIND_SPEED
+        ? process.env.REACT_APP_WINDY_URL_WIND_SPEED
         : '',
     };
   }

@@ -2,5 +2,7 @@ export type ConfigType = {
   apiUrl: string;
   grafanaUrls: string[];
   projectName: string;
-  windyUrl: string;
+  windyUrlRadiation: string;
+  windyUrlTemperature: string;
+  windyUrlWindSpeed: string;
 };

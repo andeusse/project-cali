@@ -16,7 +16,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
     <g>
       {variables.map((v) => {
         if (!v.isShown) return null;
-        if (v.hasAdditionalCondition && !additionalCondition) return null;
+        if (v.hasAdditionalCondition && additionalCondition) return null;
         let printValue: string = '-';
         if (data && typeof data[v.variable as keyof T] === 'number') {
           printValue = (data[v.variable as keyof T] as number).toFixed(v.fixed);

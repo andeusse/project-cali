@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import {
   OperationModeType,
-  SOLAR_DIAGRAM_VARIABLES,
-  SOLAR_WIND_DIAGRAM_VARIABLES,
+  MODE_1_CADMIO_MODE_2,
+  MODE_1_MODE_3,
+  MODE_2_HYBRID_DIAGRAM_VARIABLES,
+  MODE_4,
+  MODE_5,
   SolarWindOutput,
   SolarWindParameters,
 } from '../../../types/models/solar';
 import DiagramVariables from '../common/DiagramVariables';
 
-import solarWindDiagram from '../../../assets/solar/solarWindDiagram.png';
-import solarDiagram from '../../../assets/solar/solarDiagram.png';
+import mode1CadmioMode2Diagram from '../../../assets/solar/solarWindMode1CadmioMode2.png';
+import mode1Mode3Diagram from '../../../assets/solar/solarWindMode1Mode3.png';
+import mode2HybridDiagram from '../../../assets/solar/solarWindMode2Hybrid.png';
+import mode4Diagram from '../../../assets/solar/solarWindMode4.png';
+import mode5Diagram from '../../../assets/solar/solarWindMode5.png';
 
 import fanOff from '../../../assets/solar/fanOff.png';
 import fanOn from '../../../assets/solar/fan.gif';
@@ -41,6 +47,37 @@ const SolarDiagram = (props: Props) => {
           2
   );
 
+  const [diagramVariables, setDiagramVariables] = useState(MODE_1_MODE_3);
+
+  useEffect(() => {
+    if (
+      (solarWind.inputOperationMode === OperationModeType.Mode1 &&
+        solarWind.cadmiumTelluridePanel.isConnected) ||
+      (solarWind.inputOperationMode === OperationModeType.Mode2 &&
+        !solarWind.hybridInverter.isConnected)
+    ) {
+      setDiagramVariables(MODE_1_CADMIO_MODE_2);
+    } else if (
+      solarWind.inputOperationMode === OperationModeType.Mode1 ||
+      solarWind.inputOperationMode === OperationModeType.Mode3
+    ) {
+      setDiagramVariables(MODE_1_MODE_3);
+    } else if (
+      solarWind.inputOperationMode === OperationModeType.Mode2 &&
+      solarWind.hybridInverter.isConnected
+    ) {
+      setDiagramVariables(MODE_2_HYBRID_DIAGRAM_VARIABLES);
+    } else if (solarWind.inputOperationMode === OperationModeType.Mode4) {
+      setDiagramVariables(MODE_4);
+    } else if (solarWind.inputOperationMode === OperationModeType.Mode5) {
+      setDiagramVariables(MODE_5);
+    }
+  }, [
+    solarWind.cadmiumTelluridePanel.isConnected,
+    solarWind.hybridInverter.isConnected,
+    solarWind.inputOperationMode,
+  ]);
+
   useEffect(() => {
     let newValue = data
       ? data.batteryStateOfCharge
@@ -71,14 +108,68 @@ const SolarDiagram = (props: Props) => {
         xmlnsXlink="http://www.w3.org/1999/xlink"
         viewBox={`0 0 4180 2450`}
       >
+        {((solarWind.inputOperationMode === OperationModeType.Mode1 &&
+          solarWind.cadmiumTelluridePanel.isConnected) ||
+          (solarWind.inputOperationMode === OperationModeType.Mode2 &&
+            !solarWind.hybridInverter.isConnected)) && (
+          <g>
+            <image href={mode1CadmioMode2Diagram}></image>
+            <image
+              href={
+                solarWind.directCurrentLoadPower.value !== 0
+                  ? cargaDCOn
+                  : cargaDCOff
+              }
+              transform="translate(1730 1700) scale(0.8 0.8)"
+            ></image>
+            <image
+              href={
+                solarWind.alternCurrentLoadPower.value !== 0
+                  ? cargaACOn
+                  : cargaACOff
+              }
+              transform="translate(2850 1500) scale(1 1)"
+            ></image>
+            <image
+              href={
+                solarWind.solarRadiation1.value !== 0 ||
+                solarWind.solarRadiation2.value !== 0
+                  ? lightOn
+                  : lightOff
+              }
+              transform="translate(350 1400) scale(0.5 0.5)"
+            ></image>
+          </g>
+        )}
+
+        {(solarWind.inputOperationMode === OperationModeType.Mode1 ||
+          solarWind.inputOperationMode === OperationModeType.Mode3) && (
+          <g>
+            <image href={mode1Mode3Diagram}></image>
+            <image
+              href={
+                solarWind.directCurrentLoadPower.value !== 0
+                  ? cargaDCOn
+                  : cargaDCOff
+              }
+              transform="translate(1730 1700) scale(0.8 0.8)"
+            ></image>
+            <image
+              href={
+                solarWind.solarRadiation1.value !== 0 ||
+                solarWind.solarRadiation2.value !== 0
+                  ? lightOn
+                  : lightOff
+              }
+              transform="translate(350 1400) scale(0.5 0.5)"
+            ></image>
+          </g>
+        )}
+
         {solarWind.inputOperationMode === OperationModeType.Mode2 &&
           solarWind.hybridInverter.isConnected && (
             <g>
-              <image href={solarDiagram}></image>
-              <DiagramVariables
-                data={data}
-                variables={SOLAR_DIAGRAM_VARIABLES}
-              ></DiagramVariables>
+              <image href={mode2HybridDiagram}></image>
               <image
                 href={
                   solarWind.alternCurrentLoadPower.value !== 0
@@ -96,31 +187,26 @@ const SolarDiagram = (props: Props) => {
                 }
                 transform="translate(650 350) scale(0.5 0.5)"
               ></image>
-              <g transform="translate(3820,1500) scale(0.5,0.5)">
-                <BatteryStateOfCharge
-                  batteryStateOfCharge={batteryStateOfCharge}
-                ></BatteryStateOfCharge>
-              </g>
             </g>
           )}
-        {!(
-          solarWind.inputOperationMode === OperationModeType.Mode2 &&
-          solarWind.hybridInverter.isConnected
-        ) && (
+
+        {solarWind.inputOperationMode === OperationModeType.Mode4 && (
           <g>
-            <image href={solarWindDiagram}></image>
-            <DiagramVariables
-              data={data}
-              variables={SOLAR_WIND_DIAGRAM_VARIABLES}
-            ></DiagramVariables>
+            <image href={mode4Diagram}></image>
             <image
               href={
-                solarWind.alternCurrentLoadPower.value !== 0
-                  ? cargaACOn
-                  : cargaACOff
+                solarWind.directCurrentLoadPower.value !== 0
+                  ? cargaDCOn
+                  : cargaDCOff
               }
-              transform="translate(2850 1500) scale(1 1)"
+              transform="translate(1730 1700) scale(0.8 0.8)"
             ></image>
+          </g>
+        )}
+
+        {solarWind.inputOperationMode === OperationModeType.Mode5 && (
+          <g>
+            <image href={mode5Diagram}></image>
             <image
               href={
                 solarWind.directCurrentLoadPower.value !== 0
@@ -131,31 +217,54 @@ const SolarDiagram = (props: Props) => {
             ></image>
             <image
               href={
-                (solarWind.solarRadiation1.value !== 0 ||
-                  solarWind.solarRadiation2.value !== 0) &&
-                solarWind.inputOperationMode !== OperationModeType.Mode4
+                solarWind.solarRadiation1.value !== 0 ||
+                solarWind.solarRadiation2.value !== 0
                   ? lightOn
                   : lightOff
               }
               transform="translate(350 1400) scale(0.5 0.5)"
             ></image>
+          </g>
+        )}
+
+        <DiagramVariables
+          data={data}
+          variables={diagramVariables}
+          additionalCondition={solarWind.inputOfflineOperation}
+        ></DiagramVariables>
+
+        {!(
+          solarWind.inputOperationMode === OperationModeType.Mode2 &&
+          solarWind.hybridInverter.isConnected
+        ) && (
+          <g transform="translate(2150,700) scale(0.5,0.5)">
+            <BatteryStateOfCharge
+              batteryStateOfCharge={batteryStateOfCharge}
+            ></BatteryStateOfCharge>
+          </g>
+        )}
+
+        {solarWind.inputOperationMode === OperationModeType.Mode2 &&
+          solarWind.hybridInverter.isConnected && (
+            <g transform="translate(3825,1500) scale(0.5,0.5)">
+              <BatteryStateOfCharge
+                batteryStateOfCharge={batteryStateOfCharge}
+              ></BatteryStateOfCharge>
+            </g>
+          )}
+
+        {(solarWind.inputOperationMode === OperationModeType.Mode4 ||
+          solarWind.inputOperationMode === OperationModeType.Mode5) && (
+          <g>
             <image
               href={
-                solarWind.windSpeed.value !== 0 &&
-                (solarWind.inputOperationMode === OperationModeType.Mode4 ||
-                  solarWind.inputOperationMode === OperationModeType.Mode5) &&
-                isPlaying
-                  ? fanOn
-                  : fanOff
+                solarWind.windSpeed.value !== 0 && isPlaying ? fanOn : fanOff
               }
               transform="translate(580 380) scale(0.25 0.25)"
             ></image>
             <image
               href={
-                solarWind.windSpeed.value !== 0 &&
-                (solarWind.inputOperationMode === OperationModeType.Mode4 ||
-                  solarWind.inputOperationMode === OperationModeType.Mode5) &&
-                isPlaying
+                solarWind.windSpeed.value !== 0 && isPlaying
                   ? turbineOn
                   : turbineOff
               }

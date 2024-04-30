@@ -14,12 +14,15 @@ import { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   SOLAR_WIND,
-  SOLAR_WIND_DIAGRAM_VARIABLES,
   SolarWindParameters,
   OperationModeType,
   OperationModeText,
   SolarWindOutput,
-  SOLAR_DIAGRAM_VARIABLES,
+  MODE_1_CADMIO_MODE_2,
+  MODE_1_MODE_3,
+  MODE_2_HYBRID_DIAGRAM_VARIABLES,
+  MODE_4,
+  MODE_5,
 } from '../../types/models/solar';
 import { setFormState } from '../../utils/setFormState';
 import Iframe from 'react-iframe';
@@ -44,6 +47,8 @@ const Solar = (props: Props) => {
   const [solarWind, setSolarWind] = useState<SolarWindParameters>(SOLAR_WIND);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
+  const [isMetInformationExpanded, setIsMetInformationExpanded] =
+    useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
@@ -60,6 +65,37 @@ const Solar = (props: Props) => {
       setIsOpen(true);
     }
   }, [error]);
+
+  const [diagramVariables, setDiagramVariables] = useState(MODE_1_MODE_3);
+
+  useEffect(() => {
+    if (
+      (solarWind.inputOperationMode === OperationModeType.Mode1 &&
+        solarWind.cadmiumTelluridePanel.isConnected) ||
+      (solarWind.inputOperationMode === OperationModeType.Mode2 &&
+        !solarWind.hybridInverter.isConnected)
+    ) {
+      setDiagramVariables(MODE_1_CADMIO_MODE_2);
+    } else if (
+      solarWind.inputOperationMode === OperationModeType.Mode1 ||
+      solarWind.inputOperationMode === OperationModeType.Mode3
+    ) {
+      setDiagramVariables(MODE_1_MODE_3);
+    } else if (
+      solarWind.inputOperationMode === OperationModeType.Mode2 &&
+      solarWind.hybridInverter.isConnected
+    ) {
+      setDiagramVariables(MODE_2_HYBRID_DIAGRAM_VARIABLES);
+    } else if (solarWind.inputOperationMode === OperationModeType.Mode4) {
+      setDiagramVariables(MODE_4);
+    } else if (solarWind.inputOperationMode === OperationModeType.Mode5) {
+      setDiagramVariables(MODE_5);
+    }
+  }, [
+    solarWind.cadmiumTelluridePanel.isConnected,
+    solarWind.hybridInverter.isConnected,
+    solarWind.inputOperationMode,
+  ]);
 
   useEffect(() => {
     if (data !== undefined) {
@@ -92,6 +128,10 @@ const Solar = (props: Props) => {
 
   const handleParametersExpanded = () => {
     setIsParametersExpanded(!isParametersExpanded);
+  };
+
+  const handleMetInformationExpanded = () => {
+    setIsMetInformationExpanded(!isMetInformationExpanded);
   };
 
   return (
@@ -473,6 +513,54 @@ const Solar = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
+            <Grid item xs={12} md={12} xl={12}>
+              <Accordion
+                expanded={isMetInformationExpanded}
+                onChange={handleMetInformationExpanded}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  sx={{ margin: 0 }}
+                >
+                  <Typography variant="h4">
+                    Información meteorológica
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={4} xl={4}>
+                      <Iframe
+                        styles={{
+                          width: '100%',
+                          height: '500px',
+                        }}
+                        url={Config.getInstance().params.windyUrlRadiation}
+                      ></Iframe>
+                    </Grid>
+                    <Grid item xs={12} md={4} xl={4}>
+                      <Iframe
+                        styles={{
+                          width: '100%',
+                          height: '500px',
+                        }}
+                        url={Config.getInstance().params.windyUrlTemperature}
+                      ></Iframe>
+                    </Grid>
+                    <Grid item xs={12} md={4} xl={4}>
+                      <Iframe
+                        styles={{
+                          width: '100%',
+                          height: '500px',
+                        }}
+                        url={Config.getInstance().params.windyUrlWindSpeed}
+                      ></Iframe>
+                    </Grid>
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
             <Grid item xs={12} md={3} xl={3}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12} xl={12}>
@@ -619,13 +707,6 @@ const Solar = (props: Props) => {
               </Grid>
             </Grid>
             <Grid item xs={12} md={9} xl={9}>
-              <Iframe
-                styles={{
-                  width: '100%',
-                  height: '250px',
-                }}
-                url={Config.getInstance().params.windyUrl}
-              ></Iframe>
               {playerControl}
               <SolarDiagram
                 solarWind={solarWind}
@@ -642,12 +723,7 @@ const Solar = (props: Props) => {
                 timeMultiplier={solarWind.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
-                variables={
-                  solarWind.inputOperationMode === OperationModeType.Mode2 &&
-                  solarWind.hybridInverter.isConnected
-                    ? SOLAR_DIAGRAM_VARIABLES
-                    : SOLAR_WIND_DIAGRAM_VARIABLES
-                }
+                variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
               ></TimeGraphs>

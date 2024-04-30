@@ -112,7 +112,7 @@ const TurbineDiagram = (props: Props) => {
               ? PELTON_TURBINE_DIAGRAM_VARIABLES
               : TURGO_TURBINE_DIAGRAM_VARIABLES
           }
-          additionalCondition={turbine.turbineType === TurbineType.Turgo}
+          additionalCondition={turbine.inputOfflineOperation}
         ></DiagramVariables>
       </svg>
     </div>
