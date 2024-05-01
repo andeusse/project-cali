@@ -19,7 +19,7 @@ const Home = (props: Props) => {
   };
 
   return (
-    <Container disableGutters maxWidth={false}>
+    <Container maxWidth={'xl'}>
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Home</h1>
       </Box>

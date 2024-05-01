@@ -10,7 +10,7 @@ import {
   AccordionSummary,
   Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   SOLAR_WIND,
@@ -48,7 +48,7 @@ const Solar = (props: Props) => {
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isMetInformationExpanded, setIsMetInformationExpanded] =
-    useState(true);
+    useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
@@ -77,7 +77,8 @@ const Solar = (props: Props) => {
     ) {
       setDiagramVariables(MODE_1_CADMIO_MODE_2);
     } else if (
-      solarWind.inputOperationMode === OperationModeType.Mode1 ||
+      (solarWind.inputOperationMode === OperationModeType.Mode1 &&
+        !solarWind.cadmiumTelluridePanel.isConnected) ||
       solarWind.inputOperationMode === OperationModeType.Mode3
     ) {
       setDiagramVariables(MODE_1_MODE_3);

@@ -58,7 +58,8 @@ const SolarDiagram = (props: Props) => {
     ) {
       setDiagramVariables(MODE_1_CADMIO_MODE_2);
     } else if (
-      solarWind.inputOperationMode === OperationModeType.Mode1 ||
+      (solarWind.inputOperationMode === OperationModeType.Mode1 &&
+        !solarWind.cadmiumTelluridePanel.isConnected) ||
       solarWind.inputOperationMode === OperationModeType.Mode3
     ) {
       setDiagramVariables(MODE_1_MODE_3);
@@ -120,7 +121,7 @@ const SolarDiagram = (props: Props) => {
                   ? cargaDCOn
                   : cargaDCOff
               }
-              transform="translate(1730 1700) scale(0.8 0.8)"
+              transform="translate(1430 1700) scale(0.8 0.8)"
             ></image>
             <image
               href={
@@ -128,7 +129,7 @@ const SolarDiagram = (props: Props) => {
                   ? cargaACOn
                   : cargaACOff
               }
-              transform="translate(2850 1500) scale(1 1)"
+              transform="translate(2550 1500) scale(1 1)"
             ></image>
             <image
               href={
@@ -137,12 +138,13 @@ const SolarDiagram = (props: Props) => {
                   ? lightOn
                   : lightOff
               }
-              transform="translate(350 1400) scale(0.5 0.5)"
+              transform="translate(50 1400) scale(0.5 0.5)"
             ></image>
           </g>
         )}
 
-        {(solarWind.inputOperationMode === OperationModeType.Mode1 ||
+        {((solarWind.inputOperationMode === OperationModeType.Mode1 &&
+          !solarWind.cadmiumTelluridePanel.isConnected) ||
           solarWind.inputOperationMode === OperationModeType.Mode3) && (
           <g>
             <image href={mode1Mode3Diagram}></image>
@@ -176,7 +178,7 @@ const SolarDiagram = (props: Props) => {
                     ? cargaACOn
                     : cargaACOff
                 }
-                transform="translate(2950 1100) scale(1 1)"
+                transform="translate(2450 1100) scale(1 1)"
               ></image>
               <image
                 href={
@@ -185,7 +187,7 @@ const SolarDiagram = (props: Props) => {
                     ? lightOn
                     : lightOff
                 }
-                transform="translate(650 350) scale(0.5 0.5)"
+                transform="translate(150 350) scale(0.5 0.5)"
               ></image>
             </g>
           )}
@@ -246,7 +248,7 @@ const SolarDiagram = (props: Props) => {
 
         {solarWind.inputOperationMode === OperationModeType.Mode2 &&
           solarWind.hybridInverter.isConnected && (
-            <g transform="translate(3825,1500) scale(0.5,0.5)">
+            <g transform="translate(3325,1500) scale(0.5,0.5)">
               <BatteryStateOfCharge
                 batteryStateOfCharge={batteryStateOfCharge}
               ></BatteryStateOfCharge>
