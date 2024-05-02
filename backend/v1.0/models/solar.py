@@ -81,8 +81,11 @@ class Solar(Resource):
       inputActivePower = 0.0
       inputPowerFactor = 1.0
       simulatedInverterState = False
-    if "simulatedBatteryStateOfCharge" in data:
-      print(data["simulatedBatteryStateOfCharge"]) 
+    
+    solarWind["alternCurrentLoadPower"] = inputActivePower
+    solarWind["alternCurrentLoadPowerFactor"] = inputPowerFactor
+    solarWind["directCurrentLoadPower"] = inputDirectCurrentPower
+
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + int(data["isBattery2"]) * data["battery2"]["stateOfCharge"]["value"]) / (1 + int(data["isBattery2"]))
     directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
@@ -115,9 +118,6 @@ class Solar(Resource):
       if data["solarRadiation1"]["disabled"]: solarWind["inputSolarRadiation1"] = solarRadiation1
       if data["solarRadiation2"]["disabled"]: solarWind["inputSolarRadiation2"] = solarRadiation2
       if data["windSpeed"]["disabled"]: solarWind["inputWindSpeed"] = windSpeed
-      if data["alternCurrentLoadPower"]["disabled"]: solarWind["inputAlternCurrentLoadPower"] = inputActivePower
-      if data["alternCurrentLoadPowerFactor"]["disabled"]: solarWind["inputAlternCurrentLoadPowerFactor"] = inputPowerFactor
-      if data["directCurrentLoadPower"]["disabled"]: solarWind["inputDirectCurrentLoadPower"] = inputDirectCurrentPower
     else:
       batteryTemperature = 30.0
       PV_Voltage = 0.0
@@ -156,10 +156,10 @@ class Solar(Resource):
                                 controllerChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
       solarWind['solarPanelPower'] = PV_Results[0]
-      solarWind['monocrystallinePanelTemperature'] = PV_Results[1]
-      solarWind['policrystallinePanelTemperature'] = PV_Results[2]
-      solarWind['flexPanelTemperature'] = PV_Results[3]
-      solarWind['cadmiumTelluridePanelTemperature'] = PV_Results[4]
+      solarWind['monoModuleTemperature'] = PV_Results[1]
+      solarWind['polyModuleTemperature'] = PV_Results[2]
+      solarWind['flexiModuleTemperature'] = PV_Results[3]
+      solarWind['cdteModuleTemperature'] = PV_Results[4]
       
       solarWind["externalGridPower"] = twinResults[0]
       solarWind["inverterInputPower"] = twinResults[1]
@@ -179,6 +179,7 @@ class Solar(Resource):
       solarWind['batteryCurrent'] = twinResults[15]
       solarWind['externalGridCurrent'] = twinResults[16]
       solarWind['hybridInverterOutputCurrent'] = twinResults[17]
+      print(solarWind)
       
     else:
       twinResults = twinPVWF.offgridTwinOutput(simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 

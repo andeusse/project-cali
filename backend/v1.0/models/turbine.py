@@ -8,6 +8,7 @@ from utils import InfluxDbConnection
 class Turbine(Resource):
   def post(self):
     data = request.get_json()
+    turbine = {}
 
     if not data["inputOfflineOperation"]:
       excelReader = ExcelReader()
@@ -43,6 +44,9 @@ class Turbine(Resource):
     inputPowerFactor = data["inputPowerFactor"]["value"] if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     
+    turbine["inputActivePower"] = inputActivePower
+    turbine["inputPowerFactor"] = inputPowerFactor
+
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
     simulatedDirectCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
     simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
@@ -67,8 +71,6 @@ class Turbine(Resource):
 
     twinHydro = TwinHydro(name)
 
-    turbine = {}
-
     if not data["inputOfflineOperation"]:
       if data["turbineType"] == "Pelton":
         T_bat = round(values_df["Value"]['TE003'],2)
@@ -89,8 +91,6 @@ class Turbine(Resource):
 
       if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 6.89476, 2) # kPa to psi conversion
       if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow * 60, 2) # L/s to L/min conversion
-      if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = inputActivePower
-      if data["inputPowerFactor"]["disabled"]: turbine["inputPowerFactor"] = inputPowerFactor
     else:
       T_bat = 30.0
       V_CA = 0
@@ -135,5 +135,7 @@ class Turbine(Resource):
     turbine["directCurrentLoadPower"] = results[19]
     turbine["directCurrentLoadVoltage"] = results[20]
     turbine["directCurrentLoadCurrent"] = results[21]*1000
+
+    print(turbine)
 
     return {"model": turbine}
