@@ -21,10 +21,10 @@ const Home = (props: Props) => {
   return (
     <Container maxWidth={'xl'}>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>Home</h1>
+        <h1>Herramienta Smartgrid - Laboratorio de Energías Renovables</h1>
       </Box>
-      <Box display="flex" justifyContent="start" alignItems="start">
-        <p>Add some text about the project ...</p>
+      <Box display="flex" justifyContent="center" alignItems="center">
+        <h1>Universidad Santiago de Cali</h1>
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} md={4} xl={4}>
