@@ -347,7 +347,7 @@ class BiogasPlant:
     def Pump102 (self, manual_P102=0, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
         self.manual_P102 = manual_P102
 
-        if self.manual_P102 == 1 or self.DigitalTwin == 0 or self.Online == 0:
+        if self.manual_P102 == 1 or self.Online == 0:
             self.FT_P102= FT_P102
             self.TTO_P102 = TTO_P102
 
@@ -640,9 +640,12 @@ class BiogasPlant:
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][145], variable = self.database_df["Tag"][145], value = self.mol_CH4_acum_V107, timestamp = self.timestamp)
     
     def R101_ini (self, ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101 = 1000):
-        
+        self.ST_R101 = ST_R101/100
+        self.SV_R101 = SV_R101/100
+
         if ST_R101 == 0:
             self.Csus_ini_R101 = 0
+            self.SV_R101 = 0
         else:
             self.ST_R101 = ST_R101/100
             self.SV_R101 = SV_R101/100
@@ -681,7 +684,7 @@ class BiogasPlant:
             self.Ch2o_ini_R101 = (self.rho_R101*(1-self.ST_R101))/18
             return self.Csus_ini_R101, self.Csus_ini_ST_R101
     
-    def R101_DT_operation1 (self):      
+    def R101_DT_operation_1_3_5 (self):      
         self.query_mol_CH4_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "M-molT_CH4_V101", location=1, type=1, forecastTime=1)
         self.mol_CH4_R101v = self.InfluxDB.InfluxDBreader(self.query_mol_CH4_R101)
         self.mol_CH4_R101v = self.mol_CH4_R101v["M-molT_CH4_V101"].tolist()
@@ -758,8 +761,118 @@ class BiogasPlant:
 
             self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.SE104v[-1]+self.SE101v[-1])*(self.tp/3600))
 
+            self.volatilemass_int_ini_R101 = self.SV_R101*self.rho_R101*self.VR1
+            self.volatilemass_in_R101 = self.SE104v[-1]*self.SV*self.rho*(self.tp/3600)
+
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.SV_R101, timestamp = self.timestamp)
+
+            self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.SE104v[-1]+self.SE101v[-1])*(self.tp/3600)))/self.rho
+
+            self.TotalSolids_int_ini_R101 = self.ST_R101*self.rho_R101*self.VR1
+            self.TotalSolids_in_R101 = self.SE104v[-1]*self.ST*(self.tp/3600)
+
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.ST_R101, timestamp = self.timestamp)
+
+            self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.SE104v[-1]+self.SE101v[-1])*(self.tp/3600)))/self.rho
+        else:
+            return ("Data is required to continue, please wait...")
+        
+    def R102_ini (self, ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102 = 1000):
+        
+        self.ST_R102 = ST_R102/100
+        self.SV_R102 = SV_R102/100
+        
+        if ST_R102 == 0:
+            self.Csus_ini_R102 = 0
+            self.SV_R102 = 0
+
+        else:
+            self.ST_R102 = ST_R102/100
+            self.SV_R102 = SV_R102/100
+            self.Cc_R102 = Cc_R102
+            self.Ch_R102 = Ch_R102
+            self.Co_R102 = Co_R102
+            self.Cn_R102 = Cn_R102
+            self.Cs_R102 = Cs_R102
+            self.rho_R102 = rho_R102
+
+            self.molC_R102 = self.Cc_R102*(1/12.01)
+            self.molH_R102 = self.Ch_R102*(1/1.01)
+            self.molO_R102 = self.Co_R102*(1/16)
+            self.molN_R102 = self.Cn_R102*(1/14)
+            self.molS_R102 = self.Cs_R102*(1/32)
+
+            self.mol_min_R102 = min(self.molC_R102, self.molH_R102, self.molO_R102, self.molN_R102, self.molS_R102)
+
+            self.n_R102 = self.molC_R102/self.mol_min_R102
+            self.a_R102 = self.molH_R102/self.mol_min_R102
+            self.b_R102 = self.molO_R102/self.mol_min_R102
+            self.c_R102 = self.molN_R102/self.mol_min_R102
+            self.d_R102 = self.molS_R102/self.mol_min_R102
+            
+            self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
+            self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
+            self.s_CO2_R102 = (self.n_R102/2)-(self.a_R102/8)+(self.b_R102/4)+(3/8)*self.c_R102-(self.d_R102/4)
+            self.s_NH3_R102 = self.c_R102
+            self.s_H2S_R102 = self.d_R102
+
+            self.MW_sustrato_R102 = self.n_R102*12.01+self.a_R102*1.01+self.b_R102*16+self.c_R102*14+self.d_R102*32
+
+            self.Csus_ini_R102 = (self.rho_R102*self.SV_R102)/self.MW_sustrato_R102
+            self.Csus_ini_ST_R102 = (self.rho_R102*self.ST_R102)/self.MW_sustrato_R102
+            self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
+            self.Ch2o_ini_R102 = (self.rho_R102*(1-self.ST_R102))/18
+            return self.Csus_ini_R102, self.Csus_ini_ST_R102
+        
+    def R102_DT_Operation3 (self):
+        self.query_mol_CH4_R102 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "M-molT_CH4_V102", location=1, type=1, forecastTime=1)
+        self.mol_CH4_R102v = self.InfluxDB.InfluxDBreader(self.query_mol_CH4_R102)
+        self.mol_CH4_R102v = self.mol_CH4_R102v["M-molT_CH4_V102"].tolist()
+
+        if len(self.mol_CH4_R101v)>=2:
+            self.mol_CH4_R102 = self.mol_CH4_R102v[-1]
+            self.mol_CH4_R102_i = self.mol_CH4_R102v[-2]
+
+            #El biogas de ambos tanques pasa por V-102
+            if self.Pacum_v101 < 50:                                           #Este valor es el valor de presión máximo que puede almacenar V-101
+                self.mol_CH4_R102 = self.mol_CH4_R102
+                self.mol_CH4_R102_i = self.mol_CH4_R102_i
+            else:
+                self.mol_CH4_R102 = self.mol_CH4_R102 - self.mol_CH4_R101
+                self.mol_CH4_R102_i = self.mol_CH4_R102_i - self.mol_CH4_R101_i
+            
+            if self.mol_CH4_R102 < self.mol_CH4_R102_i:
+                self.mol_sus_stoichometricFR_R102 = 0
+                self.volatilemass_stoichometricFR_R102 = 0
+                self.TotalSolids_stoichometricFR_R102 = 0
+            
+            else:
+                self.mol_sus_stoichometricFR_R102 =  (1/self.s_CH4)*(self.mol_CH4_R102 - self.mol_CH4_R102_i)
+                self.volatilemass_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
+                self.TotalSolids_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
+            
+            self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR2
+            self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
+
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
+
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.Csus_ini_R102, timestamp = self.timestamp)
+
+            self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600)))
+
+
+
+
+            
 
         else:
             return ("Data is required to continue, please wait...")
+
+        
+
 
         
