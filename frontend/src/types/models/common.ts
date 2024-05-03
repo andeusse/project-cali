@@ -19,7 +19,7 @@ export type DiagramVariableType = {
   fixed?: number;
   x?: number;
   y?: number;
-  hasAdditionalCondition?: boolean;
+  hasAdditionalCondition?: number;
 };
 
 export type CommonSystemParameter = {
@@ -80,3 +80,11 @@ export type Inverter = IsConnected & {
   efficiency: InputType;
   nominalPower: InputType;
 };
+
+export type InverterHybrid = IsConnected &
+  Inverter & {
+    customize: boolean;
+    chargeVoltageBulk: InputType;
+    chargeVoltageFloat: InputType;
+    chargingMinimunVoltage: InputType;
+  };

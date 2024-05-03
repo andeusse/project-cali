@@ -21,7 +21,7 @@ const Home = (props: Props) => {
   return (
     <Container maxWidth={'xl'}>
       <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>Herramienta Smartgrid - Laboratorio de Energías Renovables</h1>
+        <h1>Plataforma Smartgrid - Laboratorio de Energías</h1>
       </Box>
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Universidad Santiago de Cali</h1>

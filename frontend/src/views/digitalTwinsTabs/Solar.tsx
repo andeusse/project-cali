@@ -10,7 +10,7 @@ import {
   AccordionSummary,
   Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   SOLAR_WIND,
@@ -100,6 +100,51 @@ const Solar = (props: Props) => {
 
   useEffect(() => {
     if (data !== undefined) {
+      setSolarWind((o) => ({
+        ...o,
+        solarRadiation1: {
+          ...o.solarRadiation1,
+          value: data.inputSolarRadiation1
+            ? data.inputSolarRadiation1
+            : o.solarRadiation1.value,
+        },
+        solarRadiation2: {
+          ...o.solarRadiation2,
+          value: data.inputSolarRadiation2
+            ? data.inputSolarRadiation2
+            : o.solarRadiation2.value,
+        },
+        alternCurrentLoadPower: {
+          ...o.alternCurrentLoadPower,
+          value: data.inputAlternCurrentLoadPower
+            ? data.inputAlternCurrentLoadPower
+            : o.alternCurrentLoadPower.value,
+        },
+        alternCurrentLoadPowerFactor: {
+          ...o.alternCurrentLoadPowerFactor,
+          value: data.inputAlternCurrentLoadPowerFactor
+            ? data.inputAlternCurrentLoadPowerFactor
+            : o.alternCurrentLoadPowerFactor.value,
+        },
+        directCurrentLoadPower: {
+          ...o.directCurrentLoadPower,
+          value: data.inputDirectCurrentLoadPower
+            ? data.inputDirectCurrentLoadPower
+            : o.directCurrentLoadPower.value,
+        },
+        simulatedBatteryStateOfCharge: data.batteryStateOfCharge,
+        simulatedDirectCurrentVoltage: data.directCurrentVoltage,
+        simulatedChargeCycle: data.chargeCycle,
+        simulatedInverterState: data.inverterState,
+      }));
+    } else {
+      setSolarWind((o) => ({
+        ...o,
+        simulatedBatteryStateOfCharge: undefined,
+        simulatedDirectCurrentVoltage: undefined,
+        simulatedChargeCycle: undefined,
+        simulatedInverterState: undefined,
+      }));
     }
   }, [data]);
 
@@ -414,17 +459,17 @@ const Solar = (props: Props) => {
                           <Grid
                             item
                             xs={12}
-                            md={6}
-                            xl={6}
+                            md={12}
+                            xl={12}
                             sx={{ height: '72px' }}
                           >
                             <h3>Inversor híbrido</h3>
                           </Grid>
                           <Grid
                             item
-                            xs={12}
-                            md={12}
-                            xl={12}
+                            xs={6}
+                            md={6}
+                            xl={6}
                             alignContent={'center'}
                             height={'72px'}
                           >
@@ -440,6 +485,23 @@ const Solar = (props: Props) => {
                               }
                             ></CustomToggle>
                           </Grid>
+                          <Grid
+                            item
+                            xs={6}
+                            md={6}
+                            xl={6}
+                            alignContent={'center'}
+                          >
+                            <CustomToggle
+                              name="hybridInverter.customize"
+                              value={solarWind.hybridInverter.customize}
+                              handleChange={handleChange}
+                              disabled={
+                                solarWind.disableParameters ||
+                                !solarWind.hybridInverter.isConnected
+                              }
+                            ></CustomToggle>
+                          </Grid>
                           <Grid item xs={6} md={6} xl={6}>
                             <CustomNumberField
                               variable={solarWind.hybridInverter.efficiency}
@@ -451,6 +513,34 @@ const Solar = (props: Props) => {
                             <CustomNumberField
                               variable={solarWind.hybridInverter.nominalPower}
                               name="hybridInverter.nominalPower"
+                              handleChange={handleChange}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={6} md={6} xl={6}>
+                            <CustomNumberField
+                              variable={
+                                solarWind.hybridInverter.chargeVoltageBulk
+                              }
+                              name="controller.chargeVoltageBulk"
+                              handleChange={handleChange}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={6} md={6} xl={6}>
+                            <CustomNumberField
+                              variable={
+                                solarWind.hybridInverter.chargeVoltageFloat
+                              }
+                              name="controller.chargeVoltageFloat"
+                              handleChange={handleChange}
+                              disabled={false}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={6} md={6} xl={6}>
+                            <CustomNumberField
+                              variable={
+                                solarWind.hybridInverter.chargingMinimunVoltage
+                              }
+                              name="controller.chargingMinimunVoltage"
                               handleChange={handleChange}
                             ></CustomNumberField>
                           </Grid>
@@ -562,7 +652,7 @@ const Solar = (props: Props) => {
                 </AccordionDetails>
               </Accordion>
             </Grid>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid item xs={12} md={2.5} xl={2.5}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Operación planta</h2>
@@ -581,31 +671,31 @@ const Solar = (props: Props) => {
                 </Grid>
                 <>
                   {(solarWind.monocrystallinePanel.isConnected ||
-                    solarWind.policrystallinePanel.isConnected ||
+                    solarWind.policrystallinePanel.isConnected) &&
                     solarWind.inputOperationMode !==
-                      OperationModeType.Mode4) && (
-                    <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
-                        variable={solarWind.solarRadiation1}
-                        name="solarRadiation1"
-                        handleChange={handleChange}
-                        disabled={solarWind.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
-                    </Grid>
-                  )}
+                      OperationModeType.Mode4 && (
+                      <Grid item xs={12} md={12} xl={12}>
+                        <ToggleCustomNumberField
+                          variable={solarWind.solarRadiation1}
+                          name="solarRadiation1"
+                          handleChange={handleChange}
+                          disabled={solarWind.inputOfflineOperation}
+                        ></ToggleCustomNumberField>
+                      </Grid>
+                    )}
                   {(solarWind.flexPanel.isConnected ||
-                    solarWind.cadmiumTelluridePanel.isConnected ||
+                    solarWind.cadmiumTelluridePanel.isConnected) &&
                     solarWind.inputOperationMode !==
-                      OperationModeType.Mode4) && (
-                    <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
-                        variable={solarWind.solarRadiation2}
-                        name="solarRadiation2"
-                        handleChange={handleChange}
-                        disabled={solarWind.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
-                    </Grid>
-                  )}
+                      OperationModeType.Mode4 && (
+                      <Grid item xs={12} md={12} xl={12}>
+                        <ToggleCustomNumberField
+                          variable={solarWind.solarRadiation2}
+                          name="solarRadiation2"
+                          handleChange={handleChange}
+                          disabled={solarWind.inputOfflineOperation}
+                        ></ToggleCustomNumberField>
+                      </Grid>
+                    )}
                   {solarWind.inputOperationMode !== OperationModeType.Mode4 && (
                     <Grid item xs={7} md={7} xl={7}>
                       <CustomNumberField
@@ -707,7 +797,7 @@ const Solar = (props: Props) => {
                   )}
               </Grid>
             </Grid>
-            <Grid item xs={12} md={9} xl={9}>
+            <Grid item xs={12} md={9.5} xl={9.5}>
               {playerControl}
               <SolarDiagram
                 solarWind={solarWind}

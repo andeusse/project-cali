@@ -125,7 +125,9 @@ const SolarDiagram = (props: Props) => {
             ></image>
             <image
               href={
-                solarWind.alternCurrentLoadPower.value !== 0
+                solarWind.alternCurrentLoadPower.value !== 0 &&
+                (solarWind.offgridInverter.isConnected ||
+                  solarWind.hybridInverter.isConnected)
                   ? cargaACOn
                   : cargaACOff
               }
@@ -232,7 +234,13 @@ const SolarDiagram = (props: Props) => {
         <DiagramVariables
           data={data}
           variables={diagramVariables}
-          additionalCondition={solarWind.inputOfflineOperation}
+          additionalCondition={[
+            solarWind.inputOfflineOperation,
+            !solarWind.monocrystallinePanel.isConnected,
+            !solarWind.policrystallinePanel.isConnected,
+            !solarWind.flexPanel.isConnected,
+            !solarWind.cadmiumTelluridePanel.isConnected,
+          ]}
         ></DiagramVariables>
 
         {!(

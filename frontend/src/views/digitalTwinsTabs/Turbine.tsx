@@ -353,7 +353,7 @@ const Turbine = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid item xs={12} md={2.5} xl={2.5}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Operación planta</h2>
@@ -423,7 +423,7 @@ const Turbine = (props: Props) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={9} xl={9}>
+            <Grid item xs={12} md={9.5} xl={9.5}>
               {playerControl}
               <TurbineDiagram
                 turbine={turbine}

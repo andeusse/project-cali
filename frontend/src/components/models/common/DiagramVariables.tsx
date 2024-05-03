@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material';
 type Props<T> = {
   data: T;
   variables: DiagramVariableType[];
-  additionalCondition?: boolean;
+  additionalCondition: boolean[];
 };
 
 const DiagramVariables = <T,>(props: Props<T>) => {
@@ -16,7 +16,13 @@ const DiagramVariables = <T,>(props: Props<T>) => {
     <g>
       {variables.map((v) => {
         if (!v.isShown) return null;
-        if (v.hasAdditionalCondition && additionalCondition) return null;
+        if (
+          additionalCondition.length !== 0 &&
+          v.hasAdditionalCondition !== undefined &&
+          additionalCondition[v.hasAdditionalCondition]
+        )
+          return null;
+
         let printValue: string = '-';
         if (data && typeof data[v.variable as keyof T] === 'number') {
           printValue = (data[v.variable as keyof T] as number).toFixed(v.fixed);

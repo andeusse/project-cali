@@ -438,7 +438,7 @@ const Biogas = (props: Props) => {
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid item xs={12} md={2.5} xl={2.5}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6} xl={6}>
                   <h3>Bomba P-104</h3>
@@ -571,7 +571,7 @@ const Biogas = (props: Props) => {
                 </Grid>
               )}
             </Grid>
-            <Grid item xs={12} md={9} xl={9}>
+            <Grid item xs={12} md={9.5} xl={9.5}>
               {playerControl}
               <Diagram<BiogasOutput>
                 diagram={biogasDiagram}
