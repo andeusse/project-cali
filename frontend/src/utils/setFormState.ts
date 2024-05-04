@@ -50,6 +50,7 @@ export const setFormState = <T extends formType>(
   if ('monocrystallinePanel' in oldState) {
     if (
       e.target.name === 'controller.customize' ||
+      e.target.name === 'hybridInverter.customize' ||
       e.target.name === 'inputOfflineOperation' ||
       e.target.name === 'inputOperationMode' ||
       (splitName.length !== 1 && splitName[1] === 'isConnected')

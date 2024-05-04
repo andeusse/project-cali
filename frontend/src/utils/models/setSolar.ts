@@ -21,6 +21,12 @@ export const setSolar = (
     newState.controller.chargeVoltageFloat.disabled = !e.target.checked;
     newState.controller.chargingMinimunVoltage.disabled = !e.target.checked;
   }
+  if (e.target.name === 'hybridInverter.customize') {
+    newState.hybridInverter.customize = e.target.checked;
+    newState.hybridInverter.chargeVoltageBulk.disabled = !e.target.checked;
+    newState.hybridInverter.chargeVoltageFloat.disabled = !e.target.checked;
+    newState.hybridInverter.chargingMinimunVoltage.disabled = !e.target.checked;
+  }
   if (name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation

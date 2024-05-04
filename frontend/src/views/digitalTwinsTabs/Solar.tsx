@@ -514,6 +514,7 @@ const Solar = (props: Props) => {
                               variable={solarWind.hybridInverter.nominalPower}
                               name="hybridInverter.nominalPower"
                               handleChange={handleChange}
+                              disabled={solarWind.disableParameters}
                             ></CustomNumberField>
                           </Grid>
                           <Grid item xs={6} md={6} xl={6}>
@@ -521,8 +522,9 @@ const Solar = (props: Props) => {
                               variable={
                                 solarWind.hybridInverter.chargeVoltageBulk
                               }
-                              name="controller.chargeVoltageBulk"
+                              name="hybridInverter.chargeVoltageBulk"
                               handleChange={handleChange}
+                              disabled={solarWind.disableParameters}
                             ></CustomNumberField>
                           </Grid>
                           <Grid item xs={6} md={6} xl={6}>
@@ -530,9 +532,9 @@ const Solar = (props: Props) => {
                               variable={
                                 solarWind.hybridInverter.chargeVoltageFloat
                               }
-                              name="controller.chargeVoltageFloat"
+                              name="hybridInverter.chargeVoltageFloat"
                               handleChange={handleChange}
-                              disabled={false}
+                              disabled={solarWind.disableParameters}
                             ></CustomNumberField>
                           </Grid>
                           <Grid item xs={6} md={6} xl={6}>
@@ -540,7 +542,7 @@ const Solar = (props: Props) => {
                               variable={
                                 solarWind.hybridInverter.chargingMinimunVoltage
                               }
-                              name="controller.chargingMinimunVoltage"
+                              name="hybridInverter.chargingMinimunVoltage"
                               handleChange={handleChange}
                             ></CustomNumberField>
                           </Grid>
