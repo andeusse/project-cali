@@ -352,19 +352,24 @@ class TwinPVWF:
             self.P_bat = (self.P_PV * self.n_hybrid / 100) - self.P_inv # Potencia de la bateria, + carga, - descarga
             if SOC > 50.0 and chargeCycle:
                 chargeCycle = False
+                print(1)
             if SOC <= 50.0 and chargeCycle and self.P_bat < 0.0:
                 self.P_bat = 0.0
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.Q_CA = 0.0
                 self.S_CA = 0.0
+                print(2)
             if self.V_CD <= V_charge and self.P_bat < 0.0:
+                print(self.V_CD)
+                print(V_charge)
                 chargeCycle = True
                 self.P_bat = (self.P_PV * self.n_hybrid / 100)
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.Q_CA = 0.0
                 self.S_CA = 0.0
+                print(3)
             # Corriente de la batería
             self.I_bat = self.P_bat / self.V_CD
             

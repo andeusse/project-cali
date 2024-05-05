@@ -82,9 +82,9 @@ class Solar(Resource):
       inputPowerFactor = 1.0
       simulatedInverterState = False
     
-    solarWind["alternCurrentLoadPower"] = inputActivePower
-    solarWind["alternCurrentLoadPowerFactor"] = inputPowerFactor
-    solarWind["directCurrentLoadPower"] = inputDirectCurrentPower
+    solarWind["inputAlternCurrentLoadPower"] = inputActivePower
+    solarWind["inputAlternCurrentLoadPowerFactor"] = inputPowerFactor
+    solarWind["inputDirectCurrentLoadPower"] = inputDirectCurrentPower
 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + int(data["isBattery2"]) * data["battery2"]["stateOfCharge"]["value"]) / (1 + int(data["isBattery2"]))
@@ -93,6 +93,9 @@ class Solar(Resource):
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
     controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
+    hybridChargeVoltageBulk = data["hybridInverter"]["chargeVoltageBulk"]["value"]
+    hybridChargeVoltageFloat = data["hybridInverter"]["chargeVoltageFloat"]["value"]
+    hybridChargingMinimunVoltage = data["hybridInverter"]["chargingMinimunVoltage"]["value"]
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -100,19 +103,28 @@ class Solar(Resource):
     twinPVWF = TwinPVWF(name)
 
     if not data["inputOfflineOperation"]:
-      batteryTemperature = round(values_df["Value"]['TB001'],2)
-      simulatedInverterState = bool(int(values_df["Value"]['EI001']))
-      measuredPV_Power = round(values_df["Value"]['PG001'],2)
-      measuredWT_Power = round(values_df["Value"]['PG005'],2)
-      measuredControllerDC_Power = round(values_df["Value"]['PB001'],2)
-      PV_Voltage = round(values_df["Value"]['VG001'],2)
-      gridVoltage = round(values_df["Value"]['VGR001'],2)
-      WT_Voltage = round(values_df["Value"]['VG005'],2)
-      directCurrentVoltage = round(values_df["Value"]['VB001'],2)
-      inverterVoltage = round(values_df["Value"]['VAC001'],2)
-      directCurrentLoadVoltage = round(values_df["Value"]['VDC001'],2)
-      hybridInverterVoltage = round(values_df["Value"]['VAC002'],2)
-      solarWind['windTurbineRevolutions'] = round(values_df["Value"]['RPM001'],2)
+      if data["inputOperationMode"] == 'Mode2' and hybridState:
+        batteryTemperature = round(values_df["Value"]['TB002'],2)
+        measuredPV_Power = round(values_df["Value"]['PG003'],2)
+        measuredWT_Power = round(values_df["Value"]['PG004'],2)
+        measuredHybridDC_Power = round(values_df["Value"]['PB002'],2)
+        PV_Voltage = round(values_df["Value"]['VG003'],2)
+        gridVoltage = round(values_df["Value"]['VGR001'],2)
+        WT_Voltage = round(values_df["Value"]['VG004'],2)
+        directCurrentVoltage = round(values_df["Value"]['VB002'],2)
+        hybridInverterVoltage = round(values_df["Value"]['VAC002'],2)
+      else:
+        batteryTemperature = round(values_df["Value"]['TB001'],2)
+        simulatedInverterState = bool(int(values_df["Value"]['EI001']))
+        measuredPV_Power = round(values_df["Value"]['PG001'],2)
+        measuredWT_Power = round(values_df["Value"]['PG002'],2)
+        measuredControllerDC_Power = round(values_df["Value"]['PB001'],2)
+        PV_Voltage = round(values_df["Value"]['VG001'],2)
+        WT_Voltage = round(values_df["Value"]['VG002'],2)
+        directCurrentVoltage = round(values_df["Value"]['VB001'],2)
+        inverterVoltage = round(values_df["Value"]['VAC001'],2)
+        directCurrentLoadVoltage = round(values_df["Value"]['VDC001'],2)
+        solarWind['windTurbineRevolutions'] = round(values_df["Value"]['RPM001'],2)
 
       solarWind["batteryTemperature"] = batteryTemperature
       if data["solarRadiation1"]["disabled"]: solarWind["inputSolarRadiation1"] = solarRadiation1
@@ -152,14 +164,14 @@ class Solar(Resource):
 
     if data["inputOperationMode"] == 'Mode2' and hybridState:
       twinResults = twinPVWF.ongridTwinOutput(gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
-                                batteryStateOfCharge, controllerChargeVoltageBulk, controllerChargeVoltageFloat, 
-                                controllerChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
+                                batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
+                                hybridChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
       solarWind['solarPanelPower'] = PV_Results[0]
-      solarWind['monoModuleTemperature'] = PV_Results[1]
-      solarWind['polyModuleTemperature'] = PV_Results[2]
-      solarWind['flexiModuleTemperature'] = PV_Results[3]
-      solarWind['cdteModuleTemperature'] = PV_Results[4]
+      solarWind['monocrystallinePanelTemperature'] = PV_Results[1]
+      solarWind['policrystallinePanelTemperature'] = PV_Results[2]
+      solarWind['flexPanelTemperature'] = PV_Results[3]
+      solarWind['cadmiumTelluridePanelTemperature'] = PV_Results[4]
       
       solarWind["externalGridPower"] = twinResults[0]
       solarWind["inverterInputPower"] = twinResults[1]
@@ -179,18 +191,16 @@ class Solar(Resource):
       solarWind['batteryCurrent'] = twinResults[15]
       solarWind['externalGridCurrent'] = twinResults[16]
       solarWind['hybridInverterOutputCurrent'] = twinResults[17]
-      print(solarWind)
-      
     else:
       twinResults = twinPVWF.offgridTwinOutput(simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
                                  batteryTemperature, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, 
                                  controllerChargeVoltageFloat, controllerChargingMinimunVoltage, PV_Voltage, WT_Voltage, 
                                  directCurrentLoadVoltage, inverterVoltage, delta_t*timeMultiplier)
       solarWind['solarPanelPower'] = PV_Results[0]
-      solarWind['monoModuleTemperature'] = PV_Results[1]
-      solarWind['polyModuleTemperature'] = PV_Results[2]
-      solarWind['flexiModuleTemperature'] = PV_Results[3]
-      solarWind['cdteModuleTemperature'] = PV_Results[4]
+      solarWind['monocrystallinePanelTemperature'] = PV_Results[1]
+      solarWind['policrystallinePanelTemperature'] = PV_Results[2]
+      solarWind['flexPanelTemperature'] = PV_Results[3]
+      solarWind['cadmiumTelluridePanelTemperature'] = PV_Results[4]
       solarWind['windTurbinePower'] = WT_Results
       
       solarWind["controllerPower"] = twinResults[0]
