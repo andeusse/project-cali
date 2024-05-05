@@ -113,7 +113,7 @@ const TurbineDiagram = (props: Props) => {
               : TURGO_TURBINE_DIAGRAM_VARIABLES
           }
           additionalCondition={[
-            !turbine.inputOfflineOperation,
+            turbine.inputOfflineOperation,
             turbine.turbineType !== TurbineType.Turgo,
           ]}
         ></DiagramVariables>

@@ -814,7 +814,7 @@ export const SOLAR_WIND: SolarWindParameters = {
 export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Potencia carga CA',
-    variable: 'alternCurrentLoadPower',
+    variable: 'inputAlternCurrentLoadPower',
     unit: 'W',
     isShown: true,
     diagramName: 'Potencia',
@@ -824,7 +824,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   },
   {
     name: 'Factor de potencia carga CA',
-    variable: 'alternCurrentLoadPowerFactor',
+    variable: 'inputAlternCurrentLoadPowerFactor',
     unit: '',
     isShown: true,
     diagramName: 'FP',
@@ -1290,7 +1290,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
 export const MODE_2_HYBRID_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Potencia carga CA',
-    variable: 'alternCurrentLoadPower',
+    variable: 'inputAlternCurrentLoadPower',
     unit: 'W',
     isShown: true,
     diagramName: 'Potencia',
@@ -1300,7 +1300,7 @@ export const MODE_2_HYBRID_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   },
   {
     name: 'Factor de potencia carga CA',
-    variable: 'alternCurrentLoadPowerFactor',
+    variable: 'inputAlternCurrentLoadPowerFactor',
     unit: '',
     isShown: true,
     diagramName: 'FP',
