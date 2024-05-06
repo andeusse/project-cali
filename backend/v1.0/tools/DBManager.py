@@ -53,7 +53,7 @@ class InfluxDBmodel:
             |> last() |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")''' #-10m
         elif type == 1:
             self.query ='''from(bucket: "''' + self.bucket + '''")
-            |> range(start: -60m, stop: now()) 
+            |> range(start: -120m, stop: now()) 
             |> filter(fn: (r) => r["_measurement"] == "''' + device + '''")
             |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'''
