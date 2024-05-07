@@ -819,7 +819,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia',
     fixed: 0,
-    x: 3200,
+    x: 3500,
     y: 1680,
   },
   {
@@ -829,7 +829,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'FP',
     fixed: 2,
-    x: 3200,
+    x: 3500,
     y: 1760,
   },
   {
@@ -839,7 +839,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'SOC',
     fixed: 3,
-    x: 1350,
+    x: 1650,
     y: 180,
   },
   {
@@ -849,7 +849,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia',
     fixed: 1,
-    x: 1350,
+    x: 1650,
     y: 260,
   },
   {
@@ -859,7 +859,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
-    x: 1350,
+    x: 1650,
     y: 340,
   },
   {
@@ -869,7 +869,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
-    x: 1350,
+    x: 1650,
     y: 420,
   },
   {
@@ -879,7 +879,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temperatura',
     fixed: 1,
-    x: 1350,
+    x: 1650,
     y: 500,
     hasAdditionalCondition: 0,
   },
@@ -890,7 +890,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. mono',
     fixed: 1,
-    x: 980,
+    x: 1280,
     y: 2060,
     hasAdditionalCondition: 1,
   },
@@ -901,7 +901,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. poli',
     fixed: 1,
-    x: 980,
+    x: 1280,
     y: 2140,
     hasAdditionalCondition: 2,
   },
@@ -912,7 +912,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. flexible',
     fixed: 1,
-    x: 980,
+    x: 1280,
     y: 2220,
     hasAdditionalCondition: 3,
   },
@@ -923,7 +923,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. Cadmio',
     fixed: 1,
-    x: 980,
+    x: 1280,
     y: 2300,
     hasAdditionalCondition: 4,
   },
@@ -934,7 +934,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia',
     fixed: 1,
-    x: 1960,
+    x: 2260,
     y: 1450,
   },
   {
@@ -944,7 +944,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
-    x: 1960,
+    x: 2260,
     y: 1530,
   },
   {
@@ -954,7 +954,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
-    x: 1960,
+    x: 2260,
     y: 1610,
   },
   {
@@ -964,7 +964,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia',
     fixed: 1,
-    x: 1920,
+    x: 2220,
     y: 1880,
   },
   {
@@ -974,7 +974,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
-    x: 1920,
+    x: 2220,
     y: 1960,
   },
   {
@@ -984,7 +984,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
-    x: 1920,
+    x: 2220,
     y: 2040,
   },
   {
@@ -994,7 +994,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'P. aparente',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 1020,
   },
   {
@@ -1004,7 +1004,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'P. activa',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 1100,
   },
   {
@@ -1014,7 +1014,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'P. reactiva',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 1180,
   },
   {
@@ -1024,7 +1024,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 1260,
   },
   {
@@ -1034,7 +1034,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 1340,
   },
   {
@@ -1044,7 +1044,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'P. entrada',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 540,
   },
   {
@@ -1054,7 +1054,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'I entrada',
     fixed: 1,
-    x: 3200,
+    x: 3500,
     y: 620,
   },
   {
@@ -1064,7 +1064,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Estado',
     fixed: 0,
-    x: 3200,
+    x: 3500,
     y: 700,
   },
   {
@@ -1074,7 +1074,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia',
     fixed: 1,
-    x: 160,
+    x: 460,
     y: 2080,
   },
   {
@@ -1084,7 +1084,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
-    x: 160,
+    x: 460,
     y: 2160,
   },
   {
@@ -1094,7 +1094,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
-    x: 160,
+    x: 460,
     y: 2240,
   },
 ];

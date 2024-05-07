@@ -121,7 +121,7 @@ const SolarDiagram = (props: Props) => {
                   ? cargaDCOn
                   : cargaDCOff
               }
-              transform="translate(1430 1700) scale(0.8 0.8)"
+              transform="translate(1730 1700) scale(0.8 0.8)"
             ></image>
             <image
               href={
@@ -131,7 +131,7 @@ const SolarDiagram = (props: Props) => {
                   ? cargaACOn
                   : cargaACOff
               }
-              transform="translate(2550 1500) scale(1 1)"
+              transform="translate(2850 1500) scale(1 1)"
             ></image>
             <image
               href={
@@ -140,7 +140,7 @@ const SolarDiagram = (props: Props) => {
                   ? lightOn
                   : lightOff
               }
-              transform="translate(50 1400) scale(0.5 0.5)"
+              transform="translate(350 1400) scale(0.5 0.5)"
             ></image>
           </g>
         )}
