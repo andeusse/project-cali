@@ -1,6 +1,7 @@
 import influxdb_client
 from influxdb_client import InfluxDBClient
-from influxdb_client.client.write_api import SYNCHRONOUS
+from influxdb_client.client.write_api import SYNCHRONOUS, WritePrecision
+
 
 # %%  InfluxDB Model        
 class InfluxDBmodel:
@@ -31,7 +32,7 @@ class InfluxDBmodel:
     # %%  InfluxDB Writer         
     def InfluxDBwriter(self, load, variable, value, timestamp):
         write_api = self.influxDBclient.write_api(write_options=SYNCHRONOUS)
-        payload = influxdb_client.Point(load).field(variable, value)
+        payload = influxdb_client.Point(load).field(variable, value).time(timestamp, write_precision=WritePrecision.MS)
         
         try:
             write_api.write(self.bucket, self.org, payload)
