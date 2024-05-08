@@ -2,6 +2,8 @@ from flask import request
 from flask_restful import Resource
 from simulation_models.Biogas import BiogasModel
 import pandas as pd
+from utils import ExcelReader
+from utils import InfluxDbConnection
 
 class Biogas(Resource):
   def post(self):
@@ -49,8 +51,24 @@ class Biogas(Resource):
     biogas_input["inputTemperature101"]=data["inputTemperature101"]["value"]
     biogas_input["inputTemperature102"]=data["inputTemperature102"]["value"]
 
+    if biogas_input["inputDigitalTwin"] == 1:
+      excelReader = ExcelReader()
+      excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
+      database_dic = excelReader.data
+      database_df = database_dic['ConexionDB']
+      variables_df = database_dic['InfluxDBVariables']
+      variables_df = variables_df.drop(variables_df[variables_df['Device'] != 'Planta Biogas'].index)
+      values_df = pd.DataFrame(columns=["Tag", "Value"])
+      values_df["Tag"] = variables_df["Tag"]
+      values_df.set_index('Tag', inplace=True)
+
+      influxDB_Connection = InfluxDbConnection()
+
+
+
     if biogas_input["inputOperationMode"] == 1:
       pass
+      
     elif biogas_input["inputOperationMode"] == 2:
       pass
     elif biogas_input["inputOperationMode"] == 3:

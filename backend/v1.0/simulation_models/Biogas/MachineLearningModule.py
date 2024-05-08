@@ -91,10 +91,13 @@ class BiogasModelTrain:
 
             self.K_optimizadav_R101.append(float(self.Optimization[0]))
             self.Kini = float(self.Optimization[0])
-            self.Csus_model_train_R101.append(float(self.Optimizacion[1][0]))
+            self.Csus_model_train_R101.append(float(self.Optimization[1][0]))
         
         self.K_mean = st.mean(self.K_optimizadav_R101)
+
         
+        
+
 
 
 
