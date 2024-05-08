@@ -39,16 +39,16 @@ import ErrorDialog from '../../components/UI/ErrorDialog';
 type Props = {};
 
 const Turbine = (props: Props) => {
-  const [turbine, setTurbine] = useState<TurbineParameters>(TURBINE);
+  const [system, setSystem] = useState<TurbineParameters>(TURBINE);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
-    useControlPlayer<TurbineParameters, TurbineOutput>('turbine', turbine);
+    useControlPlayer<TurbineParameters, TurbineOutput>('turbine', system);
 
   useEffect(() => {
-    setTurbine((o) => {
+    setSystem((o) => {
       return { ...o, disableParameters: isPlaying };
     });
   }, [isPlaying]);
@@ -61,7 +61,7 @@ const Turbine = (props: Props) => {
 
   useEffect(() => {
     if (data !== undefined) {
-      setTurbine((o) => ({
+      setSystem((o) => ({
         ...o,
         inputPressure: {
           ...o.inputPressure,
@@ -91,7 +91,7 @@ const Turbine = (props: Props) => {
         simulatedSinkLoadState: data.sinkLoadState,
       }));
     } else {
-      setTurbine((o) => ({
+      setSystem((o) => ({
         ...o,
         simulatedBatteryStateOfCharge: undefined,
         simulatedDirectCurrentVoltage: undefined,
@@ -102,9 +102,9 @@ const Turbine = (props: Props) => {
   }, [data]);
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<TurbineParameters>(e, turbine, variableName);
+    const newState = setFormState<TurbineParameters>(e, system, variableName);
     if (newState) {
-      setTurbine(newState as TurbineParameters);
+      setSystem(newState as TurbineParameters);
     }
   };
 
@@ -176,11 +176,11 @@ const Turbine = (props: Props) => {
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
-                      value={turbine.name}
+                      value={system.name}
                       name="name"
                       autoComplete="off"
                       onChange={handleChange}
-                      disabled={turbine.disableParameters}
+                      disabled={system.disableParameters}
                     />
                   </FormControl>
                 </Grid>
@@ -195,10 +195,10 @@ const Turbine = (props: Props) => {
                         <Select
                           labelId="turbine-type"
                           label="Tipo de turbina"
-                          value={turbine.turbineType}
+                          value={system.turbineType}
                           name="turbineType"
                           onChange={(e: any) => handleChange(e)}
-                          disabled={turbine.disableParameters}
+                          disabled={system.disableParameters}
                         >
                           {Object.keys(TurbineType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -208,7 +208,7 @@ const Turbine = (props: Props) => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    {turbine.turbineType === TurbineType.Pelton &&
+                    {system.turbineType === TurbineType.Pelton &&
                       PELTON_TURBINE.map((variable) => (
                         <Grid
                           key={
@@ -224,7 +224,7 @@ const Turbine = (props: Props) => {
                           ></CustomNumberField>
                         </Grid>
                       ))}
-                    {turbine.turbineType === TurbineType.Turgo &&
+                    {system.turbineType === TurbineType.Turgo &&
                       TURGO_TURBINE.map((variable) => (
                         <Grid
                           key={
@@ -250,10 +250,10 @@ const Turbine = (props: Props) => {
                         <InputLabel>Estado inicial disipación</InputLabel>
                         <Select
                           label="Estado inicial disipación"
-                          value={turbine.controller.sinkLoadInitialState}
+                          value={system.controller.sinkLoadInitialState}
                           name="controller.sinkLoadInitialState"
                           onChange={(e: any) => handleChange(e)}
-                          disabled={turbine.disableParameters}
+                          disabled={system.disableParameters}
                         >
                           {Object.keys(ControllerStateType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -266,55 +266,55 @@ const Turbine = (props: Props) => {
                     <Grid item xs={6} md={6} xl={6} alignContent={'center'}>
                       <CustomToggle
                         name="controller.customize"
-                        value={turbine.controller.customize}
+                        value={system.controller.customize}
                         handleChange={handleChange}
-                        disabled={turbine.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={turbine.controller.efficiency}
+                        variable={system.controller.efficiency}
                         name="controller.efficiency"
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={turbine.controller.chargeVoltageBulk}
+                        variable={system.controller.chargeVoltageBulk}
                         name="controller.chargeVoltageBulk"
                         handleChange={handleChange}
-                        disabled={turbine.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={turbine.controller.chargeVoltageFloat}
+                        variable={system.controller.chargeVoltageFloat}
                         name="controller.chargeVoltageFloat"
                         handleChange={handleChange}
-                        disabled={turbine.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={turbine.controller.chargingMinimunVoltage}
+                        variable={system.controller.chargingMinimunVoltage}
                         name="controller.chargingMinimunVoltage"
                         handleChange={handleChange}
-                        disabled={turbine.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={turbine.controller.sinkOffVoltage}
+                        variable={system.controller.sinkOffVoltage}
                         name="controller.sinkOffVoltage"
                         handleChange={handleChange}
-                        disabled={turbine.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={turbine.controller.sinkOnVoltage}
+                        variable={system.controller.sinkOnVoltage}
                         name="controller.sinkOnVoltage"
                         handleChange={handleChange}
-                        disabled={turbine.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                   </Grid>
@@ -323,9 +323,9 @@ const Turbine = (props: Props) => {
                   <h3>Baterías</h3>
                   <Battery
                     propertyName="battery"
-                    battery={turbine.battery}
+                    battery={system.battery}
                     handleChange={handleChange}
-                    disabled={turbine.disableParameters}
+                    disabled={system.disableParameters}
                   ></Battery>
                 </Grid>
                 <Grid item xs={12} md={6} xl={1.5}>
@@ -333,14 +333,14 @@ const Turbine = (props: Props) => {
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={turbine.inverterEfficiency}
+                        variable={system.inverterEfficiency}
                         name="inverterEfficiency"
                         handleChange={handleChange}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={turbine.inverterNominalPower}
+                        variable={system.inverterNominalPower}
                         name="inverterNominalPower"
                         handleChange={handleChange}
                       ></CustomNumberField>
@@ -361,7 +361,7 @@ const Turbine = (props: Props) => {
                 <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
                   <CustomToggle
                     name="inputOfflineOperation"
-                    value={turbine.inputOfflineOperation}
+                    value={system.inputOfflineOperation}
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
@@ -372,21 +372,21 @@ const Turbine = (props: Props) => {
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleCustomNumberField
-                    variable={turbine.inputPressure}
+                    variable={system.inputPressure}
                     name="inputPressure"
                     handleChange={handleChange}
-                    disabled={turbine.inputOfflineOperation}
+                    disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleCustomNumberField
-                    variable={turbine.inputFlow}
+                    variable={system.inputFlow}
                     name="inputFlow"
                     handleChange={handleChange}
-                    disabled={turbine.inputOfflineOperation}
+                    disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
-                {turbine.turbineType === TurbineType.Turgo && (
+                {system.turbineType === TurbineType.Turgo && (
                   <>
                     <Grid item xs={12} md={12} xl={12}>
                       <h3>Parámetros carga CD</h3>
@@ -394,7 +394,7 @@ const Turbine = (props: Props) => {
                     <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
                       <CustomToggle
                         name="inputDirectCurrentPower"
-                        value={turbine.inputDirectCurrentPower}
+                        value={system.inputDirectCurrentPower}
                         handleChange={handleChange}
                         trueString="Conectado: 2.4 W"
                         falseString="Desconectado: 0.0 W"
@@ -407,18 +407,18 @@ const Turbine = (props: Props) => {
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleCustomNumberField
-                    variable={turbine.inputActivePower}
+                    variable={system.inputActivePower}
                     name="inputActivePower"
                     handleChange={handleChange}
-                    disabled={turbine.inputOfflineOperation}
+                    disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleCustomNumberField
-                    variable={turbine.inputPowerFactor}
+                    variable={system.inputPowerFactor}
                     name="inputPowerFactor"
                     handleChange={handleChange}
-                    disabled={turbine.inputOfflineOperation}
+                    disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
               </Grid>
@@ -426,22 +426,22 @@ const Turbine = (props: Props) => {
             <Grid item xs={12} md={9.5} xl={9.5}>
               {playerControl}
               <TurbineDiagram
-                turbine={turbine}
+                turbine={system}
                 data={data}
                 isPlaying={isPlaying}
               ></TurbineDiagram>
             </Grid>
           </Grid>
         </Grid>
-        {graphs !== undefined && turbine.timeMultiplier && (
+        {graphs !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
-                timeMultiplier={turbine.timeMultiplier}
+                timeMultiplier={system.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
                 variables={
-                  turbine.turbineType === TurbineType.Pelton
+                  system.turbineType === TurbineType.Pelton
                     ? PELTON_TURBINE_DIAGRAM_VARIABLES
                     : TURGO_TURBINE_DIAGRAM_VARIABLES
                 }

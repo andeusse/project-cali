@@ -36,16 +36,16 @@ import ErrorDialog from '../../components/UI/ErrorDialog';
 type Props = {};
 
 const Biogas = (props: Props) => {
-  const [biogas, setBiogas] = useState<BiogasParameters>(BIOGAS);
+  const [system, setSystem] = useState<BiogasParameters>(BIOGAS);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
-    useControlPlayer<BiogasParameters, BiogasOutput>('biogas', biogas);
+    useControlPlayer<BiogasParameters, BiogasOutput>('biogas', system);
 
   useEffect(() => {
-    setBiogas((o) => {
+    setSystem((o) => {
       return { ...o, disableParameters: isPlaying };
     });
   }, [isPlaying]);
@@ -57,9 +57,9 @@ const Biogas = (props: Props) => {
   }, [error]);
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<BiogasParameters>(e, biogas, variableName);
+    const newState = setFormState<BiogasParameters>(e, system, variableName);
     if (newState) {
-      setBiogas(newState as BiogasParameters);
+      setSystem(newState as BiogasParameters);
     }
   };
 
@@ -131,11 +131,11 @@ const Biogas = (props: Props) => {
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
-                      value={biogas.name}
+                      value={system.name}
                       name="name"
                       autoComplete="off"
                       onChange={handleChange}
-                      disabled={biogas.disableParameters}
+                      disabled={system.disableParameters}
                     />
                   </FormControl>
                 </Grid>
@@ -146,18 +146,18 @@ const Biogas = (props: Props) => {
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.anaerobicReactorVolume1}
+                        variable={system.anaerobicReactorVolume1}
                         name="anaerobicReactorVolume1"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.anaerobicReactorVolume2}
+                        variable={system.anaerobicReactorVolume2}
                         name="anaerobicReactorVolume2"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
@@ -165,26 +165,26 @@ const Biogas = (props: Props) => {
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.biogasTankVolume1}
+                        variable={system.biogasTankVolume1}
                         name="biogasTankVolume1"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.biogasTankVolume2}
+                        variable={system.biogasTankVolume2}
                         name="biogasTankVolume2"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.biogasTankVolume3}
+                        variable={system.biogasTankVolume3}
                         name="biogasTankVolume3"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                   </Grid>
@@ -203,35 +203,35 @@ const Biogas = (props: Props) => {
                     >
                       <CustomToggle
                         name="inputDigitalTwin"
-                        value={biogas.inputDigitalTwin}
+                        value={system.inputDigitalTwin}
                         handleChange={handleChange}
                         trueString="Gemelo on"
                         falseString="Gemelo off"
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.inputDigitalTwinStepTime}
+                        variable={system.inputDigitalTwinStepTime}
                         name="inputDigitalTwinStepTime"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.inputDigitalTwinTrainingTime}
+                        variable={system.inputDigitalTwinTrainingTime}
                         name="inputDigitalTwinTrainingTime"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.inputDigitalTwinForecastTime}
+                        variable={system.inputDigitalTwinForecastTime}
                         name="inputDigitalTwinForecastTime"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
@@ -239,10 +239,10 @@ const Biogas = (props: Props) => {
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.inputKineticParameterInitialValue}
+                        variable={system.inputKineticParameterInitialValue}
                         name="inputKineticParameterInitialValue"
                         handleChange={handleChange}
-                        disabled={biogas.disableParameters}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
@@ -253,10 +253,10 @@ const Biogas = (props: Props) => {
                         <InputLabel>Orden</InputLabel>
                         <Select
                           label="Orden"
-                          value={biogas.inputSpeedLawOrder}
+                          value={system.inputSpeedLawOrder}
                           name="inputSpeedLawOrder"
                           onChange={(e: any) => handleChange(e)}
-                          disabled={biogas.inputDigitalTwin}
+                          disabled={system.inputDigitalTwin}
                         >
                           {Object.values(SpeedLawOrderType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -268,14 +268,14 @@ const Biogas = (props: Props) => {
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.inputSpeedLawExponentialFactor}
+                        variable={system.inputSpeedLawExponentialFactor}
                         name="inputSpeedLawExponentialFactor"
                         handleChange={handleChange}
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={biogas.inputSpeedLawStartEnergy}
+                        variable={system.inputSpeedLawStartEnergy}
                         name="inputSpeedLawStartEnergy"
                         handleChange={handleChange}
                       ></CustomNumberField>
@@ -292,7 +292,7 @@ const Biogas = (props: Props) => {
                         <InputLabel>Modo de operación</InputLabel>
                         <Select
                           label="Modo de operación"
-                          value={biogas.inputOperationMode}
+                          value={system.inputOperationMode}
                           name="inputOperationMode"
                           onChange={(e: any) => handleChange(e)}
                         >
@@ -313,7 +313,7 @@ const Biogas = (props: Props) => {
                     >
                       <CustomToggle
                         name="inputOfflineOperation"
-                        value={biogas.inputOfflineOperation}
+                        value={system.inputOfflineOperation}
                         handleChange={handleChange}
                         trueString="Offline"
                         falseString="Online"
@@ -331,9 +331,9 @@ const Biogas = (props: Props) => {
                     >
                       <CustomToggle
                         name="inputSubstrateConditions"
-                        value={biogas.inputSubstrateConditions}
+                        value={system.inputSubstrateConditions}
                         handleChange={handleChange}
-                        disabled={biogas.inputOfflineOperation}
+                        disabled={system.inputOfflineOperation}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6}>
@@ -350,7 +350,7 @@ const Biogas = (props: Props) => {
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
                             variable={
-                              biogas.inputElementalAnalysisCarbonContent
+                              system.inputElementalAnalysisCarbonContent
                             }
                             name="inputElementalAnalysisCarbonContent"
                             handleChange={handleChange}
@@ -359,7 +359,7 @@ const Biogas = (props: Props) => {
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
                             variable={
-                              biogas.inputElementalAnalysisHydrogenContent
+                              system.inputElementalAnalysisHydrogenContent
                             }
                             name="inputElementalAnalysisHydrogenContent"
                             handleChange={handleChange}
@@ -368,7 +368,7 @@ const Biogas = (props: Props) => {
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
                             variable={
-                              biogas.inputElementalAnalysisOxygenContent
+                              system.inputElementalAnalysisOxygenContent
                             }
                             name="inputElementalAnalysisOxygenContent"
                             handleChange={handleChange}
@@ -377,7 +377,7 @@ const Biogas = (props: Props) => {
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
                             variable={
-                              biogas.inputElementalAnalysisNitrogenContent
+                              system.inputElementalAnalysisNitrogenContent
                             }
                             name="inputElementalAnalysisNitrogenContent"
                             handleChange={handleChange}
@@ -386,7 +386,7 @@ const Biogas = (props: Props) => {
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
                             variable={
-                              biogas.inputElementalAnalysisSulfurContent
+                              system.inputElementalAnalysisSulfurContent
                             }
                             name="inputElementalAnalysisSulfurContent"
                             handleChange={handleChange}
@@ -407,7 +407,7 @@ const Biogas = (props: Props) => {
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
-                            variable={biogas.inputProximateAnalysisTotalSolids}
+                            variable={system.inputProximateAnalysisTotalSolids}
                             name="inputProximateAnalysisTotalSolids"
                             handleChange={handleChange}
                           ></CustomNumberField>
@@ -415,7 +415,7 @@ const Biogas = (props: Props) => {
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
                             variable={
-                              biogas.inputProximateAnalysisVolatileSolids
+                              system.inputProximateAnalysisVolatileSolids
                             }
                             name="inputProximateAnalysisVolatileSolids"
                             handleChange={handleChange}
@@ -423,7 +423,7 @@ const Biogas = (props: Props) => {
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
                           <CustomNumberField
-                            variable={biogas.inputProximateAnalysisDensity}
+                            variable={system.inputProximateAnalysisDensity}
                             name="inputProximateAnalysisDensity"
                             handleChange={handleChange}
                           ></CustomNumberField>
@@ -446,34 +446,34 @@ const Biogas = (props: Props) => {
                 <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
                   <CustomToggle
                     name="inputPump104"
-                    value={biogas.inputPump104}
+                    value={system.inputPump104}
                     handleChange={handleChange}
-                    disabled={biogas.inputOfflineOperation}
+                    disabled={system.inputOfflineOperation}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <CustomNumberField
-                    variable={biogas.inputPump104HydraulicRetentionTime}
+                    variable={system.inputPump104HydraulicRetentionTime}
                     name="inputPump104HydraulicRetentionTime"
                     handleChange={handleChange}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <CustomNumberField
-                    variable={biogas.inputPump104StartTime}
+                    variable={system.inputPump104StartTime}
                     name="inputPump104StartTime"
                     handleChange={handleChange}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <CustomNumberField
-                    variable={biogas.inputPump104StartsPerDay}
+                    variable={system.inputPump104StartsPerDay}
                     name="inputPump104StartsPerDay"
                     handleChange={handleChange}
                   ></CustomNumberField>
                 </Grid>
               </Grid>
-              {biogas.inputOperationMode !== OperationModeType.Modo1 && (
+              {system.inputOperationMode !== OperationModeType.Modo1 && (
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} xl={6}>
                     <h3>Bomba P-101</h3>
@@ -481,39 +481,39 @@ const Biogas = (props: Props) => {
                   <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
                     <CustomToggle
                       name="inputPump101"
-                      value={biogas.inputPump101}
+                      value={system.inputPump101}
                       handleChange={handleChange}
                       disabled={
-                        biogas.inputOfflineOperation ||
-                        biogas.inputOperationMode === OperationModeType.Modo3 ||
-                        biogas.inputOperationMode === OperationModeType.Modo4
+                        system.inputOfflineOperation ||
+                        system.inputOperationMode === OperationModeType.Modo3 ||
+                        system.inputOperationMode === OperationModeType.Modo4
                       }
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
-                      variable={biogas.inputPump101Flow}
+                      variable={system.inputPump101Flow}
                       name="inputPump101Flow"
                       handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
-                      variable={biogas.inputPump101StartTime}
+                      variable={system.inputPump101StartTime}
                       name="inputPump101StartTime"
                       handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
-                      variable={biogas.inputPump101StartsPerDay}
+                      variable={system.inputPump101StartsPerDay}
                       name="inputPump101StartsPerDay"
                       handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                 </Grid>
               )}
-              {biogas.inputOperationMode === OperationModeType.Modo4 && (
+              {system.inputOperationMode === OperationModeType.Modo4 && (
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} xl={6}>
                     <h3>Bomba P-102</h3>
@@ -521,28 +521,28 @@ const Biogas = (props: Props) => {
                   <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
                     <CustomToggle
                       name="inputPump102"
-                      value={biogas.inputPump102}
+                      value={system.inputPump102}
                       handleChange={handleChange}
-                      disabled={biogas.inputOfflineOperation}
+                      disabled={system.inputOfflineOperation}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
-                      variable={biogas.inputPump102Flow}
+                      variable={system.inputPump102Flow}
                       name="inputPump102Flow"
                       handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
-                      variable={biogas.inputPump102StartTime}
+                      variable={system.inputPump102StartTime}
                       name="inputPump102StartTime"
                       handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
-                      variable={biogas.inputPump102StartsPerDay}
+                      variable={system.inputPump102StartsPerDay}
                       name="inputPump102StartsPerDay"
                       handleChange={handleChange}
                     ></CustomNumberField>
@@ -552,21 +552,21 @@ const Biogas = (props: Props) => {
               <Grid item xs={12} md={12} xl={12}>
                 <h3>Temperatura R-101</h3>
                 <ToggleCustomNumberField
-                  variable={biogas.inputTemperature101}
+                  variable={system.inputTemperature101}
                   name="inputTemperature101"
                   handleChange={handleChange}
-                  disabled={biogas.inputOfflineOperation}
+                  disabled={system.inputOfflineOperation}
                 ></ToggleCustomNumberField>
               </Grid>
-              {(biogas.inputOperationMode === OperationModeType.Modo3 ||
-                biogas.inputOperationMode === OperationModeType.Modo4) && (
+              {(system.inputOperationMode === OperationModeType.Modo3 ||
+                system.inputOperationMode === OperationModeType.Modo4) && (
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Temperatura R-102</h3>
                   <ToggleCustomNumberField
-                    variable={biogas.inputTemperature102}
+                    variable={system.inputTemperature102}
                     name="inputTemperature102"
                     handleChange={handleChange}
-                    disabled={biogas.inputOfflineOperation}
+                    disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
               )}
@@ -583,11 +583,11 @@ const Biogas = (props: Props) => {
             </Grid>
           </Grid>
         </Grid>
-        {graphs !== undefined && biogas.timeMultiplier && (
+        {graphs !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
-                timeMultiplier={biogas.timeMultiplier}
+                timeMultiplier={system.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
                 variables={BIOGAS_DIAGRAM_VARIABLES}
