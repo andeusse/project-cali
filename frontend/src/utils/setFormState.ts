@@ -1,4 +1,3 @@
-import { InputType } from '../types/models/common';
 import { TurbineParameters } from '../types/models/turbine';
 import { SolarWindParameters } from '../types/models/solar';
 import { BiogasParameters } from '../types/models/biogas';
@@ -6,9 +5,10 @@ import { setTurbine } from './models/setTurbine';
 import { setBiogas } from './models/setBiogas';
 import { setSolar } from './models/setSolar';
 import { setFormObjectValue } from './setFormObjectValue';
-import { SmartCityParameters } from '../types/models/smartCity';
-import { SmartHomeParameters } from '../types/models/smartHome';
-import { SmartFactoryParameters } from '../types/models/smartFactory';
+import { SmartCityParameters } from '../types/scenarios/smartCity';
+import { SmartHomeParameters } from '../types/scenarios/smartHome';
+import { SmartFactoryParameters } from '../types/scenarios/smartFactory';
+import { InputType } from '../types/inputType';
 
 export type formType =
   | TurbineParameters

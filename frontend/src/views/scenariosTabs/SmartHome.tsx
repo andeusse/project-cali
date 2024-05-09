@@ -12,7 +12,10 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useState } from 'react';
-import { SMART_CITY, SmartCityParameters } from '../../types/models/smartCity';
+import {
+  SMART_CITY,
+  SmartCityParameters,
+} from '../../types/scenarios/smartCity';
 import { setFormState } from '../../utils/setFormState';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import { getValueByKey } from '../../utils/getValueByKey';
@@ -20,11 +23,9 @@ import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import smartHomeIllustration from '../../assets/illustrations/smartHome.png';
 import {
-  ScenariosModesType,
-  ScenariosStepUnitType,
-  ScenariosStepUnitText,
-} from '../../types/models/common';
-import { SMART_HOME, SmartHomeParameters } from '../../types/models/smartHome';
+  SMART_HOME,
+  SmartHomeParameters,
+} from '../../types/scenarios/smartHome';
 
 type Props = {};
 

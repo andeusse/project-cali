@@ -1,10 +1,10 @@
+import { InputType } from '../inputType';
 import { TabType } from '../tab';
 import {
+  CommonScenarioParameters,
   COMMON_SCENARIO,
   COMMON_TABS,
-  CommonScenarioParameters,
-  InputType,
-} from './common';
+} from './commons';
 
 export type SmartCityParameters = CommonScenarioParameters & {
   batterySystemNumber: InputType;

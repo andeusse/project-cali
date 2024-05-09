@@ -12,8 +12,9 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { GraphType } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
-import { DiagramVariableType, InputType } from '../../../types/models/common';
+import { DiagramVariableType } from '../../../types/models/common';
 import CustomNumberField from '../../UI/CustomNumberField';
+import { InputType } from '../../../types/inputType';
 
 type Props = {
   timeMultiplier: InputType;

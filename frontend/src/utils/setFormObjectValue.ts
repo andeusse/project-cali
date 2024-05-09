@@ -1,4 +1,4 @@
-import { InputType } from '../types/models/common';
+import { InputType } from '../types/inputType';
 import { formType } from './setFormState';
 
 export const setFormObjectValue = <T extends formType>(

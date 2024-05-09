@@ -1,12 +1,12 @@
 import Config from '../../config/config';
+import { CommonSystemParameter } from '../common';
 import { CommonGraphType } from '../graph';
+import { InputType } from '../inputType';
 import {
   Battery,
   CommonController,
   CommonDigitalTwinsParameter,
-  CommonSystemParameter,
   DiagramVariableType,
-  InputType,
   Inverter,
   InverterHybrid,
   IsConnected,

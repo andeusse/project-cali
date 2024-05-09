@@ -1,4 +1,4 @@
-import { InputType } from './models/common';
+import { InputType } from './inputType';
 
 export type CustomTextFieldType = {
   variable: InputType;

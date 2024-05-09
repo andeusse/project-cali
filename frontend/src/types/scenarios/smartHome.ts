@@ -1,11 +1,11 @@
 import { TabType } from '../tab';
+import { InputType } from '../inputType';
 import {
+  CommonScenarioParameters,
   COMMON_SCENARIO,
   COMMON_TABS,
-  CommonScenarioParameters,
-  CommonSystemParameter,
-  InputType,
-} from './common';
+} from './commons';
+import { CommonSystemParameter } from '../common';
 
 export type SmartHomeParameters = CommonScenarioParameters &
   CommonSystemParameter & {

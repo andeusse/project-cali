@@ -13,21 +13,19 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
-import { SMART_CITY, SmartCityParameters } from '../../types/models/smartCity';
+import {
+  SMART_CITY,
+  SmartCityParameters,
+} from '../../types/scenarios/smartCity';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import smartFactoryIllustration from '../../assets/illustrations/smartFactory.png';
 import {
-  ScenariosModesType,
-  ScenariosStepUnitType,
-  ScenariosStepUnitText,
-} from '../../types/models/common';
-import {
   SMART_FACTORY,
   SmartFactoryParameters,
-} from '../../types/models/smartFactory';
+} from '../../types/scenarios/smartFactory';
 
 type Props = {};
 

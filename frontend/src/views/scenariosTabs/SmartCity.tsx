@@ -17,20 +17,20 @@ import {
   SMART_CITY,
   SMART_CITY_TABS,
   SmartCityParameters,
-} from '../../types/models/smartCity';
+} from '../../types/scenarios/smartCity';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import smartCityIllustration from '../../assets/illustrations/smartCity.png';
-import {
-  ScenariosModesType,
-  ScenariosStepUnitType,
-  ScenariosStepUnitText,
-  ScenariosModesText,
-} from '../../types/models/common';
 import CustomTab from '../../components/UI/CustomTab';
 import { TabType } from '../../types/tab';
+import {
+  ScenariosModesType,
+  ScenariosModesText,
+  ScenariosStepUnitType,
+  ScenariosStepUnitText,
+} from '../../types/scenarios/commons';
 
 type Props = {};
 

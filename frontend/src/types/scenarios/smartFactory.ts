@@ -1,10 +1,10 @@
+import { CommonSystemParameter } from '../common';
 import { TabType } from '../tab';
 import {
+  CommonScenarioParameters,
   COMMON_SCENARIO,
   COMMON_TABS,
-  CommonScenarioParameters,
-  CommonSystemParameter,
-} from './common';
+} from './commons';
 
 export type SmartFactoryParameters = CommonScenarioParameters &
   CommonSystemParameter & {};

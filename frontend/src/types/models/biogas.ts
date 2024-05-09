@@ -1,11 +1,8 @@
 import Config from '../../config/config';
+import { CommonSystemParameter } from '../common';
 import { CommonGraphType } from '../graph';
-import {
-  CommonDigitalTwinsParameter,
-  CommonSystemParameter,
-  DiagramVariableType,
-  InputType,
-} from './common';
+import { InputType } from '../inputType';
+import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
 
 export enum OperationModeType {
   Modo1 = 'Modo1',
