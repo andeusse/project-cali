@@ -10,6 +10,9 @@ import homeMonitoring from '../assets/home/homeMonitoring.jpg';
 import homeDigitalTwins from '../assets/home/homeDigitalTwins.jpg';
 import homeScenario from '../assets/home/homeScenario.jpg';
 
+import logoDida from '../assets/home/logoDida.png';
+import logoUSC from '../assets/home/logoUSC.png';
+
 type Props = {};
 
 const Home = (props: Props) => {
@@ -97,6 +100,24 @@ const Home = (props: Props) => {
             >
               Escenarios
             </LinkButton>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={6} xl={6} marginTop={2.5}>
+          <Box
+            sx={{ display: { xs: 'grid', md: 'flex' } }}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <img style={{ width: '25%' }} src={logoDida} alt="logoDida"></img>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={6} xl={6} marginTop={2.5}>
+          <Box
+            sx={{ display: { xs: 'grid', md: 'flex' } }}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <img style={{ width: '25%' }} src={logoUSC} alt="logoUSC"></img>
           </Box>
         </Grid>
       </Grid>

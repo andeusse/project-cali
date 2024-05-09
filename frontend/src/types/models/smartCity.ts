@@ -1,55 +1,19 @@
-import { InputType } from './common';
+import { TabType } from '../tab';
+import {
+  COMMON_SCENARIO,
+  COMMON_TABS,
+  CommonScenarioParameters,
+  InputType,
+} from './common';
 
-export enum SmartCityOperationModesType {
-  Manual = 'Manual',
-  Automatic = 'Automático',
-}
-
-export enum StepUnitType {
-  Second = 'Segundo(s)',
-  Minute = 'Minutos(s)',
-  Hour = 'Hora(s)',
-  Day = 'Día(s)',
-}
-
-export type SmartCityParameters = {
-  operationMode: SmartCityOperationModesType;
-  steps: InputType;
-  stepTime: InputType;
-  stepUnit: StepUnitType;
-  solarSystemNumber: InputType;
+export type SmartCityParameters = CommonScenarioParameters & {
   batterySystemNumber: InputType;
-  BiogasSystemNumber: InputType;
-  LoadSystemNumber: InputType;
+  hydraulicSystemNumber: InputType;
+  windSystemNumber: InputType;
 };
 
 export const SMART_CITY: SmartCityParameters = {
-  operationMode: SmartCityOperationModesType.Manual,
-  steps: {
-    disabled: false,
-    value: 1,
-    tooltip: 'Número de pasos a simular',
-    unit: '',
-    variableString: 'Número de pasos',
-    min: 1,
-  },
-  stepTime: {
-    disabled: false,
-    value: 1,
-    tooltip: 'Tiempo por paso',
-    unit: '',
-    variableString: 'Tiempo por paso',
-    min: 1,
-  },
-  stepUnit: StepUnitType.Second,
-  solarSystemNumber: {
-    disabled: false,
-    value: 1,
-    tooltip: 'Número de sistemas solares',
-    unit: '',
-    variableString: 'Sistemas solares',
-    min: 0,
-  },
+  ...COMMON_SCENARIO,
   batterySystemNumber: {
     disabled: false,
     value: 1,
@@ -57,21 +21,40 @@ export const SMART_CITY: SmartCityParameters = {
     unit: '',
     variableString: 'Sistemas de baterías',
     min: 0,
+    max: 100,
   },
-  BiogasSystemNumber: {
+  hydraulicSystemNumber: {
     disabled: false,
     value: 1,
-    tooltip: 'Número de sistemas de biogás',
+    tooltip: 'Número de sistemas hidráulicos',
     unit: '',
-    variableString: 'Sistemas de biogás',
+    variableString: 'Sistemas hidráulicos',
     min: 0,
+    max: 100,
   },
-  LoadSystemNumber: {
+  windSystemNumber: {
     disabled: false,
     value: 1,
-    tooltip: '',
+    tooltip: 'Número de sistemas de eólicos',
     unit: '',
-    variableString: '',
+    variableString: 'Sistemas eólicos',
     min: 0,
+    max: 100,
   },
 };
+
+export const SMART_CITY_TABS: TabType[] = [
+  ...COMMON_TABS,
+  {
+    title: 'Baterías',
+    children: undefined,
+  },
+  {
+    title: 'Hidráulicos',
+    children: undefined,
+  },
+  {
+    title: 'Eólicos',
+    children: undefined,
+  },
+];

@@ -117,14 +117,6 @@ const Turbine = (props: Props) => {
     ></PlayerControls>
   );
 
-  const handleImageExpanded = () => {
-    setIsImageExpanded(!isImageExpanded);
-  };
-
-  const handleParametersExpanded = () => {
-    setIsParametersExpanded(!isParametersExpanded);
-  };
-
   return (
     <>
       <ErrorDialog
@@ -134,7 +126,10 @@ const Turbine = (props: Props) => {
       ></ErrorDialog>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
-          <Accordion expanded={isImageExpanded} onChange={handleImageExpanded}>
+          <Accordion
+            expanded={isImageExpanded}
+            onChange={() => setIsImageExpanded(!isImageExpanded)}
+          >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -160,7 +155,7 @@ const Turbine = (props: Props) => {
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
             expanded={isParametersExpanded}
-            onChange={handleParametersExpanded}
+            onChange={() => setIsParametersExpanded(!isParametersExpanded)}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}

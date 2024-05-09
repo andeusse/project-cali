@@ -1,35 +1,38 @@
 import {
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
   Typography,
+  TextField,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useState } from 'react';
-import { SMART_CITY, SmartCityParameters } from '../../types/models/smartCity';
-import { setFormState } from '../../utils/setFormState';
 import CustomNumberField from '../../components/UI/CustomNumberField';
+import { SMART_CITY, SmartCityParameters } from '../../types/models/smartCity';
 import { getValueByKey } from '../../utils/getValueByKey';
+import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
-import smartHomeIllustration from '../../assets/illustrations/smartHome.png';
+import smartFactoryIllustration from '../../assets/illustrations/smartFactory.png';
 import {
   ScenariosModesType,
   ScenariosStepUnitType,
   ScenariosStepUnitText,
 } from '../../types/models/common';
-import { SMART_HOME, SmartHomeParameters } from '../../types/models/smartHome';
+import {
+  SMART_FACTORY,
+  SmartFactoryParameters,
+} from '../../types/models/smartFactory';
 
 type Props = {};
 
-const SmartHome = (props: Props) => {
-  const [system, setSystem] = useState(SMART_HOME);
+const SmartFactory = (props: Props) => {
+  const [system, setSystem] = useState(SMART_FACTORY);
   const [isOpen, setIsOpen] = useState(false);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
@@ -37,9 +40,13 @@ const SmartHome = (props: Props) => {
   const error = '';
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<SmartHomeParameters>(e, system, variableName);
+    const newState = setFormState<SmartFactoryParameters>(
+      e,
+      system,
+      variableName
+    );
     if (newState) {
-      setSystem(newState as SmartHomeParameters);
+      setSystem(newState as SmartFactoryParameters);
     }
   };
 
@@ -55,4 +62,4 @@ const SmartHome = (props: Props) => {
   );
 };
 
-export default SmartHome;
+export default SmartFactory;
