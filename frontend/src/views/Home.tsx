@@ -6,9 +6,9 @@ import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
 import LinkButton from '../components/UI/LinkButton';
 import { Link } from 'react-router-dom';
 
-import homeMonitoring from '../assets/home/homeMonitoring.jpg';
-import homeDigitalTwins from '../assets/home/homeDigitalTwins.jpg';
-import homeScenario from '../assets/home/homeScenario.jpg';
+import homeMonitoring from '../assets/home/homeMonitoring.png';
+import homeDigitalTwins from '../assets/home/homeDigitalTwins.png';
+import homeScenario from '../assets/home/homeScenario.png';
 
 import logoDida from '../assets/home/logoDida.png';
 import logoUSC from '../assets/home/logoUSC.png';
@@ -29,7 +29,7 @@ const Home = (props: Props) => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Universidad Santiago de Cali</h1>
       </Box>
-      <Grid container spacing={2}>
+      <Grid container spacing={3} marginTop = {5}>
         <Grid item xs={12} md={4} xl={4}>
           <Link to={`/monitoring`}>
             <img
@@ -43,15 +43,6 @@ const Home = (props: Props) => {
             justifyContent="center"
             alignItems="center"
           >
-            <LinkButton
-              startIcon={<MonitorIcon></MonitorIcon>}
-              sx={style}
-              to={`/monitoring`}
-              variant="contained"
-              color="inherit"
-            >
-              Monitoreo
-            </LinkButton>
           </Box>
         </Grid>
         <Grid item xs={12} md={4} xl={4}>
@@ -67,15 +58,6 @@ const Home = (props: Props) => {
             justifyContent="center"
             alignItems="center"
           >
-            <LinkButton
-              startIcon={<ContentCopyIcon></ContentCopyIcon>}
-              sx={style}
-              to={`/digitaltwins`}
-              variant="contained"
-              color="inherit"
-            >
-              Gemelos digitales
-            </LinkButton>
           </Box>
         </Grid>
         <Grid item xs={12} md={4} xl={4}>
@@ -91,15 +73,6 @@ const Home = (props: Props) => {
             justifyContent="center"
             alignItems="center"
           >
-            <LinkButton
-              startIcon={<StackedLineChartIcon></StackedLineChartIcon>}
-              sx={style}
-              to={`/scenarios`}
-              variant="contained"
-              color="inherit"
-            >
-              Escenarios
-            </LinkButton>
           </Box>
         </Grid>
         <Grid item xs={12} md={6} xl={6} marginTop={2.5}>
