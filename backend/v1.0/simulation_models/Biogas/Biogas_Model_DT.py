@@ -19,7 +19,9 @@ from  tools import DBManager
 
 class BiogasPlantDT:
 
-    def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, t_prediction = 1, timetrain=1, Kini=1):
+    def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30,
+                 ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101 = 1000,
+                 ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102 = 1000):
 
         #Interface Inputs
         self.VR1 = VR1
@@ -32,10 +34,6 @@ class BiogasPlantDT:
         self.InfluxDB = DBManager.InfluxDBmodel(server = 'http://' + str(self.databaseConnection_df['IP'][3])+':'+str(self.databaseConnection_df['Port'][3])+'/', org = self.databaseConnection_df['Organization'][3], bucket = self.databaseConnection_df['Bucket'][3], token = self.databaseConnection_df['Token'][3])
         self.Thermo = TP.ThermoProperties()
         self.tp = tp
-        self.t_prediction = t_prediction * 3600
-        self.timetrain = timetrain * 3600
-        self.validation_time = timetrain * 3600
-        self.Kini = Kini
         #Initial values
         #Global time
         self.TotalTime = 0
@@ -52,7 +50,95 @@ class BiogasPlantDT:
         #Biogas V_107
         self.Pacum_v107 = 0
         self.P_ini_V107 = 0
-    
+        #Reactor 101 initial conditions
+        self.ST_R101 = ST_R101/100
+        self.SV_R101 = SV_R101/100
+
+        if ST_R101 == 0:
+            self.Csus_ini_R101 = 0
+            self.SV_R101 = 0
+        else:
+            self.ST_R101 = ST_R101/100
+            self.SV_R101 = SV_R101/100
+            self.Cc_R101 = Cc_R101
+            self.Ch_R101 = Ch_R101
+            self.Co_R101 = Co_R101
+            self.Cn_R101 = Cn_R101
+            self.Cs_R101 = Cs_R101
+            self.rho_R101 = rho_R101
+
+            self.molC_R101 = self.Cc_R101*(1/12.01)
+            self.molH_R101 = self.Ch_R101*(1/1.01)
+            self.molO_R101 = self.Co_R101*(1/16)
+            self.molN_R101 = self.Cn_R101*(1/14)
+            self.molS_R101 = self.Cs_R101*(1/32)
+
+            self.mol_min_R101 = min(self.molC_R101, self.molH_R101, self.molO_R101, self.molN_R101, self.molS_R101)
+
+            self.n_R101 = self.molC_R101/self.mol_min_R101
+            self.a_R101 = self.molH_R101/self.mol_min_R101
+            self.b_R101 = self.molO_R101/self.mol_min_R101
+            self.c_R101 = self.molN_R101/self.mol_min_R101
+            self.d_R101 = self.molS_R101/self.mol_min_R101
+            
+            self.s_H2O_R101 = self.n_R101-(self.a_R101/4)-(self.b_R101/2)+(3/4)*self.c_R101+(self.d_R101/2)
+            self.s_CH4_R101 = (self.n_R101/2)+(self.a_R101/8)-(self.b_R101/4)-(3/8)*self.c_R101-(self.d_R101/4)
+            self.s_CO2_R101 = (self.n_R101/2)-(self.a_R101/8)+(self.b_R101/4)+(3/8)*self.c_R101-(self.d_R101/4)
+            self.s_NH3_R101 = self.c_R101
+            self.s_H2S_R101 = self.d_R101
+
+            self.MW_sustrato_R101 = self.n_R101*12.01+self.a_R101*1.01+self.b_R101*16+self.c_R101*14+self.d_R101*32
+
+            self.Csus_ini_R101 = (self.rho_R101*self.SV_R101)/self.MW_sustrato_R101
+            self.Csus_ini_ST_R101 = (self.rho_R101*self.ST_R101)/self.MW_sustrato_R101
+            self.Csus_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_R101
+            self.Ch2o_ini_R101 = (self.rho_R101*(1-self.ST_R101))/18
+        
+        #Reactor 102 initial conditions
+        self.ST_R102 = ST_R102/100
+        self.SV_R102 = SV_R102/100
+        
+        if ST_R102 == 0:
+            self.Csus_ini_R102 = 0
+            self.SV_R102 = 0
+
+        else:
+            self.ST_R102 = ST_R102/100
+            self.SV_R102 = SV_R102/100
+            self.Cc_R102 = Cc_R102
+            self.Ch_R102 = Ch_R102
+            self.Co_R102 = Co_R102
+            self.Cn_R102 = Cn_R102
+            self.Cs_R102 = Cs_R102
+            self.rho_R102 = rho_R102
+
+            self.molC_R102 = self.Cc_R102*(1/12.01)
+            self.molH_R102 = self.Ch_R102*(1/1.01)
+            self.molO_R102 = self.Co_R102*(1/16)
+            self.molN_R102 = self.Cn_R102*(1/14)
+            self.molS_R102 = self.Cs_R102*(1/32)
+
+            self.mol_min_R102 = min(self.molC_R102, self.molH_R102, self.molO_R102, self.molN_R102, self.molS_R102)
+
+            self.n_R102 = self.molC_R102/self.mol_min_R102
+            self.a_R102 = self.molH_R102/self.mol_min_R102
+            self.b_R102 = self.molO_R102/self.mol_min_R102
+            self.c_R102 = self.molN_R102/self.mol_min_R102
+            self.d_R102 = self.molS_R102/self.mol_min_R102
+            
+            self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
+            self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
+            self.s_CO2_R102 = (self.n_R102/2)-(self.a_R102/8)+(self.b_R102/4)+(3/8)*self.c_R102-(self.d_R102/4)
+            self.s_NH3_R102 = self.c_R102
+            self.s_H2S_R102 = self.d_R102
+
+            self.MW_sustrato_R102 = self.n_R102*12.01+self.a_R102*1.01+self.b_R102*16+self.c_R102*14+self.d_R102*32
+
+            self.Csus_ini_R102 = (self.rho_R102*self.SV_R102)/self.MW_sustrato_R102
+            self.Csus_ini_ST_R102 = (self.rho_R102*self.ST_R102)/self.MW_sustrato_R102
+            self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
+            self.Ch2o_ini_R102 = (self.rho_R102*(1-self.ST_R102))/18
+
     def GetValuesFromBiogasPlant (self):
         
         self.msg = self.InfluxDB.InfluxDBconnection()
@@ -100,6 +186,14 @@ class BiogasPlantDT:
         #Get Temperature from TE101B from real biogas plant
         self.query_TE101B = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-101B", location=1, type=1, forecastTime=1)
         self.TE_101Bv = self.InfluxDB.InfluxDBreader(self.query_TE101B)
+
+        #Get temperature from TE102A from real biogas plant
+        self.query_TE102A = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-102A", location=1, type=1, forecastTime=1)
+        self.TE_102Av = self.InfluxDB.InfluxDBreader(self.query_TE102A)
+
+        #Get temperature from TE102B from real biogas plant
+        self.query_TE102B = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "TE-102B", location=1, type=1, forecastTime=1)
+        self.TE_102Bv = self.InfluxDB.InfluxDBreader(self.query_TE102B)
         
         #Get pump-101 flow from real biogas plant
         self.query_SE101 = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "SE-101", location=1, type=1, forecastTime=1)
@@ -470,6 +564,31 @@ class BiogasPlantDT:
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
             self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = Tf, timestamp = self.timestamp)
+    
+    def Temperature_R102 (self, manual_temp_R102 = 1, Temp_R102=35):
+        self.manual_temp_R102 = manual_temp_R102
+
+        if self.manual_temp_R102 == 1 or self.Online == 0:
+            self.Temp_R102 = Temp_R102
+
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = self.Temp_R102, timestamp = self.timestamp)
+            
+            self.query_TE102 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-102v", location=1, type=1, forecastTime=1) 
+            self.TE_102v = self.InfluxDB.InfluxDBreader(self.query_TE102)
+            self.TE_102v = self.TE_101v["TE-102v"].tolist()
+
+        else:
+
+            self.TE_102Av = self.TE_102Av["TE-102A"].tolist()
+            self.TE_102Bv = self.TE_102Bv["TE-102B"].tolist()
+
+            T1 = self.TE_102Av[-1]
+            T2 = self.TE_102Bv[-1]
+            Tf = (T1 + T2)/2
+
+            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = Tf, timestamp = self.timestamp)
         
     def V_101_DT (self):
         self.AT103A1v = self.AT103A1v["AT-103A1"]
@@ -484,32 +603,32 @@ class BiogasPlantDT:
         self.TT103v = self.TT103v["TT-103"]
         self.SV103v = self.SV103v["SV-103"]
 
-        self.P_std = 100
-        self.T_std = 273.15
+        self.P_std = 100        #[kPa]
+        self.T_std = 273.15     #[K]    
 
         self.V_normal_V101 = ((self.PT103v.iloc[-1]*6.89476)*self.VG1*self.T_std)/(self.P_std*(self.TT103v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = self.V_normal_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][102], variable = self.database_df["Tag"][102], value = self.V_normal_V101, timestamp = self.timestamp)
         
         self.V_normal_CH4_V101 = self.AT103A1v.iloc[-1]/100*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][102], variable = self.database_df["Tag"][102], value = self.V_normal_CH4_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][103], variable = self.database_df["Tag"][103], value = self.V_normal_CH4_V101, timestamp = self.timestamp)
 
         self.V_normal_CO2_V101 = self.AT103A2v.iloc[-1]/100*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][103], variable = self.database_df["Tag"][103], value = self.V_normal_CO2_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][104], variable = self.database_df["Tag"][104], value = self.V_normal_CO2_V101, timestamp = self.timestamp)
 
         self.V_normal_H2S_V101 = self.AT103A3v.iloc[-1]/1000000*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][104], variable = self.database_df["Tag"][104], value = self.V_normal_H2S_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][105], variable = self.database_df["Tag"][105], value = self.V_normal_H2S_V101, timestamp = self.timestamp)
 
         self.V_normal_O2_V101 = self.AT103A4v.iloc[-1]/100*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][105], variable = self.database_df["Tag"][105], value = self.V_normal_O2_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][106], variable = self.database_df["Tag"][106], value = self.V_normal_O2_V101, timestamp = self.timestamp)
 
         self.V_normal_H2_V101 = self.AT103A5v.iloc[-1]/1000000*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][106], variable = self.database_df["Tag"][106], value = self.V_normal_H2_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][107], variable = self.database_df["Tag"][107], value = self.V_normal_H2_V101, timestamp = self.timestamp)
 
         self.V_mol_CH4 = self.Thermo.Hgases(xCH4=1, xCO2=0, xH2O=0, xO2=0, xN2=0, xH2S=0, xH2=0, P=self.PT103v.iloc[-1], Patm=100, T=self.TT103v.iloc[-1])[2]
         self.V_mol_CO2 = self.Thermo.Hgases(xCH4=0, xCO2=1, xH2O=0, xO2=0, xN2=0, xH2S=0, xH2=0, P=self.PT103v.iloc[-1], Patm=100, T=self.TT103v.iloc[-1])[2]
@@ -519,45 +638,45 @@ class BiogasPlantDT:
 
         self.mol_CH4_V101 = self.V_normal_CH4_V101/self.V_mol_CH4     
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][107], variable = self.database_df["Tag"][107], value = self.mol_CH4_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][108], variable = self.database_df["Tag"][108], value = self.mol_CH4_V101, timestamp = self.timestamp)
 
         self.mol_CO2_V101 = self.V_normal_CO2_V101/self.V_mol_CO2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][108], variable = self.database_df["Tag"][108], value = self.mol_CO2_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][109], variable = self.database_df["Tag"][109], value = self.mol_CO2_V101, timestamp = self.timestamp)
 
         self.mol_H2S_V101 = self.V_normal_H2S_V101/self.V_mol_H2S
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][109], variable = self.database_df["Tag"][109], value = self.mol_H2S_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][110], variable = self.database_df["Tag"][110], value = self.mol_H2S_V101, timestamp = self.timestamp)
 
         self.mol_O2_V101 = self.V_normal_O2_V101/self.V_mol_O2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][110], variable = self.database_df["Tag"][110], value = self.mol_O2_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][111], variable = self.database_df["Tag"][111], value = self.mol_O2_V101, timestamp = self.timestamp)
 
         self.mol_H2_V101 = self.V_normal_H2_V101/self.V_mol_H2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][111], variable = self.database_df["Tag"][111], value = self.mol_H2_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][112], variable = self.database_df["Tag"][112], value = self.mol_H2_V101, timestamp = self.timestamp)
 
         self.RH_V101 = self.AT103Bv.iloc[-1]/100
         self.AH_v101 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V101, self.TT103v.iloc[-1])
         self.mol_H2O_V101 = self.AH_v101*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][112], variable = self.database_df["Tag"][112], value = self.mol_H2O_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][113], variable = self.database_df["Tag"][113], value = self.mol_H2O_V101, timestamp = self.timestamp)
 
         if (len (self.PT103v) > 1) and (self.PT103v.iloc[-1]*1.05 < self.PT103v.iloc[-2]):  #Cambiar cuando se conecte con la planta real
             self.P_ini_V101 = self.Pacum_v101
         
         self.Pacum_v101 = self.PT103v.iloc[-1] + self.P_ini_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][113], variable = self.database_df["Tag"][113], value = self.Pacum_v101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][114], variable = self.database_df["Tag"][114], value = self.Pacum_v101, timestamp = self.timestamp)
 
         self.Vnormal_acum_v101 = ((self.Pacum_v101*6.89476)*self.VG1*self.T_std)/(self.P_std*(self.TT103v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][114], variable = self.database_df["Tag"][114], value = self.Vnormal_acum_v101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][115], variable = self.database_df["Tag"][115], value = self.Vnormal_acum_v101, timestamp = self.timestamp)
 
         self.V_normal_CH4_acum_V101 = self.AT103A1v.iloc[-1]/100*self.Vnormal_acum_v101
         self.mol_CH4_acum_V101 = self.V_normal_CH4_acum_V101/self.V_mol_CH4     
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][115], variable = self.database_df["Tag"][115], value = self.mol_CH4_acum_V101, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][116], variable = self.database_df["Tag"][116], value = self.mol_CH4_acum_V101, timestamp = self.timestamp)
 
     
     def V_102_DT (self):
@@ -571,69 +690,69 @@ class BiogasPlantDT:
 
         self.V_normal_V102 = ((self.PT104v.iloc[-1]*6.89476)*self.VG2*self.T_std)/(self.P_std*(self.TT104v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][116], variable = self.database_df["Tag"][116], value = self.V_normal_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][117], variable = self.database_df["Tag"][117], value = self.V_normal_V102, timestamp = self.timestamp)
 
         self.V_normal_CH4_V102 = self.AT104A1v.iloc[-1]/100*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][117], variable = self.database_df["Tag"][117], value = self.V_normal_CH4_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][118], variable = self.database_df["Tag"][118], value = self.V_normal_CH4_V102, timestamp = self.timestamp)
 
         self.V_normal_CO2_V102 = self.AT104A2v.iloc[-1]/100*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][118], variable = self.database_df["Tag"][118], value = self.V_normal_CO2_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][119], variable = self.database_df["Tag"][119], value = self.V_normal_CO2_V102, timestamp = self.timestamp)
 
         self.V_normal_H2S_V102 = self.AT104A3v.iloc[-1]/1000000*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][119], variable = self.database_df["Tag"][119], value = self.V_normal_H2S_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][120], variable = self.database_df["Tag"][120], value = self.V_normal_H2S_V102, timestamp = self.timestamp)
 
         self.V_normal_O2_V102 = self.AT104A4v.iloc[-1]/100*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][120], variable = self.database_df["Tag"][120], value = self.V_normal_O2_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][121], variable = self.database_df["Tag"][121], value = self.V_normal_O2_V102, timestamp = self.timestamp)
 
         self.V_normal_H2_V102 = self.AT103A5v.iloc[-1]/1000000*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][121], variable = self.database_df["Tag"][121], value = self.V_normal_H2_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][122], variable = self.database_df["Tag"][122], value = self.V_normal_H2_V102, timestamp = self.timestamp)
         
         self.mol_CH4_V102 = self.V_normal_CH4_V102/self.V_mol_CH4     
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][122], variable = self.database_df["Tag"][122], value = self.mol_CH4_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][123], variable = self.database_df["Tag"][123], value = self.mol_CH4_V102, timestamp = self.timestamp)
         
         self.mol_CO2_V102 = self.V_normal_CO2_V102/self.V_mol_CO2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][123], variable = self.database_df["Tag"][123], value = self.mol_CO2_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][124], variable = self.database_df["Tag"][124], value = self.mol_CO2_V102, timestamp = self.timestamp)
 
         self.mol_H2S_V102 = self.V_normal_H2S_V102/self.V_mol_H2S
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][124], variable = self.database_df["Tag"][124], value = self.mol_H2S_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][125], variable = self.database_df["Tag"][125], value = self.mol_H2S_V102, timestamp = self.timestamp)
 
         self.mol_O2_V102 = self.V_normal_O2_V102/self.V_mol_O2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][125], variable = self.database_df["Tag"][125], value = self.mol_O2_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][126], variable = self.database_df["Tag"][126], value = self.mol_O2_V102, timestamp = self.timestamp)
 
         self.mol_H2_V102 = self.V_normal_H2_V102/self.V_mol_H2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][126], variable = self.database_df["Tag"][126], value = self.mol_H2_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][127], variable = self.database_df["Tag"][127], value = self.mol_H2_V102, timestamp = self.timestamp)
 
         self.RH_V102 = self.AT104Bv.iloc[-1]/100
         self.AH_v102 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V102, self.TT104v.iloc[-1])
         self.mol_H2O_V102 = self.AH_v102*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][127], variable = self.database_df["Tag"][127], value = self.mol_H2O_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][128], variable = self.database_df["Tag"][128], value = self.mol_H2O_V102, timestamp = self.timestamp)
 
         if (len (self.PT104v) > 1) and (self.PT104v.iloc[-1]*1.05 < self.PT104v.iloc[-2]):  #Cambiar cuando se conecte con la planta real
             self.P_ini_V102 = self.Pacum_v102
         
         self.Pacum_v102 = self.PT104v.iloc[-1] + self.P_ini_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][128], variable = self.database_df["Tag"][128], value = self.Pacum_v102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][129], variable = self.database_df["Tag"][129], value = self.Pacum_v102, timestamp = self.timestamp)
 
         self.Vnormal_acum_v102 = ((self.Pacum_v102*6.89476)*self.VG2*self.T_std)/(self.P_std*(self.TT104v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][129], variable = self.database_df["Tag"][129], value = self.Vnormal_acum_v102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][130], variable = self.database_df["Tag"][130], value = self.Vnormal_acum_v102, timestamp = self.timestamp)
 
         self.V_normal_CH4_acum_V102 = self.AT104A1v.iloc[-1]/100*self.Vnormal_acum_v102
         self.mol_CH4_acum_V102 = self.V_normal_CH4_acum_V102/self.V_mol_CH4     
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][130], variable = self.database_df["Tag"][130], value = self.mol_CH4_acum_V102, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][131], variable = self.database_df["Tag"][131], value = self.mol_CH4_acum_V102, timestamp = self.timestamp)
 
         
     def V_103_DT (self):
@@ -647,162 +766,70 @@ class BiogasPlantDT:
 
         self.V_normal_V107 = ((self.PT105v.iloc[-1]*6.89476)*self.VG3*self.T_std)/(self.P_std*(self.TT105v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][131], variable = self.database_df["Tag"][131], value = self.V_normal_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][132], variable = self.database_df["Tag"][132], value = self.V_normal_V107, timestamp = self.timestamp)
 
         self.V_normal_CH4_V107 = self.AT105A1v.iloc[-1]/100*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][132], variable = self.database_df["Tag"][132], value = self.V_normal_CH4_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][133], variable = self.database_df["Tag"][133], value = self.V_normal_CH4_V107, timestamp = self.timestamp)
 
         self.V_normal_CO2_V107 = self.AT105A2v.iloc[-1]/100*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][133], variable = self.database_df["Tag"][133], value = self.V_normal_CO2_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][134], variable = self.database_df["Tag"][134], value = self.V_normal_CO2_V107, timestamp = self.timestamp)
 
         self.V_normal_H2S_V107 = self.AT105A3v.iloc[-1]/1000000*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][134], variable = self.database_df["Tag"][134], value = self.V_normal_H2S_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][135], variable = self.database_df["Tag"][135], value = self.V_normal_H2S_V107, timestamp = self.timestamp)
 
         self.V_normal_O2_V107 = self.AT105A4v.iloc[-1]/100*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][135], variable = self.database_df["Tag"][135], value = self.V_normal_O2_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][136], variable = self.database_df["Tag"][136], value = self.V_normal_O2_V107, timestamp = self.timestamp)
 
         self.V_normal_H2_V107 = self.AT105A5v.iloc[-1]/1000000*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][136], variable = self.database_df["Tag"][136], value = self.V_normal_H2_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][137], variable = self.database_df["Tag"][137], value = self.V_normal_H2_V107, timestamp = self.timestamp)
 
         self.mol_CH4_V107 = self.V_normal_CH4_V107/self.V_mol_CH4     
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][137], variable = self.database_df["Tag"][137], value = self.mol_CH4_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][138], variable = self.database_df["Tag"][138], value = self.mol_CH4_V107, timestamp = self.timestamp)
 
         self.mol_CO2_V107 = self.V_normal_CO2_V107/self.V_mol_CO2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][138], variable = self.database_df["Tag"][138], value = self.mol_CO2_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][139], variable = self.database_df["Tag"][139], value = self.mol_CO2_V107, timestamp = self.timestamp)
 
         self.mol_H2S_V107 = self.V_normal_H2S_V107/self.V_mol_H2S
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][139], variable = self.database_df["Tag"][139], value = self.mol_H2S_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][140], variable = self.database_df["Tag"][140], value = self.mol_H2S_V107, timestamp = self.timestamp)
 
         self.mol_O2_V107 = self.V_normal_O2_V107/self.V_mol_O2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][140], variable = self.database_df["Tag"][140], value = self.mol_O2_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][141], variable = self.database_df["Tag"][141], value = self.mol_O2_V107, timestamp = self.timestamp)
 
         self.mol_H2_V107 = self.V_normal_H2_V107/self.V_mol_H2
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][141], variable = self.database_df["Tag"][141], value = self.mol_H2_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][142], variable = self.database_df["Tag"][142], value = self.mol_H2_V107, timestamp = self.timestamp)
 
         self.RH_V107 = self.AT105Bv.iloc[-1]/100
         self.AH_v107 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V107, self.TT105v.iloc[-1])
         self.mol_H2O_V107 = self.AH_v107*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][142], variable = self.database_df["Tag"][142], value = self.mol_H2O_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][143], variable = self.database_df["Tag"][143], value = self.mol_H2O_V107, timestamp = self.timestamp)
 
         if (len (self.PT105v) > 1) and (self.PT105v.iloc[-1]*1.05 < self.PT105v.iloc[-2]):  #Cambiar cuando se conecte con la planta real
             self.P_ini_V107 = self.Pacum_v107
         
         self.Pacum_v107 = self.PT105v.iloc[-1] + self.P_ini_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][143], variable = self.database_df["Tag"][143], value = self.Pacum_v107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][144], variable = self.database_df["Tag"][144], value = self.Pacum_v107, timestamp = self.timestamp)
 
         self.Vnormal_acum_v107 = ((self.Pacum_v107*6.89476)*self.VG3*self.T_std)/(self.P_std*(self.TT105v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][144], variable = self.database_df["Tag"][144], value = self.Vnormal_acum_v107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][145], variable = self.database_df["Tag"][145], value = self.Vnormal_acum_v107, timestamp = self.timestamp)
 
         self.V_normal_CH4_acum_V107 = self.AT105A1v.iloc[-1]/100*self.Vnormal_acum_v107
         self.mol_CH4_acum_V107 = self.V_normal_CH4_acum_V107/self.V_mol_CH4     
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][145], variable = self.database_df["Tag"][145], value = self.mol_CH4_acum_V107, timestamp = self.timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][146], variable = self.database_df["Tag"][146], value = self.mol_CH4_acum_V107, timestamp = self.timestamp)
     
-    def R101_ini (self, ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101 = 1000):
-        self.ST_R101 = ST_R101/100
-        self.SV_R101 = SV_R101/100
-
-        if ST_R101 == 0:
-            self.Csus_ini_R101 = 0
-            self.SV_R101 = 0
-        else:
-            self.ST_R101 = ST_R101/100
-            self.SV_R101 = SV_R101/100
-            self.Cc_R101 = Cc_R101
-            self.Ch_R101 = Ch_R101
-            self.Co_R101 = Co_R101
-            self.Cn_R101 = Cn_R101
-            self.Cs_R101 = Cs_R101
-            self.rho_R101 = rho_R101
-
-            self.molC_R101 = self.Cc_R101*(1/12.01)
-            self.molH_R101 = self.Ch_R101*(1/1.01)
-            self.molO_R101 = self.Co_R101*(1/16)
-            self.molN_R101 = self.Cn_R101*(1/14)
-            self.molS_R101 = self.Cs_R101*(1/32)
-
-            self.mol_min_R101 = min(self.molC_R101, self.molH_R101, self.molO_R101, self.molN_R101, self.molS_R101)
-
-            self.n_R101 = self.molC_R101/self.mol_min_R101
-            self.a_R101 = self.molH_R101/self.mol_min_R101
-            self.b_R101 = self.molO_R101/self.mol_min_R101
-            self.c_R101 = self.molN_R101/self.mol_min_R101
-            self.d_R101 = self.molS_R101/self.mol_min_R101
-            
-            self.s_H2O_R101 = self.n_R101-(self.a_R101/4)-(self.b_R101/2)+(3/4)*self.c_R101+(self.d_R101/2)
-            self.s_CH4_R101 = (self.n_R101/2)+(self.a_R101/8)-(self.b_R101/4)-(3/8)*self.c_R101-(self.d_R101/4)
-            self.s_CO2_R101 = (self.n_R101/2)-(self.a_R101/8)+(self.b_R101/4)+(3/8)*self.c_R101-(self.d_R101/4)
-            self.s_NH3_R101 = self.c_R101
-            self.s_H2S_R101 = self.d_R101
-
-            self.MW_sustrato_R101 = self.n_R101*12.01+self.a_R101*1.01+self.b_R101*16+self.c_R101*14+self.d_R101*32
-
-            self.Csus_ini_R101 = (self.rho_R101*self.SV_R101)/self.MW_sustrato_R101
-            self.Csus_ini_ST_R101 = (self.rho_R101*self.ST_R101)/self.MW_sustrato_R101
-            self.Csus_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_R101
-            self.Ch2o_ini_R101 = (self.rho_R101*(1-self.ST_R101))/18
-            return self.Csus_ini_R101, self.Csus_ini_ST_R101
-        
-    def R102_ini (self, ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102 = 1000):
-        
-        self.ST_R102 = ST_R102/100
-        self.SV_R102 = SV_R102/100
-        
-        if ST_R102 == 0:
-            self.Csus_ini_R102 = 0
-            self.SV_R102 = 0
-
-        else:
-            self.ST_R102 = ST_R102/100
-            self.SV_R102 = SV_R102/100
-            self.Cc_R102 = Cc_R102
-            self.Ch_R102 = Ch_R102
-            self.Co_R102 = Co_R102
-            self.Cn_R102 = Cn_R102
-            self.Cs_R102 = Cs_R102
-            self.rho_R102 = rho_R102
-
-            self.molC_R102 = self.Cc_R102*(1/12.01)
-            self.molH_R102 = self.Ch_R102*(1/1.01)
-            self.molO_R102 = self.Co_R102*(1/16)
-            self.molN_R102 = self.Cn_R102*(1/14)
-            self.molS_R102 = self.Cs_R102*(1/32)
-
-            self.mol_min_R102 = min(self.molC_R102, self.molH_R102, self.molO_R102, self.molN_R102, self.molS_R102)
-
-            self.n_R102 = self.molC_R102/self.mol_min_R102
-            self.a_R102 = self.molH_R102/self.mol_min_R102
-            self.b_R102 = self.molO_R102/self.mol_min_R102
-            self.c_R102 = self.molN_R102/self.mol_min_R102
-            self.d_R102 = self.molS_R102/self.mol_min_R102
-            
-            self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
-            self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
-            self.s_CO2_R102 = (self.n_R102/2)-(self.a_R102/8)+(self.b_R102/4)+(3/8)*self.c_R102-(self.d_R102/4)
-            self.s_NH3_R102 = self.c_R102
-            self.s_H2S_R102 = self.d_R102
-
-            self.MW_sustrato_R102 = self.n_R102*12.01+self.a_R102*1.01+self.b_R102*16+self.c_R102*14+self.d_R102*32
-
-            self.Csus_ini_R102 = (self.rho_R102*self.SV_R102)/self.MW_sustrato_R102
-            self.Csus_ini_ST_R102 = (self.rho_R102*self.ST_R102)/self.MW_sustrato_R102
-            self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
-            self.Ch2o_ini_R102 = (self.rho_R102*(1-self.ST_R102))/18
-            return self.Csus_ini_R102, self.Csus_ini_ST_R102
-
     def R101_DT_operation_1 (self):      
         self.query_mol_CH4_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "M-molT_CH4_V101", location=1, type=1, forecastTime=1)
         self.mol_CH4_R101v = self.InfluxDB.InfluxDBreader(self.query_mol_CH4_R101)
@@ -825,10 +852,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R101 = self.SE104v[-1]*self.Csus_ini*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][146], variable = self.database_df["Tag"][146], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.Csus_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.Csus_ini_R101, timestamp = self.timestamp)
             
             self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.SE104v[-1]*(self.tp/3600)))
 
@@ -836,7 +863,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R101 = self.SE104v[-1]*self.SV*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.SV_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.SV_R101, timestamp = self.timestamp)
 
             self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.SE104v[-1]*(self.tp/3600))))/self.rho
 
@@ -844,7 +871,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R101 = self.SE104v[-1]*self.ST*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.ST_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.ST_R101, timestamp = self.timestamp)
 
             self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.SE104v[-1]*(self.tp/3600))))/self.rho
         
@@ -873,10 +900,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R101 = self.SE104v[-1]*self.Csus_ini*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][146], variable = self.database_df["Tag"][146], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.Csus_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.Csus_ini_R101, timestamp = self.timestamp)
 
             self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.SE104v[-1]+self.SE101v[-1])*(self.tp/3600))
 
@@ -884,7 +911,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R101 = self.SE104v[-1]*self.SV*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.SV_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.SV_R101, timestamp = self.timestamp)
 
             self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.SE104v[-1]+self.SE101v[-1])*(self.tp/3600)))/self.rho
 
@@ -892,7 +919,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R101 = self.SE104v[-1]*self.ST*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.ST_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.ST_R101, timestamp = self.timestamp)
 
             self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.SE104v[-1]+self.SE101v[-1])*(self.tp/3600)))/self.rho
         else:
@@ -920,10 +947,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R101 = self.SE104v[-1]*self.Csus_ini*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][146], variable = self.database_df["Tag"][146], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.Csus_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.Csus_ini_R101, timestamp = self.timestamp)
             
             self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.SE101v[-1]*(self.tp/3600)))
 
@@ -931,7 +958,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R101 = self.SE104v[-1]*self.SV*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.SV_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.SV_R101, timestamp = self.timestamp)
 
             self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1]*(self.tp/3600))))/self.rho
 
@@ -939,7 +966,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R101 = self.SE104v[-1]*self.ST*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.ST_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.ST_R101, timestamp = self.timestamp)
 
             self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.SE101v[-1]*(self.tp/3600))))/self.rho
         
@@ -969,10 +996,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R101_2 = self.SE102v[-1]*self.Csus_ini_R102*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][146], variable = self.database_df["Tag"][146], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.mol_sus_int_ini_R101, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][147], variable = self.database_df["Tag"][147], value = self.Csus_ini_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.Csus_ini_R101, timestamp = self.timestamp)
 
             self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101_1 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1])*self.tp) 
 
@@ -981,7 +1008,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R101_2 = self.SE102v[-1]*self.SV_R102*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][148], variable = self.database_df["Tag"][148], value = self.SV_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.SV_R101, timestamp = self.timestamp)
 
             self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101_1 + self.volatilemass_in_R101_2 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1])*(self.tp/3600)))/self.rho
 
@@ -990,7 +1017,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R101_2 = self.SE102v[-1]*self.ST_R102*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][149], variable = self.database_df["Tag"][149], value = self.ST_R101, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.ST_R101, timestamp = self.timestamp)
 
             self.ST_R101 = (self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101_1 + self.TotalSolids_in_R101_2 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1])*(self.tp/3600))/self.rho
 
@@ -1031,10 +1058,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.Csus_ini_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][152], variable = self.database_df["Tag"][152], value = self.Csus_ini_R102, timestamp = self.timestamp)
 
             self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600)))
 
@@ -1042,7 +1069,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R102 = self.SE101v[-1]*self.SV_R101*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][152], variable = self.database_df["Tag"][152], value = self.SV_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][153], variable = self.database_df["Tag"][153], value = self.SV_R102, timestamp = self.timestamp)
 
             self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600))))/self.rho
 
@@ -1050,7 +1077,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R102 = self.SE101v[-1]*self.ST_R101*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][153], variable = self.database_df["Tag"][153], value = self.ST_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][154], variable = self.database_df["Tag"][154], value = self.ST_R102, timestamp = self.timestamp)
 
             self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600))))/self.rho           
 
@@ -1088,10 +1115,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.Csus_ini_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][152], variable = self.database_df["Tag"][152], value = self.Csus_ini_R102, timestamp = self.timestamp)
 
             self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+self.SE104v[-1])*(self.tp/3600)))
 
@@ -1099,7 +1126,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R102 = self.SE101v[-1]*self.SV_R101*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][152], variable = self.database_df["Tag"][152], value = self.SV_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][153], variable = self.database_df["Tag"][153], value = self.SV_R102, timestamp = self.timestamp)
 
             self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+self.SE104v[-1])*(self.tp/3600))))/self.rho
 
@@ -1107,7 +1134,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R102 = self.SE101v[-1]*self.ST_R101*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][153], variable = self.database_df["Tag"][153], value = self.ST_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][154], variable = self.database_df["Tag"][154], value = self.ST_R102, timestamp = self.timestamp)
 
             self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+self.SE104v[-1])*(self.tp/3600))))/self.rho 
 
@@ -1142,10 +1169,10 @@ class BiogasPlantDT:
             self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][150], variable = self.database_df["Tag"][150], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.mol_sus_int_ini_R102, timestamp = self.timestamp)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][151], variable = self.database_df["Tag"][151], value = self.Csus_ini_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][152], variable = self.database_df["Tag"][152], value = self.Csus_ini_R102, timestamp = self.timestamp)
 
             self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.SE104v[-1]-self.SE102v[-1]))*(self.tp/3600)))
 
@@ -1153,7 +1180,7 @@ class BiogasPlantDT:
             self.volatilemass_in_R102 = self.SE101v[-1]*self.SV_R101*self.rho*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][152], variable = self.database_df["Tag"][152], value = self.SV_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][153], variable = self.database_df["Tag"][153], value = self.SV_R102, timestamp = self.timestamp)
 
             self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.SE104v[-1]-self.SE102v[-1]))*(self.tp/3600))))/self.rho
 
@@ -1161,7 +1188,7 @@ class BiogasPlantDT:
             self.TotalSolids_in_R102 = self.SE101v[-1]*self.ST_R101*(self.tp/3600)
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][153], variable = self.database_df["Tag"][153], value = self.ST_R102, timestamp = self.timestamp)
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][154], variable = self.database_df["Tag"][154], value = self.ST_R102, timestamp = self.timestamp)
 
             self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.SE104v[-1]-self.SE102v[-1]))*(self.tp/3600))))/self.rho
 

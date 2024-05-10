@@ -1,4 +1,4 @@
-from simulation_models.Biogas import Biogas_Initializer
+from simulation_models.Biogas import Biogas_Model_DT
 
 class BiogasStart:
     _instance = None
@@ -8,10 +8,10 @@ class BiogasStart:
           cls._instance._biogas = None
         return cls._instance
     def starting(self, VR1, VR2, VG1, VG2, VG3, tp, t_prediction, timetrain, Kini):
-        if self._biogas is None:
-          self._biogas = Biogas_Initializer.BiogasInitializer(VR1, VR2, VG1, VG2, VG3, tp, t_prediction, timetrain, Kini)
+        if self._data is None:
+          self._data = Biogas_Model_DT.BiogasPlantDT(VR1, VR2, VG1, VG2, VG3, tp, t_prediction, timetrain, Kini)
     @property
     def data(self):
-        if self._biogas is None:
+        if self._data is None:
           raise ValueError("Biogas model not created. Please call createConnection method first.")
-        return self._biogas
+        return self._data
