@@ -6,117 +6,78 @@ current_directory = os.getcwd()
 excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory, '..', '..')), "tools", "DB_Mapping.xlsx")
 print(excel_file_path)
 
-import time
-from datetime import datetime
-import numpy as np
+from  tools import DBManager
+import pandas as pd
 from scipy.integrate import odeint
 from scipy.optimize import minimize
-import statistics as st
+import numpy as np
+import time
+from datetime import datetime
+
 
 
 class BiogasModelTrain:
-    def __init__ (self, Msus_exp_R101, C_sus_exp_R101, Q_P104, Initial_time, tp, VR1, Kini):  #iniital time es el tiempo que se registra cuando se envía el primer dato de Csus_exp_R101
-        self.Msus_exp_R101 = Msus_exp_R101
-        self.C_sus_exp_R101 = C_sus_exp_R101
-        self.Q_P104 = Q_P104
-        self.initial_time = Initial_time
-        self.tp = tp
+    def __init__ (self, index_database, VR1):
+        self.databaseConnection_df = pd.read_excel(excel_file_path, sheet_name='ConexionDB')
+        self.database_df = pd.read_excel(excel_file_path, sheet_name='InfluxDBVariables')
+        self.InfluxDB = DBManager.InfluxDBmodel(server = 'http://' + str(self.databaseConnection_df['IP'][index_database])+':'+str(self.databaseConnection_df['Port'][index_database])+'/', org = self.databaseConnection_df['Organization'][index_database], bucket = self.databaseConnection_df['Bucket'][index_database], token = self.databaseConnection_df['Token'][index_database])
+        
+        self.query_Csus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Csus_exp_R101", location=1, type=1, forecastTime=1)
+        self.Csus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Csus_exp_R101)
+        self.initial_time = self.Csus_exp_R101["_time"][0]
+        self.Csus_ini = self.Csus_exp_R101["Csus_exp_R101"][0]
+        
         self.VR1 = VR1
-        self.Kini = Kini
+
+    def Get_data_DT (self):
+        self.msg = self.InfluxDB.InfluxDBconnection()
+
+        self.query_Msus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Msus_exp_R102", location=1, type=1, forecastTime=1)
+        self.Msus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Msus_exp_R101)
         
+        self.query_Csus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Csus_exp_R101", location=1, type=1, forecastTime=1)
+        self.Csus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Csus_exp_R101)
+
+        self.query_P104 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "SE-104v", location=1, type=1, forecastTime=1) 
+        self.Q_P104 = self.InfluxDB.InfluxDBreader(self.query_P104)
     
-    def vector_of_times (self):
-        self.time = self.C_sus_exp_R101["_time"]
+    def DT_time(self):
+        self.t_DT = []
 
-        if len(self.time) >= 240:      
-            
-            self.t_train = []
-            Iteration = 0
-            for i in range (120):
-                t = self.time[Iteration] - self.initial_time
-                t = t.total_seconds()
-                self.t_train.append(t)
-                Iteration = Iteration + 1
-                self.last_time_train = self.time [Iteration]
-                self.last_time_train = int(self.last_time_train.timestamp())
-            
-            self.t_train = np.asarray(self.t_train)
+        for i in range (len(self.Csus_exp_R101["_time"].tolist())):
+            t_i = self.Csus_exp_R101["_time"].tolist()
+            t = t_i[i] - self.initial_time 
+            self.t_DT.append(t.total_seconds())
 
-            self.t_val = []
-            for i in range (120):
-                t = self.time[Iteration] - self.initial_time
-                t = t.total_seconds()
-                self.t_val.append(t)
-                Iteration = Iteration + 1
-            
-            self.t_val = np.asarray(self.t_val)
-
-            self.t_pred = []
-            last_t_val = self.t_val[-1]
-            for i in range(120):
-                t = last_t_val + self.tp
-                self.t_pred.append(t)
-            
-            self.t_pred = np.asarray(self.t_pred)
     
-    def R101_Operation1 (self):
-        C_sus_ini = self.C_sus_exp_R101[0]
-        self.C_sus_exp_train_R101 = self.C_sus_exp_R101 [: len(self.t_train)]
-        self.C_sus_exp_val_R101 = self.C_sus_exp_R101 [len(self.t_train) + 1 : len(self.t_val)]
 
-        def Optimization (K, t, C_sus_exp, Q):
-            Q_P104 = Q[0]
-            def Model (K , t, C_sus_exp):
+    
+    def Operation_1_Train(self):
+
+        def Optimization(K, t, Csus_exp, Q):
+            Q = Q[0]
+
+            def Model (K, t, Csus_exp):
+
                 def DiferentialEquation (C, t):
-                    self.Csus_R101_dt = (Q_P104/self.VR1)*(C_sus_ini - C)-K
-                    return self.Csus_R101_dt
-                Co = C_sus_exp[0]
-                self.Csus = odeint(DiferentialEquation, Co, t)
-                self.obj = np.sum((self.Csus - C_sus_exp)**2)
+                    self.dCsusR101_dt = (Q/self.VR1)*(self.Csus_ini-C)-K
+                    return self.dCsusR101_dt
+                Co = Csus_exp[0]
+                self.Csus_R101 = odeint (DiferentialEquation, Co, t)
+                self.obj = np.sum((self.Csus_R101 - Csus_exp)**2)
                 return self.obj
-            self.Optimization_R101 = minimize(Model, K, args=(t, C_sus_exp))
-            self.K_R101 = self.Optimization_R101.x
-            return self.K_R101, self.Csus
-        
-        self.K_optimizadav_R101 = []
-        self.Csus_model_train_R101 = []
-
-        for i in range (len(self.t_train)):
-            self.tv = self.t_train[i : i+1]
-            self.C_train_R101 = self.C_sus_exp_train_R101[i : i+1]
-            self.Q_train_R101 = self.Q_P104[i : i+1] 
-
-            self.Ko = self.Kini
-            self.Optimization  = Optimization(K = self.Ko, t = self.tv, C_sus_exp= self.C_train_R101, Q = self.Q_train_R101)
-
-            self.K_optimizadav_R101.append(float(self.Optimization[0]))
-            self.Kini = float(self.Optimization[0])
-            self.Csus_model_train_R101.append(float(self.Optimization[1][0]))
-        
-        self.K_mean = st.mean(self.K_optimizadav_R101)
-
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-             
-
-
-
-
-
-        
-        
-    
-        
             
+            self.Optimization = minimize(Model, K, arg=(t, Csus_exp))
+            self.K_R101 = self.Optimization.x
+            return self.K_R101, self.Csus_R101
+        
+        def ValidationAndPrediction (K, t, Q, C):
+            Q = Q[0]
 
+            def DiferentialEquation (C, t):
+                self.CsusR101_val_dt = Q/self.VR1*(self.Csus_ini-C)-K
+                return self.CsusR101_val_dt
+            
+            Co = C[0]
+            self.res_val_R101 = odeint(DiferentialEquation, Co, t)
+            return self.res_val_R101
