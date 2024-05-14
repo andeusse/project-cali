@@ -2,7 +2,14 @@ import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
 
 const CustomNumberField = (props: CustomTextFieldType) => {
-  const { variable, name, handleChange, disabled: disabledProp } = props;
+  const {
+    variable,
+    name,
+    handleChange,
+    disabled: disabledProp,
+    isInteger,
+    disableKeyDown,
+  } = props;
   const { disabled, value, tooltip, unit, variableString, variableSubString } =
     variable;
 
@@ -11,12 +18,19 @@ const CustomNumberField = (props: CustomTextFieldType) => {
   };
 
   const onBlur = (e: any) => {
-    const newValue = parseFloat(e.target.value);
-    if (variable.min !== undefined && newValue < variable.min) {
+    if (e.target.value !== '') {
+      let newValue = parseFloat(e.target.value);
+      if (isInteger) {
+        e.target.value = Math.round(newValue);
+      }
+      if (variable.min !== undefined && newValue < variable.min) {
+        e.target.value = variable.min;
+      }
+      if (variable.max !== undefined && newValue > variable.max) {
+        e.target.value = variable.max;
+      }
+    } else {
       e.target.value = variable.min;
-    }
-    if (variable.max !== undefined && newValue > variable.max) {
-      e.target.value = variable.max;
     }
     if (handleChange) {
       handleChange(e);
@@ -25,7 +39,13 @@ const CustomNumberField = (props: CustomTextFieldType) => {
 
   return (
     <FormControl fullWidth>
-      <Tooltip title={tooltip} placement="right" arrow>
+      <Tooltip
+        title={`${tooltip}. ${
+          variable.min !== undefined ? `Mínimo: ${variable.min}.` : ''
+        } ${variable.max !== undefined ? `Máximo: ${variable.max}.` : ''}`}
+        placement="right"
+        arrow
+      >
         <TextField
           label={
             <>
@@ -38,7 +58,10 @@ const CustomNumberField = (props: CustomTextFieldType) => {
           name={name}
           onChange={handleChange}
           onWheel={onWheel}
-          onBlur={onBlur}
+          onBlur={(event) => (!disableKeyDown ? onBlur(event) : undefined)}
+          onKeyDown={(event) =>
+            disableKeyDown ? event.preventDefault() : undefined
+          }
           InputProps={{
             type: 'number',
             inputProps: {

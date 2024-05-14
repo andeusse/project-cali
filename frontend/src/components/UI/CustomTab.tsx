@@ -10,15 +10,15 @@ type Props = {
 const CustomTab = (props: Props) => {
   const { tabs } = props;
 
-  const [value, setValue] = useState('1');
+  const [selectedTab, setSelectedTab] = useState<string>(tabs[0].title);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
+    setSelectedTab(newValue);
   };
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={value}>
+      <TabContext value={selectedTab}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList
             onChange={handleChange}
@@ -26,20 +26,16 @@ const CustomTab = (props: Props) => {
             variant="scrollable"
             allowScrollButtonsMobile
           >
-            {tabs.map((tab, index) => {
-              return (
-                <Tab key={tab.title} label={tab.title} value={`${index + 1}`} />
-              );
-            })}
+            {tabs.map((tab) => (
+              <Tab key={tab.title} label={tab.title} value={tab.title} />
+            ))}
           </TabList>
         </Box>
-        {tabs.map((tab, index) => {
-          return (
-            <TabPanel key={tab.title} value={`${index + 1}`}>
-              {tab.children}
-            </TabPanel>
-          );
-        })}
+        {tabs.map((tab) => (
+          <TabPanel key={tab.title} value={tab.title}>
+            {tab.children}
+          </TabPanel>
+        ))}
       </TabContext>
     </Box>
   );

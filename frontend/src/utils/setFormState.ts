@@ -9,6 +9,7 @@ import { SmartCityParameters } from '../types/scenarios/smartCity';
 import { SmartHomeParameters } from '../types/scenarios/smartHome';
 import { SmartFactoryParameters } from '../types/scenarios/smartFactory';
 import { InputType } from '../types/inputType';
+import { setScenario } from './scenarios/setScenario';
 
 export type formType =
   | TurbineParameters
@@ -60,6 +61,11 @@ export const setFormState = <T extends formType>(
       (splitName.length !== 1 && splitName[1] === 'isConnected')
     ) {
       return setSolar(e, oldState);
+    }
+  }
+  if ('operationMode' in oldState) {
+    if (name.includes('SystemNumber') || name === 'steps') {
+      return setScenario(e, oldState);
     }
   }
 

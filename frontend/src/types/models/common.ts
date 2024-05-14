@@ -29,7 +29,10 @@ export type IsConnected = {
   isConnectedDisabled: boolean;
 };
 
-export type SolarPanel = IsConnected & CommonSolarPanel;
+export type SolarPanel = IsConnected &
+  CommonSolarPanel & {
+    peakPower: InputType;
+  };
 
 export type WindTurbine = CommonWindTurbine;
 
