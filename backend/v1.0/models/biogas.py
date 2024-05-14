@@ -170,7 +170,7 @@ class Biogas(Resource):
         pass
     
       """
-      #variables de salida real-time operation para todos los modos de operación
+      #variables de salida real-time operation para todos los modos de operación en el gemelo digital
       """
       """
       #A la entrada de R101
