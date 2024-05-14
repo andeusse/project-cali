@@ -5,6 +5,8 @@ export type CustomTextFieldType = {
   name?: string;
   handleChange?: (e: any, variableName?: string) => void;
   disabled?: boolean;
+  isInteger?: boolean;
+  disableKeyDown?: boolean;
 };
 
 export type ToggleCustomTextFieldType = CustomTextFieldType & {

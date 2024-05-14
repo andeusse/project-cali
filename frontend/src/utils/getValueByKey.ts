@@ -1,3 +1,3 @@
-export const getValueByKey = (T: any, value: string) => {
-  return T[value as keyof typeof T];
+export const getValueByKey = (type: any, value: string) => {
+  return type[value as keyof typeof type];
 };

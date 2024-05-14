@@ -9,13 +9,14 @@ import {
   AccordionSummary,
   Typography,
   TextField,
+  Box,
+  Tab,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
   SMART_CITY,
-  SMART_CITY_TABS,
   SmartCityParameters,
 } from '../../types/scenarios/smartCity';
 import { getValueByKey } from '../../utils/getValueByKey';
@@ -23,24 +24,29 @@ import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import smartCityIllustration from '../../assets/illustrations/smartCity.png';
-import CustomTab from '../../components/UI/CustomTab';
-import { TabType } from '../../types/tab';
 import {
   ScenariosModesType,
   ScenariosModesText,
   ScenariosStepUnitType,
   ScenariosStepUnitText,
-} from '../../types/scenarios/commons';
+  SmartSystemType,
+} from '../../types/scenarios/common';
+import SolarTab from '../../components/scenarios/system/SolarTab';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import {
+  setSolarSystemArraysById,
+  setSolarSystemById,
+} from '../../utils/scenarios/setSolarSystem';
+import { Matrix } from 'react-spreadsheet';
 
 type Props = {};
 
 const SmartCity = (props: Props) => {
   const [system, setSystem] = useState(SMART_CITY);
   const [isOpen, setIsOpen] = useState(false);
-  const [isImageExpanded, setIsImageExpanded] = useState(true);
+  const [isImageExpanded, setIsImageExpanded] = useState(false);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-
-  const [tabs, setTabs] = useState<TabType[]>(SMART_CITY_TABS);
+  const [selectedTab, setSelectedTab] = useState<string>('solar');
 
   const error = '';
 
@@ -49,6 +55,34 @@ const SmartCity = (props: Props) => {
     if (newState) {
       setSystem(newState as SmartCityParameters);
     }
+  };
+
+  const handleSystemChange = (e: any, id: string, type: SmartSystemType) => {
+    if (type === SmartSystemType.Solar) {
+      const newState = setSolarSystemById(e, system, id);
+      if (newState) {
+        setSystem(newState as SmartCityParameters);
+      }
+    }
+  };
+
+  const handleTableChange = (
+    e: Matrix<{
+      value: number;
+    }>,
+    id: string,
+    type: SmartSystemType
+  ) => {
+    if (type === SmartSystemType.Solar) {
+      const newState = setSolarSystemArraysById(e, system, id);
+      if (newState) {
+        setSystem(newState as SmartCityParameters);
+      }
+    }
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setSelectedTab(newValue);
   };
 
   return (
@@ -140,6 +174,8 @@ const SmartCity = (props: Props) => {
                     variable={system.steps}
                     name="steps"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={3} xl={3}>
@@ -177,6 +213,8 @@ const SmartCity = (props: Props) => {
                     variable={system.solarSystemNumber}
                     name="solarSystemNumber"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -184,6 +222,8 @@ const SmartCity = (props: Props) => {
                     variable={system.hydraulicSystemNumber}
                     name="hydraulicSystemNumber"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -191,6 +231,8 @@ const SmartCity = (props: Props) => {
                     variable={system.windSystemNumber}
                     name="windSystemNumber"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -198,6 +240,8 @@ const SmartCity = (props: Props) => {
                     variable={system.biogasSystemNumber}
                     name="biogasSystemNumber"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -205,6 +249,8 @@ const SmartCity = (props: Props) => {
                     variable={system.batterySystemNumber}
                     name="batterySystemNumber"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
@@ -212,6 +258,8 @@ const SmartCity = (props: Props) => {
                     variable={system.loadSystemNumber}
                     name="loadSystemNumber"
                     handleChange={handleChange}
+                    isInteger={true}
+                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
               </Grid>
@@ -219,7 +267,29 @@ const SmartCity = (props: Props) => {
           </Accordion>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
-          <CustomTab tabs={tabs}></CustomTab>
+          <TabContext value={selectedTab}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <TabList
+                onChange={handleTabChange}
+                aria-label="Monitoring tabs"
+                variant="scrollable"
+                allowScrollButtonsMobile
+              >
+                {system.solarSystemNumber.value !== 0 && (
+                  <Tab key={'solar'} label={'Solar'} value={'solar'} />
+                )}
+              </TabList>
+            </Box>
+            <TabPanel key={'solar'} value={'solar'}>
+              {system.solarSystemNumber.value !== 0 && (
+                <SolarTab
+                  system={system}
+                  handleSystemChange={handleSystemChange}
+                  handleTableChange={handleTableChange}
+                ></SolarTab>
+              )}
+            </TabPanel>
+          </TabContext>
         </Grid>
       </Grid>
     </>

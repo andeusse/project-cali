@@ -1,10 +1,5 @@
-import { TabType } from '../tab';
 import { InputType } from '../inputType';
-import {
-  CommonScenarioParameters,
-  COMMON_SCENARIO,
-  COMMON_TABS,
-} from './commons';
+import { CommonScenarioParameters, COMMON_SCENARIO } from './common';
 import { CommonSystemParameter } from '../common';
 
 export type SmartHomeParameters = CommonScenarioParameters &
@@ -28,11 +23,3 @@ export const SMART_HOME: SmartHomeParameters = {
     max: 100,
   },
 };
-
-export const SMART_FACTORY_TABS: TabType[] = [
-  ...COMMON_TABS,
-  {
-    title: 'Baterías',
-    children: undefined,
-  },
-];
