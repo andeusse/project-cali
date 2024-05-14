@@ -755,7 +755,7 @@ class BiogasPlantDT:
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][131], variable = self.database_df["Tag"][131], value = self.mol_CH4_acum_V102, timestamp = self.timestamp)
 
         
-    def V_103_DT (self):
+    def V_107_DT (self):
         self.AT105A1v = self.AT105A1v["AT-105A1"]
         self.AT105A2v = self.AT105A2v["AT-105A2"]
         self.AT105A3v = self.AT105A3v["AT-105A3"]
