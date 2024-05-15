@@ -41,16 +41,25 @@ class BiogasModelTrain:
         self.query_P104 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "SE-104v", location=1, type=1, forecastTime=1) 
         self.Q_P104 = self.InfluxDB.InfluxDBreader(self.query_P104)
     
-    def DT_time(self):
+    def DT_time_and_data (self):
         self.t_DT = []
-
+        t_i = self.Csus_exp_R101["_time"].tolist()
+        self.Data = self.Csus_exp_R101[['_time', 'Csus_exp_R101']]
+        
         for i in range (len(self.Csus_exp_R101["_time"].tolist())):
-            t_i = self.Csus_exp_R101["_time"].tolist()
             t = t_i[i] - self.initial_time 
             self.t_DT.append(t.total_seconds())
-
-    
-
+        
+        if len(self.t_DT) % 2 == 0:
+            n = len(self.t_DT)/2
+            self.t_train = self.t_DT[: n]
+            self.end_train_date = t_i[n]
+            self.data_train = self.Data[: n]
+            self.t_val = self.t_DT[n :]
+        
+        else:
+            n = (len(self.t_DT)+1)/2
+            self.t_train = self.t_DT[: n]
     
     def Operation_1_Train(self):
 
