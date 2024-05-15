@@ -1,10 +1,22 @@
 import { InputType } from '../inputType';
-import { CommonScenarioParameters, COMMON_SCENARIO } from './common';
+import {
+  CommonScenarioParameters,
+  COMMON_SCENARIO,
+  BatterySystem,
+  COMMON_BATTERY_SYSTEM,
+  COMMON_HYDRAULIC_SYSTEM,
+  COMMON_WIND_SYSTEM,
+  HydraulicSystem,
+  WindSystem,
+} from './common';
 
 export type SmartCityParameters = CommonScenarioParameters & {
   batterySystemNumber: InputType;
   hydraulicSystemNumber: InputType;
   windSystemNumber: InputType;
+  batterySystems: BatterySystem[];
+  hydraulicSystems: HydraulicSystem[];
+  windSystems: WindSystem[];
 };
 
 export const SMART_CITY: SmartCityParameters = {
@@ -36,4 +48,7 @@ export const SMART_CITY: SmartCityParameters = {
     min: 0,
     max: 100,
   },
+  batterySystems: [{ ...COMMON_BATTERY_SYSTEM }],
+  hydraulicSystems: [{ ...COMMON_HYDRAULIC_SYSTEM }],
+  windSystems: [{ ...COMMON_WIND_SYSTEM }],
 };

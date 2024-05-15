@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScenariosSolarPanelMeteorologicalInformationText,
   ScenariosSolarPanelMeteorologicalInformationType,
   SmartSystemType,
-  SolarPanel,
+  SolarSystem,
   SolarPanelModuleText,
   SolarPanelModuleType,
+  TabProps,
 } from '../../../types/scenarios/common';
 import {
   FormControl,
@@ -20,35 +21,20 @@ import CustomNumberField from '../../UI/CustomNumberField';
 import { getValueByKey } from '../../../utils/getValueByKey';
 import { useAppSelector } from '../../../redux/reduxHooks';
 import { ThemeType } from '../../../types/theme';
-import { SmartCityParameters } from '../../../types/scenarios/smartCity';
-
-type Props = {
-  system: SmartCityParameters;
-  handleSystemChange: (e: any, id: string, type: SmartSystemType) => void;
-  handleTableChange: (
-    e: Matrix<{
-      value: number;
-    }>,
-    id: string,
-    type: SmartSystemType
-  ) => void;
-};
 
 const ROW_LABELS: string[] = ['Radiación [W / m²]', 'Temperatura [°C]'];
 
-const SolarTab = (props: Props) => {
+const SolarTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
 
   const userTheme = useAppSelector((state) => state.theme.value);
 
-  const table = useRef<any>();
-
   const [selectedElement, setSelectedElement] = useState<string | undefined>(
-    system.solarPanels.length > 0 ? system.solarPanels[0].id : undefined
+    system.solarSystems.length > 0 ? system.solarSystems[0].id : undefined
   );
 
-  const [selectedSystem, setSelectedSystem] = useState<SolarPanel | undefined>(
-    system.solarPanels.find((s) => s.id === selectedElement)
+  const [selectedSystem, setSelectedSystem] = useState<SolarSystem | undefined>(
+    system.solarSystems.find((s) => s.id === selectedElement)
   );
 
   const [data, setData] = useState<Matrix<CellBase>>([
@@ -70,7 +56,7 @@ const SolarTab = (props: Props) => {
 
   useEffect(() => {
     setSelectedSystem(() => {
-      const newSystem = system.solarPanels.find(
+      const newSystem = system.solarSystems.find(
         (s) => s.id === selectedElement
       );
       if (newSystem) {
@@ -108,6 +94,12 @@ const SolarTab = (props: Props) => {
     }
   };
 
+  const handleChange = (e: any) => {
+    if (selectedSystem) {
+      handleSystemChange(e, selectedSystem.id, SmartSystemType.Solar);
+    }
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={12} xl={12}>
@@ -119,12 +111,12 @@ const SolarTab = (props: Props) => {
             value={selectedElement}
             onChange={handleSelectedSystem}
           >
-            {system.solarPanels.map((sP, index) => {
+            {system.solarSystems.map((s, index) => {
               return (
-                <MenuItem key={sP.id} value={sP.id}>
-                  {`${index + 1}. ${sP.name} (${getValueByKey(
+                <MenuItem key={s.id} value={s.id}>
+                  {`${index + 1}. ${s.name} (${getValueByKey(
                     SolarPanelModuleText,
-                    sP.moduleType
+                    s.moduleType
                   )})`}
                 </MenuItem>
               );
@@ -144,13 +136,7 @@ const SolarTab = (props: Props) => {
                     value={selectedSystem.name}
                     name="name"
                     autoComplete="off"
-                    onChange={(e: any) =>
-                      handleSystemChange(
-                        e,
-                        selectedSystem.id,
-                        SmartSystemType.Solar
-                      )
-                    }
+                    onChange={handleChange}
                   />
                 </FormControl>
               </Grid>
@@ -159,26 +145,14 @@ const SolarTab = (props: Props) => {
                   variable={selectedSystem.modulesNumber}
                   name="modulesNumber"
                   isInteger={true}
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={6} xl={6}>
                 <CustomNumberField
                   variable={selectedSystem.modulePower}
                   name="modulePower"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={6} xl={6}>
@@ -191,13 +165,7 @@ const SolarTab = (props: Props) => {
                     label="Modo de ingreso información meteorológica"
                     value={selectedSystem.meteorologicalInformationMode}
                     name="meteorologicalInformationMode"
-                    onChange={(e: any) =>
-                      handleSystemChange(
-                        e,
-                        selectedSystem.id,
-                        SmartSystemType.Solar
-                      )
-                    }
+                    onChange={handleChange}
                   >
                     {Object.keys(
                       ScenariosSolarPanelMeteorologicalInformationType
@@ -229,13 +197,7 @@ const SolarTab = (props: Props) => {
                     label="Tipo de módulos"
                     value={selectedSystem.moduleType}
                     name="moduleType"
-                    onChange={(e: any) =>
-                      handleSystemChange(
-                        e,
-                        selectedSystem.id,
-                        SmartSystemType.Solar
-                      )
-                    }
+                    onChange={handleChange}
                   >
                     {Object.keys(SolarPanelModuleType).map((key) => (
                       <MenuItem key={key} value={key}>
@@ -245,33 +207,23 @@ const SolarTab = (props: Props) => {
                   </Select>
                 </FormControl>
               </Grid>
-              {selectedSystem.meteorologicalInformationMode ===
-                ScenariosSolarPanelMeteorologicalInformationType.Fixed && (
+              {(selectedSystem.meteorologicalInformationMode ===
+                ScenariosSolarPanelMeteorologicalInformationType.Fixed ||
+                selectedSystem.meteorologicalInformationMode ===
+                  ScenariosSolarPanelMeteorologicalInformationType.Typical) && (
                 <>
                   <Grid item xs={12} md={6} xl={6}>
                     <CustomNumberField
                       variable={selectedSystem.radiation}
                       name="radiation"
-                      handleChange={(e: any) =>
-                        handleSystemChange(
-                          e,
-                          selectedSystem.id,
-                          SmartSystemType.Solar
-                        )
-                      }
+                      handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={6} xl={6}>
                     <CustomNumberField
                       variable={selectedSystem.temperature}
                       name="temperature"
-                      handleChange={(e: any) =>
-                        handleSystemChange(
-                          e,
-                          selectedSystem.id,
-                          SmartSystemType.Solar
-                        )
-                      }
+                      handleChange={handleChange}
                     ></CustomNumberField>
                   </Grid>
                 </>
@@ -285,104 +237,56 @@ const SolarTab = (props: Props) => {
                 <CustomNumberField
                   variable={selectedSystem.deratingFactor}
                   name="deratingFactor"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.efficiency}
                   name="efficiency"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.nominalIrradiance}
                   name="nominalIrradiance"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.nominalTemperature}
                   name="nominalTemperature"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.testIrradiance}
                   name="testIrradiance"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.testTemperature}
                   name="testTemperature"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.operatingTemperature}
                   name="operatingTemperature"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={12} xl={4}>
                 <CustomNumberField
                   variable={selectedSystem.temperatureVariationCoefficient}
                   name="temperatureVariationCoefficient"
-                  handleChange={(e: any) =>
-                    handleSystemChange(
-                      e,
-                      selectedSystem.id,
-                      SmartSystemType.Solar
-                    )
-                  }
+                  handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
             </Grid>
@@ -390,7 +294,7 @@ const SolarTab = (props: Props) => {
           {selectedSystem.meteorologicalInformationMode ===
             ScenariosSolarPanelMeteorologicalInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
-              <div style={{ maxWidth: '100%', overflow: 'auto' }} ref={table}>
+              <div style={{ maxWidth: '100%', overflow: 'auto' }}>
                 <Spreadsheet
                   darkMode={userTheme === ThemeType.Dark}
                   data={data}

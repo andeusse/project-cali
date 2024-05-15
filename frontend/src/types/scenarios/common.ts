@@ -2,9 +2,24 @@ import {
   CommonSystemParameter,
   SolarPanel as CommonSolarPanel,
   MONOCRYSTALLINE_PANEL,
+  CUSTOM_BATTERY,
 } from '../common';
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
+import { SmartCityParameters } from './smartCity';
+import { CellBase, Matrix } from 'react-spreadsheet';
+
+export type smartSystemParameters = SmartCityParameters;
+
+export type TabProps = {
+  system: SmartCityParameters;
+  handleSystemChange: (e: any, id: string, type: SmartSystemType) => void;
+  handleTableChange: (
+    e: Matrix<CellBase>,
+    id: string,
+    type: SmartSystemType
+  ) => void;
+};
 
 export enum ScenariosModesType {
   Manual = 'Manual',
@@ -58,7 +73,27 @@ export enum SolarPanelModuleText {
   Custom = 'Personalizado',
 }
 
-export type SolarPanel = CommonSystemParameter &
+export enum ScenariosBatteryInformationType {
+  Custom = 'Custom',
+  Fixed = 'Fixed',
+}
+
+export enum ScenariosBatteryInformationText {
+  Custom = 'Perfil personalizado',
+  Fixed = 'Perfil fijo',
+}
+
+export enum BatteryType {
+  Gel = 'Gel',
+  Custom = 'Custom',
+}
+
+export enum BatteryText {
+  Gel = 'Gel (Laboratorio)',
+  Custom = 'Personalizado',
+}
+
+export type SolarSystem = CommonSystemParameter &
   CommonSolarPanel & {
     id: string;
     modulesNumber: InputType;
@@ -70,6 +105,47 @@ export type SolarPanel = CommonSystemParameter &
     radiationArray: number[];
     temperatureArray: number[];
   };
+
+export type BatteryTypeParameters = {
+  selfDischargeCoefficient: InputType;
+  chargeEfficiency: InputType;
+  dischargeDischargeEfficiency: InputType;
+};
+
+export type BatterySystem = CommonSystemParameter &
+  BatteryTypeParameters & {
+    id: string;
+    storageCapacity: InputType;
+    maxChargePower: InputType;
+    minChargePower: InputType;
+    maxDischargePower: InputType;
+    minDischargePower: InputType;
+    stateOfCharge: InputType;
+    batteryType: BatteryType;
+    informationMode: ScenariosBatteryInformationType;
+    chargePowerArray: number[];
+    dischargePowerArray: number[];
+  };
+
+export type BiogasSystem = CommonSystemParameter & {
+  id: string;
+  var: InputType;
+};
+
+export type LoadSystem = CommonSystemParameter & {
+  id: string;
+  var: InputType;
+};
+
+export type HydraulicSystem = CommonSystemParameter & {
+  id: string;
+  var: InputType;
+};
+
+export type WindSystem = CommonSystemParameter & {
+  id: string;
+  var: InputType;
+};
 
 export enum SmartSystemType {
   Solar = 'Solar',
@@ -88,10 +164,12 @@ export type CommonScenarioParameters = CommonSystemParameter & {
   solarSystemNumber: InputType;
   biogasSystemNumber: InputType;
   loadSystemNumber: InputType;
-  solarPanels: SolarPanel[];
+  solarSystems: SolarSystem[];
+  biogasSystems: BiogasSystem[];
+  loadSystems: LoadSystem[];
 };
 
-export const COMMON_SOLAR_PANEL: SolarPanel = {
+export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   id: uuidv4(),
   name: 'Sistema solar',
   modulesNumber: {
@@ -137,6 +215,118 @@ export const COMMON_SOLAR_PANEL: SolarPanel = {
   },
   radiationArray: Array(24).fill(0),
   temperatureArray: Array(24).fill(0),
+};
+
+export const COMMON_BATTERY_SYSTEM: BatterySystem = {
+  id: uuidv4(),
+  name: 'Sistema de baterías',
+  storageCapacity: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Número de módulos solares',
+    unit: '',
+    variableString: 'Módulos solares',
+    min: 1,
+    max: 100000,
+  },
+  maxChargePower: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Número de módulos solares',
+    unit: '',
+    variableString: 'Módulos solares',
+    min: 1,
+    max: 100000,
+  },
+  minChargePower: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Número de módulos solares',
+    unit: '',
+    variableString: 'Módulos solares',
+    min: 1,
+    max: 100000,
+  },
+  maxDischargePower: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Número de módulos solares',
+    unit: '',
+    variableString: 'Módulos solares',
+    min: 1,
+    max: 100000,
+  },
+  minDischargePower: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Número de módulos solares',
+    unit: '',
+    variableString: 'Módulos solares',
+    min: 1,
+    max: 100000,
+  },
+  stateOfCharge: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Número de módulos solares',
+    unit: '',
+    variableString: 'Módulos solares',
+    min: 1,
+    max: 100000,
+  },
+  informationMode: ScenariosBatteryInformationType.Custom,
+  batteryType: BatteryType.Custom,
+  ...CUSTOM_BATTERY,
+  chargePowerArray: Array(24).fill(0),
+  dischargePowerArray: Array(24).fill(0),
+};
+
+export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
+  id: uuidv4(),
+  name: '',
+  var: {
+    disabled: false,
+    value: 0,
+    tooltip: '',
+    unit: '',
+    variableString: '',
+  },
+};
+
+export const COMMON_WIND_SYSTEM: WindSystem = {
+  id: uuidv4(),
+  name: '',
+  var: {
+    disabled: false,
+    value: 0,
+    tooltip: '',
+    unit: '',
+    variableString: '',
+  },
+};
+
+export const COMMON_LOAD_SYSTEM: LoadSystem = {
+  id: uuidv4(),
+  name: '',
+  var: {
+    disabled: false,
+    value: 0,
+    tooltip: '',
+    unit: '',
+    variableString: '',
+  },
+};
+
+export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
+  id: uuidv4(),
+  name: '',
+  var: {
+    disabled: false,
+    value: 0,
+    tooltip: '',
+    unit: '',
+    variableString: '',
+  },
 };
 
 export const COMMON_SCENARIO: CommonScenarioParameters = {
@@ -189,5 +379,7 @@ export const COMMON_SCENARIO: CommonScenarioParameters = {
     min: 1,
     max: 100,
   },
-  solarPanels: [{ ...COMMON_SOLAR_PANEL }],
+  solarSystems: [{ ...COMMON_SOLAR_SYSTEM }],
+  biogasSystems: [{ ...COMMON_BIOGAS_SYSTEM }],
+  loadSystems: [{ ...COMMON_LOAD_SYSTEM }],
 };

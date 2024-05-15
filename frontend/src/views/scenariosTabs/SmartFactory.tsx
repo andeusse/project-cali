@@ -22,15 +22,11 @@ import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import smartFactoryIllustration from '../../assets/illustrations/smartFactory.png';
-import {
-  SMART_FACTORY,
-  SmartFactoryParameters,
-} from '../../types/scenarios/smartFactory';
 
 type Props = {};
 
 const SmartFactory = (props: Props) => {
-  const [system, setSystem] = useState(SMART_FACTORY);
+  const [system, setSystem] = useState(SMART_CITY);
   const [isOpen, setIsOpen] = useState(false);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
@@ -38,13 +34,9 @@ const SmartFactory = (props: Props) => {
   const error = '';
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<SmartFactoryParameters>(
-      e,
-      system,
-      variableName
-    );
+    const newState = setFormState<SmartCityParameters>(e, system, variableName);
     if (newState) {
-      setSystem(newState as SmartFactoryParameters);
+      setSystem(newState as SmartCityParameters);
     }
   };
 

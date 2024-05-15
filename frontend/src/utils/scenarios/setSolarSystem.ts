@@ -1,4 +1,4 @@
-import { Matrix } from 'react-spreadsheet';
+import { CellBase, Matrix } from 'react-spreadsheet';
 import {
   CADMIUM_TELLURIDE_PANEL,
   CUSTOM_PANEL,
@@ -7,16 +7,12 @@ import {
   POLICRYSTALLINE_PANEL,
 } from '../../types/common';
 import { InputType } from '../../types/inputType';
-import { SolarPanel, SolarPanelModuleType } from '../../types/scenarios/common';
-import { SmartCityParameters } from '../../types/scenarios/smartCity';
-import { SmartFactoryParameters } from '../../types/scenarios/smartFactory';
-import { SmartHomeParameters } from '../../types/scenarios/smartHome';
+import {
+  SolarSystem,
+  SolarPanelModuleType,
+  smartSystemParameters,
+} from '../../types/scenarios/common';
 import { matrix2Array } from '../matrix2Array';
-
-export type smartSystemParameters =
-  | SmartCityParameters
-  | SmartFactoryParameters
-  | SmartHomeParameters;
 
 export const setSolarSystemById = <T extends smartSystemParameters>(
   e: any,
@@ -27,53 +23,53 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
   const value = e.target.value;
   const name = e.target.name;
 
-  let system = newState.solarPanels.find((s) => s.id === id);
+  let system = newState.solarSystems.find((s) => s.id === id);
   if (system !== undefined) {
-    if (typeof system[name as keyof SolarPanel] === 'object') {
+    if (typeof system[name as keyof SolarSystem] === 'object') {
       system = {
         ...system,
         [name]: {
-          ...(system[name as keyof SolarPanel] as InputType),
+          ...(system[name as keyof SolarSystem] as InputType),
           value: parseFloat(value),
         },
       };
     } else {
       system = { ...system, [name]: e.target.value };
       if (name === 'moduleType') {
-        let panelParams = MONOCRYSTALLINE_PANEL;
+        let params = MONOCRYSTALLINE_PANEL;
         if (
-          system[name as keyof SolarPanel] ===
+          system[name as keyof SolarSystem] ===
           SolarPanelModuleType.MonocrystallinePanel
         ) {
-          panelParams = MONOCRYSTALLINE_PANEL;
+          params = MONOCRYSTALLINE_PANEL;
         }
         if (
-          system[name as keyof SolarPanel] ===
+          system[name as keyof SolarSystem] ===
           SolarPanelModuleType.PolicrystallinePanel
         ) {
-          panelParams = POLICRYSTALLINE_PANEL;
+          params = POLICRYSTALLINE_PANEL;
         }
         if (
-          system[name as keyof SolarPanel] === SolarPanelModuleType.FlexPanel
+          system[name as keyof SolarSystem] === SolarPanelModuleType.FlexPanel
         ) {
-          panelParams = FLEX_PANEL;
+          params = FLEX_PANEL;
         }
         if (
-          system[name as keyof SolarPanel] ===
+          system[name as keyof SolarSystem] ===
           SolarPanelModuleType.CadmiumTelluridePanel
         ) {
-          panelParams = CADMIUM_TELLURIDE_PANEL;
+          params = CADMIUM_TELLURIDE_PANEL;
         }
-        if (system[name as keyof SolarPanel] === SolarPanelModuleType.Custom) {
-          panelParams = CUSTOM_PANEL;
+        if (system[name as keyof SolarSystem] === SolarPanelModuleType.Custom) {
+          params = CUSTOM_PANEL;
         }
         system = {
           ...system,
-          ...panelParams,
+          ...params,
         };
       }
     }
-    newState.solarPanels = newState.solarPanels.map((s) => {
+    newState.solarSystems = newState.solarSystems.map((s) => {
       if (system && s.id === id) {
         return system;
       }
@@ -84,19 +80,17 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
 };
 
 export const setSolarSystemArraysById = <T extends smartSystemParameters>(
-  e: Matrix<{
-    value: number;
-  }>,
+  e: Matrix<CellBase>,
   oldState: T,
   id: string
 ) => {
   const newState = { ...oldState };
-  let system = newState.solarPanels.find((s) => s.id === id);
+  let system = newState.solarSystems.find((s) => s.id === id);
   if (system) {
     system.radiationArray = matrix2Array(e, 0).slice(0, newState.steps.value);
     system.temperatureArray = matrix2Array(e, 1).slice(0, newState.steps.value);
   }
-  newState.solarPanels = newState.solarPanels.map((s) => {
+  newState.solarSystems = newState.solarSystems.map((s) => {
     if (system && s.id === id) {
       return system;
     }

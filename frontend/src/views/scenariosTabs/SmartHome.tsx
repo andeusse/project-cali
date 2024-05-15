@@ -22,15 +22,11 @@ import { getValueByKey } from '../../utils/getValueByKey';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import smartHomeIllustration from '../../assets/illustrations/smartHome.png';
-import {
-  SMART_HOME,
-  SmartHomeParameters,
-} from '../../types/scenarios/smartHome';
 
 type Props = {};
 
 const SmartHome = (props: Props) => {
-  const [system, setSystem] = useState(SMART_HOME);
+  const [system, setSystem] = useState(SMART_CITY);
   const [isOpen, setIsOpen] = useState(false);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
@@ -38,9 +34,9 @@ const SmartHome = (props: Props) => {
   const error = '';
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<SmartHomeParameters>(e, system, variableName);
+    const newState = setFormState<SmartCityParameters>(e, system, variableName);
     if (newState) {
-      setSystem(newState as SmartHomeParameters);
+      setSystem(newState as SmartCityParameters);
     }
   };
 
