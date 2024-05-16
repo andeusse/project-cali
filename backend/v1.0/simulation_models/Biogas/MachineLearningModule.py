@@ -63,6 +63,7 @@ class BiogasModelTrain:
         self.data_train = self.Data[: n]    #Vector with dates
         self.Csus_exp_train = self.Data['Csus_exp_R101'][: n]
         self.Q_P104_train = self.Q_P104["SE-104v"][: n]
+        self.Date_train = t_i[: n]
         #Test Data
         self.t_val = self.t_DT[n :]         #Vector time in seconds without date
         self.data_val = self.Data[n :]      #Vector with dates    
@@ -98,6 +99,8 @@ class BiogasModelTrain:
             self.K_optimizada.append(float(self.Optimizacion[0]))
             self.Kini = float(self.Optimizacion[0])
             self.C_sus_model_train.append(float(self.Optimizacion[1][0]))
+            timestamp = int(self.Date_train[i].timestamp())
+            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.Kini, timestamp = timestamp)
 
         
         def ValidationAndPrediction (K, t, Q, C):
