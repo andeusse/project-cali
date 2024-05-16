@@ -37,7 +37,28 @@ import {
   setSolarSystemArraysById,
   setSolarSystemById,
 } from '../../utils/scenarios/setSolarSystem';
-import { Matrix } from 'react-spreadsheet';
+import { CellBase, Matrix } from 'react-spreadsheet';
+import BatteryTab from '../../components/scenarios/system/BatteryTab';
+import {
+  setBatterySystemArraysById,
+  setBatterySystemById,
+} from '../../utils/scenarios/setBatterySystem';
+import {
+  setBiogasSystemArraysById,
+  setBiogasSystemById,
+} from '../../utils/scenarios/setBiogasSystem';
+import {
+  setLoadSystemArraysById,
+  setLoadSystemById,
+} from '../../utils/scenarios/setLoadSystem';
+import {
+  setHydraulicSystemArraysById,
+  setHydraulicSystemById,
+} from '../../utils/scenarios/setHydraulicSystem';
+import {
+  setWindSystemArraysById,
+  setWindSystemById,
+} from '../../utils/scenarios/setWindSystem';
 
 type Props = {};
 
@@ -58,27 +79,53 @@ const SmartCity = (props: Props) => {
   };
 
   const handleSystemChange = (e: any, id: string, type: SmartSystemType) => {
+    let newState: SmartCityParameters = SMART_CITY;
     if (type === SmartSystemType.Solar) {
-      const newState = setSolarSystemById(e, system, id);
-      if (newState) {
-        setSystem(newState as SmartCityParameters);
-      }
+      newState = setSolarSystemById(e, system, id);
     }
+    if (type === SmartSystemType.Battery) {
+      newState = setBatterySystemById(e, system, id);
+    }
+    if (type === SmartSystemType.Biogas) {
+      newState = setBiogasSystemById(e, system, id);
+    }
+    if (type === SmartSystemType.Load) {
+      newState = setLoadSystemById(e, system, id);
+    }
+    if (type === SmartSystemType.Hydraulic) {
+      newState = setHydraulicSystemById(e, system, id);
+    }
+    if (type === SmartSystemType.Wind) {
+      newState = setWindSystemById(e, system, id);
+    }
+    setSystem(newState as SmartCityParameters);
   };
 
   const handleTableChange = (
-    e: Matrix<{
-      value: number;
-    }>,
+    e: Matrix<CellBase>,
     id: string,
     type: SmartSystemType
   ) => {
+    let newState: SmartCityParameters = SMART_CITY;
     if (type === SmartSystemType.Solar) {
-      const newState = setSolarSystemArraysById(e, system, id);
-      if (newState) {
-        setSystem(newState as SmartCityParameters);
-      }
+      newState = setSolarSystemArraysById(e, system, id);
     }
+    if (type === SmartSystemType.Battery) {
+      newState = setBatterySystemArraysById(e, system, id);
+    }
+    if (type === SmartSystemType.Biogas) {
+      newState = setBiogasSystemArraysById(e, system, id);
+    }
+    if (type === SmartSystemType.Load) {
+      newState = setLoadSystemArraysById(e, system, id);
+    }
+    if (type === SmartSystemType.Hydraulic) {
+      newState = setHydraulicSystemArraysById(e, system, id);
+    }
+    if (type === SmartSystemType.Wind) {
+      newState = setWindSystemArraysById(e, system, id);
+    }
+    setSystem(newState as SmartCityParameters);
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -278,6 +325,9 @@ const SmartCity = (props: Props) => {
                 {system.solarSystemNumber.value !== 0 && (
                   <Tab key={'solar'} label={'Solar'} value={'solar'} />
                 )}
+                {system.batterySystemNumber.value !== 0 && (
+                  <Tab key={'battery'} label={'BESS'} value={'battery'} />
+                )}
               </TabList>
             </Box>
             <TabPanel key={'solar'} value={'solar'}>
@@ -287,6 +337,15 @@ const SmartCity = (props: Props) => {
                   handleSystemChange={handleSystemChange}
                   handleTableChange={handleTableChange}
                 ></SolarTab>
+              )}
+            </TabPanel>
+            <TabPanel key={'battery'} value={'battery'}>
+              {system.batterySystemNumber.value !== 0 && (
+                <BatteryTab
+                  system={system}
+                  handleSystemChange={handleSystemChange}
+                  handleTableChange={handleTableChange}
+                ></BatteryTab>
               )}
             </TabPanel>
           </TabContext>

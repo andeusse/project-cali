@@ -1,4 +1,5 @@
 import { InputType } from './inputType';
+import { BatteryTypeParameters } from './scenarios/common';
 
 export type CommonSystemParameter = {
   name: string;
@@ -397,5 +398,59 @@ export const CUSTOM_PANEL: SolarPanel = {
     min: -10,
     max: 0,
     step: 0.1,
+  },
+};
+
+export const GEL_BATTERY: BatteryTypeParameters = {
+  selfDischargeCoefficient: {
+    disabled: true,
+    value: 2.5,
+    tooltip: 'Coeficiente de autodescarga',
+    unit: '%/mes',
+    variableString: 'Coeficiente de autodescarga',
+  },
+  chargeEfficiency: {
+    disabled: true,
+    value: 98,
+    tooltip: 'Eficiencia de carga',
+    unit: '%',
+    variableString: 'Eficiencia de carga',
+  },
+  dischargeDischargeEfficiency: {
+    disabled: true,
+    value: 98,
+    tooltip: 'Eficiencia de descarga',
+    unit: '%',
+    variableString: 'Eficiencia de descarga',
+  },
+};
+
+export const CUSTOM_BATTERY: BatteryTypeParameters = {
+  selfDischargeCoefficient: {
+    disabled: false,
+    value: 2.5,
+    tooltip: 'Coeficiente de autodescarga',
+    unit: '%/mes',
+    variableString: 'Coeficiente de autodescarga',
+    min: 0,
+    max: 100,
+  },
+  chargeEfficiency: {
+    disabled: false,
+    value: 98,
+    tooltip: 'Eficiencia de carga',
+    unit: '%',
+    variableString: 'Eficiencia de carga',
+    min: 0,
+    max: 100,
+  },
+  dischargeDischargeEfficiency: {
+    disabled: false,
+    value: 98,
+    tooltip: 'Eficiencia de descarga',
+    unit: '%',
+    variableString: 'Eficiencia de descarga',
+    min: 0,
+    max: 100,
   },
 };
