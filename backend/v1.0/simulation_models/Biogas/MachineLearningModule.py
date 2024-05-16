@@ -17,7 +17,7 @@ from datetime import datetime
 
 
 class BiogasModelTrain:
-    def __init__ (self, index_database, VR1):
+    def __init__ (self, index_database, VR1, Kini):
         self.databaseConnection_df = pd.read_excel(excel_file_path, sheet_name='ConexionDB')
         self.database_df = pd.read_excel(excel_file_path, sheet_name='InfluxDBVariables')
         self.InfluxDB = DBManager.InfluxDBmodel(server = 'http://' + str(self.databaseConnection_df['IP'][index_database])+':'+str(self.databaseConnection_df['Port'][index_database])+'/', org = self.databaseConnection_df['Organization'][index_database], bucket = self.databaseConnection_df['Bucket'][index_database], token = self.databaseConnection_df['Token'][index_database])
@@ -28,6 +28,7 @@ class BiogasModelTrain:
         self.Csus_ini = self.Csus_exp_R101["Csus_exp_R101"][0]
         
         self.VR1 = VR1
+        self.Kini = Kini
 
     def Get_data_DT (self):
         self.msg = self.InfluxDB.InfluxDBconnection()
@@ -51,15 +52,20 @@ class BiogasModelTrain:
             self.t_DT.append(t.total_seconds())
         
         if len(self.t_DT) % 2 == 0:
-            n = len(self.t_DT)/2
-            self.t_train = self.t_DT[: n]
-            self.end_train_date = t_i[n]
-            self.data_train = self.Data[: n]
-            self.t_val = self.t_DT[n :]
-        
+            n = len(self.t_DT)/2 
         else:
             n = (len(self.t_DT)+1)/2
-            self.t_train = self.t_DT[: n]
+
+        #end date to train
+        self.end_train_date = t_i[n]
+        #Train Data    
+        self.t_train = self.t_DT[: n]       #Vector time in seconds without date
+        self.data_train = self.Data[: n]    #Vector with dates
+        self.Csus_exp_train = self.Data['Csus_exp_R101'][: n]
+        self.Q_P104_train = self.Q_P104["SE-104v"][: n]
+        #Test Data
+        self.t_val = self.t_DT[n :]         #Vector time in seconds without date
+        self.data_val = self.Data[n :]      #Vector with dates    
     
     def Operation_1_Train(self):
 
@@ -79,6 +85,20 @@ class BiogasModelTrain:
             self.Optimization = minimize(Model, K, arg=(t, Csus_exp))
             self.K_R101 = self.Optimization.x
             return self.K_R101, self.Csus_R101
+        
+        self.K_optimizada = []
+        self.C_sus_model_train = []
+        for i in range (len(self.t_train)):
+            self.tv = self.t_train[i : i+1]
+            self.C_train = self.Csus_exp_train[i : i+1]
+            self.Q_train = self.Q_P104_train[i : i+1]
+            self.Ko = self.Kini
+
+            self.Optimizacion = Optimization(K = self.Ko, t = self.tv, Csus_exp=self.C_train, Q = self.Q_train)
+            self.K_optimizada.append(float(self.Optimizacion[0]))
+            self.Kini = float(self.Optimizacion[0])
+            self.C_sus_model_train.append(float(self.Optimizacion[1][0]))
+
         
         def ValidationAndPrediction (K, t, Q, C):
             Q = Q[0]
