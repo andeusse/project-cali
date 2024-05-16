@@ -19,35 +19,44 @@ export const setScenario = (
   const value: number = parseFloat(e.target.value);
 
   if (name === 'steps') {
-    if (value > newState.steps.value) {
-      newState.solarSystems.forEach((s) => {
-        s.radiationArray.push(0);
-        s.temperatureArray.push(0);
-      });
-      newState.batterySystems.forEach((s) => {
-        s.chargePowerArray.push(0);
-        s.dischargePowerArray.push(0);
-      });
-    } else if (value < newState.steps.value) {
-      newState.solarSystems.forEach((s) => {
-        s.radiationArray.splice(-1);
-        s.temperatureArray.splice(-1);
-      });
-      newState.batterySystems.forEach((s) => {
-        s.chargePowerArray.splice(-1);
-        s.dischargePowerArray.splice(-1);
-      });
-    }
+    newState.solarSystems.forEach((s) => {
+      s.radiationArray = Array(value ? value : 1).fill(0);
+      s.temperatureArray = Array(value ? value : 1).fill(0);
+    });
+    newState.batterySystems.forEach((s) => {
+      s.chargePowerArray = Array(value ? value : 1).fill(0);
+      s.dischargePowerArray = Array(value ? value : 1).fill(0);
+    });
   }
   if (name.includes('SystemNumber')) {
     if ('solarSystems' in newState && name.includes('solar')) {
       if (value > newState.solarSystemNumber.value) {
         newState.solarSystems = [
           ...newState.solarSystems,
-          { ...COMMON_SOLAR_SYSTEM, id: uuidv4() },
+          {
+            ...COMMON_SOLAR_SYSTEM,
+            radiationArray: Array(newState.steps.value).fill(0),
+            temperatureArray: Array(newState.steps.value).fill(0),
+            id: uuidv4(),
+          },
         ];
       } else if (value < newState.solarSystemNumber.value) {
         newState.solarSystems.splice(-1);
+      }
+    }
+    if ('batterySystems' in newState && name.includes('battery')) {
+      if (value > newState.batterySystemNumber.value) {
+        newState.batterySystems = [
+          ...newState.batterySystems,
+          {
+            ...COMMON_BATTERY_SYSTEM,
+            chargePowerArray: Array(newState.steps.value).fill(0),
+            dischargePowerArray: Array(newState.steps.value).fill(0),
+            id: uuidv4(),
+          },
+        ];
+      } else if (value < newState.batterySystemNumber.value) {
+        newState.batterySystems.splice(-1);
       }
     }
     if ('biogasSystems' in newState && name.includes('biogas')) {
@@ -68,16 +77,6 @@ export const setScenario = (
         ];
       } else if (value < newState.loadSystemNumber.value) {
         newState.loadSystems.splice(-1);
-      }
-    }
-    if ('batterySystems' in newState && name.includes('battery')) {
-      if (value > newState.batterySystemNumber.value) {
-        newState.batterySystems = [
-          ...newState.batterySystems,
-          { ...COMMON_BATTERY_SYSTEM, id: uuidv4() },
-        ];
-      } else if (value < newState.batterySystemNumber.value) {
-        newState.batterySystems.splice(-1);
       }
     }
     if ('hydraulicSystems' in newState && name.includes('hydraulic')) {

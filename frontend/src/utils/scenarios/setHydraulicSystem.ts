@@ -1,10 +1,9 @@
-import { Matrix, CellBase } from 'react-spreadsheet';
 import { InputType } from '../../types/inputType';
 import {
   HydraulicSystem,
+  SetSystemArrayType,
   smartSystemParameters,
 } from '../../types/scenarios/common';
-import { matrix2Array } from '../matrix2Array';
 
 export const setHydraulicSystemById = <T extends smartSystemParameters>(
   e: any,
@@ -38,10 +37,9 @@ export const setHydraulicSystemById = <T extends smartSystemParameters>(
 };
 
 export const setHydraulicSystemArraysById = <T extends smartSystemParameters>(
-  e: Matrix<CellBase>,
-  oldState: T,
-  id: string
+  props: SetSystemArrayType<T>
 ) => {
+  const { e, oldState, id } = props;
   const newState = { ...oldState };
   let system = newState.hydraulicSystems.find((s) => s.id === id);
   if (system) {

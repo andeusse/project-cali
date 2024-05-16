@@ -7,7 +7,7 @@ import {
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
 import { SmartCityParameters } from './smartCity';
-import { CellBase, Matrix } from 'react-spreadsheet';
+import { CellChange } from '@silevis/reactgrid';
 
 export type smartSystemParameters = SmartCityParameters;
 
@@ -15,10 +15,16 @@ export type TabProps = {
   system: SmartCityParameters;
   handleSystemChange: (e: any, id: string, type: SmartSystemType) => void;
   handleTableChange: (
-    e: Matrix<CellBase>,
+    e: CellChange[],
     id: string,
     type: SmartSystemType
   ) => void;
+};
+
+export type SetSystemArrayType<T> = {
+  e: CellChange[];
+  oldState: T;
+  id: string;
 };
 
 export enum ScenariosModesType {
@@ -197,9 +203,9 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   radiation: {
     disabled: false,
     value: 800,
-    tooltip: 'Radiación solar',
+    tooltip: 'Irradiancia solar',
     unit: 'W / m²',
-    variableString: 'Radiación solar',
+    variableString: 'Irradiancia solar',
     min: 0,
     max: 1500,
     step: 100,
@@ -223,56 +229,61 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
   storageCapacity: {
     disabled: false,
     value: 10,
-    tooltip: 'Número de módulos solares',
-    unit: '',
-    variableString: 'Módulos solares',
-    min: 1,
-    max: 100000,
+    tooltip: 'Capacidad de almacenamiento',
+    unit: 'kW',
+    variableString: 'Capacidad almacenamiento',
+    min: 0.1,
+    max: 10000,
+    step: 0.1,
   },
   maxChargePower: {
     disabled: false,
     value: 10,
-    tooltip: 'Número de módulos solares',
-    unit: '',
-    variableString: 'Módulos solares',
-    min: 1,
-    max: 100000,
+    tooltip: 'Potencia máxima de carga',
+    unit: 'kW',
+    variableString: 'Potencia máxima de carga',
+    min: 0.1,
+    max: 10000,
+    step: 0.1,
   },
   minChargePower: {
     disabled: false,
-    value: 10,
-    tooltip: 'Número de módulos solares',
-    unit: '',
-    variableString: 'Módulos solares',
-    min: 1,
-    max: 100000,
+    value: 0,
+    tooltip: 'Potencia mínima de carga',
+    unit: 'kW',
+    variableString: 'Potencia mínima de carga',
+    min: 0.1,
+    max: 10,
+    step: 0.1,
   },
   maxDischargePower: {
     disabled: false,
     value: 10,
-    tooltip: 'Número de módulos solares',
-    unit: '',
-    variableString: 'Módulos solares',
-    min: 1,
-    max: 100000,
+    tooltip: 'Potencia máxima de descarga',
+    unit: 'kW',
+    variableString: 'Potencia máxima de descarga',
+    min: 0.1,
+    max: 10000,
+    step: 0.1,
   },
   minDischargePower: {
     disabled: false,
-    value: 10,
-    tooltip: 'Número de módulos solares',
-    unit: '',
-    variableString: 'Módulos solares',
-    min: 1,
-    max: 100000,
+    value: 0,
+    tooltip: 'Potencia mínima de descarga',
+    unit: 'kW',
+    variableString: 'Potencia mínima de descarga',
+    min: 0.1,
+    max: 10,
+    step: 0.1,
   },
   stateOfCharge: {
     disabled: false,
-    value: 10,
-    tooltip: 'Número de módulos solares',
+    value: 100,
+    tooltip: 'Estado de carga inicial',
     unit: '',
-    variableString: 'Módulos solares',
-    min: 1,
-    max: 100000,
+    variableString: 'SOC',
+    min: 0,
+    max: 100,
   },
   informationMode: ScenariosBatteryInformationType.Custom,
   batteryType: BatteryType.Custom,

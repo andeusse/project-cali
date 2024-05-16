@@ -1,10 +1,9 @@
-import { Matrix, CellBase } from 'react-spreadsheet';
 import { InputType } from '../../types/inputType';
 import {
+  SetSystemArrayType,
   WindSystem,
   smartSystemParameters,
 } from '../../types/scenarios/common';
-import { matrix2Array } from '../matrix2Array';
 
 export const setWindSystemById = <T extends smartSystemParameters>(
   e: any,
@@ -38,10 +37,9 @@ export const setWindSystemById = <T extends smartSystemParameters>(
 };
 
 export const setWindSystemArraysById = <T extends smartSystemParameters>(
-  e: Matrix<CellBase>,
-  oldState: T,
-  id: string
+  props: SetSystemArrayType<T>
 ) => {
+  const { e, oldState, id } = props;
   const newState = { ...oldState };
   let system = newState.windSystems.find((s) => s.id === id);
   if (system) {

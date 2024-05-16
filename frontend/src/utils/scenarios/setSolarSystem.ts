@@ -1,4 +1,3 @@
-import { CellBase, Matrix } from 'react-spreadsheet';
 import {
   CADMIUM_TELLURIDE_PANEL,
   CUSTOM_PANEL,
@@ -11,8 +10,10 @@ import {
   SolarSystem,
   SolarPanelModuleType,
   smartSystemParameters,
+  ScenariosSolarPanelMeteorologicalInformationType,
+  SetSystemArrayType,
 } from '../../types/scenarios/common';
-import { matrix2Array } from '../matrix2Array';
+import { CellChange2Array } from '../cellChange2Array';
 
 export const setSolarSystemById = <T extends smartSystemParameters>(
   e: any,
@@ -68,6 +69,28 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
           ...params,
         };
       }
+      if (name === 'meteorologicalInformationMode') {
+        if (
+          system.meteorologicalInformationMode ===
+          ScenariosSolarPanelMeteorologicalInformationType.Fixed
+        ) {
+          system.radiation.tooltip = 'Irradiancia solar';
+          system.radiation.variableString = 'Irradiancia solar';
+
+          system.temperature.tooltip = 'Temperatura ambiente';
+          system.temperature.variableString = 'Temperatura ambiente';
+        }
+        if (
+          system.meteorologicalInformationMode ===
+          ScenariosSolarPanelMeteorologicalInformationType.Typical
+        ) {
+          system.radiation.tooltip = 'Irradiancia solar máxima';
+          system.radiation.variableString = 'Irradiancia solar máxima';
+
+          system.temperature.tooltip = 'Temperatura ambiente máxima';
+          system.temperature.variableString = 'Temperatura ambiente máxima';
+        }
+      }
     }
     newState.solarSystems = newState.solarSystems.map((s) => {
       if (system && s.id === id) {
@@ -80,15 +103,18 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
 };
 
 export const setSolarSystemArraysById = <T extends smartSystemParameters>(
-  e: Matrix<CellBase>,
-  oldState: T,
-  id: string
+  props: SetSystemArrayType<T>
 ) => {
+  const { e, oldState, id } = props;
   const newState = { ...oldState };
   let system = newState.solarSystems.find((s) => s.id === id);
   if (system) {
-    system.radiationArray = matrix2Array(e, 0).slice(0, newState.steps.value);
-    system.temperatureArray = matrix2Array(e, 1).slice(0, newState.steps.value);
+    const newArrays = CellChange2Array(e, [
+      system.radiationArray,
+      system.temperatureArray,
+    ]);
+    system.radiationArray = newArrays[0];
+    system.temperatureArray = newArrays[1];
   }
   newState.solarSystems = newState.solarSystems.map((s) => {
     if (system && s.id === id) {

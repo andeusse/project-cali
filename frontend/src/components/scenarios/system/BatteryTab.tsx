@@ -6,7 +6,7 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   BatterySystem,
   BatteryText,
@@ -16,16 +16,17 @@ import {
   SmartSystemType,
   TabProps,
 } from '../../../types/scenarios/common';
-import Spreadsheet, { Matrix, CellBase } from 'react-spreadsheet';
 import { useAppSelector } from '../../../redux/reduxHooks';
 import { getValueByKey } from '../../../utils/getValueByKey';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { ThemeType } from '../../../types/theme';
-
-const ROW_LABELS: string[] = [
-  'Potencia de carga [kW]',
-  'Potencia de descarga [kW]',
-];
+import {
+  CellChange,
+  Column,
+  DefaultCellTypes,
+  ReactGrid,
+  Row,
+} from '@silevis/reactgrid';
 
 const BatteryTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
@@ -40,22 +41,78 @@ const BatteryTab = (props: TabProps) => {
     BatterySystem | undefined
   >(system.batterySystems.find((s) => s.id === selectedElement));
 
-  const [data, setData] = useState<Matrix<CellBase>>([
-    selectedSystem
-      ? selectedSystem.chargePowerArray.map((s) => ({ value: s }))
-      : [],
-    selectedSystem
-      ? selectedSystem.dischargePowerArray.map((s) => ({ value: s }))
-      : [],
-  ]);
+  const getColumns = useCallback((): Column[] => {
+    if (selectedSystem) {
+      let arr: Column[] = [
+        { columnId: `variables`, width: 200 },
+        ...selectedSystem.chargePowerArray.map((v, i) => {
+          const col: Column = {
+            columnId: `${i}`,
+            width: 100,
+          };
+          return col;
+        }),
+      ];
+      return arr;
+    }
+    return [];
+  }, [selectedSystem]);
 
-  const [tableMode, setTableMode] = useState('view');
+  const getRows = useCallback((): Row[] => {
+    if (selectedSystem) {
+      let arr: Row[] = [];
+      arr.push({
+        rowId: 'header',
+        cells: [
+          { type: 'header', text: '', nonEditable: true },
+          ...selectedSystem.chargePowerArray.map((v, i) => {
+            const col: DefaultCellTypes = {
+              type: 'header',
+              text: `P ${i + 1}`,
+              nonEditable: true,
+            };
+            return col;
+          }),
+        ],
+      });
+      arr.push({
+        rowId: '0',
+        cells: [
+          { type: 'header', text: 'Potencia de carga [kW]', nonEditable: true },
+          ...selectedSystem.chargePowerArray.map((v, i) => {
+            const col: DefaultCellTypes = {
+              type: 'number',
+              value: v,
+            };
+            return col;
+          }),
+        ],
+      });
+      arr.push({
+        rowId: '1',
+        cells: [
+          {
+            type: 'header',
+            text: 'Potencia de descarga [kW]',
+            nonEditable: true,
+          },
+          ...selectedSystem.dischargePowerArray.map((v, i) => {
+            const col: DefaultCellTypes = {
+              type: 'number',
+              value: v,
+            };
+            return col;
+          }),
+        ],
+      });
+      return arr;
+    }
+    return [];
+  }, [selectedSystem]);
 
-  const [columnLabels, setColumnLabels] = useState(
-    selectedSystem
-      ? selectedSystem.chargePowerArray.map((s, index) => `P ${index + 1}`)
-      : []
-  );
+  const [rows, setRows] = useState<Row[]>(getRows());
+
+  const [columns, setColumns] = useState<Column[]>(getColumns());
 
   useEffect(() => {
     setSelectedSystem(() => {
@@ -63,37 +120,20 @@ const BatteryTab = (props: TabProps) => {
         (s) => s.id === selectedElement
       );
       if (newSystem) {
-        setData([
-          newSystem.chargePowerArray.map((s) => ({ value: s })),
-          newSystem.chargePowerArray.map((s) => ({ value: s })),
-        ]);
-        setColumnLabels(
-          newSystem.chargePowerArray.map((s, index) => `P ${index + 1}`)
-        );
+        setRows(getRows());
+        setColumns(getColumns());
       }
       return newSystem;
     });
-  }, [selectedElement, system]);
+  }, [getColumns, getRows, selectedElement, system]);
 
   const handleSelectedSystem = (e: any) => {
     setSelectedElement(e.target.value);
   };
 
-  const handleTableOnBlur = () => {
+  const handleCellsChange = (e: CellChange[]) => {
     if (selectedSystem) {
-      handleTableChange(data, selectedSystem.id, SmartSystemType.Battery);
-    }
-  };
-
-  const handleTableOnChange = (e: any) => {
-    if (tableMode === 'view') {
-      setData(e);
-    }
-  };
-
-  const handleOnKeyDown = (e: React.KeyboardEvent<Element>) => {
-    if (!(e.ctrlKey === true && (e.key === 'v' || e.key === 'c'))) {
-      e.preventDefault();
+      handleTableChange(e, selectedSystem.id, SmartSystemType.Battery);
     }
   };
 
@@ -187,24 +227,6 @@ const BatteryTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <FormControl fullWidth>
-                  <InputLabel id="batteryType-type">Tipo de batería</InputLabel>
-                  <Select
-                    labelId="batteryType-type"
-                    label="Tipo de batería"
-                    value={selectedSystem.batteryType}
-                    name="batteryType"
-                    onChange={handleChange}
-                  >
-                    {Object.keys(BatteryType).map((key) => (
-                      <MenuItem key={key} value={key}>
-                        {getValueByKey(BatteryText, key)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <FormControl fullWidth>
                   <InputLabel id="informationMode-type">
                     Modo ingreso de información
                   </InputLabel>
@@ -218,6 +240,24 @@ const BatteryTab = (props: TabProps) => {
                     {Object.keys(ScenariosBatteryInformationType).map((key) => (
                       <MenuItem key={key} value={key}>
                         {getValueByKey(ScenariosBatteryInformationText, key)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
+                <FormControl fullWidth>
+                  <InputLabel id="batteryType-type">Tipo de batería</InputLabel>
+                  <Select
+                    labelId="batteryType-type"
+                    label="Tipo de batería"
+                    value={selectedSystem.batteryType}
+                    name="batteryType"
+                    onChange={handleChange}
+                  >
+                    {Object.keys(BatteryType).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {getValueByKey(BatteryText, key)}
                       </MenuItem>
                     ))}
                   </Select>
@@ -255,15 +295,12 @@ const BatteryTab = (props: TabProps) => {
             ScenariosBatteryInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div style={{ maxWidth: '100%', overflow: 'auto' }}>
-                <Spreadsheet
-                  darkMode={userTheme === ThemeType.Dark}
-                  data={data}
-                  rowLabels={ROW_LABELS}
-                  columnLabels={columnLabels}
-                  onModeChange={setTableMode}
-                  onBlur={handleTableOnBlur}
-                  onChange={handleTableOnChange}
-                  onKeyDown={handleOnKeyDown}
+                <ReactGrid
+                  rows={rows}
+                  columns={columns}
+                  onCellsChanged={(e: CellChange[]) => {
+                    handleCellsChange(e);
+                  }}
                 />
               </div>
             </Grid>

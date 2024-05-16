@@ -161,7 +161,7 @@ const WIND_TURBINE: WindTurbine = {
     tooltip: 'Velocidad de viento de corte inferior',
     unit: 'm / s',
     variableString: 'V',
-    variableSubString: 'f',
+    variableSubString: 'c',
   },
   upperCutoffWindSpeed: {
     disabled: true,
@@ -169,7 +169,7 @@ const WIND_TURBINE: WindTurbine = {
     tooltip: 'Velocidad de viento de corte superior',
     unit: 'm / s',
     variableString: 'V',
-    variableSubString: 'c',
+    variableSubString: 'f',
   },
 };
 
@@ -475,9 +475,9 @@ export const SOLAR_WIND: SolarWindParameters = {
   solarRadiation1: {
     disabled: false,
     value: 800,
-    tooltip: 'Radiación solar 1',
+    tooltip: 'Irradiancia solar 1',
     unit: 'W / m²',
-    variableString: 'Radiación solar 1',
+    variableString: 'Irradiancia solar 1',
     min: 0,
     max: 1500,
     step: 100,
@@ -485,9 +485,9 @@ export const SOLAR_WIND: SolarWindParameters = {
   solarRadiation2: {
     disabled: false,
     value: 800,
-    tooltip: 'Radiación solar 2',
+    tooltip: 'Irradiancia solar 2',
     unit: 'W / m²',
-    variableString: 'Radiación solar 2',
+    variableString: 'Irradiancia solar 2',
     min: 0,
     max: 1500,
     step: 100,

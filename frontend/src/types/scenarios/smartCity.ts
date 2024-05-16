@@ -11,6 +11,7 @@ import {
 } from './common';
 
 export type SmartCityParameters = CommonScenarioParameters & {
+  houseArea: InputType;
   batterySystemNumber: InputType;
   hydraulicSystemNumber: InputType;
   windSystemNumber: InputType;
@@ -21,6 +22,15 @@ export type SmartCityParameters = CommonScenarioParameters & {
 
 export const SMART_CITY: SmartCityParameters = {
   ...COMMON_SCENARIO,
+  houseArea: {
+    disabled: false,
+    value: 100,
+    tooltip: 'Área de la casa',
+    unit: 'm²',
+    variableString: 'Área de la casa',
+    min: 1,
+    max: 1000,
+  },
   batterySystemNumber: {
     disabled: false,
     value: 1,
@@ -51,4 +61,16 @@ export const SMART_CITY: SmartCityParameters = {
   batterySystems: [{ ...COMMON_BATTERY_SYSTEM }],
   hydraulicSystems: [{ ...COMMON_HYDRAULIC_SYSTEM }],
   windSystems: [{ ...COMMON_WIND_SYSTEM }],
+};
+
+export const SMART_FACTORY: SmartCityParameters = {
+  ...SMART_CITY,
+};
+
+export const SMART_HOME: SmartCityParameters = {
+  ...SMART_CITY,
+  solarSystemNumber: {
+    ...SMART_CITY.solarSystemNumber,
+    max: 10,
+  },
 };

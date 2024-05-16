@@ -37,7 +37,6 @@ import {
   setSolarSystemArraysById,
   setSolarSystemById,
 } from '../../utils/scenarios/setSolarSystem';
-import { CellBase, Matrix } from 'react-spreadsheet';
 import BatteryTab from '../../components/scenarios/system/BatteryTab';
 import {
   setBatterySystemArraysById,
@@ -59,6 +58,7 @@ import {
   setWindSystemArraysById,
   setWindSystemById,
 } from '../../utils/scenarios/setWindSystem';
+import { CellChange, NumberCell } from '@silevis/reactgrid';
 
 type Props = {};
 
@@ -102,28 +102,28 @@ const SmartCity = (props: Props) => {
   };
 
   const handleTableChange = (
-    e: Matrix<CellBase>,
+    e: CellChange[],
     id: string,
     type: SmartSystemType
   ) => {
     let newState: SmartCityParameters = SMART_CITY;
     if (type === SmartSystemType.Solar) {
-      newState = setSolarSystemArraysById(e, system, id);
+      newState = setSolarSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Battery) {
-      newState = setBatterySystemArraysById(e, system, id);
+      newState = setBatterySystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Biogas) {
-      newState = setBiogasSystemArraysById(e, system, id);
+      newState = setBiogasSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Load) {
-      newState = setLoadSystemArraysById(e, system, id);
+      newState = setLoadSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Hydraulic) {
-      newState = setHydraulicSystemArraysById(e, system, id);
+      newState = setHydraulicSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Wind) {
-      newState = setWindSystemArraysById(e, system, id);
+      newState = setWindSystemArraysById({ e, oldState: system, id });
     }
     setSystem(newState as SmartCityParameters);
   };
@@ -222,7 +222,6 @@ const SmartCity = (props: Props) => {
                     name="steps"
                     handleChange={handleChange}
                     isInteger={true}
-                    disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={3} xl={3}>

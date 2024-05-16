@@ -1,11 +1,11 @@
-import { Matrix, CellBase } from 'react-spreadsheet';
 import { InputType } from '../../types/inputType';
 import {
   BatterySystem,
   BatteryType,
+  SetSystemArrayType,
   smartSystemParameters,
 } from '../../types/scenarios/common';
-import { matrix2Array } from '../matrix2Array';
+import { CellChange2Array } from '../cellChange2Array';
 import { CUSTOM_BATTERY, GEL_BATTERY } from '../../types/common';
 
 export const setBatterySystemById = <T extends smartSystemParameters>(
@@ -27,6 +27,12 @@ export const setBatterySystemById = <T extends smartSystemParameters>(
           value: parseFloat(value),
         },
       };
+      if (name === 'maxChargePower') {
+        system.minChargePower.max = parseFloat(value);
+      }
+      if (name === 'maxDischargePower') {
+        system.minDischargePower.max = parseFloat(value);
+      }
     } else {
       system = { ...system, [name]: e.target.value };
       if (name === 'batteryType') {
@@ -53,18 +59,18 @@ export const setBatterySystemById = <T extends smartSystemParameters>(
 };
 
 export const setBatterySystemArraysById = <T extends smartSystemParameters>(
-  e: Matrix<CellBase>,
-  oldState: T,
-  id: string
+  props: SetSystemArrayType<T>
 ) => {
+  const { e, oldState, id } = props;
   const newState = { ...oldState };
   let system = newState.batterySystems.find((s) => s.id === id);
   if (system) {
-    system.chargePowerArray = matrix2Array(e, 0).slice(0, newState.steps.value);
-    system.dischargePowerArray = matrix2Array(e, 1).slice(
-      0,
-      newState.steps.value
-    );
+    const newArrays = CellChange2Array(e, [
+      system.chargePowerArray,
+      system.dischargePowerArray,
+    ]);
+    system.chargePowerArray = newArrays[0];
+    system.dischargePowerArray = newArrays[1];
   }
   newState.batterySystems = newState.batterySystems.map((s) => {
     if (system && s.id === id) {

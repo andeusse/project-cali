@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ScenariosSolarPanelMeteorologicalInformationText,
   ScenariosSolarPanelMeteorologicalInformationType,
@@ -16,13 +16,19 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import Spreadsheet, { CellBase, Matrix } from 'react-spreadsheet';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { getValueByKey } from '../../../utils/getValueByKey';
 import { useAppSelector } from '../../../redux/reduxHooks';
 import { ThemeType } from '../../../types/theme';
-
-const ROW_LABELS: string[] = ['Radiación [W / m²]', 'Temperatura [°C]'];
+import {
+  ReactGrid,
+  Column,
+  Row,
+  DefaultCellTypes,
+  CellChange,
+  NumberCell,
+} from '@silevis/reactgrid';
+import '@silevis/reactgrid/styles.css';
 
 const SolarTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
@@ -37,22 +43,74 @@ const SolarTab = (props: TabProps) => {
     system.solarSystems.find((s) => s.id === selectedElement)
   );
 
-  const [data, setData] = useState<Matrix<CellBase>>([
-    selectedSystem
-      ? selectedSystem.radiationArray.map((s) => ({ value: s }))
-      : [],
-    selectedSystem
-      ? selectedSystem.temperatureArray.map((s) => ({ value: s }))
-      : [],
-  ]);
+  const getColumns = useCallback((): Column[] => {
+    if (selectedSystem) {
+      let arr: Column[] = [
+        { columnId: `variables`, width: 200 },
+        ...selectedSystem.radiationArray.map((v, i) => {
+          const col: Column = {
+            columnId: `${i}`,
+            width: 100,
+          };
+          return col;
+        }),
+      ];
+      return arr;
+    }
+    return [];
+  }, [selectedSystem]);
 
-  const [tableMode, setTableMode] = useState('view');
+  const getRows = useCallback((): Row[] => {
+    if (selectedSystem) {
+      let arr: Row[] = [];
+      arr.push({
+        rowId: 'header',
+        cells: [
+          { type: 'header', text: '', nonEditable: true },
+          ...selectedSystem.radiationArray.map((v, i) => {
+            const col: DefaultCellTypes = {
+              type: 'header',
+              text: `P ${i + 1}`,
+              nonEditable: true,
+            };
+            return col;
+          }),
+        ],
+      });
+      arr.push({
+        rowId: '0',
+        cells: [
+          { type: 'header', text: 'Irradiancia [W / m²]', nonEditable: true },
+          ...selectedSystem.radiationArray.map((v, i) => {
+            const col: DefaultCellTypes = {
+              type: 'number',
+              value: v,
+            };
+            return col;
+          }),
+        ],
+      });
+      arr.push({
+        rowId: '1',
+        cells: [
+          { type: 'header', text: 'Temperatura [°C]', nonEditable: true },
+          ...selectedSystem.temperatureArray.map((v, i) => {
+            const col: DefaultCellTypes = {
+              type: 'number',
+              value: v,
+            };
+            return col;
+          }),
+        ],
+      });
+      return arr;
+    }
+    return [];
+  }, [selectedSystem]);
 
-  const [columnLabels, setColumnLabels] = useState(
-    selectedSystem
-      ? selectedSystem.radiationArray.map((s, index) => `P ${index + 1}`)
-      : []
-  );
+  const [rows, setRows] = useState<Row[]>(getRows());
+
+  const [columns, setColumns] = useState<Column[]>(getColumns());
 
   useEffect(() => {
     setSelectedSystem(() => {
@@ -60,37 +118,20 @@ const SolarTab = (props: TabProps) => {
         (s) => s.id === selectedElement
       );
       if (newSystem) {
-        setData([
-          newSystem.radiationArray.map((s) => ({ value: s })),
-          newSystem.temperatureArray.map((s) => ({ value: s })),
-        ]);
-        setColumnLabels(
-          newSystem.radiationArray.map((s, index) => `P ${index + 1}`)
-        );
+        setRows(getRows());
+        setColumns(getColumns());
       }
       return newSystem;
     });
-  }, [selectedElement, system]);
+  }, [getColumns, getRows, selectedElement, system]);
 
   const handleSelectedSystem = (e: any) => {
     setSelectedElement(e.target.value);
   };
 
-  const handleTableOnBlur = () => {
+  const handleCellsChange = (e: CellChange[]) => {
     if (selectedSystem) {
-      handleTableChange(data, selectedSystem.id, SmartSystemType.Solar);
-    }
-  };
-
-  const handleTableOnChange = (e: any) => {
-    if (tableMode === 'view') {
-      setData(e);
-    }
-  };
-
-  const handleOnKeyDown = (e: React.KeyboardEvent<Element>) => {
-    if (!(e.ctrlKey === true && (e.key === 'v' || e.key === 'c'))) {
-      e.preventDefault();
+      handleTableChange(e, selectedSystem.id, SmartSystemType.Solar);
     }
   };
 
@@ -295,15 +336,12 @@ const SolarTab = (props: TabProps) => {
             ScenariosSolarPanelMeteorologicalInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div style={{ maxWidth: '100%', overflow: 'auto' }}>
-                <Spreadsheet
-                  darkMode={userTheme === ThemeType.Dark}
-                  data={data}
-                  rowLabels={ROW_LABELS}
-                  columnLabels={columnLabels}
-                  onModeChange={setTableMode}
-                  onBlur={handleTableOnBlur}
-                  onChange={handleTableOnChange}
-                  onKeyDown={handleOnKeyDown}
+                <ReactGrid
+                  rows={rows}
+                  columns={columns}
+                  onCellsChanged={(e: CellChange[]) => {
+                    handleCellsChange(e);
+                  }}
                 />
               </div>
             </Grid>
