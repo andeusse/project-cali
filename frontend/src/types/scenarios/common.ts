@@ -51,13 +51,23 @@ export enum ScenariosStepUnitText {
   Day = 'Día(s)',
 }
 
-export enum ScenariosSolarPanelMeteorologicalInformationType {
+export enum ScenariosCommonInputInformationType {
+  Custom = 'Custom',
+  Fixed = 'Fixed',
+}
+
+export enum ScenariosCommonInputInformationText {
+  Custom = 'Perfil personalizado',
+  Fixed = 'Perfil fijo',
+}
+
+export enum ScenariosSolarPanelInputInformationType {
   Custom = 'Custom',
   Fixed = 'Fixed',
   Typical = 'Typical',
 }
 
-export enum ScenariosSolarPanelMeteorologicalInformationText {
+export enum ScenariosSolarPanelInputInformationText {
   Custom = 'Perfil personalizado',
   Fixed = 'Perfil fijo',
   Typical = 'Perfil típico',
@@ -79,16 +89,6 @@ export enum SolarPanelModuleText {
   Custom = 'Personalizado',
 }
 
-export enum ScenariosBatteryInformationType {
-  Custom = 'Custom',
-  Fixed = 'Fixed',
-}
-
-export enum ScenariosBatteryInformationText {
-  Custom = 'Perfil personalizado',
-  Fixed = 'Perfil fijo',
-}
-
 export enum BatteryType {
   Gel = 'Gel',
   Custom = 'Custom',
@@ -104,7 +104,7 @@ export type SolarSystem = CommonSystemParameter &
     id: string;
     modulesNumber: InputType;
     modulePower: InputType;
-    meteorologicalInformationMode: ScenariosSolarPanelMeteorologicalInformationType;
+    meteorologicalInformationMode: ScenariosSolarPanelInputInformationType;
     moduleType: SolarPanelModuleType;
     radiation: InputType;
     temperature: InputType;
@@ -128,7 +128,7 @@ export type BatterySystem = CommonSystemParameter &
     minDischargePower: InputType;
     stateOfCharge: InputType;
     batteryType: BatteryType;
-    informationMode: ScenariosBatteryInformationType;
+    informationMode: ScenariosCommonInputInformationType;
     chargePowerArray: number[];
     dischargePowerArray: number[];
   };
@@ -196,8 +196,7 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
     min: 1,
     max: 1000,
   },
-  meteorologicalInformationMode:
-    ScenariosSolarPanelMeteorologicalInformationType.Custom,
+  meteorologicalInformationMode: ScenariosSolarPanelInputInformationType.Custom,
   moduleType: SolarPanelModuleType.MonocrystallinePanel,
   ...MONOCRYSTALLINE_PANEL,
   radiation: {
@@ -285,7 +284,7 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
     min: 0,
     max: 100,
   },
-  informationMode: ScenariosBatteryInformationType.Custom,
+  informationMode: ScenariosCommonInputInformationType.Custom,
   batteryType: BatteryType.Custom,
   ...CUSTOM_BATTERY,
   chargePowerArray: Array(24).fill(0),

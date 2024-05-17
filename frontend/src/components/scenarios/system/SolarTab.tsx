@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ScenariosSolarPanelMeteorologicalInformationText,
-  ScenariosSolarPanelMeteorologicalInformationType,
+  ScenariosSolarPanelInputInformationText,
+  ScenariosSolarPanelInputInformationType,
   SmartSystemType,
   SolarSystem,
   SolarPanelModuleText,
@@ -208,25 +208,25 @@ const SolarTab = (props: TabProps) => {
                     name="meteorologicalInformationMode"
                     onChange={handleChange}
                   >
-                    {Object.keys(
-                      ScenariosSolarPanelMeteorologicalInformationType
-                    ).map((key) => {
-                      if (
-                        key ===
-                          ScenariosSolarPanelMeteorologicalInformationType.Typical &&
-                        system.steps.value !== 24
-                      ) {
-                        return null;
+                    {Object.keys(ScenariosSolarPanelInputInformationType).map(
+                      (key) => {
+                        if (
+                          key ===
+                            ScenariosSolarPanelInputInformationType.Typical &&
+                          system.steps.value !== 24
+                        ) {
+                          return null;
+                        }
+                        return (
+                          <MenuItem key={key} value={key}>
+                            {getValueByKey(
+                              ScenariosSolarPanelInputInformationText,
+                              key
+                            )}
+                          </MenuItem>
+                        );
                       }
-                      return (
-                        <MenuItem key={key} value={key}>
-                          {getValueByKey(
-                            ScenariosSolarPanelMeteorologicalInformationText,
-                            key
-                          )}
-                        </MenuItem>
-                      );
-                    })}
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
@@ -249,9 +249,9 @@ const SolarTab = (props: TabProps) => {
                 </FormControl>
               </Grid>
               {(selectedSystem.meteorologicalInformationMode ===
-                ScenariosSolarPanelMeteorologicalInformationType.Fixed ||
+                ScenariosSolarPanelInputInformationType.Fixed ||
                 selectedSystem.meteorologicalInformationMode ===
-                  ScenariosSolarPanelMeteorologicalInformationType.Typical) && (
+                  ScenariosSolarPanelInputInformationType.Typical) && (
                 <>
                   <Grid item xs={12} md={6} xl={6}>
                     <CustomNumberField
@@ -333,7 +333,7 @@ const SolarTab = (props: TabProps) => {
             </Grid>
           </Grid>
           {selectedSystem.meteorologicalInformationMode ===
-            ScenariosSolarPanelMeteorologicalInformationType.Custom && (
+            ScenariosSolarPanelInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div style={{ maxWidth: '100%', overflow: 'auto' }}>
                 <ReactGrid

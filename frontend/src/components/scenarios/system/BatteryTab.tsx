@@ -11,8 +11,8 @@ import {
   BatterySystem,
   BatteryText,
   BatteryType,
-  ScenariosBatteryInformationText,
-  ScenariosBatteryInformationType,
+  ScenariosCommonInputInformationText,
+  ScenariosCommonInputInformationType,
   SmartSystemType,
   TabProps,
 } from '../../../types/scenarios/common';
@@ -237,11 +237,16 @@ const BatteryTab = (props: TabProps) => {
                     name="informationMode"
                     onChange={handleChange}
                   >
-                    {Object.keys(ScenariosBatteryInformationType).map((key) => (
-                      <MenuItem key={key} value={key}>
-                        {getValueByKey(ScenariosBatteryInformationText, key)}
-                      </MenuItem>
-                    ))}
+                    {Object.keys(ScenariosCommonInputInformationType).map(
+                      (key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(
+                            ScenariosCommonInputInformationText,
+                            key
+                          )}
+                        </MenuItem>
+                      )
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
@@ -292,7 +297,7 @@ const BatteryTab = (props: TabProps) => {
             </Grid>
           </Grid>
           {selectedSystem.informationMode ===
-            ScenariosBatteryInformationType.Custom && (
+            ScenariosCommonInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div style={{ maxWidth: '100%', overflow: 'auto' }}>
                 <ReactGrid
