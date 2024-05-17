@@ -299,7 +299,14 @@ const BatteryTab = (props: TabProps) => {
           {selectedSystem.informationMode ===
             ScenariosCommonInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
-              <div style={{ maxWidth: '100%', overflow: 'auto' }}>
+              <div
+                id={
+                  userTheme === ThemeType.Dark
+                    ? 'reactgrid-dark-mode'
+                    : 'reactgrid-light-mode'
+                }
+                style={{ maxWidth: '100%', overflow: 'auto' }}
+              >
                 <ReactGrid
                   rows={rows}
                   columns={columns}

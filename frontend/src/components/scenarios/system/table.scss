@@ -1,0 +1,9 @@
+#reactgrid-light-mode {
+  @import '@silevis/reactgrid/styles.scss';
+}
+
+#reactgrid-dark-mode {
+  $cell-text-color: white !default;
+  $cell-editor-bg-color: #ffffff !default;
+  @import '@silevis/reactgrid/styles.scss';
+}
