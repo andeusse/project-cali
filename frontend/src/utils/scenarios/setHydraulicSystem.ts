@@ -7,7 +7,7 @@ import { InputType } from '../../types/inputType';
 import {
   HydraulicSystem,
   SetSystemArrayType,
-  TurbineType,
+  HydraulicType,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
@@ -34,13 +34,13 @@ export const setHydraulicSystemById = <T extends SmartSystemParameters>(
       system = { ...system, [name]: e.target.value };
       if (name === 'type') {
         let params = PELTON_TURBINE;
-        if (system.type === TurbineType.Pelton) {
+        if (system.type === HydraulicType.Pelton) {
           params = PELTON_TURBINE;
         }
-        if (system.type === TurbineType.Turgo) {
+        if (system.type === HydraulicType.Turgo) {
           params = TURGO_TURBINE;
         }
-        if (system.type === TurbineType.Custom) {
+        if (system.type === HydraulicType.Custom) {
           params = CUSTOM_TURBINE;
         }
         system = {

@@ -10,7 +10,7 @@ import {
   SolarSystem,
   SolarPanelModuleType,
   SmartSystemParameters,
-  ScenariosSolarPanelInputInformationType,
+  ScenariosSolarWindInputInformationType,
   SetSystemArrayType,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
@@ -72,7 +72,7 @@ export const setSolarSystemById = <T extends SmartSystemParameters>(
       if (name === 'informationMode') {
         if (
           system.informationMode ===
-          ScenariosSolarPanelInputInformationType.Fixed
+          ScenariosSolarWindInputInformationType.Fixed
         ) {
           system.radiation.tooltip = 'Irradiancia solar';
           system.radiation.variableString = 'Irradiancia solar';
@@ -82,7 +82,7 @@ export const setSolarSystemById = <T extends SmartSystemParameters>(
         }
         if (
           system.informationMode ===
-          ScenariosSolarPanelInputInformationType.Typical
+          ScenariosSolarWindInputInformationType.Typical
         ) {
           system.radiation.tooltip = 'Irradiancia solar máxima';
           system.radiation.variableString = 'Irradiancia solar máxima';

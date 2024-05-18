@@ -13,8 +13,8 @@ import {
   ScenariosCommonInputInformationType,
   SmartSystemType,
   TabProps,
-  TurbineText,
-  TurbineType,
+  HydraulicText,
+  HydraulicType,
 } from '../../../types/scenarios/common';
 import {
   Column,
@@ -156,7 +156,7 @@ const HydraulicTab = (props: TabProps) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
                   {`${index + 1}. ${s.name} (${getValueByKey(
-                    TurbineText,
+                    HydraulicText,
                     s.type
                   )})`}
                 </MenuItem>
@@ -233,9 +233,9 @@ const HydraulicTab = (props: TabProps) => {
                     name="type"
                     onChange={handleChange}
                   >
-                    {Object.keys(TurbineType).map((key) => (
+                    {Object.keys(HydraulicType).map((key) => (
                       <MenuItem key={key} value={key}>
-                        {getValueByKey(TurbineText, key)}
+                        {getValueByKey(HydraulicText, key)}
                       </MenuItem>
                     ))}
                   </Select>

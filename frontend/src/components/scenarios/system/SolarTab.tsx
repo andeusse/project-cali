@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ScenariosSolarPanelInputInformationText,
-  ScenariosSolarPanelInputInformationType,
+  ScenariosSolarWindInputInformationText,
+  ScenariosSolarWindInputInformationType,
   SmartSystemType,
   SolarSystem,
   SolarPanelModuleText,
@@ -207,11 +207,11 @@ const SolarTab = (props: TabProps) => {
                     name="informationMode"
                     onChange={handleChange}
                   >
-                    {Object.keys(ScenariosSolarPanelInputInformationType).map(
+                    {Object.keys(ScenariosSolarWindInputInformationType).map(
                       (key) => {
                         if (
                           key ===
-                            ScenariosSolarPanelInputInformationType.Typical &&
+                            ScenariosSolarWindInputInformationType.Typical &&
                           system.steps.value !== 24
                         ) {
                           return null;
@@ -219,7 +219,7 @@ const SolarTab = (props: TabProps) => {
                         return (
                           <MenuItem key={key} value={key}>
                             {getValueByKey(
-                              ScenariosSolarPanelInputInformationText,
+                              ScenariosSolarWindInputInformationText,
                               key
                             )}
                           </MenuItem>
@@ -248,9 +248,9 @@ const SolarTab = (props: TabProps) => {
                 </FormControl>
               </Grid>
               {(selectedSystem.informationMode ===
-                ScenariosSolarPanelInputInformationType.Fixed ||
+                ScenariosSolarWindInputInformationType.Fixed ||
                 selectedSystem.informationMode ===
-                  ScenariosSolarPanelInputInformationType.Typical) && (
+                  ScenariosSolarWindInputInformationType.Typical) && (
                 <>
                   <Grid item xs={12} md={6} xl={6}>
                     <CustomNumberField
@@ -332,7 +332,7 @@ const SolarTab = (props: TabProps) => {
             </Grid>
           </Grid>
           {selectedSystem.informationMode ===
-            ScenariosSolarPanelInputInformationType.Custom && (
+            ScenariosSolarWindInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div
                 id={

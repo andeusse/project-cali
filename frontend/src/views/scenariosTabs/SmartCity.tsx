@@ -333,7 +333,7 @@ const SmartCity = (props: Props) => {
                   <Tab key={'battery'} label={'BESS'} value={'battery'} />
                 )}
                 {system.hydraulicSystemNumber.value !== 0 && (
-                  <Tab key={'turbinas'} label={'Turbinas'} value={'turbinas'} />
+                  <Tab key={'hidro'} label={'Hidro'} value={'hidro'} />
                 )}
               </TabList>
             </Box>
@@ -355,7 +355,7 @@ const SmartCity = (props: Props) => {
                 ></BatteryTab>
               )}
             </TabPanel>
-            <TabPanel key={'turbinas'} value={'turbinas'}>
+            <TabPanel key={'hidro'} value={'hidro'}>
               {system.hydraulicSystemNumber.value !== 0 && (
                 <HydraulicTab
                   system={system}

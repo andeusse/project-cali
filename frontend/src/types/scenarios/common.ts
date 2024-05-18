@@ -59,13 +59,13 @@ export enum ScenariosCommonInputInformationText {
   Fixed = 'Perfil fijo',
 }
 
-export enum ScenariosSolarPanelInputInformationType {
+export enum ScenariosSolarWindInputInformationType {
   Custom = 'Custom',
   Fixed = 'Fixed',
   Typical = 'Typical',
 }
 
-export enum ScenariosSolarPanelInputInformationText {
+export enum ScenariosSolarWindInputInformationText {
   Custom = 'Perfil personalizado',
   Fixed = 'Perfil fijo',
   Typical = 'Perfil típico',
@@ -97,17 +97,19 @@ export enum BatteryText {
   Custom = 'Personalizado',
 }
 
-export enum TurbineType {
+export enum HydraulicType {
   Pelton = 'Pelton',
   Turgo = 'Turgo',
   Custom = 'Custom',
 }
 
-export enum TurbineText {
+export enum HydraulicText {
   Pelton = 'Pelton (Laboratorio)',
   Turgo = 'Turgo (Laboratorio)',
   Custom = 'Personalizado',
 }
+
+// export enum
 
 export type SolarSystem = CommonSystemParameter &
   CommonSolarPanel & {
@@ -115,7 +117,7 @@ export type SolarSystem = CommonSystemParameter &
     modulesNumber: InputType;
     modulePower: InputType;
     type: SolarPanelModuleType;
-    informationMode: ScenariosSolarPanelInputInformationType;
+    informationMode: ScenariosSolarWindInputInformationType;
     radiation: InputType;
     temperature: InputType;
     radiationArray: number[];
@@ -157,7 +159,7 @@ export type HydraulicSystem = CommonSystemParameter &
     id: string;
     turbineNumber: InputType;
     nominalPower: InputType;
-    type: TurbineType;
+    type: HydraulicType;
     informationMode: ScenariosCommonInputInformationType;
     waterHeadArray: number[];
     waterFlowArray: number[];
@@ -228,7 +230,7 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
     min: 1,
     max: 1000,
   },
-  informationMode: ScenariosSolarPanelInputInformationType.Custom,
+  informationMode: ScenariosSolarWindInputInformationType.Custom,
   type: SolarPanelModuleType.MonocrystallinePanel,
   ...MONOCRYSTALLINE_PANEL,
   radiation: {
@@ -345,7 +347,7 @@ export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
     max: 100000,
     step: 0.1,
   },
-  type: TurbineType.Pelton,
+  type: HydraulicType.Pelton,
   informationMode: ScenariosCommonInputInformationType.Custom,
   ...PELTON_TURBINE,
   waterHeadArray: Array(24).fill(0),
