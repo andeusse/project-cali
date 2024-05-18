@@ -1,6 +1,5 @@
 from flask import request
 from flask_restful import Resource
-from simulation_models.Biogas import BiogasModel
 import pandas as pd
 from utils import Biogas_Start
 

@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Api, Resource, request
 from flask_cors import CORS
 from models import Turbine, Solar, Biogas
+from scenarios import SmartHome,SmartCity,SmartFactory
 
 app = Flask(__name__)
 api = Api(app)
@@ -23,6 +24,12 @@ api.add_resource(Turbine, "/models/turbine")
 api.add_resource(Solar, "/models/solar")
 
 api.add_resource(Biogas, "/models/biogas")
+
+api.add_resource(SmartCity, "/scenarios/smartcity")
+
+api.add_resource(SmartFactory, "/scenarios/smartfactory")
+
+api.add_resource(SmartHome, "/scenarios/smarthome")
 
 if __name__ == "__main__":
   app.run(debug=True)
