@@ -6,3 +6,4 @@ class SmartCity(Resource):
     data = request.get_json()
     print(data)
     response = {}
+    return response
