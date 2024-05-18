@@ -31,6 +31,9 @@ export const setScenario = (
       s.waterHeadArray = Array(value ? value : 1).fill(0);
       s.waterFlowArray = Array(value ? value : 1).fill(0);
     });
+    newState.windSystems.forEach((s) => {
+      s.windSpeed = Array(value ? value : 1).fill(0);
+    });
   }
   if (name.includes('SystemNumber')) {
     if ('solarSystems' in newState && name.includes('solar')) {
@@ -78,6 +81,20 @@ export const setScenario = (
         newState.hydraulicSystems.splice(-1);
       }
     }
+    if ('windSystems' in newState && name.includes('wind')) {
+      if (value > newState.windSystemNumber.value) {
+        newState.windSystems = [
+          ...newState.windSystems,
+          {
+            ...COMMON_WIND_SYSTEM,
+            windSpeed: Array(newState.steps.value).fill(0),
+            id: uuidv4(),
+          },
+        ];
+      } else if (value < newState.windSystemNumber.value) {
+        newState.windSystems.splice(-1);
+      }
+    }
     if ('biogasSystems' in newState && name.includes('biogas')) {
       if (value > newState.biogasSystemNumber.value) {
         newState.biogasSystems = [
@@ -96,16 +113,6 @@ export const setScenario = (
         ];
       } else if (value < newState.loadSystemNumber.value) {
         newState.loadSystems.splice(-1);
-      }
-    }
-    if ('windSystems' in newState && name.includes('wind')) {
-      if (value > newState.windSystemNumber.value) {
-        newState.windSystems = [
-          ...newState.windSystems,
-          { ...COMMON_WIND_SYSTEM, id: uuidv4() },
-        ];
-      } else if (value < newState.windSystemNumber.value) {
-        newState.windSystems.splice(-1);
       }
     }
   }

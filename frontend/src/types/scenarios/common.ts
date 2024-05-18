@@ -4,6 +4,8 @@ import {
   MONOCRYSTALLINE_PANEL,
   CUSTOM_BATTERY,
   PELTON_TURBINE,
+  WindTurbine,
+  LABORATORY_WIND_TURBINE,
 } from '../common';
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
@@ -109,7 +111,15 @@ export enum HydraulicText {
   Custom = 'Personalizado',
 }
 
-// export enum
+export enum WindType {
+  Laboratory = 'Laboratory',
+  Custom = 'Custom',
+}
+
+export enum WindText {
+  Laboratory = 'Turbina laboratorio',
+  Custom = 'Personalizado',
+}
 
 export type SolarSystem = CommonSystemParameter &
   CommonSolarPanel & {
@@ -145,7 +155,7 @@ export type BatterySystem = CommonSystemParameter &
     dischargePowerArray: number[];
   };
 
-export type TurbineTypeParameters = {
+export type HydraulicTypeParameters = {
   efficiency: InputType;
   frictionLosses: InputType;
   minimumWaterHead: InputType;
@@ -155,7 +165,7 @@ export type TurbineTypeParameters = {
 };
 
 export type HydraulicSystem = CommonSystemParameter &
-  TurbineTypeParameters & {
+  HydraulicTypeParameters & {
     id: string;
     turbineNumber: InputType;
     nominalPower: InputType;
@@ -165,17 +175,27 @@ export type HydraulicSystem = CommonSystemParameter &
     waterFlowArray: number[];
   };
 
+export type WindTypeParameters = WindTurbine & {
+  surfaceRoughnessLength: InputType;
+};
+
+export type WindSystem = CommonSystemParameter &
+  WindTypeParameters & {
+    id: string;
+    turbineNumber: InputType;
+    nominalPower: InputType;
+    airDensity: InputType;
+    type: WindType;
+    informationMode: ScenariosSolarWindInputInformationType;
+    windSpeed: number[];
+  };
+
 export type BiogasSystem = CommonSystemParameter & {
   id: string;
   var: InputType;
 };
 
 export type LoadSystem = CommonSystemParameter & {
-  id: string;
-  var: InputType;
-};
-
-export type WindSystem = CommonSystemParameter & {
   id: string;
   var: InputType;
 };
@@ -356,14 +376,40 @@ export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
 
 export const COMMON_WIND_SYSTEM: WindSystem = {
   id: uuidv4(),
-  name: '',
-  var: {
+  name: 'Sistema eólico',
+  turbineNumber: {
     disabled: false,
-    value: 0,
-    tooltip: '',
+    value: 1,
+    tooltip: 'Número de turbinas',
     unit: '',
-    variableString: '',
+    variableString: 'Número de turbinas',
+    min: 1,
+    max: 100,
   },
+  nominalPower: {
+    disabled: false,
+    value: 500,
+    tooltip: 'Potencia nominal de cada turbina',
+    unit: 'kW',
+    variableString: 'Potencia nominal',
+    min: 0.1,
+    max: 100000,
+    step: 0.1,
+  },
+  airDensity: {
+    disabled: false,
+    value: 1.112,
+    tooltip: 'Densidad del aire',
+    unit: 'kg / m³',
+    variableString: 'Densidad del aire',
+    min: 0.1,
+    max: 10,
+    step: 0.1,
+  },
+  type: WindType.Laboratory,
+  informationMode: ScenariosSolarWindInputInformationType.Custom,
+  ...LABORATORY_WIND_TURBINE,
+  windSpeed: Array(24).fill(0),
 };
 
 export const COMMON_LOAD_SYSTEM: LoadSystem = {

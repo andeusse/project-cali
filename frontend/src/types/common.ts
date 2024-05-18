@@ -1,7 +1,8 @@
 import { InputType } from './inputType';
 import {
   BatteryTypeParameters,
-  TurbineTypeParameters,
+  HydraulicTypeParameters,
+  WindTypeParameters,
 } from './scenarios/common';
 
 export type CommonSystemParameter = {
@@ -35,6 +36,62 @@ export type Battery = {
   selfDischargeCoefficient: InputType;
   chargeDischargeEfficiency: InputType;
   temperatureCompensationCoefficient: InputType;
+};
+
+export const WIND_TURBINE: WindTurbine = {
+  peakPower: {
+    disabled: true,
+    value: 200,
+    tooltip: 'Potencia pico del aerogenerador',
+    unit: 'W',
+    variableString: 'Potencia pico',
+  },
+  rotorHeight: {
+    disabled: false,
+    value: 1.5,
+    tooltip: 'Altura del rotor del aerogenerador',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'r',
+    min: 0,
+    max: 10,
+    step: 0.1,
+  },
+  anemometerHeight: {
+    disabled: false,
+    value: 1.5,
+    tooltip: 'Altura del anemómetro',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'a',
+    min: 0,
+    max: 10,
+    step: 0.1,
+  },
+  ratedWindSpeed: {
+    disabled: true,
+    value: 11.5,
+    tooltip: 'Velocidad de viento nominal',
+    unit: 'm / s',
+    variableString: 'V',
+    variableSubString: 'n',
+  },
+  lowerCutoffWindSpeed: {
+    disabled: true,
+    value: 2,
+    tooltip: 'Velocidad de viento de corte inferior',
+    unit: 'm / s',
+    variableString: 'V',
+    variableSubString: 'c',
+  },
+  upperCutoffWindSpeed: {
+    disabled: true,
+    value: 65,
+    tooltip: 'Velocidad de viento de corte superior',
+    unit: 'm / s',
+    variableString: 'V',
+    variableSubString: 'f',
+  },
 };
 
 export const MONOCRYSTALLINE_PANEL: SolarPanel = {
@@ -458,7 +515,7 @@ export const CUSTOM_BATTERY: BatteryTypeParameters = {
   },
 };
 
-export const PELTON_TURBINE: TurbineTypeParameters = {
+export const PELTON_TURBINE: HydraulicTypeParameters = {
   efficiency: {
     disabled: true,
     value: 75,
@@ -509,7 +566,7 @@ export const PELTON_TURBINE: TurbineTypeParameters = {
   },
 };
 
-export const TURGO_TURBINE: TurbineTypeParameters = {
+export const TURGO_TURBINE: HydraulicTypeParameters = {
   efficiency: {
     disabled: true,
     value: 75,
@@ -560,7 +617,7 @@ export const TURGO_TURBINE: TurbineTypeParameters = {
   },
 };
 
-export const CUSTOM_TURBINE: TurbineTypeParameters = {
+export const CUSTOM_TURBINE: HydraulicTypeParameters = {
   efficiency: {
     disabled: false,
     value: 75,
@@ -626,5 +683,85 @@ export const CUSTOM_TURBINE: TurbineTypeParameters = {
     min: 0,
     max: 1,
     step: 1,
+  },
+};
+
+export const LABORATORY_WIND_TURBINE: WindTypeParameters = {
+  ...WIND_TURBINE,
+  surfaceRoughnessLength: {
+    disabled: true,
+    value: 2,
+    tooltip: 'Longitud de rugosidad superficial',
+    unit: 'm',
+    variableString: 'Longitud de rugosidad superficial',
+  },
+};
+
+export const CUSTOM_WIND_TURBINE: WindTypeParameters = {
+  peakPower: {
+    disabled: true,
+    value: 200,
+    tooltip: 'Potencia pico del aerogenerador',
+    unit: 'W',
+    variableString: 'Potencia pico',
+  },
+  rotorHeight: {
+    disabled: false,
+    value: 1.5,
+    tooltip: 'Altura del rotor del aerogenerador',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'r',
+    min: 1,
+    max: 300,
+  },
+  anemometerHeight: {
+    disabled: false,
+    value: 1.5,
+    tooltip: 'Altura del anemómetro',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'a',
+    min: 1,
+    max: 300,
+  },
+  ratedWindSpeed: {
+    disabled: false,
+    value: 11.5,
+    tooltip: 'Velocidad de viento nominal',
+    unit: 'm / s',
+    variableString: 'V',
+    variableSubString: 'n',
+    min: 1,
+    max: 100,
+  },
+  lowerCutoffWindSpeed: {
+    disabled: false,
+    value: 2,
+    tooltip: 'Velocidad de viento de corte inferior',
+    unit: 'm / s',
+    variableString: 'V',
+    variableSubString: 'c',
+    min: 1,
+    max: 100,
+  },
+  upperCutoffWindSpeed: {
+    disabled: false,
+    value: 65,
+    tooltip: 'Velocidad de viento de corte superior',
+    unit: 'm / s',
+    variableString: 'V',
+    variableSubString: 'f',
+    min: 10,
+    max: 200,
+  },
+  surfaceRoughnessLength: {
+    disabled: false,
+    value: 0.03,
+    tooltip: 'Longitud de rugosidad superficial',
+    unit: 'm',
+    variableString: 'Longitud de rugosidad superficial',
+    min: 0.0001,
+    max: 10,
   },
 };

@@ -23,7 +23,7 @@ import { getValueByKey } from '../../utils/getValueByKey';
 import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
-import smartCityIllustration from '../../assets/illustrations/smartCity.png';
+import illustration from '../../assets/illustrations/smartCity.png';
 import {
   ScenariosModesType,
   ScenariosModesText,
@@ -60,6 +60,7 @@ import {
 } from '../../utils/scenarios/setWindSystem';
 import { CellChange } from '@silevis/reactgrid';
 import HydraulicTab from '../../components/scenarios/system/HydraulicTab';
+import WindTab from '../../components/scenarios/system/WindTab';
 
 type Props = {};
 
@@ -166,7 +167,7 @@ const SmartCity = (props: Props) => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 }}
-                src={smartCityIllustration}
+                src={illustration}
                 alt="smartCityIllustration"
               ></img>
             </AccordionDetails>
@@ -335,6 +336,9 @@ const SmartCity = (props: Props) => {
                 {system.hydraulicSystemNumber.value !== 0 && (
                   <Tab key={'hidro'} label={'Hidro'} value={'hidro'} />
                 )}
+                {system.windSystemNumber.value !== 0 && (
+                  <Tab key={'wind'} label={'Eólico'} value={'wind'} />
+                )}
               </TabList>
             </Box>
             <TabPanel key={'solar'} value={'solar'}>
@@ -362,6 +366,15 @@ const SmartCity = (props: Props) => {
                   handleSystemChange={handleSystemChange}
                   handleTableChange={handleTableChange}
                 ></HydraulicTab>
+              )}
+            </TabPanel>
+            <TabPanel key={'wind'} value={'wind'}>
+              {system.windSystemNumber.value !== 0 && (
+                <WindTab
+                  system={system}
+                  handleSystemChange={handleSystemChange}
+                  handleTableChange={handleTableChange}
+                ></WindTab>
               )}
             </TabPanel>
           </TabContext>

@@ -5,6 +5,7 @@ import {
   POLICRYSTALLINE_PANEL as PP,
   FLEX_PANEL as FP,
   CADMIUM_TELLURIDE_PANEL as CTP,
+  WIND_TURBINE,
 } from '../common';
 import { CommonGraphType } from '../graph';
 import { InputType } from '../inputType';
@@ -115,62 +116,6 @@ const CADMIUM_TELLURIDE_PANEL: SolarPanel = {
     variableString: 'Potencia pico',
   },
   ...CTP,
-};
-
-const WIND_TURBINE: WindTurbine = {
-  peakPower: {
-    disabled: true,
-    value: 200,
-    tooltip: 'Potencia pico del aerogenerador',
-    unit: 'W',
-    variableString: 'Potencia pico',
-  },
-  rotorHeight: {
-    disabled: false,
-    value: 1.5,
-    tooltip: 'Altura del rotor del aerogenerador',
-    unit: 'm',
-    variableString: 'H',
-    variableSubString: 'r',
-    min: 0,
-    max: 10,
-    step: 0.1,
-  },
-  anemometerHeight: {
-    disabled: false,
-    value: 1.5,
-    tooltip: 'Altura del anemómetro',
-    unit: 'm',
-    variableString: 'H',
-    variableSubString: 'a',
-    min: 0,
-    max: 10,
-    step: 0.1,
-  },
-  ratedWindSpeed: {
-    disabled: true,
-    value: 11.5,
-    tooltip: 'Velocidad de viento nominal',
-    unit: 'm / s',
-    variableString: 'V',
-    variableSubString: 'n',
-  },
-  lowerCutoffWindSpeed: {
-    disabled: true,
-    value: 2,
-    tooltip: 'Velocidad de viento de corte inferior',
-    unit: 'm / s',
-    variableString: 'V',
-    variableSubString: 'c',
-  },
-  upperCutoffWindSpeed: {
-    disabled: true,
-    value: 65,
-    tooltip: 'Velocidad de viento de corte superior',
-    unit: 'm / s',
-    variableString: 'V',
-    variableSubString: 'f',
-  },
 };
 
 const BATTERY: Battery = {
