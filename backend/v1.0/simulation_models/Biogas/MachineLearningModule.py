@@ -13,6 +13,8 @@ from scipy.optimize import minimize
 import numpy as np
 import time
 from datetime import datetime
+from pmdarima import ARIMA
+from pmdarima import auto_arima
 
 
 
@@ -52,23 +54,23 @@ class BiogasModelTrain:
             self.t_DT.append(t.total_seconds())
         
         if len(self.t_DT) % 2 == 0:
-            n = len(self.t_DT)/2 
+            self.n = len(self.t_DT)/2 
         else:
-            n = (len(self.t_DT)+1)/2
+            self.n = (len(self.t_DT)+1)/2
 
         #end date to train
-        self.end_train_date = t_i[n]
+        self.end_train_date = t_i[self.n]
         #Train Data    
-        self.t_train = self.t_DT[: n]       #Vector time in seconds without date
-        self.data_train = self.Data[: n]    #Vector with dates
-        self.Csus_exp_train = self.Data['Csus_exp_R101'][: n]
-        self.Q_P104_train = self.Q_P104["SE-104v"][: n]
-        self.Date_train = t_i[: n]
+        self.t_train = self.t_DT[: self.n]       #Vector time in seconds without date
+        self.data_train = self.Data[: self.n]    #Vector with dates
+        self.Csus_exp_train = self.Data['Csus_exp_R101'][: self.n]
+        self.Q_P104_train = self.Q_P104["SE-104v"][: self.n]
+        self.Date_train = t_i[: self.n]
         #Test Data
-        self.t_val = self.t_DT[n :]         #Vector time in seconds without date
-        self.data_val = self.Data[n :]      #Vector with dates    
+        self.t_val = self.t_DT[self.n + 1 :]         #Vector time in seconds without date
+        self.data_val = self.Data[self.n + 1 :]      #Vector with dates    
     
-    def Operation_1_Train(self):
+    def Operation_1_Optimization(self):
 
         def Optimization(K, t, Csus_exp, Q):
             Q = Q[0]
@@ -89,10 +91,10 @@ class BiogasModelTrain:
         
         self.K_optimizada = []
         self.C_sus_model_train = []
-        for i in range (len(self.t_train)):
-            self.tv = self.t_train[i : i+1]
-            self.C_train = self.Csus_exp_train[i : i+1]
-            self.Q_train = self.Q_P104_train[i : i+1]
+        for i in range (len(self.t_DT)):
+            self.tv = self.t_DT[i : i+1]
+            self.C_train = self.Data['Csus_exp_R101'][i : i+1]
+            self.Q_train = self.Q_P104["SE-104v"][i : i+1]
             self.Ko = self.Kini
 
             self.Optimizacion = Optimization(K = self.Ko, t = self.tv, Csus_exp=self.C_train, Q = self.Q_train)
@@ -102,14 +104,13 @@ class BiogasModelTrain:
             timestamp = int(self.Date_train[i].timestamp())
             self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.Kini, timestamp = timestamp)
 
+    def Kinetic_Forecasting (self):
+        self.K_train = self.K_optimizada[: self.n]
+        self.K_test = self.K_optimizada[self.n+1 :]
         
-        def ValidationAndPrediction (K, t, Q, C):
-            Q = Q[0]
-
-            def DiferentialEquation (C, t):
-                self.CsusR101_val_dt = Q/self.VR1*(self.Csus_ini-C)-K
-                return self.CsusR101_val_dt
+        
+        
             
-            Co = C[0]
-            self.res_val_R101 = odeint(DiferentialEquation, Co, t)
-            return self.res_val_R101
+            
+
+    
