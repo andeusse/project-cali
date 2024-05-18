@@ -2,10 +2,10 @@ import { InputType } from '../../types/inputType';
 import {
   BiogasSystem,
   SetSystemArrayType,
-  smartSystemParameters,
+  SmartSystemParameters,
 } from '../../types/scenarios/common';
 
-export const setBiogasSystemById = <T extends smartSystemParameters>(
+export const setBiogasSystemById = <T extends SmartSystemParameters>(
   e: any,
   oldState: T,
   id: string
@@ -36,7 +36,7 @@ export const setBiogasSystemById = <T extends smartSystemParameters>(
   return newState;
 };
 
-export const setBiogasSystemArraysById = <T extends smartSystemParameters>(
+export const setBiogasSystemArraysById = <T extends SmartSystemParameters>(
   props: SetSystemArrayType<T>
 ) => {
   const { e, oldState, id } = props;

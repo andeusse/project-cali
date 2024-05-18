@@ -9,13 +9,13 @@ import { InputType } from '../../types/inputType';
 import {
   SolarSystem,
   SolarPanelModuleType,
-  smartSystemParameters,
+  SmartSystemParameters,
   ScenariosSolarPanelInputInformationType,
   SetSystemArrayType,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 
-export const setSolarSystemById = <T extends smartSystemParameters>(
+export const setSolarSystemById = <T extends SmartSystemParameters>(
   e: any,
   oldState: T,
   id: string
@@ -36,7 +36,7 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
       };
     } else {
       system = { ...system, [name]: e.target.value };
-      if (name === 'moduleType') {
+      if (name === 'type') {
         let params = MONOCRYSTALLINE_PANEL;
         if (
           system[name as keyof SolarSystem] ===
@@ -69,9 +69,9 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
           ...params,
         };
       }
-      if (name === 'meteorologicalInformationMode') {
+      if (name === 'informationMode') {
         if (
-          system.meteorologicalInformationMode ===
+          system.informationMode ===
           ScenariosSolarPanelInputInformationType.Fixed
         ) {
           system.radiation.tooltip = 'Irradiancia solar';
@@ -81,7 +81,7 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
           system.temperature.variableString = 'Temperatura ambiente';
         }
         if (
-          system.meteorologicalInformationMode ===
+          system.informationMode ===
           ScenariosSolarPanelInputInformationType.Typical
         ) {
           system.radiation.tooltip = 'Irradiancia solar máxima';
@@ -102,7 +102,7 @@ export const setSolarSystemById = <T extends smartSystemParameters>(
   return newState;
 };
 
-export const setSolarSystemArraysById = <T extends smartSystemParameters>(
+export const setSolarSystemArraysById = <T extends SmartSystemParameters>(
   props: SetSystemArrayType<T>
 ) => {
   const { e, oldState, id } = props;

@@ -7,13 +7,13 @@ import { setSolar } from './models/setSolar';
 import { setFormObjectValue } from './setFormObjectValue';
 import { InputType } from '../types/inputType';
 import { setScenario } from './scenarios/setScenario';
-import { smartSystemParameters } from '../types/scenarios/common';
+import { SmartSystemParameters } from '../types/scenarios/common';
 
 export type formType =
   | TurbineParameters
   | SolarWindParameters
   | BiogasParameters
-  | smartSystemParameters;
+  | SmartSystemParameters;
 
 export const setFormState = <T extends formType>(
   e: any,

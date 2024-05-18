@@ -3,12 +3,12 @@ import {
   BatterySystem,
   BatteryType,
   SetSystemArrayType,
-  smartSystemParameters,
+  SmartSystemParameters,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 import { CUSTOM_BATTERY, GEL_BATTERY } from '../../types/common';
 
-export const setBatterySystemById = <T extends smartSystemParameters>(
+export const setBatterySystemById = <T extends SmartSystemParameters>(
   e: any,
   oldState: T,
   id: string
@@ -35,7 +35,7 @@ export const setBatterySystemById = <T extends smartSystemParameters>(
       }
     } else {
       system = { ...system, [name]: e.target.value };
-      if (name === 'batteryType') {
+      if (name === 'type') {
         let params = CUSTOM_BATTERY;
         if (system[name as keyof BatterySystem] === BatteryType.Custom) {
           params = CUSTOM_BATTERY;
@@ -58,7 +58,7 @@ export const setBatterySystemById = <T extends smartSystemParameters>(
   return newState;
 };
 
-export const setBatterySystemArraysById = <T extends smartSystemParameters>(
+export const setBatterySystemArraysById = <T extends SmartSystemParameters>(
   props: SetSystemArrayType<T>
 ) => {
   const { e, oldState, id } = props;

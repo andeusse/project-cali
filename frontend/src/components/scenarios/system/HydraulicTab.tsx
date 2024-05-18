@@ -8,44 +8,46 @@ import {
 } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  BatterySystem,
-  BatteryText,
-  BatteryType,
+  HydraulicSystem,
   ScenariosCommonInputInformationText,
   ScenariosCommonInputInformationType,
   SmartSystemType,
   TabProps,
+  TurbineText,
+  TurbineType,
 } from '../../../types/scenarios/common';
+import {
+  Column,
+  Row,
+  DefaultCellTypes,
+  CellChange,
+  ReactGrid,
+} from '@silevis/reactgrid';
 import { useAppSelector } from '../../../redux/reduxHooks';
 import { getValueByKey } from '../../../utils/getValueByKey';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { ThemeType } from '../../../types/theme';
-import {
-  CellChange,
-  Column,
-  DefaultCellTypes,
-  ReactGrid,
-  Row,
-} from '@silevis/reactgrid';
 
-const BatteryTab = (props: TabProps) => {
+const HydraulicTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
 
   const userTheme = useAppSelector((state) => state.theme.value);
 
   const [selectedElement, setSelectedElement] = useState<string | undefined>(
-    system.batterySystems.length > 0 ? system.batterySystems[0].id : undefined
+    system.hydraulicSystems.length > 0
+      ? system.hydraulicSystems[0].id
+      : undefined
   );
 
   const [selectedSystem, setSelectedSystem] = useState<
-    BatterySystem | undefined
-  >(system.batterySystems.find((s) => s.id === selectedElement));
+    HydraulicSystem | undefined
+  >(system.hydraulicSystems.find((s) => s.id === selectedElement));
 
   const getColumns = useCallback((): Column[] => {
     if (selectedSystem) {
       let arr: Column[] = [
         { columnId: `variables`, width: 200 },
-        ...selectedSystem.chargePowerArray.map((v, i) => {
+        ...selectedSystem.waterHeadArray.map((v, i) => {
           const col: Column = {
             columnId: `${i}`,
             width: 100,
@@ -65,7 +67,7 @@ const BatteryTab = (props: TabProps) => {
         rowId: 'header',
         cells: [
           { type: 'header', text: '', nonEditable: true },
-          ...selectedSystem.chargePowerArray.map((v, i) => {
+          ...selectedSystem.waterHeadArray.map((v, i) => {
             const col: DefaultCellTypes = {
               type: 'header',
               text: `P ${i + 1}`,
@@ -78,8 +80,8 @@ const BatteryTab = (props: TabProps) => {
       arr.push({
         rowId: '0',
         cells: [
-          { type: 'header', text: 'Potencia de carga [kW]', nonEditable: true },
-          ...selectedSystem.chargePowerArray.map((v, i) => {
+          { type: 'header', text: 'Cabeza de agua [m]', nonEditable: true },
+          ...selectedSystem.waterHeadArray.map((v, i) => {
             const col: DefaultCellTypes = {
               type: 'number',
               value: v,
@@ -91,12 +93,8 @@ const BatteryTab = (props: TabProps) => {
       arr.push({
         rowId: '1',
         cells: [
-          {
-            type: 'header',
-            text: 'Potencia de descarga [kW]',
-            nonEditable: true,
-          },
-          ...selectedSystem.dischargePowerArray.map((v, i) => {
+          { type: 'header', text: 'Flujo de agua [m³ / s]', nonEditable: true },
+          ...selectedSystem.waterFlowArray.map((v, i) => {
             const col: DefaultCellTypes = {
               type: 'number',
               value: v,
@@ -116,7 +114,7 @@ const BatteryTab = (props: TabProps) => {
 
   useEffect(() => {
     setSelectedSystem(() => {
-      const newSystem = system.batterySystems.find(
+      const newSystem = system.hydraulicSystems.find(
         (s) => s.id === selectedElement
       );
       if (newSystem) {
@@ -133,13 +131,13 @@ const BatteryTab = (props: TabProps) => {
 
   const handleCellsChange = (e: CellChange[]) => {
     if (selectedSystem) {
-      handleTableChange(e, selectedSystem.id, SmartSystemType.Battery);
+      handleTableChange(e, selectedSystem.id, SmartSystemType.Hydraulic);
     }
   };
 
   const handleChange = (e: any) => {
     if (selectedSystem) {
-      handleSystemChange(e, selectedSystem.id, SmartSystemType.Battery);
+      handleSystemChange(e, selectedSystem.id, SmartSystemType.Hydraulic);
     }
   };
 
@@ -147,18 +145,18 @@ const BatteryTab = (props: TabProps) => {
     <Grid container spacing={2}>
       <Grid item xs={12} md={12} xl={12}>
         <FormControl fullWidth>
-          <InputLabel id="battery-system">Sistema de batería</InputLabel>
+          <InputLabel id="turbine-system">Sistema de turbinas</InputLabel>
           <Select
-            labelId="battery-system"
-            label="Sistema de batería"
+            labelId="turbine-system"
+            label="Sistema de turbinas"
             value={selectedElement}
             onChange={handleSelectedSystem}
           >
-            {system.batterySystems.map((s, index) => {
+            {system.hydraulicSystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
                   {`${index + 1}. ${s.name} (${getValueByKey(
-                    BatteryText,
+                    TurbineText,
                     s.type
                   )})`}
                 </MenuItem>
@@ -169,10 +167,10 @@ const BatteryTab = (props: TabProps) => {
       </Grid>
       {selectedSystem && (
         <>
-          <Grid item xs={12} md={12} xl={9}>
+          <Grid item xs={12} md={12} xl={6}>
             <h3>Parámetros simulación</h3>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={12} xl={4}>
+              <Grid item xs={12} md={12} xl={8}>
                 <FormControl fullWidth>
                   <TextField
                     label="Nombre"
@@ -185,54 +183,27 @@ const BatteryTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <CustomNumberField
-                  variable={selectedSystem.storageCapacity}
-                  name="storageCapacity"
+                  variable={selectedSystem.turbineNumber}
+                  name="turbineNumber"
+                  isInteger={true}
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <CustomNumberField
-                  variable={selectedSystem.maxChargePower}
-                  name="maxChargePower"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <CustomNumberField
-                  variable={selectedSystem.minChargePower}
-                  name="minChargePower"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <CustomNumberField
-                  variable={selectedSystem.maxDischargePower}
-                  name="maxDischargePower"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <CustomNumberField
-                  variable={selectedSystem.minDischargePower}
-                  name="minDischargePower"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <CustomNumberField
-                  variable={selectedSystem.stateOfCharge}
-                  name="stateOfCharge"
+                  variable={selectedSystem.nominalPower}
+                  name="nominalPower"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <FormControl fullWidth>
                   <InputLabel id="informationMode-type">
-                    Modo ingreso de información
+                    Modo de ingreso información
                   </InputLabel>
                   <Select
                     labelId="informationMode-type"
-                    label="Modo ingreso de información"
+                    label="Modo de ingreso información"
                     value={selectedSystem.informationMode}
                     name="informationMode"
                     onChange={handleChange}
@@ -252,17 +223,19 @@ const BatteryTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <FormControl fullWidth>
-                  <InputLabel id="type-type">Tipo de batería</InputLabel>
+                  <InputLabel id="informationMode-type">
+                    Modo de ingreso información
+                  </InputLabel>
                   <Select
-                    labelId="type-type"
-                    label="Tipo de batería"
+                    labelId="informationMode-type"
+                    label="Modo de ingreso información"
                     value={selectedSystem.type}
                     name="type"
                     onChange={handleChange}
                   >
-                    {Object.keys(BatteryType).map((key) => (
+                    {Object.keys(TurbineType).map((key) => (
                       <MenuItem key={key} value={key}>
-                        {getValueByKey(BatteryText, key)}
+                        {getValueByKey(TurbineText, key)}
                       </MenuItem>
                     ))}
                   </Select>
@@ -270,27 +243,48 @@ const BatteryTab = (props: TabProps) => {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} md={12} xl={3}>
-            <h3>Parámetros baterías</h3>
+          <Grid item xs={12} md={12} xl={6}>
+            <h3>Parámetros turbinas</h3>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6} xl={12}>
+              <Grid item xs={12} md={6} xl={4}>
                 <CustomNumberField
-                  variable={selectedSystem.selfDischargeCoefficient}
-                  name="selfDischargeCoefficient"
+                  variable={selectedSystem.efficiency}
+                  name="efficiency"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
-              <Grid item xs={12} md={6} xl={12}>
+              <Grid item xs={12} md={6} xl={4}>
                 <CustomNumberField
-                  variable={selectedSystem.chargeEfficiency}
-                  name="chargeEfficiency"
+                  variable={selectedSystem.frictionLosses}
+                  name="frictionLosses"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
-              <Grid item xs={12} md={6} xl={12}>
+              <Grid item xs={12} md={6} xl={4}>
                 <CustomNumberField
-                  variable={selectedSystem.dischargeDischargeEfficiency}
-                  name="dischargeDischargeEfficiency"
+                  variable={selectedSystem.minimumWaterHead}
+                  name="minimumWaterHead"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
+                <CustomNumberField
+                  variable={selectedSystem.maximumWaterHead}
+                  name="maximumWaterHead"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
+                <CustomNumberField
+                  variable={selectedSystem.minimumWaterFlow}
+                  name="minimumWaterFlow"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
+                <CustomNumberField
+                  variable={selectedSystem.maximumWaterFlow}
+                  name="maximumWaterFlow"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
@@ -323,4 +317,4 @@ const BatteryTab = (props: TabProps) => {
   );
 };
 
-export default BatteryTab;
+export default HydraulicTab;

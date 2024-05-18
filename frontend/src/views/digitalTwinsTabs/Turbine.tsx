@@ -39,7 +39,7 @@ import ErrorDialog from '../../components/UI/ErrorDialog';
 type Props = {};
 
 const Turbine = (props: Props) => {
-  const [system, setSystem] = useState<TurbineParameters>(TURBINE);
+  const [system, setSystem] = useState<TurbineParameters>({ ...TURBINE });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);

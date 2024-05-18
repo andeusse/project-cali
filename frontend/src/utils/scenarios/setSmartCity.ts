@@ -1,8 +1,8 @@
-import { SmartCityParameters } from '../../types/scenarios/smartCity';
+import { SmartSystemParameters } from '../../types/scenarios/common';
 
 export const setSmartCity = (
   e: any,
-  oldState: SmartCityParameters
-): SmartCityParameters => {
+  oldState: SmartSystemParameters
+): SmartSystemParameters => {
   return oldState;
 };

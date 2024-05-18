@@ -1,5 +1,8 @@
 import { InputType } from './inputType';
-import { BatteryTypeParameters } from './scenarios/common';
+import {
+  BatteryTypeParameters,
+  TurbineTypeParameters,
+} from './scenarios/common';
 
 export type CommonSystemParameter = {
   name: string;
@@ -452,5 +455,176 @@ export const CUSTOM_BATTERY: BatteryTypeParameters = {
     variableString: 'Eficiencia de descarga',
     min: 0,
     max: 100,
+  },
+};
+
+export const PELTON_TURBINE: TurbineTypeParameters = {
+  efficiency: {
+    disabled: true,
+    value: 75,
+    tooltip: 'Eficiencia de la turbina',
+    unit: '%',
+    variableString: 'η',
+    variableSubString: 't',
+  },
+  frictionLosses: {
+    disabled: true,
+    value: 0,
+    tooltip: 'Pérdidas por fricción',
+    unit: '%',
+    variableString: 'F',
+    variableSubString: 'h',
+  },
+  minimumWaterHead: {
+    disabled: true,
+    value: 3,
+    tooltip: 'Mínima cabeza de agua de operación de la turbina',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'min',
+  },
+  maximumWaterHead: {
+    disabled: true,
+    value: 130,
+    tooltip: 'Máxima cabeza de agua de operación de la turbina',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'max',
+  },
+  minimumWaterFlow: {
+    disabled: true,
+    value: 0.0001,
+    tooltip: 'Mínimo caudal de operación de la turbina',
+    unit: 'm³ / s',
+    variableString: 'Q',
+    variableSubString: 'min',
+  },
+  maximumWaterFlow: {
+    disabled: true,
+    value: 0.01,
+    tooltip: 'Máximo caudal de operación de la turbina',
+    unit: 'm³ / s',
+    variableString: 'Q',
+    variableSubString: 'max',
+  },
+};
+
+export const TURGO_TURBINE: TurbineTypeParameters = {
+  efficiency: {
+    disabled: true,
+    value: 75,
+    tooltip: 'Eficiencia de la turbina',
+    unit: '%',
+    variableString: 'η',
+    variableSubString: 't',
+  },
+  frictionLosses: {
+    disabled: true,
+    value: 0,
+    tooltip: 'Pérdidas por fricción',
+    unit: '%',
+    variableString: 'F',
+    variableSubString: 'h',
+  },
+  minimumWaterHead: {
+    disabled: true,
+    value: 2,
+    tooltip: 'Mínima cabeza de agua de operación de la turbina',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'min',
+  },
+  maximumWaterHead: {
+    disabled: true,
+    value: 30,
+    tooltip: 'Máxima cabeza de agua de operación de la turbina',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'max',
+  },
+  minimumWaterFlow: {
+    disabled: true,
+    value: 0.008,
+    tooltip: 'Mínimo caudal de operación de la turbina',
+    unit: 'm³ / s',
+    variableString: 'Q',
+    variableSubString: 'min',
+  },
+  maximumWaterFlow: {
+    disabled: true,
+    value: 0.016,
+    tooltip: 'Máximo caudal de operación de la turbina',
+    unit: 'm³ / s',
+    variableString: 'Q',
+    variableSubString: 'max',
+  },
+};
+
+export const CUSTOM_TURBINE: TurbineTypeParameters = {
+  efficiency: {
+    disabled: false,
+    value: 75,
+    tooltip: 'Eficiencia de la turbina',
+    unit: '%',
+    variableString: 'η',
+    variableSubString: 't',
+    min: 0,
+    max: 1,
+    step: 1,
+  },
+  frictionLosses: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Pérdidas por fricción',
+    unit: '%',
+    variableString: 'F',
+    variableSubString: 'h',
+    min: 0,
+    max: 1,
+    step: 1,
+  },
+  minimumWaterHead: {
+    disabled: false,
+    value: 2,
+    tooltip: 'Mínima cabeza de agua de operación de la turbina',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'min',
+    min: 0,
+    max: 1,
+    step: 1,
+  },
+  maximumWaterHead: {
+    disabled: false,
+    value: 30,
+    tooltip: 'Máxima cabeza de agua de operación de la turbina',
+    unit: 'm',
+    variableString: 'H',
+    variableSubString: 'max',
+    min: 0,
+    max: 1,
+    step: 1,
+  },
+  minimumWaterFlow: {
+    disabled: false,
+    value: 0.008,
+    tooltip: 'Mínimo caudal de operación de la turbina',
+    unit: 'm³ / s',
+    variableString: 'Q',
+    variableSubString: 'min',
+    min: 0,
+    max: 1,
+    step: 1,
+  },
+  maximumWaterFlow: {
+    disabled: false,
+    value: 0.016,
+    tooltip: 'Máximo caudal de operación de la turbina',
+    unit: 'm³ / s',
+    variableString: 'Q',
+    variableSubString: 'max',
+    min: 0,
+    max: 1,
+    step: 1,
   },
 };

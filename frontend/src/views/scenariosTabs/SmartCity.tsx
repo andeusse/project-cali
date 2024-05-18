@@ -17,8 +17,8 @@ import React, { useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
   SMART_CITY,
-  SmartCityParameters,
-} from '../../types/scenarios/smartCity';
+  SmartSystemParameters,
+} from '../../types/scenarios/common';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { setFormState } from '../../utils/setFormState';
 import ErrorDialog from '../../components/UI/ErrorDialog';
@@ -58,12 +58,13 @@ import {
   setWindSystemArraysById,
   setWindSystemById,
 } from '../../utils/scenarios/setWindSystem';
-import { CellChange, NumberCell } from '@silevis/reactgrid';
+import { CellChange } from '@silevis/reactgrid';
+import HydraulicTab from '../../components/scenarios/system/HydraulicTab';
 
 type Props = {};
 
 const SmartCity = (props: Props) => {
-  const [system, setSystem] = useState(SMART_CITY);
+  const [system, setSystem] = useState({ ...SMART_CITY });
   const [isOpen, setIsOpen] = useState(false);
   const [isImageExpanded, setIsImageExpanded] = useState(false);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
@@ -72,14 +73,18 @@ const SmartCity = (props: Props) => {
   const error = '';
 
   const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<SmartCityParameters>(e, system, variableName);
+    const newState = setFormState<SmartSystemParameters>(
+      e,
+      system,
+      variableName
+    );
     if (newState) {
-      setSystem(newState as SmartCityParameters);
+      setSystem(newState as SmartSystemParameters);
     }
   };
 
   const handleSystemChange = (e: any, id: string, type: SmartSystemType) => {
-    let newState: SmartCityParameters = SMART_CITY;
+    let newState: SmartSystemParameters = { ...SMART_CITY };
     if (type === SmartSystemType.Solar) {
       newState = setSolarSystemById(e, system, id);
     }
@@ -98,7 +103,7 @@ const SmartCity = (props: Props) => {
     if (type === SmartSystemType.Wind) {
       newState = setWindSystemById(e, system, id);
     }
-    setSystem(newState as SmartCityParameters);
+    setSystem(newState as SmartSystemParameters);
   };
 
   const handleTableChange = (
@@ -106,12 +111,15 @@ const SmartCity = (props: Props) => {
     id: string,
     type: SmartSystemType
   ) => {
-    let newState: SmartCityParameters = SMART_CITY;
+    let newState: SmartSystemParameters = { ...SMART_CITY };
     if (type === SmartSystemType.Solar) {
       newState = setSolarSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Battery) {
       newState = setBatterySystemArraysById({ e, oldState: system, id });
+    }
+    if (type === SmartSystemType.Hydraulic) {
+      newState = setHydraulicSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Biogas) {
       newState = setBiogasSystemArraysById({ e, oldState: system, id });
@@ -119,13 +127,10 @@ const SmartCity = (props: Props) => {
     if (type === SmartSystemType.Load) {
       newState = setLoadSystemArraysById({ e, oldState: system, id });
     }
-    if (type === SmartSystemType.Hydraulic) {
-      newState = setHydraulicSystemArraysById({ e, oldState: system, id });
-    }
     if (type === SmartSystemType.Wind) {
       newState = setWindSystemArraysById({ e, oldState: system, id });
     }
-    setSystem(newState as SmartCityParameters);
+    setSystem(newState as SmartSystemParameters);
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -327,6 +332,9 @@ const SmartCity = (props: Props) => {
                 {system.batterySystemNumber.value !== 0 && (
                   <Tab key={'battery'} label={'BESS'} value={'battery'} />
                 )}
+                {system.hydraulicSystemNumber.value !== 0 && (
+                  <Tab key={'turbinas'} label={'Turbinas'} value={'turbinas'} />
+                )}
               </TabList>
             </Box>
             <TabPanel key={'solar'} value={'solar'}>
@@ -345,6 +353,15 @@ const SmartCity = (props: Props) => {
                   handleSystemChange={handleSystemChange}
                   handleTableChange={handleTableChange}
                 ></BatteryTab>
+              )}
+            </TabPanel>
+            <TabPanel key={'turbinas'} value={'turbinas'}>
+              {system.hydraulicSystemNumber.value !== 0 && (
+                <HydraulicTab
+                  system={system}
+                  handleSystemChange={handleSystemChange}
+                  handleTableChange={handleTableChange}
+                ></HydraulicTab>
               )}
             </TabPanel>
           </TabContext>

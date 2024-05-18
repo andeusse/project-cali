@@ -36,7 +36,7 @@ import ErrorDialog from '../../components/UI/ErrorDialog';
 type Props = {};
 
 const Biogas = (props: Props) => {
-  const [system, setSystem] = useState<BiogasParameters>(BIOGAS);
+  const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);

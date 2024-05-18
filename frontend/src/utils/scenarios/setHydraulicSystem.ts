@@ -1,11 +1,18 @@
+import {
+  CUSTOM_TURBINE,
+  PELTON_TURBINE,
+  TURGO_TURBINE,
+} from '../../types/common';
 import { InputType } from '../../types/inputType';
 import {
   HydraulicSystem,
   SetSystemArrayType,
-  smartSystemParameters,
+  TurbineType,
+  SmartSystemParameters,
 } from '../../types/scenarios/common';
+import { CellChange2Array } from '../cellChange2Array';
 
-export const setHydraulicSystemById = <T extends smartSystemParameters>(
+export const setHydraulicSystemById = <T extends SmartSystemParameters>(
   e: any,
   oldState: T,
   id: string
@@ -25,6 +32,22 @@ export const setHydraulicSystemById = <T extends smartSystemParameters>(
       };
     } else {
       system = { ...system, [name]: e.target.value };
+      if (name === 'type') {
+        let params = PELTON_TURBINE;
+        if (system.type === TurbineType.Pelton) {
+          params = PELTON_TURBINE;
+        }
+        if (system.type === TurbineType.Turgo) {
+          params = TURGO_TURBINE;
+        }
+        if (system.type === TurbineType.Custom) {
+          params = CUSTOM_TURBINE;
+        }
+        system = {
+          ...system,
+          ...params,
+        };
+      }
     }
   }
   newState.hydraulicSystems = newState.hydraulicSystems.map((s) => {
@@ -36,14 +59,19 @@ export const setHydraulicSystemById = <T extends smartSystemParameters>(
   return newState;
 };
 
-export const setHydraulicSystemArraysById = <T extends smartSystemParameters>(
+export const setHydraulicSystemArraysById = <T extends SmartSystemParameters>(
   props: SetSystemArrayType<T>
 ) => {
   const { e, oldState, id } = props;
   const newState = { ...oldState };
   let system = newState.hydraulicSystems.find((s) => s.id === id);
   if (system) {
-    // system.chargePowerArray = matrix2Array(e, 0).slice(0, newState.steps.value);
+    const newArrays = CellChange2Array(e, [
+      system.waterHeadArray,
+      system.waterFlowArray,
+    ]);
+    system.waterHeadArray = newArrays[0];
+    system.waterFlowArray = newArrays[1];
   }
   newState.hydraulicSystems = newState.hydraulicSystems.map((s) => {
     if (system && s.id === id) {

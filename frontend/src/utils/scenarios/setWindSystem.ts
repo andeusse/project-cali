@@ -2,10 +2,10 @@ import { InputType } from '../../types/inputType';
 import {
   SetSystemArrayType,
   WindSystem,
-  smartSystemParameters,
+  SmartSystemParameters,
 } from '../../types/scenarios/common';
 
-export const setWindSystemById = <T extends smartSystemParameters>(
+export const setWindSystemById = <T extends SmartSystemParameters>(
   e: any,
   oldState: T,
   id: string
@@ -36,7 +36,7 @@ export const setWindSystemById = <T extends smartSystemParameters>(
   return newState;
 };
 
-export const setWindSystemArraysById = <T extends smartSystemParameters>(
+export const setWindSystemArraysById = <T extends SmartSystemParameters>(
   props: SetSystemArrayType<T>
 ) => {
   const { e, oldState, id } = props;

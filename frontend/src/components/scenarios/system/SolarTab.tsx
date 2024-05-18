@@ -156,7 +156,7 @@ const SolarTab = (props: TabProps) => {
                 <MenuItem key={s.id} value={s.id}>
                   {`${index + 1}. ${s.name} (${getValueByKey(
                     SolarPanelModuleText,
-                    s.moduleType
+                    s.type
                   )})`}
                 </MenuItem>
               );
@@ -197,14 +197,14 @@ const SolarTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={6}>
                 <FormControl fullWidth>
-                  <InputLabel id="meteorologicalInformationMode-type">
+                  <InputLabel id="informationMode-type">
                     Modo de ingreso información meteorológica
                   </InputLabel>
                   <Select
-                    labelId="meteorologicalInformationMode-type"
+                    labelId="informationMode-type"
                     label="Modo de ingreso información meteorológica"
-                    value={selectedSystem.meteorologicalInformationMode}
-                    name="meteorologicalInformationMode"
+                    value={selectedSystem.informationMode}
+                    name="informationMode"
                     onChange={handleChange}
                   >
                     {Object.keys(ScenariosSolarPanelInputInformationType).map(
@@ -235,8 +235,8 @@ const SolarTab = (props: TabProps) => {
                   <Select
                     labelId="moduleType-type"
                     label="Tipo de módulos"
-                    value={selectedSystem.moduleType}
-                    name="moduleType"
+                    value={selectedSystem.type}
+                    name="type"
                     onChange={handleChange}
                   >
                     {Object.keys(SolarPanelModuleType).map((key) => (
@@ -247,9 +247,9 @@ const SolarTab = (props: TabProps) => {
                   </Select>
                 </FormControl>
               </Grid>
-              {(selectedSystem.meteorologicalInformationMode ===
+              {(selectedSystem.informationMode ===
                 ScenariosSolarPanelInputInformationType.Fixed ||
-                selectedSystem.meteorologicalInformationMode ===
+                selectedSystem.informationMode ===
                   ScenariosSolarPanelInputInformationType.Typical) && (
                 <>
                   <Grid item xs={12} md={6} xl={6}>
@@ -331,7 +331,7 @@ const SolarTab = (props: TabProps) => {
               </Grid>
             </Grid>
           </Grid>
-          {selectedSystem.meteorologicalInformationMode ===
+          {selectedSystem.informationMode ===
             ScenariosSolarPanelInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div

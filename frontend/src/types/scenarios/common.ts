@@ -3,16 +3,14 @@ import {
   SolarPanel as CommonSolarPanel,
   MONOCRYSTALLINE_PANEL,
   CUSTOM_BATTERY,
+  PELTON_TURBINE,
 } from '../common';
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
-import { SmartCityParameters } from './smartCity';
 import { CellChange } from '@silevis/reactgrid';
 
-export type smartSystemParameters = SmartCityParameters;
-
 export type TabProps = {
-  system: SmartCityParameters;
+  system: SmartSystemParameters;
   handleSystemChange: (e: any, id: string, type: SmartSystemType) => void;
   handleTableChange: (
     e: CellChange[],
@@ -99,13 +97,25 @@ export enum BatteryText {
   Custom = 'Personalizado',
 }
 
+export enum TurbineType {
+  Pelton = 'Pelton',
+  Turgo = 'Turgo',
+  Custom = 'Custom',
+}
+
+export enum TurbineText {
+  Pelton = 'Pelton (Laboratorio)',
+  Turgo = 'Turgo (Laboratorio)',
+  Custom = 'Personalizado',
+}
+
 export type SolarSystem = CommonSystemParameter &
   CommonSolarPanel & {
     id: string;
     modulesNumber: InputType;
     modulePower: InputType;
-    meteorologicalInformationMode: ScenariosSolarPanelInputInformationType;
-    moduleType: SolarPanelModuleType;
+    type: SolarPanelModuleType;
+    informationMode: ScenariosSolarPanelInputInformationType;
     radiation: InputType;
     temperature: InputType;
     radiationArray: number[];
@@ -127,10 +137,30 @@ export type BatterySystem = CommonSystemParameter &
     maxDischargePower: InputType;
     minDischargePower: InputType;
     stateOfCharge: InputType;
-    batteryType: BatteryType;
+    type: BatteryType;
     informationMode: ScenariosCommonInputInformationType;
     chargePowerArray: number[];
     dischargePowerArray: number[];
+  };
+
+export type TurbineTypeParameters = {
+  efficiency: InputType;
+  frictionLosses: InputType;
+  minimumWaterHead: InputType;
+  maximumWaterHead: InputType;
+  minimumWaterFlow: InputType;
+  maximumWaterFlow: InputType;
+};
+
+export type HydraulicSystem = CommonSystemParameter &
+  TurbineTypeParameters & {
+    id: string;
+    turbineNumber: InputType;
+    nominalPower: InputType;
+    type: TurbineType;
+    informationMode: ScenariosCommonInputInformationType;
+    waterHeadArray: number[];
+    waterFlowArray: number[];
   };
 
 export type BiogasSystem = CommonSystemParameter & {
@@ -139,11 +169,6 @@ export type BiogasSystem = CommonSystemParameter & {
 };
 
 export type LoadSystem = CommonSystemParameter & {
-  id: string;
-  var: InputType;
-};
-
-export type HydraulicSystem = CommonSystemParameter & {
   id: string;
   var: InputType;
 };
@@ -162,7 +187,7 @@ export enum SmartSystemType {
   Wind = 'Wind',
 }
 
-export type CommonScenarioParameters = CommonSystemParameter & {
+export type SmartSystemParameters = CommonSystemParameter & {
   operationMode: ScenariosModesType;
   steps: InputType;
   stepTime: InputType;
@@ -170,9 +195,16 @@ export type CommonScenarioParameters = CommonSystemParameter & {
   solarSystemNumber: InputType;
   biogasSystemNumber: InputType;
   loadSystemNumber: InputType;
+  houseArea: InputType;
+  batterySystemNumber: InputType;
+  hydraulicSystemNumber: InputType;
+  windSystemNumber: InputType;
   solarSystems: SolarSystem[];
   biogasSystems: BiogasSystem[];
   loadSystems: LoadSystem[];
+  batterySystems: BatterySystem[];
+  hydraulicSystems: HydraulicSystem[];
+  windSystems: WindSystem[];
 };
 
 export const COMMON_SOLAR_SYSTEM: SolarSystem = {
@@ -196,8 +228,8 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
     min: 1,
     max: 1000,
   },
-  meteorologicalInformationMode: ScenariosSolarPanelInputInformationType.Custom,
-  moduleType: SolarPanelModuleType.MonocrystallinePanel,
+  informationMode: ScenariosSolarPanelInputInformationType.Custom,
+  type: SolarPanelModuleType.MonocrystallinePanel,
   ...MONOCRYSTALLINE_PANEL,
   radiation: {
     disabled: false,
@@ -285,7 +317,7 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
     max: 100,
   },
   informationMode: ScenariosCommonInputInformationType.Custom,
-  batteryType: BatteryType.Custom,
+  type: BatteryType.Custom,
   ...CUSTOM_BATTERY,
   chargePowerArray: Array(24).fill(0),
   dischargePowerArray: Array(24).fill(0),
@@ -293,14 +325,31 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
 
 export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
   id: uuidv4(),
-  name: '',
-  var: {
+  name: 'Sistema de turbinas',
+  turbineNumber: {
     disabled: false,
-    value: 0,
-    tooltip: '',
+    value: 1,
+    tooltip: 'Número de turbinas',
     unit: '',
-    variableString: '',
+    variableString: 'Número de turbinas',
+    min: 1,
+    max: 100,
   },
+  nominalPower: {
+    disabled: false,
+    value: 500,
+    tooltip: 'Potencia nominal de cada turbina',
+    unit: 'kW',
+    variableString: 'Potencia nominal',
+    min: 0.1,
+    max: 100000,
+    step: 0.1,
+  },
+  type: TurbineType.Pelton,
+  informationMode: ScenariosCommonInputInformationType.Custom,
+  ...PELTON_TURBINE,
+  waterHeadArray: Array(24).fill(0),
+  waterFlowArray: Array(24).fill(0),
 };
 
 export const COMMON_WIND_SYSTEM: WindSystem = {
@@ -339,7 +388,7 @@ export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
   },
 };
 
-export const COMMON_SCENARIO: CommonScenarioParameters = {
+export const COMMON_SCENARIO: SmartSystemParameters = {
   name: 'Nombre',
   operationMode: ScenariosModesType.Manual,
   steps: {
@@ -389,7 +438,62 @@ export const COMMON_SCENARIO: CommonScenarioParameters = {
     min: 1,
     max: 100,
   },
+  houseArea: {
+    disabled: false,
+    value: 100,
+    tooltip: 'Área de la casa',
+    unit: 'm²',
+    variableString: 'Área de la casa',
+    min: 1,
+    max: 1000,
+  },
+  batterySystemNumber: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Número de sistemas de baterías',
+    unit: '',
+    variableString: 'Sistemas de baterías',
+    min: 0,
+    max: 100,
+  },
+  hydraulicSystemNumber: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Número de sistemas hidráulicos',
+    unit: '',
+    variableString: 'Sistemas hidráulicos',
+    min: 0,
+    max: 100,
+  },
+  windSystemNumber: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Número de sistemas de eólicos',
+    unit: '',
+    variableString: 'Sistemas eólicos',
+    min: 0,
+    max: 100,
+  },
   solarSystems: [{ ...COMMON_SOLAR_SYSTEM }],
+  batterySystems: [{ ...COMMON_BATTERY_SYSTEM }],
+  hydraulicSystems: [{ ...COMMON_HYDRAULIC_SYSTEM }],
   biogasSystems: [{ ...COMMON_BIOGAS_SYSTEM }],
   loadSystems: [{ ...COMMON_LOAD_SYSTEM }],
+  windSystems: [{ ...COMMON_WIND_SYSTEM }],
+};
+
+export const SMART_CITY: SmartSystemParameters = {
+  ...COMMON_SCENARIO,
+};
+
+export const SMART_FACTORY: SmartSystemParameters = {
+  ...SMART_CITY,
+};
+
+export const SMART_HOME: SmartSystemParameters = {
+  ...SMART_CITY,
+  solarSystemNumber: {
+    ...SMART_CITY.solarSystemNumber,
+    max: 10,
+  },
 };
