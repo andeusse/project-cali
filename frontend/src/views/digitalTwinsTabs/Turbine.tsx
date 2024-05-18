@@ -32,7 +32,7 @@ import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
-import turbineIllustration from '../../assets/illustrations/turbine.jpg';
+import turbineIllustration from '../../assets/illustrations/turbine.png';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
