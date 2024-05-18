@@ -28,6 +28,15 @@ export type SetSystemArrayType<T> = {
   id: string;
 };
 
+export enum SmartSystemType {
+  Solar = 'Solar',
+  Biogas = 'Biogas',
+  Load = 'Load',
+  Battery = 'Battery',
+  Hydraulic = 'Hydraulic',
+  Wind = 'Wind',
+}
+
 export enum ScenariosModesType {
   Manual = 'Manual',
   Automatic = 'Automatic',
@@ -240,15 +249,6 @@ export type LoadSystem = CommonSystemParameter & {
   var: InputType;
 };
 
-export enum SmartSystemType {
-  Solar = 'Solar',
-  Biogas = 'Biogas',
-  Load = 'Load',
-  Battery = 'Battery',
-  Hydraulic = 'Hydraulic',
-  Wind = 'Wind',
-}
-
 export type SmartSystemParameters = CommonSystemParameter & {
   operationMode: ScenariosModesType;
   steps: InputType;
@@ -268,6 +268,8 @@ export type SmartSystemParameters = CommonSystemParameter & {
   hydraulicSystems: HydraulicSystem[];
   windSystems: WindSystem[];
 };
+
+export type SmartSystemOutput = {};
 
 export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   id: uuidv4(),

@@ -14,14 +14,11 @@ import {
   Select,
   TextField,
 } from '@mui/material';
-import { useAppSelector } from '../../../redux/reduxHooks';
 import { getValueByKey } from '../../../utils/getValueByKey';
 import CustomNumberField from '../../UI/CustomNumberField';
 
 const BiogasTab = (props: TabProps) => {
-  const { system, handleSystemChange, handleTableChange } = props;
-
-  const userTheme = useAppSelector((state) => state.theme.value);
+  const { system, handleSystemChange } = props;
 
   const [selectedElement, setSelectedElement] = useState<string | undefined>(
     system.biogasSystems.length > 0 ? system.biogasSystems[0].id : undefined

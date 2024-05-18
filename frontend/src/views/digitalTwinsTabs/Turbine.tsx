@@ -36,9 +36,7 @@ import turbineIllustration from '../../assets/illustrations/turbine.png';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
-type Props = {};
-
-const Turbine = (props: Props) => {
+const Turbine = () => {
   const [system, setSystem] = useState<TurbineParameters>({ ...TURBINE });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);

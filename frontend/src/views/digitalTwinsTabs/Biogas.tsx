@@ -33,9 +33,7 @@ import biogasDiagram from '../../assets/biogas/biogasPlantDiagram.svg';
 import biogasIllustration from '../../assets/illustrations/biogas.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
-type Props = {};
-
-const Biogas = (props: Props) => {
+const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);

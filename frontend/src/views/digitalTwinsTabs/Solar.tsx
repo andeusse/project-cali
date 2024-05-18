@@ -41,9 +41,7 @@ import solarIllustration from '../../assets/illustrations/solar.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
 
-type Props = {};
-
-const Solar = (props: Props) => {
+const Solar = () => {
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);

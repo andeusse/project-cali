@@ -11,12 +11,14 @@ import {
   TextField,
   Box,
   Tab,
+  Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
   SMART_CITY,
+  SmartSystemOutput,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
 import { getValueByKey } from '../../utils/getValueByKey';
@@ -60,16 +62,22 @@ import HydraulicTab from '../../components/scenarios/system/HydraulicTab';
 import WindTab from '../../components/scenarios/system/WindTab';
 import BiogasTab from '../../components/scenarios/system/BiogasTab';
 
-type Props = {};
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import ResultTab from '../../components/scenarios/common/ResultTab';
+import { updateScenario } from '../../api/scenario';
+import { AxiosError } from 'axios';
+import { errorResp } from '../../types/api';
 
-const SmartCity = (props: Props) => {
+const SmartCity = () => {
   const [system, setSystem] = useState({ ...SMART_CITY });
   const [isOpen, setIsOpen] = useState(false);
   const [isImageExpanded, setIsImageExpanded] = useState(false);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [selectedTab, setSelectedTab] = useState<string>('solar');
 
-  const error = '';
+  const [data, setData] = useState<SmartSystemOutput | undefined>(undefined);
+  const [error, setError] = useState('');
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<SmartSystemParameters>(
@@ -131,6 +139,26 @@ const SmartCity = (props: Props) => {
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setSelectedTab(newValue);
+  };
+
+  const handleQueryScenario = () => {
+    updateScenario<SmartSystemParameters, SmartSystemOutput>(
+      'smartcity',
+      system
+    )
+      .then((resp) => {
+        setData(resp.data);
+      })
+      .catch((err: AxiosError<errorResp>) => {
+        setData(undefined);
+        setError(err.message);
+        setIsOpen(true);
+      });
+  };
+
+  const handleResetScenario = () => {
+    setData(undefined);
+    setError('');
   };
 
   return (
@@ -313,6 +341,37 @@ const SmartCity = (props: Props) => {
             </AccordionDetails>
           </Accordion>
         </Grid>
+
+        <Grid item xs={12} md={12} xl={12}>
+          <div
+            style={{
+              textAlign: 'center',
+              marginTop: '20px',
+              marginBottom: '20px',
+            }}
+          >
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleQueryScenario}
+              startIcon={<PlayArrowIcon />}
+              sx={{ width: '120px', margin: '5px' }}
+            >
+              Simular
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              disabled={data === undefined}
+              onClick={handleResetScenario}
+              startIcon={<RestartAltIcon />}
+              sx={{ width: '120px', margin: '5px' }}
+            >
+              {'Reiniciar'}
+            </Button>
+          </div>
+        </Grid>
+
         <Grid item xs={12} md={12} xl={12}>
           <TabContext value={selectedTab}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -336,6 +395,9 @@ const SmartCity = (props: Props) => {
                 )}
                 {system.biogasSystemNumber.value !== 0 && (
                   <Tab key={'biogas'} label={'Biogas'} value={'biogas'} />
+                )}
+                {data !== undefined && (
+                  <Tab key={'result'} label={'Resultados'} value={'result'} />
                 )}
               </TabList>
             </Box>
@@ -383,6 +445,9 @@ const SmartCity = (props: Props) => {
                   handleTableChange={handleTableChange}
                 ></BiogasTab>
               )}
+            </TabPanel>
+            <TabPanel key={'result'} value={'result'}>
+              {data !== undefined && <ResultTab data={data}></ResultTab>}
             </TabPanel>
           </TabContext>
         </Grid>
