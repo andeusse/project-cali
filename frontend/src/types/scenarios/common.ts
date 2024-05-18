@@ -157,7 +157,7 @@ export type SolarSystem = CommonSystemParameter &
 export type BatteryTypeParameters = {
   selfDischargeCoefficient: InputType;
   chargeEfficiency: InputType;
-  dischargeDischargeEfficiency: InputType;
+  dischargeEfficiency: InputType;
 };
 
 export type BatterySystem = CommonSystemParameter &

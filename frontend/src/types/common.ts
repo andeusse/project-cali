@@ -477,7 +477,7 @@ export const GEL_BATTERY: BatteryTypeParameters = {
     unit: '%',
     variableString: 'Eficiencia de carga',
   },
-  dischargeDischargeEfficiency: {
+  dischargeEfficiency: {
     disabled: true,
     value: 98,
     tooltip: 'Eficiencia de descarga',
@@ -505,7 +505,7 @@ export const CUSTOM_BATTERY: BatteryTypeParameters = {
     min: 0,
     max: 100,
   },
-  dischargeDischargeEfficiency: {
+  dischargeEfficiency: {
     disabled: false,
     value: 98,
     tooltip: 'Eficiencia de descarga',

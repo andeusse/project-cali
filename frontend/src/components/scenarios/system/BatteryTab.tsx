@@ -289,8 +289,8 @@ const BatteryTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={12}>
                 <CustomNumberField
-                  variable={selectedSystem.dischargeDischargeEfficiency}
-                  name="dischargeDischargeEfficiency"
+                  variable={selectedSystem.dischargeEfficiency}
+                  name="dischargeEfficiency"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
