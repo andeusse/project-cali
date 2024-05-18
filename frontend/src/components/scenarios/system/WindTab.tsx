@@ -45,7 +45,7 @@ const WindTab = (props: TabProps) => {
     if (selectedSystem) {
       let arr: Column[] = [
         { columnId: `variables`, width: 200 },
-        ...selectedSystem.windSpeed.map((v, i) => {
+        ...selectedSystem.windSpeedArray.map((v, i) => {
           const col: Column = {
             columnId: `${i}`,
             width: 100,
@@ -65,7 +65,7 @@ const WindTab = (props: TabProps) => {
         rowId: 'header',
         cells: [
           { type: 'header', text: '', nonEditable: true },
-          ...selectedSystem.windSpeed.map((v, i) => {
+          ...selectedSystem.windSpeedArray.map((v, i) => {
             const col: DefaultCellTypes = {
               type: 'header',
               text: `P ${i + 1}`,
@@ -83,7 +83,7 @@ const WindTab = (props: TabProps) => {
             text: 'Velocidad del viento [m / s]',
             nonEditable: true,
           },
-          ...selectedSystem.windSpeed.map((v, i) => {
+          ...selectedSystem.windSpeedArray.map((v, i) => {
             const col: DefaultCellTypes = {
               type: 'number',
               value: v,

@@ -32,7 +32,7 @@ export const setScenario = (
       s.waterFlowArray = Array(value ? value : 1).fill(0);
     });
     newState.windSystems.forEach((s) => {
-      s.windSpeed = Array(value ? value : 1).fill(0);
+      s.windSpeedArray = Array(value ? value : 1).fill(0);
     });
   }
   if (name.includes('SystemNumber')) {
@@ -87,7 +87,7 @@ export const setScenario = (
           ...newState.windSystems,
           {
             ...COMMON_WIND_SYSTEM,
-            windSpeed: Array(newState.steps.value).fill(0),
+            windSpeedArray: Array(newState.steps.value).fill(0),
             id: uuidv4(),
           },
         ];

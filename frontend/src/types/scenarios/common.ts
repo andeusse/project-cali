@@ -207,7 +207,7 @@ export type WindSystem = CommonSystemParameter &
     airDensity: InputType;
     type: WindType;
     informationMode: ScenariosSolarWindInputInformationType;
-    windSpeed: number[];
+    windSpeedArray: number[];
   };
 
 export type BiogasTypeParamenters = {
@@ -451,7 +451,7 @@ export const COMMON_WIND_SYSTEM: WindSystem = {
   type: WindType.Laboratory,
   informationMode: ScenariosSolarWindInputInformationType.Custom,
   ...LABORATORY_WIND_TURBINE,
-  windSpeed: Array(24).fill(0),
+  windSpeedArray: Array(24).fill(0),
 };
 
 export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
