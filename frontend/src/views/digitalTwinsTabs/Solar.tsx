@@ -37,7 +37,7 @@ import SolarPanel from '../../components/models/SolarPanel';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
-import solarIllustration from '../../assets/illustrations/solar.jpg';
+import solarIllustration from '../../assets/illustrations/solar.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
 

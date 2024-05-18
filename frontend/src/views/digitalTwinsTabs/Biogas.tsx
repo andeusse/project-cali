@@ -30,7 +30,7 @@ import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField
 import CustomToggle from '../../components/UI/CustomToggle';
 
 import biogasDiagram from '../../assets/biogas/biogasPlantDiagram.svg';
-import biogasIllustration from '../../assets/illustrations/biogas.jpg';
+import biogasIllustration from '../../assets/illustrations/biogas.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 
 type Props = {};
