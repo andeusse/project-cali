@@ -120,6 +120,7 @@ const TimeGraphs = (props: Props) => {
                     </MenuItem>
                   );
                 }
+                return null;
               })}
             </Select>
           </FormControl>

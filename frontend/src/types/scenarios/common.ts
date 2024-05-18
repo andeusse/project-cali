@@ -1,11 +1,12 @@
 import {
   CommonSystemParameter,
   SolarPanel as CommonSolarPanel,
+  WindTurbine,
   MONOCRYSTALLINE_PANEL,
   CUSTOM_BATTERY,
   PELTON_TURBINE,
-  WindTurbine,
   LABORATORY_WIND_TURBINE,
+  EXAMPLE_BIOGAS,
 } from '../common';
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
@@ -121,6 +122,16 @@ export enum WindText {
   Custom = 'Personalizado',
 }
 
+export enum BiogasType {
+  Laboratory = 'Laboratory',
+  Custom = 'Custom',
+}
+
+export enum BiogasText {
+  Laboratory = 'Planta ejemplo',
+  Custom = 'Personalizado',
+}
+
 export type SolarSystem = CommonSystemParameter &
   CommonSolarPanel & {
     id: string;
@@ -190,10 +201,39 @@ export type WindSystem = CommonSystemParameter &
     windSpeed: number[];
   };
 
-export type BiogasSystem = CommonSystemParameter & {
-  id: string;
-  var: InputType;
+export type BiogasTypeParamenters = {
+  reactorVolume1: InputType;
+  reactorVolume2: InputType;
+  diameterHeightRatio1: InputType;
+  diameterHeightRatio2: InputType;
+  heatTransferCoefficient1: InputType;
+  heatTransferCoefficient2: InputType;
+  temperatureSetpoint1: InputType;
+  temperatureSetpoint2: InputType;
+  controllerTolerance1: InputType;
+  controllerTolerance2: InputType;
+  carbonConcentration: InputType;
+  hydrogenConcentration: InputType;
+  oxygenConcentration: InputType;
+  sulfurConcentration: InputType;
+  totalConcentration: InputType;
+  substrateDensity: InputType;
+  substrateTemperature: InputType;
+  substratePressure: InputType;
+  substrateFlow: InputType;
+  substratePresurreDrop: InputType;
 };
+
+export type BiogasSystem = CommonSystemParameter &
+  BiogasTypeParamenters & {
+    id: string;
+    stabilizationDays: InputType;
+    ambientPressure: InputType;
+    ambienteTemperature: InputType;
+    electricGeneratorPower: InputType;
+    electricGeneratorEfficiency: InputType;
+    type: BiogasType;
+  };
 
 export type LoadSystem = CommonSystemParameter & {
   id: string;
@@ -412,19 +452,60 @@ export const COMMON_WIND_SYSTEM: WindSystem = {
   windSpeed: Array(24).fill(0),
 };
 
-export const COMMON_LOAD_SYSTEM: LoadSystem = {
+export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
   id: uuidv4(),
-  name: '',
-  var: {
+  name: 'Sistema de biogas',
+  stabilizationDays: {
     disabled: false,
-    value: 0,
-    tooltip: '',
-    unit: '',
-    variableString: '',
+    value: 90,
+    tooltip: 'Días de estabilización',
+    unit: 'días',
+    variableString: 'Días de estabilización',
+    min: 1,
+    max: 365,
   },
+  ambientPressure: {
+    disabled: false,
+    value: 101.323,
+    tooltip: 'Presión ambiente',
+    unit: 'kPa',
+    variableString: 'Presión ambiente',
+    min: 1,
+    max: 200,
+  },
+  ambienteTemperature: {
+    disabled: false,
+    value: 25,
+    tooltip: 'Temperatura ambiente',
+    unit: '°C',
+    variableString: 'Temperatura ambiente',
+    min: 5,
+    max: 40,
+  },
+  electricGeneratorPower: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Potencia de generador eléctrico',
+    unit: 'kW',
+    variableString: 'Potencia de generador eléctrico',
+    min: 0.1,
+    max: 100000,
+    step: 0.1,
+  },
+  electricGeneratorEfficiency: {
+    disabled: false,
+    value: 30,
+    tooltip: 'Eficiencia de generador eléctrico',
+    unit: '%',
+    variableString: 'Eficiencia de generador eléctrico',
+    min: 1,
+    max: 100,
+  },
+  type: BiogasType.Laboratory,
+  ...EXAMPLE_BIOGAS,
 };
 
-export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
+export const COMMON_LOAD_SYSTEM: LoadSystem = {
   id: uuidv4(),
   name: '',
   var: {

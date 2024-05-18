@@ -1,9 +1,4 @@
 import { Box, Container, Grid } from '@mui/material';
-import MonitorIcon from '@mui/icons-material/Monitor';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
-
-import LinkButton from '../components/UI/LinkButton';
 import { Link } from 'react-router-dom';
 
 import homeMonitoring from '../assets/home/homeMonitoring.png';
@@ -16,11 +11,6 @@ import logoUSC from '../assets/home/logoUSC.png';
 type Props = {};
 
 const Home = (props: Props) => {
-  const style = {
-    marginRight: 2,
-    mb: 2,
-  };
-
   return (
     <Container maxWidth={'xl'}>
       <Box display="flex" justifyContent="center" alignItems="center">
@@ -29,7 +19,7 @@ const Home = (props: Props) => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Universidad Santiago de Cali</h1>
       </Box>
-      <Grid container spacing={3} marginTop = {5}>
+      <Grid container spacing={3} marginTop={5}>
         <Grid item xs={12} md={4} xl={4}>
           <Link to={`/monitoring`}>
             <img
@@ -42,8 +32,7 @@ const Home = (props: Props) => {
             sx={{ display: { xs: 'grid', md: 'flex' } }}
             justifyContent="center"
             alignItems="center"
-          >
-          </Box>
+          ></Box>
         </Grid>
         <Grid item xs={12} md={4} xl={4}>
           <Link to={`/digitaltwins`}>
@@ -57,8 +46,7 @@ const Home = (props: Props) => {
             sx={{ display: { xs: 'grid', md: 'flex' } }}
             justifyContent="center"
             alignItems="center"
-          >
-          </Box>
+          ></Box>
         </Grid>
         <Grid item xs={12} md={4} xl={4}>
           <Link to={`/scenarios`}>
@@ -72,8 +60,7 @@ const Home = (props: Props) => {
             sx={{ display: { xs: 'grid', md: 'flex' } }}
             justifyContent="center"
             alignItems="center"
-          >
-          </Box>
+          ></Box>
         </Grid>
         <Grid item xs={12} md={6} xl={6} marginTop={2.5}>
           <Box

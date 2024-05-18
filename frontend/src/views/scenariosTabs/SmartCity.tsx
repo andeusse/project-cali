@@ -42,10 +42,7 @@ import {
   setBatterySystemArraysById,
   setBatterySystemById,
 } from '../../utils/scenarios/setBatterySystem';
-import {
-  setBiogasSystemArraysById,
-  setBiogasSystemById,
-} from '../../utils/scenarios/setBiogasSystem';
+import { setBiogasSystemById } from '../../utils/scenarios/setBiogasSystem';
 import {
   setLoadSystemArraysById,
   setLoadSystemById,
@@ -61,6 +58,7 @@ import {
 import { CellChange } from '@silevis/reactgrid';
 import HydraulicTab from '../../components/scenarios/system/HydraulicTab';
 import WindTab from '../../components/scenarios/system/WindTab';
+import BiogasTab from '../../components/scenarios/system/BiogasTab';
 
 type Props = {};
 
@@ -121,9 +119,6 @@ const SmartCity = (props: Props) => {
     }
     if (type === SmartSystemType.Hydraulic) {
       newState = setHydraulicSystemArraysById({ e, oldState: system, id });
-    }
-    if (type === SmartSystemType.Biogas) {
-      newState = setBiogasSystemArraysById({ e, oldState: system, id });
     }
     if (type === SmartSystemType.Load) {
       newState = setLoadSystemArraysById({ e, oldState: system, id });
@@ -339,6 +334,9 @@ const SmartCity = (props: Props) => {
                 {system.windSystemNumber.value !== 0 && (
                   <Tab key={'wind'} label={'Eólico'} value={'wind'} />
                 )}
+                {system.biogasSystemNumber.value !== 0 && (
+                  <Tab key={'biogas'} label={'Biogas'} value={'biogas'} />
+                )}
               </TabList>
             </Box>
             <TabPanel key={'solar'} value={'solar'}>
@@ -375,6 +373,15 @@ const SmartCity = (props: Props) => {
                   handleSystemChange={handleSystemChange}
                   handleTableChange={handleTableChange}
                 ></WindTab>
+              )}
+            </TabPanel>
+            <TabPanel key={'biogas'} value={'biogas'}>
+              {system.biogasSystemNumber.value !== 0 && (
+                <BiogasTab
+                  system={system}
+                  handleSystemChange={handleSystemChange}
+                  handleTableChange={handleTableChange}
+                ></BiogasTab>
               )}
             </TabPanel>
           </TabContext>
