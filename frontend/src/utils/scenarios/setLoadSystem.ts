@@ -4,6 +4,7 @@ import {
   SetSystemArrayType,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
+import { CellChange2Array } from '../cellChange2Array';
 
 export const setLoadSystemById = <T extends SmartSystemParameters>(
   e: any,
@@ -43,7 +44,8 @@ export const setLoadSystemArraysById = <T extends SmartSystemParameters>(
   const newState = { ...oldState };
   let system = newState.loadSystems.find((s) => s.id === id);
   if (system) {
-    // system.chargePowerArray = matrix2Array(e, 0).slice(0, newState.steps.value);
+    const newArrays = CellChange2Array(e, [system.powerArray]);
+    system.powerArray = newArrays[0];
   }
   newState.loadSystems = newState.loadSystems.map((s) => {
     if (system && s.id === id) {

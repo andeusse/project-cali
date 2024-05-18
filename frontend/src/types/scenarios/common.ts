@@ -83,6 +83,22 @@ export enum ScenariosSolarWindInputInformationText {
   Typical = 'Perfil típico',
 }
 
+export enum ScenariosLoadInputInformationType {
+  Custom = 'Custom',
+  Fixed = 'Fixed',
+  Residential = 'Residential',
+  Commercial = 'Commercial',
+  Industrial = 'Industrial',
+}
+
+export enum ScenariosLoadInputInformationText {
+  Custom = 'Perfil personalizado',
+  Fixed = 'Fijo',
+  Residential = 'Perfil típico residencial',
+  Commercial = 'Perfil típico comercial',
+  Industrial = 'Perfil típico industrial',
+}
+
 export enum SolarPanelModuleType {
   MonocrystallinePanel = 'MonocrystallinePanel',
   PolicrystallinePanel = 'PolicrystallinePanel',
@@ -246,7 +262,10 @@ export type BiogasSystem = CommonSystemParameter &
 
 export type LoadSystem = CommonSystemParameter & {
   id: string;
-  var: InputType;
+  informationMode: ScenariosLoadInputInformationType;
+  power: InputType;
+  peakPower: InputType;
+  powerArray: number[];
 };
 
 export type SmartSystemParameters = CommonSystemParameter & {
@@ -509,14 +528,29 @@ export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
 
 export const COMMON_LOAD_SYSTEM: LoadSystem = {
   id: uuidv4(),
-  name: '',
-  var: {
+  name: 'Carga',
+  informationMode: ScenariosLoadInputInformationType.Custom,
+  power: {
     disabled: false,
-    value: 0,
-    tooltip: '',
-    unit: '',
-    variableString: '',
+    value: 10,
+    tooltip: 'Potencia de demanda',
+    unit: 'kW',
+    variableString: 'Potencia de demanda',
+    min: 0.1,
+    max: 1000000,
+    step: 0.1,
   },
+  peakPower: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Potencia de demanda pico',
+    unit: 'kW',
+    variableString: 'Potencia de demanda pico',
+    min: 0.1,
+    max: 1000000,
+    step: 0.1,
+  },
+  powerArray: Array(24).fill(10),
 };
 
 export const COMMON_SCENARIO: SmartSystemParameters = {

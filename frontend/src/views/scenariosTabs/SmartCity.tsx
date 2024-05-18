@@ -68,6 +68,7 @@ import ResultTab from '../../components/scenarios/common/ResultTab';
 import { updateScenario } from '../../api/scenario';
 import { AxiosError } from 'axios';
 import { errorResp } from '../../types/api';
+import LoadTab from '../../components/scenarios/system/LoadTab';
 
 const SmartCity = () => {
   const [system, setSystem] = useState({ ...SMART_CITY });
@@ -396,6 +397,9 @@ const SmartCity = () => {
                 {system.biogasSystemNumber.value !== 0 && (
                   <Tab key={'biogas'} label={'Biogas'} value={'biogas'} />
                 )}
+                {system.loadSystemNumber.value !== 0 && (
+                  <Tab key={'load'} label={'Carga'} value={'load'} />
+                )}
                 {data !== undefined && (
                   <Tab key={'result'} label={'Resultados'} value={'result'} />
                 )}
@@ -444,6 +448,15 @@ const SmartCity = () => {
                   handleSystemChange={handleSystemChange}
                   handleTableChange={handleTableChange}
                 ></BiogasTab>
+              )}
+            </TabPanel>
+            <TabPanel key={'load'} value={'load'}>
+              {system.loadSystemNumber.value !== 0 && (
+                <LoadTab
+                  system={system}
+                  handleSystemChange={handleSystemChange}
+                  handleTableChange={handleTableChange}
+                ></LoadTab>
               )}
             </TabPanel>
             <TabPanel key={'result'} value={'result'}>

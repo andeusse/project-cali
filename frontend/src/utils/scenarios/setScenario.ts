@@ -34,6 +34,9 @@ export const setScenario = (
     newState.windSystems.forEach((s) => {
       s.windSpeedArray = Array(value ? value : 1).fill(0);
     });
+    newState.loadSystems.forEach((s) => {
+      s.powerArray = Array(value ? value : 1).fill(10);
+    });
   }
   if (name.includes('SystemNumber')) {
     if ('solarSystems' in newState && name.includes('solar')) {
@@ -109,7 +112,11 @@ export const setScenario = (
       if (value > newState.loadSystemNumber.value) {
         newState.loadSystems = [
           ...newState.loadSystems,
-          { ...COMMON_LOAD_SYSTEM, id: uuidv4() },
+          {
+            ...COMMON_LOAD_SYSTEM,
+            powerArray: Array(newState.steps.value).fill(10),
+            id: uuidv4(),
+          },
         ];
       } else if (value < newState.loadSystemNumber.value) {
         newState.loadSystems.splice(-1);
