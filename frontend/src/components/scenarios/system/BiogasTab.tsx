@@ -105,8 +105,8 @@ const BiogasTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={6}>
                 <CustomNumberField
-                  variable={selectedSystem.ambienteTemperature}
-                  name="ambienteTemperature"
+                  variable={selectedSystem.ambientTemperature}
+                  name="ambientTemperature"
                   isInteger={true}
                   handleChange={handleChange}
                 ></CustomNumberField>

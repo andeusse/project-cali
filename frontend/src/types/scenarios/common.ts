@@ -238,7 +238,7 @@ export type BiogasSystem = CommonSystemParameter &
     id: string;
     stabilizationDays: InputType;
     ambientPressure: InputType;
-    ambienteTemperature: InputType;
+    ambientTemperature: InputType;
     electricGeneratorPower: InputType;
     electricGeneratorEfficiency: InputType;
     type: BiogasType;
@@ -475,7 +475,7 @@ export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
     min: 1,
     max: 200,
   },
-  ambienteTemperature: {
+  ambientTemperature: {
     disabled: false,
     value: 25,
     tooltip: 'Temperatura ambiente',

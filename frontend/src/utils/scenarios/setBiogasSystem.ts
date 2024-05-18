@@ -24,16 +24,16 @@ export const setBiogasSystemById = <T extends SmartSystemParameters>(
           value: parseFloat(value),
         },
       };
-      if (name === 'ambienteTemperature') {
+      if (name === 'ambientTemperature') {
         system = {
           ...system,
           temperatureSetpoint1: {
             ...system.temperatureSetpoint1,
-            min: system.ambienteTemperature.value,
+            min: system.ambientTemperature.value,
           },
           temperatureSetpoint2: {
             ...system.temperatureSetpoint2,
-            min: system.ambienteTemperature.value,
+            min: system.ambientTemperature.value,
           },
         };
       }
