@@ -5,7 +5,7 @@ Created on Wed Aug 16 11:03:11 2023
 @author: Sergio
 """
 import numpy as np
-import ThermoProperties as Thermo
+from simulation_models.Scenarios_systems import ThermoProperties as Thermo
 from scipy.integrate import odeint
 import pandas as pd
 import importlib

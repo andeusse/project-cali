@@ -1,10 +1,10 @@
-import Scenary_BESS
-import BiogasModel as Scenary_BM
-import Scenary_Hydro
-import Scenary_PV
-import Scenary_WF
-import Scenary_Demand
-import Scenary_Optimizer
+from simulation_models.Scenarios_systems import Scenary_BESS
+from simulation_models.Scenarios_systems import BiogasModel as Scenary_BM
+from simulation_models.Scenarios_systems import Scenary_Hydro
+from simulation_models.Scenarios_systems import Scenary_PV
+from simulation_models.Scenarios_systems import Scenary_WF
+from simulation_models.Scenarios_systems import Scenary_Demand
+from simulation_models.Scenarios_systems import Scenary_Optimizer
 import pandas as pd
 
 class Scenary_Model:

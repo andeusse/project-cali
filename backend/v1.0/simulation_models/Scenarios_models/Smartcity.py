@@ -1,4 +1,4 @@
-import Scenary
+from simulation_models.Scenarios_models import Scenary
 import pandas as pd
 
 class Smartcity:

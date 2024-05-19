@@ -1,9 +1,9 @@
 import xalglib
 import pandas as pd
-import BiogasModel as BM
-import Scenary_Hydro
-import Scenary_PV
-import Scenary_WF
+from simulation_models.Scenarios_systems import BiogasModel as BM
+from simulation_models.Scenarios_systems import Scenary_Hydro
+from simulation_models.Scenarios_systems import Scenary_PV
+from simulation_models.Scenarios_systems import Scenary_WF
 
 class Dispatcher:
     # Inicialización del modelo de optimización con los elementos creados en el escenario (ver script Scenario.py)
