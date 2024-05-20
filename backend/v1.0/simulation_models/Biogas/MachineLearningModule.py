@@ -78,7 +78,7 @@ class BiogasModelTrain:
             def Model (K, t, Csus_exp):
 
                 def DiferentialEquation (C, t):
-                    self.dCsusR101_dt = (Q/self.VR1)*(self.Csus_ini-C)-K
+                    self.dCsusR101_dt = (Q/self.VR1)*(self.Csus_ini-C)-K/self.VR1
                     return self.dCsusR101_dt
                 Co = Csus_exp[0]
                 self.Csus_R101 = odeint (DiferentialEquation, Co, t)
