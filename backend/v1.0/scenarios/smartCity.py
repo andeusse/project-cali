@@ -46,11 +46,15 @@ class SmartCity(Resource):
     testTemperature = []
     operatingTemperature = []
     temperatureVariationCoefficient = []
+    informationMode = []
+    radiations = []
+    temperatures = []
 
     for solarSystem in data['solarSystems']:
       PV_Names.append(solarSystem['name'])
       moduleNumbers.append(solarSystem['modulesNumber']['value'])
       modulePowers.append(solarSystem['modulePower']['value'])
+      
       if solarSystem['type'] == 'MonocrystallinePanel':
         moduleTypes.append(1)
       elif solarSystem['type'] == 'PolicrystallinePanel':
@@ -69,6 +73,19 @@ class SmartCity(Resource):
         testTemperature.append(solarSystem['testTemperature']['value'])
         operatingTemperature.append(solarSystem['operatingTemperature']['value'])
         temperatureVariationCoefficient.append(solarSystem['temperatureVariationCoefficient']['value'])
+      
+      if solarSystem['informationMode'] == 'Fixed':
+        informationMode.append(1)
+        radiations.append([solarSystem['radiation']['value']])
+        temperatures.append([solarSystem['temperature']['value']])
+      elif solarSystem['informationMode'] == 'Typical':
+        informationMode.append(2)
+        radiations.append([solarSystem['radiation']['value']])
+        temperatures.append([solarSystem['temperature']['value']])
+      elif solarSystem['informationMode'] == 'Custom':
+        informationMode.append(0)
+        radiations.append(solarSystem['radiationArray']['value'])
+        temperatures.append(solarSystem['temperatureArray']['value'])
 
     BESS_Names = []
     batteryTypes = []
@@ -81,6 +98,9 @@ class SmartCity(Resource):
     selfDischargeCoefficient = []
     chargeEfficiency = []
     dischargeEfficiency = []
+    batteryInformationMode = []
+    chargePowers = []
+    dischargePowers = [] 
 
     for batterySystem in data['batterySystems']:
       BESS_Names.append(batterySystem['name'])
@@ -98,6 +118,15 @@ class SmartCity(Resource):
         chargeEfficiency.append(batterySystem['chargeEfficiency']['value'])
         dischargeEfficiency.append(batterySystem['dischargeEfficiency']['value'])
 
+      if batterySystem['informationMode'] == 'Fixed':
+        batteryInformationMode.append(1)
+        chargePowers.append([hydraulicSystem['chargePower']['value']])
+        dischargePowers.append([hydraulicSystem['dischargePower']['value']])
+      elif batterySystem['informationMode'] == 'Custom':
+        batteryInformationMode.append(0)
+        chargePowers.append(hydraulicSystem['chargePowerArray']['value'])
+        dischargePowers.append(hydraulicSystem['dischargePowerArray']['value'])
+
     hydroNames = []
     turbineNumbers = []
     turbinePowers = []
@@ -108,11 +137,15 @@ class SmartCity(Resource):
     maximumWaterHead = []
     minimumWaterFlow = []
     maximumWaterFlow = []
+    turbineInformationMode = []
+    waterHeads = []
+    waterFlows = []    
 
     for hydraulicSystem in data['hydraulicSystems']:
       hydroNames.append(hydraulicSystem['name'])
       turbineNumbers.append(hydraulicSystem['turbineNumber']['value'])
       turbinePowers.append(hydraulicSystem['nominalPower']['value'])
+
       if hydraulicSystem['type'] == 'Pelton':
         turbineTypes.append(1)
       if hydraulicSystem['type'] == 'Turgo':
@@ -125,6 +158,15 @@ class SmartCity(Resource):
         maximumWaterHead.append(hydraulicSystem['maximumWaterHead']['value'])
         minimumWaterFlow.append(hydraulicSystem['minimumWaterFlow']['value'])
         maximumWaterFlow.append(hydraulicSystem['maximumWaterFlow']['value'])
+      
+      if hydraulicSystem['informationMode'] == 'Fixed':
+        turbineInformationMode.append(1)
+        waterHeads.append([hydraulicSystem['waterHead']['value']])
+        waterFlows.append([hydraulicSystem['waterFlow']['value']])
+      elif hydraulicSystem['informationMode'] == 'Custom':
+        turbineInformationMode.append(0)
+        waterHeads.append(hydraulicSystem['waterHeadArray']['value'])
+        waterFlows.append(hydraulicSystem['waterFlowArray']['value'])
 
     windNames = []
     windTurbineNumbers = []
@@ -137,22 +179,35 @@ class SmartCity(Resource):
     lowerCutoffWindSpeed = []
     upperCutoffWindSpeed = []
     surfaceRoughnessLength = []
+    windInformationMode = []
+    windSpeeds = []
 
     for windSystem in data['windSystems']:
       windNames.append(windSystem['name'])
       windTurbineNumbers.append(windSystem['turbineNumber']['value'])
       windTurbinePowers.append(windSystem['nominalPower']['value'])
+      airDensity.append(windSystem['airDensity']['value'])
+      
       if windSystem['type'] == 'Laboratory':
         windTurbineTypes.append(1)
       elif windSystem['type'] == 'Custom':
         windTurbineTypes.append(0)
-        airDensity.append(windSystem['airDensity']['value'])
         rotorHeight.append(windSystem['rotorHeight']['value'])
         anemometerHeight.append(windSystem['anemometerHeight']['value'])
         ratedWindSpeed.append(windSystem['ratedWindSpeed']['value'])
         lowerCutoffWindSpeed.append(windSystem['lowerCutoffWindSpeed']['value'])
         upperCutoffWindSpeed.append(windSystem['upperCutoffWindSpeed']['value'])
         surfaceRoughnessLength.append(windSystem['surfaceRoughnessLength']['value'])
+      
+      if windSystem['informationMode'] == 'Fixed':
+        windInformationMode.append(1)
+        windSpeeds.append([solarSystem['windSpeed']['value']])
+      elif windSystem['informationMode'] == 'Typical':
+        windInformationMode.append(2)
+        windSpeeds.append([solarSystem['windSpeed']['value']])
+      elif windSystem['informationMode'] == 'Custom':
+        windInformationMode.append(0)
+        windSpeeds.append(solarSystem['windSpeedArray']['value'])
 
     loadNames = []
     loadTypes = []
@@ -177,42 +232,79 @@ class SmartCity(Resource):
         loadTypes.append(0)
         loadPowers.append(loadSystem['powerArray']['value'])
 
-    # biogasNames = ['Biogas_1','Biogas_2']
+    biogasNames = []
+    stabilizationDays = []
+    ambientPressure = []
+    ambientTemperature = []
+    electricGeneratorPower = []
+    electricGeneratorEfficiency = []
+    reactorVolume1 = []
+    reactorVolume2 = []
+    diameterHeightRatio1 = []
+    diameterHeightRatio2 = []
+    heatTransferCoefficient1 = []
+    heatTransferCoefficient2 = []
+    temperatureSetpoint1 = []
+    temperatureSetpoint2 = []
+    controllerTolerance1 = []
+    controllerTolerance2 = []
+    carbonConcentration = []
+    hydrogenConcentration = []
+    oxygenConcentration = []
+    sulfurConcentration = []
+    totalConcentration = []
+    substrateDensity = []
+    substrateTemperature = []
+    substratePressure = []
+    substrateFlow = []
+    substratePresurreDrop = []
 
-    # smartcity_model.resourcesDefinition(PV_Names = PV_Names, moduleNumbers = moduleNumbers, modulePowers = modulePowers, moduleTypes = moduleTypes, f_PV = deratingFactor, G_0 = testIrradiance, u_PM = temperatureVariationCoefficient, T_cSTC = testTemperature, T_cNOCT = nominalTemperature, T_aNOCT = operatingTemperature, G_NOCT = nominalIrradiance, n_c = efficiency, 
-    #                         BESS_Names = BESS_Names, batteryTypes = batteryTypes, batteryEnergy = storageCapacity, chargePower_Max = maxChargePower, chargePower_Min = minChargePower, dischargePower_Max = maxDischargePower, dischargePower_Min = minDischargePower, gamma_sd = selfDischargeCoefficient, eta_bc = chargeEfficiency, eta_bd = dischargeEfficiency, 
-    #                         hydroNames = hydroNames, turbineNumbers = turbineNumbers, turbinePowers = turbinePowers, turbineTypes = turbineTypes, n_t = efficiency, H_min = minimumWaterHead, H_max = maximumWaterHead, Q_min = minimumWaterFlow, Q_max = maximumWaterFlow, f_h = frictionLosses, 
-    #                         WF_Names = windNames, windTurbineNumbers = windTurbineNumbers, windTurbinePowers = windTurbinePowers, windTurbineTypes = windTurbineTypes, H_R = rotorHeight, H_A = anemometerHeight, Z_0 = surfaceRoughnessLength, V_C = lowerCutoffWindSpeed, V_N = ratedWindSpeed, V_F = upperCutoffWindSpeed, 
-    #                         biogasNames = , timestep = , days = , reactorVolume1 = , reactorVolume2 = , heightRelation1 = , heightRelation2 = , heatTransfer1 = , heatTransfer2 = , Tset1 = , tolerancia1 = , Tset2 = , tolerancia2 = , Cci = , Chi = , Coi = , Csi = , ST = , rho_sus = , Tin_sus = , Pin_sus = , vin_sus = , DeltaP = , Patm = , Tamb = , genEfficiency = , ratedPower = , 
-    #                         demandNames = loadNames, demandTypes = loadTypes, demandPowersSet = loadPowers)
+    for biogasSystem in data['biogasSystems']:
+      biogasNames.append(biogasSystem['name'])
+      stabilizationDays.append(biogasSystem['stabilizationDays']['value'])
+      ambientPressure.append(biogasSystem['ambientPressure']['value'])
+      ambientTemperature.append(biogasSystem['ambientTemperature']['value'])
+      electricGeneratorPower.append(biogasSystem['electricGeneratorPower']['value'])
+      electricGeneratorEfficiency.append(biogasSystem['electricGeneratorEfficiency']['value'])
+      reactorVolume1.append(biogasSystem['reactorVolume1']['value'])
+      reactorVolume2.append(biogasSystem['reactorVolume2']['value'])
+      diameterHeightRatio1.append(biogasSystem['diameterHeightRatio1']['value'])
+      diameterHeightRatio2.append(biogasSystem['diameterHeightRatio2']['value'])
+      heatTransferCoefficient1.append(biogasSystem['heatTransferCoefficient1']['value'])
+      heatTransferCoefficient2.append(biogasSystem['heatTransferCoefficient2']['value'])
+      temperatureSetpoint1.append(biogasSystem['temperatureSetpoint1']['value'])
+      temperatureSetpoint2.append(biogasSystem['temperatureSetpoint2']['value'])
+      controllerTolerance1.append(biogasSystem['controllerTolerance1']['value'])
+      controllerTolerance2.append(biogasSystem['controllerTolerance2']['value'])
+      carbonConcentration.append(biogasSystem['carbonConcentration']['value'])
+      hydrogenConcentration.append(biogasSystem['hydrogenConcentration']['value'])
+      oxygenConcentration.append(biogasSystem['oxygenConcentration']['value'])
+      sulfurConcentration.append(biogasSystem['sulfurConcentration']['value'])
+      totalConcentration.append(biogasSystem['totalConcentration']['value'])
+      substrateDensity.append(biogasSystem['substrateDensity']['value'])
+      substrateTemperature.append(biogasSystem['substrateTemperature']['value'])
+      substratePressure.append(biogasSystem['substratePressure']['value'])
+      substrateFlow.append(biogasSystem['substrateFlow']['value'])
+      substratePresurreDrop.append(biogasSystem['substratePresurreDrop']['value'])
 
-    # # Operación manual
 
-    # irradiance = [(random.uniform(500,1000)) for i in range(simulationSteps)]
-    # temperature = [(random.uniform(20,30)) for i in range(simulationSteps)]
-    # head = [(random.uniform(20,30)) for i in range(simulationSteps)]
-    # flux = [(random.uniform(0.003,0.01)) for i in range(simulationSteps)]
-    # batcharge1 = [(random.uniform(0,5)) for i in range(simulationSteps)]
-    # batcharge2 = [(random.uniform(0,50)) for i in range(simulationSteps)]
-    # batcharge3 = [(random.uniform(0,50)) for i in range(simulationSteps)]
-    # batdischarge1 = [(random.uniform(0,5)) for i in range(simulationSteps)]
-    # batdischarge2 = [(random.uniform(0,50)) for i in range(simulationSteps)]
-    # batdischarge3 = [(random.uniform(0,50)) for i in range(simulationSteps)]
-    # wind = [(random.uniform(5,12)) for i in range(simulationSteps)]
-    # weights = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 3.0, 4.0, 1.0, 1.0, 1.0, 2.0, 3.0, 5.0]
+    smartcity_model.resourcesDefinition(PV_Names = PV_Names, moduleNumbers = moduleNumbers, modulePowers = modulePowers, moduleTypes = moduleTypes, f_PV = deratingFactor, G_0 = testIrradiance, u_PM = temperatureVariationCoefficient, T_cSTC = testTemperature, T_cNOCT = nominalTemperature, T_aNOCT = operatingTemperature, G_NOCT = nominalIrradiance, n_c = efficiency, 
+                            BESS_Names = BESS_Names, batteryTypes = batteryTypes, batteryEnergy = storageCapacity, chargePower_Max = maxChargePower, chargePower_Min = minChargePower, dischargePower_Max = maxDischargePower, dischargePower_Min = minDischargePower, gamma_sd = selfDischargeCoefficient, eta_bc = chargeEfficiency, eta_bd = dischargeEfficiency, 
+                            hydroNames = hydroNames, turbineNumbers = turbineNumbers, turbinePowers = turbinePowers, turbineTypes = turbineTypes, n_t = efficiency, H_min = minimumWaterHead, H_max = maximumWaterHead, Q_min = minimumWaterFlow, Q_max = maximumWaterFlow, f_h = frictionLosses, 
+                            WF_Names = windNames, windTurbineNumbers = windTurbineNumbers, windTurbinePowers = windTurbinePowers, windTurbineTypes = windTurbineTypes, H_R = rotorHeight, H_A = anemometerHeight, Z_0 = surfaceRoughnessLength, V_C = lowerCutoffWindSpeed, V_N = ratedWindSpeed, V_F = upperCutoffWindSpeed, 
+                            biogasNames = biogasNames, timestep = 1, days = stabilizationDays, reactorVolume1 = reactorVolume1, reactorVolume2 = reactorVolume2, heightRelation1 = diameterHeightRatio1, heightRelation2 = diameterHeightRatio2, heatTransfer1 = heatTransferCoefficient1, heatTransfer2 = heatTransferCoefficient2, Tset1 = temperatureSetpoint1, tolerancia1 = controllerTolerance1, Tset2 = temperatureSetpoint2, tolerancia2 = controllerTolerance2, Cci = carbonConcentration, Chi = hydrogenConcentration, Coi = oxygenConcentration, Csi = sulfurConcentration, ST = totalConcentration, rho_sus = substrateDensity, Tin_sus = substrateTemperature, Pin_sus = substratePressure, vin_sus = substrateFlow, DeltaP = substratePresurreDrop, Patm = ambientPressure, Tamb = ambientTemperature, genEfficiency = electricGeneratorEfficiency, ratedPower = electricGeneratorPower, 
+                            demandNames = loadNames, demandTypes = loadTypes, demandPowersSet = loadPowers)
 
-    # 'solarSystems': ['informationMode': 'Fixed', 'radiation': {'disabled': False, 'value': 800, 'tooltip': 'Irradiancia solar', 'unit': 'W / m²', 'variableString': 'Irradiancia solar', 'min': 0, 'max': 1500, 'step': 100}, 'temperature': {'disabled': False, 'value': 25, 'tooltip': 'Temperatura ambiente', 'unit': '°C', 'variableString': 'Temperatura ambiente', 'min': -10, 'max': 50}, 'radiationArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'temperatureArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}
-    # 'batterySystems': ['informationMode': 'Fixed', 'chargePowerArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'dischargePowerArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}],
-    # 'hydraulicSystems': ['informationMode': 'Fixed', 'waterHeadArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'waterFlowArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}],
-    # 'windSystems': ['informationMode': 'Fixed', 'windSpeedArray': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+   
+    weights = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 3.0, 4.0, 1.0, 1.0, 1.0, 2.0, 3.0, 5.0]
+    
 
-    # Results_df = smartcity_model.operation(PV_MeteorologicalDataType=0, temperature=temperature, irradiance=irradiance, 
-    #               BESS_OperativeDataType=0, initialSOC=[50,50,50], chargePower=[batcharge1,batcharge2,batcharge3], dischargePower= [batdischarge1,batdischarge2,batdischarge3], 
-    #               hydroOperativeDataType=0, head=[head,head,head], flux=[flux,flux,flux], 
-    #               WF_MeteorologicalDataType=0, airDensity = 1.112, windSpeed=[wind,wind,wind],
-    #               weights = weights)
+    results_df = smartcity_model.operation(PV_MeteorologicalDataType = informationMode, temperature = temperatures, irradiance = radiations, 
+                  BESS_OperativeDataType = batteryInformationMode, initialSOC = stateOfCharge, chargePower = chargePowers, dischargePower = dischargePowers, 
+                  hydroOperativeDataType = turbineInformationMode, head = waterHeads, flux = waterFlows, 
+                  WF_MeteorologicalDataType = windInformationMode, airDensity = airDensity, windSpeed = windSpeeds,
+                  weights = weights)
 
-    # Results = Results_df.to_json(orient='split')
+    response = results_df.to_json(orient='split')
 
-    response = {}
     return response

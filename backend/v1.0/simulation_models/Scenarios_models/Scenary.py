@@ -82,8 +82,8 @@ class Scenary_Model:
         self.PV_Powers = pd.DataFrame(columns = self.PV_Names)
         
         for i in range(self.N_PV):
-            self.T_Profile.append(self.PV_Elements[i].meteorologicalData(PV_MeteorologicalDataType, temperature, irradiance)[0])
-            self.G_Profile.append(self.PV_Elements[i].meteorologicalData(PV_MeteorologicalDataType, temperature, irradiance)[1])
+            self.T_Profile.append(self.PV_Elements[i].meteorologicalData(PV_MeteorologicalDataType[i], temperature[i], irradiance[i])[0])
+            self.G_Profile.append(self.PV_Elements[i].meteorologicalData(PV_MeteorologicalDataType[i], temperature[i], irradiance[i])[1])
         
         if self.operationType == 1:
             for i in range(self.N_PV):
@@ -122,17 +122,13 @@ class Scenary_Model:
         self.dischargePowers.columns = self.BESS_dischargeNames
         
         for i in range(self.N_BESS):
-            self.BESS_Elements[i].operativeData(BESS_OperativeDataType, initialSOC[i], chargePower[i], dischargePower[i])
+            self.BESS_Elements[i].operativeData(BESS_OperativeDataType[i], initialSOC[i], chargePower[i], dischargePower[i])
         
         if self.operationType == 1:
             for i in range(self.N_BESS):
                 self.BESS_SOC[self.BESS_SOC_Names[i]] = self.BESS_Elements[i].SOCOutput(self.stepTime)[0]
-            return self.BESS_SOC, self.chargePowers, self.dischargePowers
+            return self.BESS_SOC, self.chargePowers*(-1), self.dischargePowers
         elif self.operationType == 2:
-            # self.BESS_OperativeDataType = BESS_OperativeDataType
-            # self.initialSOC = initialSOC
-            # self.chargePower = chargePower
-            # self.dischargePower = dischargePower
             return 0, 0, 0
     
     # Creación de los elementos Hydro con base en sus parámetros constructivos 
@@ -157,8 +153,8 @@ class Scenary_Model:
         self.hydroPowers = pd.DataFrame(columns = self.hydroNames)
         
         for i in range(self.N_Hydro):
-            self.H_Profile.append(self.hydroElements[i].operativeData(hydroOperativeDataType, head[i], flux[i])[0])
-            self.Q_Profile.append(self.hydroElements[i].operativeData(hydroOperativeDataType, head[i], flux[i])[1])
+            self.H_Profile.append(self.hydroElements[i].operativeData(hydroOperativeDataType[i], head[i], flux[i])[0])
+            self.Q_Profile.append(self.hydroElements[i].operativeData(hydroOperativeDataType[i], head[i], flux[i])[1])
         
         if self.operationType == 1:
             for i in range(self.N_Hydro):
@@ -191,7 +187,7 @@ class Scenary_Model:
         self.WF_Powers = pd.DataFrame(columns = self.WF_Names)
         
         for i in range(self.N_WF):
-            self.V_Profile.append(self.WF_Elements[i].meteorologicalData(WF_MeteorologicalDataType, airDensity, windSpeed[i]))
+            self.V_Profile.append(self.WF_Elements[i].meteorologicalData(WF_MeteorologicalDataType[i], airDensity, windSpeed[i]))
         
         if self.operationType == 1:
             for i in range(self.N_WF):
@@ -272,7 +268,7 @@ class Scenary_Model:
         for i in range(self.N_Demand):
             self.demandPowers[self.demandNames[i]] = self.demandElements[i].Demand()
         self.loadProfile = self.demandPowers.sum(axis=1)
-        return self.demandPowers
+        return self.demandPowers*(-1)
     
     # Cálculo de potencia de la Red Externa balanceando generación-demanda
     def GridPower(self):
@@ -321,7 +317,7 @@ class Scenary_Model:
                 WF_PowerResults = PowerCalculationResults.iloc[:, self.N_PV + 2*self.N_BESS + self.N_Hydro : self.N_PV + 2*self.N_BESS + self.N_Hydro + self.N_WF]
                 biogasPowerResults = PowerCalculationResults.iloc[:, self.N_PV + 2*self.N_BESS + self.N_Hydro + self.N_WF : self.N_PV + 2*self.N_BESS + self.N_Hydro + self.N_WF + self.N_Biogas]
                 gridPowerResults = PowerCalculationResults.iloc[:, self.N_PV + 2*self.N_BESS + self.N_Hydro + self.N_WF + self.N_Biogas]
-                demandPowerResults = self.demandPowers
+                demandPowerResults = self.demandPowers*(-1)
                 BESS_SOC_Results = PowerCalculationResults.iloc[:, self.N_PV + 2*self.N_BESS + self.N_Hydro + self.N_WF + self.N_Biogas + 1 + self.N_BESS : self.N_PV + 2*self.N_BESS + self.N_Hydro + self.N_WF + self.N_Biogas + 1 + 2*self.N_BESS]
                 
                 PowerCalculationResults = pd.concat([PowerCalculationResults, demandPowerResults], axis = 1)
