@@ -162,7 +162,6 @@ const SmartCity = () => {
     //     setIsOpen(true);
     //   });
     updateScenarioMock().then((res) => {
-      console.log(res);
       setData(res);
     });
   };

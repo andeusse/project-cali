@@ -66,7 +66,7 @@ const TimeGraphs = (props: Props) => {
     }
   };
 
-  const handleRemoveGrahp = (e: string) => {
+  const handleRemoveGraph = (e: string) => {
     setCurrentGraphs(currentGraphs.filter((f) => f.variable !== e));
   };
 
@@ -144,7 +144,7 @@ const TimeGraphs = (props: Props) => {
                   <TimeGraph
                     graph={g}
                     variable={variable}
-                    handleDeleteChart={handleRemoveGrahp}
+                    handleDeleteChart={handleRemoveGraph}
                     isPlaying={isPlaying}
                   ></TimeGraph>
                 </Grid>
