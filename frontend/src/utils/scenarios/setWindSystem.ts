@@ -8,6 +8,7 @@ import {
   WindSystem,
   SmartSystemParameters,
   WindType,
+  SortableItemParameter,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 
@@ -43,6 +44,18 @@ export const setWindSystemById = <T extends SmartSystemParameters>(
           ...system,
           ...params,
         };
+      }
+      if (name === 'name') {
+        newState.priorityList = newState.priorityList.map((e) => {
+          if (system && e.id === id) {
+            const value: SortableItemParameter = {
+              id: e.id,
+              name: system.name,
+            };
+            return value;
+          }
+          return e;
+        });
       }
     }
   }

@@ -9,6 +9,7 @@ import {
   SetSystemArrayType,
   HydraulicType,
   SmartSystemParameters,
+  SortableItemParameter,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 
@@ -47,6 +48,18 @@ export const setHydraulicSystemById = <T extends SmartSystemParameters>(
           ...system,
           ...params,
         };
+      }
+      if (name === 'name') {
+        newState.priorityList = newState.priorityList.map((e) => {
+          if (system && e.id === id) {
+            const value: SortableItemParameter = {
+              id: e.id,
+              name: system.name,
+            };
+            return value;
+          }
+          return e;
+        });
       }
     }
   }

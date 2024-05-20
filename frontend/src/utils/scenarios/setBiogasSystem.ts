@@ -4,6 +4,7 @@ import {
   BiogasSystem,
   BiogasType,
   SmartSystemParameters,
+  SortableItemParameter,
 } from '../../types/scenarios/common';
 
 export const setBiogasSystemById = <T extends SmartSystemParameters>(
@@ -51,6 +52,18 @@ export const setBiogasSystemById = <T extends SmartSystemParameters>(
           ...system,
           ...params,
         };
+      }
+      if (name === 'name') {
+        newState.priorityList = newState.priorityList.map((e) => {
+          if (system && e.id === id) {
+            const value: SortableItemParameter = {
+              id: e.id,
+              name: system.name,
+            };
+            return value;
+          }
+          return e;
+        });
       }
     }
   }

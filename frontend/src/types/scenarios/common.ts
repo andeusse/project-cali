@@ -268,6 +268,11 @@ export type LoadSystem = CommonSystemParameter & {
   powerArray: number[];
 };
 
+export type SortableItemParameter = {
+  id: string;
+  name: string;
+};
+
 export type SmartSystemParameters = CommonSystemParameter & {
   operationMode: ScenariosModesType;
   steps: InputType;
@@ -280,6 +285,7 @@ export type SmartSystemParameters = CommonSystemParameter & {
   batterySystemNumber: InputType;
   hydraulicSystemNumber: InputType;
   windSystemNumber: InputType;
+  priorityList: SortableItemParameter[];
   solarSystems: SolarSystem[];
   biogasSystems: BiogasSystem[];
   loadSystems: LoadSystem[];
@@ -288,7 +294,11 @@ export type SmartSystemParameters = CommonSystemParameter & {
   windSystems: WindSystem[];
 };
 
-export type SmartSystemOutput = {};
+export type SmartSystemOutput = {
+  columns: string[];
+  index: number[];
+  data: number[][];
+};
 
 export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   id: uuidv4(),
@@ -645,6 +655,28 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
   biogasSystems: [{ ...COMMON_BIOGAS_SYSTEM }],
   loadSystems: [{ ...COMMON_LOAD_SYSTEM }],
   windSystems: [{ ...COMMON_WIND_SYSTEM }],
+  priorityList: [
+    {
+      id: COMMON_SOLAR_SYSTEM.id,
+      name: COMMON_SOLAR_SYSTEM.name,
+    },
+    {
+      id: COMMON_BATTERY_SYSTEM.id,
+      name: COMMON_BATTERY_SYSTEM.name,
+    },
+    {
+      id: COMMON_HYDRAULIC_SYSTEM.id,
+      name: COMMON_HYDRAULIC_SYSTEM.name,
+    },
+    {
+      id: COMMON_BIOGAS_SYSTEM.id,
+      name: COMMON_BIOGAS_SYSTEM.name,
+    },
+    {
+      id: COMMON_WIND_SYSTEM.id,
+      name: COMMON_WIND_SYSTEM.name,
+    },
+  ],
 };
 
 export const SMART_CITY: SmartSystemParameters = {

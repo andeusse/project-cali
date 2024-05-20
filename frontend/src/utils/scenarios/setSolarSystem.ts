@@ -12,6 +12,7 @@ import {
   SmartSystemParameters,
   ScenariosSolarWindInputInformationType,
   SetSystemArrayType,
+  SortableItemParameter,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 
@@ -90,6 +91,18 @@ export const setSolarSystemById = <T extends SmartSystemParameters>(
           system.temperature.tooltip = 'Temperatura ambiente máxima';
           system.temperature.variableString = 'Temperatura ambiente máxima';
         }
+      }
+      if (name === 'name') {
+        newState.priorityList = newState.priorityList.map((e) => {
+          if (system && e.id === id) {
+            const value: SortableItemParameter = {
+              id: e.id,
+              name: system.name,
+            };
+            return value;
+          }
+          return e;
+        });
       }
     }
     newState.solarSystems = newState.solarSystems.map((s) => {

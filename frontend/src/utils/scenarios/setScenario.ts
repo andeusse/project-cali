@@ -41,70 +41,101 @@ export const setScenario = (
   if (name.includes('SystemNumber')) {
     if ('solarSystems' in newState && name.includes('solar')) {
       if (value > newState.solarSystemNumber.value) {
+        const newSystem = {
+          ...COMMON_SOLAR_SYSTEM,
+          radiationArray: Array(newState.steps.value).fill(0),
+          temperatureArray: Array(newState.steps.value).fill(0),
+          id: uuidv4(),
+        };
+        newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
         newState.solarSystems = [
           ...newState.solarSystems,
           {
-            ...COMMON_SOLAR_SYSTEM,
-            radiationArray: Array(newState.steps.value).fill(0),
-            temperatureArray: Array(newState.steps.value).fill(0),
-            id: uuidv4(),
+            ...newSystem,
           },
         ];
       } else if (value < newState.solarSystemNumber.value) {
+        const removeSystem =
+          newState.solarSystems[newState.solarSystems.length - 1];
+        newState.priorityList = [
+          ...newState.priorityList.filter((f) => f.id !== removeSystem.id),
+        ];
         newState.solarSystems.splice(-1);
       }
     }
     if ('batterySystems' in newState && name.includes('battery')) {
       if (value > newState.batterySystemNumber.value) {
+        const newSystem = {
+          ...COMMON_BATTERY_SYSTEM,
+          chargePowerArray: Array(newState.steps.value).fill(0),
+          dischargePowerArray: Array(newState.steps.value).fill(0),
+          id: uuidv4(),
+        };
+        newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
         newState.batterySystems = [
           ...newState.batterySystems,
-          {
-            ...COMMON_BATTERY_SYSTEM,
-            chargePowerArray: Array(newState.steps.value).fill(0),
-            dischargePowerArray: Array(newState.steps.value).fill(0),
-            id: uuidv4(),
-          },
+          { ...newSystem },
         ];
       } else if (value < newState.batterySystemNumber.value) {
+        const removeSystem =
+          newState.batterySystems[newState.batterySystems.length - 1];
+        newState.priorityList = [
+          ...newState.priorityList.filter((f) => f.id !== removeSystem.id),
+        ];
         newState.batterySystems.splice(-1);
       }
     }
     if ('hydraulicSystems' in newState && name.includes('hydraulic')) {
       if (value > newState.hydraulicSystemNumber.value) {
+        const newSystem = {
+          ...COMMON_HYDRAULIC_SYSTEM,
+          waterHeadArray: Array(newState.steps.value).fill(0),
+          waterFlowArray: Array(newState.steps.value).fill(0),
+          id: uuidv4(),
+        };
+        newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
         newState.hydraulicSystems = [
           ...newState.hydraulicSystems,
-          {
-            ...COMMON_HYDRAULIC_SYSTEM,
-            waterHeadArray: Array(newState.steps.value).fill(0),
-            waterFlowArray: Array(newState.steps.value).fill(0),
-            id: uuidv4(),
-          },
+          { ...newSystem },
         ];
       } else if (value < newState.hydraulicSystemNumber.value) {
+        const removeSystem =
+          newState.hydraulicSystems[newState.hydraulicSystems.length - 1];
+        newState.priorityList = [
+          ...newState.priorityList.filter((f) => f.id !== removeSystem.id),
+        ];
         newState.hydraulicSystems.splice(-1);
       }
     }
     if ('windSystems' in newState && name.includes('wind')) {
       if (value > newState.windSystemNumber.value) {
-        newState.windSystems = [
-          ...newState.windSystems,
-          {
-            ...COMMON_WIND_SYSTEM,
-            windSpeedArray: Array(newState.steps.value).fill(0),
-            id: uuidv4(),
-          },
-        ];
+        const newSystem = {
+          ...COMMON_WIND_SYSTEM,
+          windSpeedArray: Array(newState.steps.value).fill(0),
+          id: uuidv4(),
+        };
+        newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
+        newState.windSystems = [...newState.windSystems, { ...newSystem }];
       } else if (value < newState.windSystemNumber.value) {
+        const removeSystem =
+          newState.windSystems[newState.windSystems.length - 1];
+        newState.priorityList = [
+          ...newState.priorityList.filter((f) => f.id !== removeSystem.id),
+        ];
         newState.windSystems.splice(-1);
       }
     }
     if ('biogasSystems' in newState && name.includes('biogas')) {
       if (value > newState.biogasSystemNumber.value) {
-        newState.biogasSystems = [
-          ...newState.biogasSystems,
-          { ...COMMON_BIOGAS_SYSTEM, id: uuidv4() },
-        ];
+        const newSystem = { ...COMMON_BIOGAS_SYSTEM, id: uuidv4() };
+        newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
+        newState.biogasSystems = [...newState.biogasSystems, { ...newSystem }];
       } else if (value < newState.biogasSystemNumber.value) {
+        const removeSystem =
+          newState.biogasSystems[newState.biogasSystems.length - 1];
+        newState.priorityList = [
+          ...newState.priorityList.filter((f) => f.id !== removeSystem.id),
+        ];
         newState.biogasSystems.splice(-1);
       }
     }

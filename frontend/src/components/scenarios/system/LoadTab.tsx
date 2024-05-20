@@ -26,8 +26,6 @@ import { getValueByKey } from '../../../utils/getValueByKey';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { ThemeType } from '../../../types/theme';
 
-type Props = {};
-
 const LoadTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
 

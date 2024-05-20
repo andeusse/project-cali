@@ -20,6 +20,7 @@ import {
   SMART_CITY,
   SmartSystemOutput,
   SmartSystemParameters,
+  SortableItemParameter,
 } from '../../types/scenarios/common';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { setFormState } from '../../utils/setFormState';
@@ -61,14 +62,15 @@ import { CellChange } from '@silevis/reactgrid';
 import HydraulicTab from '../../components/scenarios/system/HydraulicTab';
 import WindTab from '../../components/scenarios/system/WindTab';
 import BiogasTab from '../../components/scenarios/system/BiogasTab';
+import LoadTab from '../../components/scenarios/system/LoadTab';
+import ResultTab from '../../components/scenarios/common/ResultTab';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import ResultTab from '../../components/scenarios/common/ResultTab';
-import { updateScenario } from '../../api/scenario';
+import { updateScenario, updateScenarioMock } from '../../api/scenario';
 import { AxiosError } from 'axios';
 import { errorResp } from '../../types/api';
-import LoadTab from '../../components/scenarios/system/LoadTab';
+import SortableList from '../../components/UI/SortableList';
 
 const SmartCity = () => {
   const [system, setSystem] = useState({ ...SMART_CITY });
@@ -76,6 +78,8 @@ const SmartCity = () => {
   const [isImageExpanded, setIsImageExpanded] = useState(false);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [selectedTab, setSelectedTab] = useState<string>('solar');
+
+  const [sortableList, setSortableList] = useState(system.priorityList);
 
   const [data, setData] = useState<SmartSystemOutput | undefined>(undefined);
   const [error, setError] = useState('');
@@ -88,6 +92,7 @@ const SmartCity = () => {
     );
     if (newState) {
       setSystem(newState as SmartSystemParameters);
+      setSortableList((newState as SmartSystemParameters).priorityList);
     }
   };
 
@@ -112,6 +117,7 @@ const SmartCity = () => {
       newState = setWindSystemById(e, system, id);
     }
     setSystem(newState as SmartSystemParameters);
+    setSortableList((newState as SmartSystemParameters).priorityList);
   };
 
   const handleTableChange = (
@@ -143,23 +149,42 @@ const SmartCity = () => {
   };
 
   const handleQueryScenario = () => {
-    updateScenario<SmartSystemParameters, SmartSystemOutput>(
-      'smartcity',
-      system
-    )
-      .then((resp) => {
-        setData(resp.data);
-      })
-      .catch((err: AxiosError<errorResp>) => {
-        setData(undefined);
-        setError(err.message);
-        setIsOpen(true);
-      });
+    // updateScenario<SmartSystemParameters, SmartSystemOutput>(
+    //   'smartcity',
+    //   system
+    // )
+    //   .then((resp) => {
+    //     setData(resp.data);
+    //   })
+    //   .catch((err: AxiosError<errorResp>) => {
+    //     setData(undefined);
+    //     setError(err.message);
+    //     setIsOpen(true);
+    //   });
+    updateScenarioMock().then((res) => {
+      console.log(res);
+      setData(res);
+    });
   };
 
   const handleResetScenario = () => {
     setData(undefined);
     setError('');
+  };
+
+  const reorder = (
+    list: SortableItemParameter[],
+    startIndex: number,
+    endIndex: number
+  ) => {
+    const result = [...list];
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    setSystem({
+      ...system,
+      priorityList: result,
+    });
+    return result;
   };
 
   return (
@@ -208,12 +233,12 @@ const SmartCity = () => {
               id="panel1-header"
               sx={{ margin: 0 }}
             >
-              <Typography variant="h4">Parámametros</Typography>
+              <Typography variant="h4">Parámetros</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12} xl={12}>
-                  <Typography variant="h6">Parámametros del sistema</Typography>
+                  <Typography variant="h6">Parámetros del sistema</Typography>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <FormControl fullWidth>
@@ -279,6 +304,23 @@ const SmartCity = () => {
                     </Select>
                   </FormControl>
                 </Grid>
+                {system.priorityList.length !== 0 &&
+                  system.operationMode === ScenariosModesType.Automatic && (
+                    <>
+                      <Grid item xs={12} md={12} xl={12}>
+                        <Typography variant="h6">Orden de prioridad</Typography>
+                      </Grid>
+                      <Grid item xs={12} md={12} xl={12}>
+                        <div style={{ maxHeight: '470px', overflow: 'auto' }}>
+                          <SortableList
+                            list={sortableList}
+                            setList={setSortableList}
+                            reorder={reorder}
+                          ></SortableList>
+                        </div>
+                      </Grid>
+                    </>
+                  )}
                 <Grid item xs={12} md={12} xl={12}>
                   <Typography variant="h6">
                     Configuración de escenario
@@ -342,7 +384,6 @@ const SmartCity = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
-
         <Grid item xs={12} md={12} xl={12}>
           <div
             style={{
