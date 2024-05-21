@@ -13,6 +13,7 @@ from scipy.optimize import minimize
 import numpy as np
 import time
 from datetime import datetime
+import statistics as st
 
 
 class BiogasModelTrain:
@@ -74,7 +75,10 @@ class BiogasModelTrain:
         self.Date_train = t_i[: self.n]
         #Test Data
         self.t_val = self.t_DT[self.n + 1 :]         #Vector time in seconds without date
-        self.data_val = self.Data[self.n + 1 :]      #Vector with dates    
+        self.data_val = self.Data[self.n + 1 :]      #Vector with dates 
+        self.Csus_exp_val = self.Data['Csus_exp_R101'][self.n + 1 :] 
+        self.Q_P104_val = self.Q_P104["SE-104v"][self.n + 1 :]
+        self.TE101_val = self.TE101["TE-101v"][self.n + 1 :]  
 
         self.Csus_ini = self.Csus_exp_train[0]
         
@@ -99,23 +103,64 @@ class BiogasModelTrain:
             self.K_R101 = self.Optimization.x
             return self.K_R101, self.Csus_R101
         
-        self.K_optimizada = []
-        self.Ea_Optimizada = []
+        self.K_optimizada_R101 = []
+        self.Ea_Optimizada_R101 = []
         self.C_sus_model_train = []
-        for i in range (len(self.t_train)):
-            self.tv = self.t_train [i : i+2]
-            self.C_train = self.Csus_exp_train[i : i+2]
-            self.Q_train = self.Q_P104_train[i : i+2]
-            self.T_train = self.TE101_train[i : i+2]
-            self.Ko = self.Kini
-            self.Eao = self.Eaini
 
-            self.Optimizacion = Optimization(K = self.Ko, Ea=self.Eaini, t = self.tv, Csus_exp=self.C_train, Q = self.Q_train)
-            self.K_optimizada.append(float(self.Optimizacion[0]))
-            self.Kini = float(self.Optimizacion[0])
-            self.C_sus_model_train.append(float(self.Optimizacion[1][0]))
-            timestamp = int(self.Date_train[i].timestamp())
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.Kini, timestamp = timestamp)
+        for i in range (len(self.t_train)):
+                self.tv = self.t_train [i : i+2]
+                self.C_train = self.Csus_exp_train[i : i+2]
+                self.Q_train = self.Q_P104_train[i : i+2]
+                self.T_train = self.TE101_train[i : i+2]
+                self.Ko = self.Kini
+                self.Eao = self.Eaini
+
+                self.Optimizacion = Optimization(K = self.Ko, Ea=self.Eaini, t = self.tv, Csus_exp=self.C_train, Q = self.Q_train)
+                self.K_optimizada_R101.append(float(self.Optimizacion[0][0]))
+                self.Ea_Optimizada_R101.append(float(self.Optimizacion[0][1]))
+                self.Kini = float(self.Optimizacion[0][0])
+                self.Eaini = float(self.Optimizacion[0][1])
+                self.C_sus_model_train.append(float(self.Optimizacion[1][0]))
+                
+        self.K_R101 = st.mean(self.K_optimizada_R101)
+        self.Ea_R101 = st.mean(self.Ea_Optimizada_R101)
+        timestamp = int(self.Date_train[-1].timestamp())
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.K_R101, timestamp = timestamp)
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], Value = self.Ea_R101, timestamp = timestamp)
+
+        def Model (K, Ea, t, Q, T, C):
+            Q = Q[0]
+            T = T[0]
+
+            def DiferentialEquation(C,t):
+                R=8.314
+                self.dCsusValR101_dt = (Q/self.VR1)*(self.Csus_ini-C)-(K*C*np.exp(Ea/R*T))/self.VR1
+                return self.dCsusValR101_dt
+            Co = C[0]
+            self.Csus_val_R101 = odeint (DiferentialEquation, Co, t)
+
+            return self.Csus_val_R101
+        
+        self.C_sus_model_val = []
+
+        for i in range (len(self.t_val)):
+            self.tv_val = self.t_val[i : i+2]
+            self.C_val = self.Csus_exp_val[i : i+2]
+            self.Q_val = self.Q_P104_val[i + i+2]
+            self.T_val = self.TE101_val[i + i+2]
+            self.K_val = self.K_R101
+            self.Ea_val = self.Ea_R101
+
+            self.Validation = Model(K = self.K_val, Ea = self.Ea_val, t=self.tv_val, Q=self.Q_val, T=self.T_val, C=self.C_val)
+            self.C_sus_model_val.append(float(self.Validation[0]))
+
+
+            
+
+
+
+
+        
 
     
         

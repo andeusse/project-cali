@@ -230,7 +230,7 @@ class Biogas(Resource):
       b = Biogas_plant_DT.b                                 #Subindice de oxígeno en la ecuacción empírica del sustrato
       c = Biogas_plant_DT.c                                 #Subindice de nitrogeno en la ecuacción empírica del sustrato
       d = Biogas_plant_DT.d                                 #Subindice de azufre en la ecuacción empírica del sustrato
-      Pump101Flow = Biogas_plant_DT.Q_P104                  #Flujo volumétro de la bomba P104 [L/h]
+      Pump104Flow = Biogas_plant_DT.Q_P104                  #Flujo volumétro de la bomba P104 [L/h]
 
       """
       #En el tanque de biogas V-101
@@ -248,7 +248,7 @@ class Biogas(Resource):
       AcumBiogasVolumenV101 = Biogas_plant_DT.Vnormal_acum_v101   #Volumen de biogás total producido por la planta (acumulado) en el tanque V-101 [NL] 
 
       #Biogás almacenado en variable presión
-      StorageBiogasPressureV101 = Biogas_plant_DT.PT103v.iloc[-1]  #Presión de biogás almacenado (actual) en el tanque V-101 [kPa]
+      StorageBiogasPressureV101 = Biogas_plant_DT.PT103v[-1]  #Presión de biogás almacenado (actual) en el tanque V-101 [kPa]
 
       #Biogás acumulado por presión
       AcumBiogasPressureV101 = Biogas_plant_DT.Pacum_v101         #Presión de biogás total producida en el tanque V-101 [kPa]
@@ -262,11 +262,11 @@ class Biogas(Resource):
       StorageH2_V101Volume = Biogas_plant_DT.V_normal_H2_V101     #Volumen de hidrógeno almacenado (actual) en el tanque V-101 [NL]
 
       # Visualización por concentraciones en el gemelo digital
-      StorageCH4_V101Concentration = Biogas_plant_DT.AT103A1v.iloc[-1]   #Concentración de metano almacenado (actual) en el tanque V-101 [%]
-      StorageCO2_V101Concentration = Biogas_plant_DT.AT103A2v.iloc[-1]   #Concentración de dióxido de carbono almacenado (actual) en el tanque V-101 [%]
-      StorageH2S_V101Concentration = Biogas_plant_DT.AT103A3v.iloc[-1]   #Concentración de sulfuro de hidrógeno almacenado (actual) en el tanque V-101 [%]
-      StorageO2_V101Concentration = Biogas_plant_DT.AT103A4v.iloc[-1]    #Concentración de oxígeno almacenado (actual) en el tanque V-101 [%]
-      StorageH2_V101Concentration = Biogas_plant_DT.AT103A5v.iloc[-1]    #Concentración de hidrógeno almacenado (actual) en el tanque V-101 [%]
+      StorageCH4_V101Concentration = Biogas_plant_DT.AT103A1v[-1]   #Concentración de metano almacenado (actual) en el tanque V-101 [%]
+      StorageCO2_V101Concentration = Biogas_plant_DT.AT103A2v[-1]   #Concentración de dióxido de carbono almacenado (actual) en el tanque V-101 [%]
+      StorageH2S_V101Concentration = Biogas_plant_DT.AT103A3v[-1]   #Concentración de sulfuro de hidrógeno almacenado (actual) en el tanque V-101 [%]
+      StorageO2_V101Concentration = Biogas_plant_DT.AT103A4v[-1]    #Concentración de oxígeno almacenado (actual) en el tanque V-101 [%]
+      StorageH2_V101Concentration = Biogas_plant_DT.AT103A5v[-1]    #Concentración de hidrógeno almacenado (actual) en el tanque V-101 [%]
 
       # Visualización por moles en el gemelo digital
       StorageCH4_V101moles = Biogas_plant_DT.mol_CH4_V101               #moles de metano almacenado (actual) en el tanque V-101 [%]
@@ -296,7 +296,7 @@ class Biogas(Resource):
       StorageBiogasVolumeV102 = Biogas_plant_DT.V_normal_V102     #Volumen de biogás almacenado (actual) en el tanque V-101 [NL]
 
       #Biogás acumulado por volumen
-      AcumBiogasVolumenv102 = Biogas_plant_DT.Vnormal_acum_v102   #Volumen de biogás total producido por la planta (acumulado) en el tanque V-101 [NL] 
+      AcumBiogasVolumenV102 = Biogas_plant_DT.Vnormal_acum_v102   #Volumen de biogás total producido por la planta (acumulado) en el tanque V-101 [NL] 
 
       #Biogás almacenado en variable presión
       StorageBiogasPressureV102 = Biogas_plant_DT.PT104v.iloc[-1]  #Presión de biogás almacenado (actual) en el tanque V-101 [kPa]
@@ -389,17 +389,89 @@ class Biogas(Resource):
     biogas_output["VolatileSolidsOutR101"] = VolatileSolidsOutR101
     biogas_output["VolatileSolidsOutR101"] = VolatileSolidsOutR101
     biogas_output["SubstrateConcentrationOutR101"] = SubstrateConcentrationOutR101
+    
     biogas_output["FlowExit_R102"] = FlowExit_R102
     biogas_output["TotalSolidsOutR102"] = TotalSolidsOutR102
     biogas_output["VolatileSolidsOutR102"] = VolatileSolidsOutR102
     biogas_output["SubstrateConcentrationOutR102"] = SubstrateConcentrationOutR102
     biogas_output["FlowExit_R102_1"] = FlowExit_R102_1
     biogas_output["FlowExit_R102_2"] = FlowExit_R102_2
+    
+    biogas_output["VolatileSolidsInletR101"] = VolatileSolidsInletR101
+    biogas_output["TotalSolidsInletR101"] = TotalSolidsInletR101
+    biogas_output["n"] = n
+    biogas_output["a"] = a
+    biogas_output["b"] = b
+    biogas_output["c"] = c
+    biogas_output["d"] = d
+    biogas_output["Pump104Flow"] = Pump104Flow
+    
+    biogas_output["StorageBiogasVolumeV101"] = StorageBiogasVolumeV101
+    biogas_output["AcumBiogasVolumenV101"] = AcumBiogasVolumenV101
+    biogas_output["StorageBiogasPressureV101"] = StorageBiogasPressureV101
+    biogas_output["AcumBiogasPressureV101"] = AcumBiogasPressureV101
+    biogas_output["StorageCH4_V101Volume"] = StorageCH4_V101Volume
+    biogas_output["StorageCO2_V101Volume"] = StorageCO2_V101Volume
+    biogas_output["StorageH2S_V101Volume"] = StorageH2S_V101Volume
+    biogas_output["StorageO2_V101Volume"] = StorageO2_V101Volume
+    biogas_output["StorageH2_V101Volume"] = StorageH2_V101Volume
+    biogas_output["StorageCH4_V101Concentration"] = StorageCH4_V101Concentration
+    biogas_output["StorageCO2_V101Concentration"] = StorageCO2_V101Concentration
+    biogas_output["StorageH2S_V101Concentration"] = StorageH2S_V101Concentration
+    biogas_output["StorageO2_V101Concentration"] = StorageO2_V101Concentration
+    biogas_output["StorageH2_V101Concentration"] = StorageH2_V101Concentration
+    biogas_output["StorageCH4_V101moles"] = StorageCH4_V101moles
+    biogas_output["StorageCO2_V101moles"] = StorageCO2_V101moles
+    biogas_output["StorageH2S_V101moles"] = StorageH2S_V101moles
+    biogas_output["StorageO2_V101moles"] = StorageO2_V101moles
+    biogas_output["StorageH2_V101moles"] =  StorageH2_V101moles
+    biogas_output["Relative_humidity_V101"] = Relative_humidity_V101
+    biogas_output["moles_humidity_V101"] = moles_humidity_V101
 
-    
-    
-    
+    biogas_output["StorageBiogasVolumeV102"] = StorageBiogasVolumeV102
+    biogas_output["AcumBiogasVolumenV102"] = AcumBiogasVolumenV102
+    biogas_output["StorageBiogasPressureV102"] = StorageBiogasPressureV102
+    biogas_output["AcumBiogasPressureV102"] = AcumBiogasPressureV102
+    biogas_output["StorageCH4_V102Volume"] = StorageCH4_V102Volume
+    biogas_output["StorageCO2_V102Volume"] = StorageCO2_V102Volume
+    biogas_output["StorageH2S_V102Volume"] = StorageH2S_V102Volume
+    biogas_output["StorageO2_V102Volume"] = StorageO2_V102Volume
+    biogas_output["StorageH2_V102Volume"] = StorageH2_V102Volume
+    biogas_output["StorageCH4_V102Concentration"] = StorageCH4_V102Concentration
+    biogas_output["StorageCO2_V102Concentration"] = StorageCO2_V102Concentration
+    biogas_output["StorageH2S_V102Concentration"] = StorageH2S_V102Concentration
+    biogas_output["StorageO2_V102Concentration"] = StorageO2_V102Concentration
+    biogas_output["StorageH2_V102Concentration"] = StorageH2_V102Concentration
+    biogas_output["StorageCH4_V102moles"] = StorageCH4_V102moles
+    biogas_output["StorageCO2_V102moles"] = StorageCO2_V102moles
+    biogas_output["StorageH2S_V102moles"] = StorageH2S_V102moles
+    biogas_output["StorageO2_V102moles"] = StorageO2_V102moles
+    biogas_output["StorageH2_V102moles"] =  StorageH2_V102moles
+    biogas_output["Relative_humidity_V102"] = Relative_humidity_V102
+    biogas_output["moles_humidity_V102"] = moles_humidity_V102
 
+    biogas_output["StorageBiogasVolumeV107"] = StorageBiogasVolumeV107
+    biogas_output["AcumBiogasVolumenV107"] = AcumBiogasVolumenV107
+    biogas_output["StorageBiogasPressureV107"] = StorageBiogasPressureV107
+    biogas_output["AcumBiogasPressureV107"] = AcumBiogasPressureV107
+    biogas_output["StorageCH4_V107Volume"] = StorageCH4_V107Volume
+    biogas_output["StorageCO2_V107Volume"] = StorageCO2_V107Volume
+    biogas_output["StorageH2S_V107Volume"] = StorageH2S_V107Volume
+    biogas_output["StorageO2_V107Volume"] = StorageO2_V107Volume
+    biogas_output["StorageH2_V107Volume"] = StorageH2_V107Volume
+    biogas_output["StorageCH4_V107Concentration"] = StorageCH4_V107Concentration
+    biogas_output["StorageCO2_V107Concentration"] = StorageCO2_V107Concentration
+    biogas_output["StorageH2S_V107Concentration"] = StorageH2S_V107Concentration
+    biogas_output["StorageO2_V107Concentration"] = StorageO2_V107Concentration
+    biogas_output["StorageH2_V107Concentration"] = StorageH2_V107Concentration
+    biogas_output["StorageCH4_V107moles"] = StorageCH4_V107moles
+    biogas_output["StorageCO2_V107moles"] = StorageCO2_V107moles
+    biogas_output["StorageH2S_V107moles"] = StorageH2S_V107moles
+    biogas_output["StorageO2_V107moles"] = StorageO2_V107moles
+    biogas_output["StorageH2_V107moles"] =  StorageH2_V107moles
+    biogas_output["Relative_humidity_V107"] = Relative_humidity_V107
+    biogas_output["moles_humidity_V107"] = moles_humidity_V107
+    
     print(biogas_input)
     print(biogas_output)
 
