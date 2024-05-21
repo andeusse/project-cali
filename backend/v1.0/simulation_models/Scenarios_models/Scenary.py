@@ -79,18 +79,16 @@ class Scenary_Model:
     
     # Cálculo de potencia de los elementos PV con base en sus parámetros operativos        
     def PVGeneration (self, PV_MeteorologicalDataType, temperature = [25.0], irradiance = [1000.0]):
-        self.PV_Powers = pd.DataFrame(columns = self.PV_Names)
         
         for i in range(self.N_PV):
             self.T_Profile.append(self.PV_Elements[i].meteorologicalData(PV_MeteorologicalDataType[i], temperature[i], irradiance[i])[0])
             self.G_Profile.append(self.PV_Elements[i].meteorologicalData(PV_MeteorologicalDataType[i], temperature[i], irradiance[i])[1])
         
-        if self.operationType == 1:
+        if self.operationType == 1 and self.N_PV > 0:
+            self.PV_Powers = pd.DataFrame(columns = self.PV_Names)
             for i in range(self.N_PV):
                 self.PV_Powers[self.PV_Names[i]] = self.PV_Elements[i].PowerOutput()
             return self.PV_Powers
-        elif self.operationType == 2:
-            return 0
     
     # Creación de los elementos BESS con base en sus parámetros constructivos     
     def BESSElements (self, BESS_Names, batteryTypes, batteryEnergy, chargePower_Max, chargePower_Min, dischargePower_Max, dischargePower_Min, 
@@ -115,20 +113,20 @@ class Scenary_Model:
     
     # Cálculo de estado de carga de los elementos BESS con base en sus parámetros operativos
     def BESSSOC (self, BESS_OperativeDataType, initialSOC = [100.0], chargePower = [0.0], dischargePower = [0.0]):
-        self.BESS_SOC = pd.DataFrame(columns = self.BESS_SOC_Names)
-        self.chargePowers = pd.DataFrame(chargePower).transpose()
-        self.chargePowers.columns = self.BESS_chargeNames
-        self.dischargePowers = pd.DataFrame(dischargePower).transpose()
-        self.dischargePowers.columns = self.BESS_dischargeNames
-        
+                
         for i in range(self.N_BESS):
             self.BESS_Elements[i].operativeData(BESS_OperativeDataType[i], initialSOC[i], chargePower[i], dischargePower[i])
         
-        if self.operationType == 1:
+        if self.operationType == 1 and self.N_BESS > 0:
+            self.BESS_SOC = pd.DataFrame(columns = self.BESS_SOC_Names)
+            self.chargePowers = pd.DataFrame(chargePower).transpose()
+            self.chargePowers.columns = self.BESS_chargeNames
+            self.dischargePowers = pd.DataFrame(dischargePower).transpose()
+            self.dischargePowers.columns = self.BESS_dischargeNames
             for i in range(self.N_BESS):
                 self.BESS_SOC[self.BESS_SOC_Names[i]] = self.BESS_Elements[i].SOCOutput(self.stepTime)[0]
             return self.BESS_SOC, self.chargePowers*(-1), self.dischargePowers
-        elif self.operationType == 2:
+        else:
             return 0, 0, 0
     
     # Creación de los elementos Hydro con base en sus parámetros constructivos 
@@ -150,21 +148,16 @@ class Scenary_Model:
     
     # Cálculo de potencia de los elementos Hydro con base en sus parámetros operativos
     def HydroGeneration (self, hydroOperativeDataType, head = [100.0], flux = [0.005]):
-        self.hydroPowers = pd.DataFrame(columns = self.hydroNames)
         
         for i in range(self.N_Hydro):
             self.H_Profile.append(self.hydroElements[i].operativeData(hydroOperativeDataType[i], head[i], flux[i])[0])
             self.Q_Profile.append(self.hydroElements[i].operativeData(hydroOperativeDataType[i], head[i], flux[i])[1])
         
-        if self.operationType == 1:
+        if self.operationType == 1 and self.N_Hydro > 0:
+            self.hydroPowers = pd.DataFrame(columns = self.hydroNames)
             for i in range(self.N_Hydro):
                 self.hydroPowers[self.hydroNames[i]] = self.hydroElements[i].PowerOutput()
             return self.hydroPowers
-        elif self.operationType == 2:
-        #     self.hydroOperativeDataType = hydroOperativeDataType
-        #     self.head = head
-        #     self.flux = flux
-            return 0
         
     # Creación de los elementos Wind Farm con base en sus parámetros constructivos 
     def WFElements (self, WF_Names, turbineNumbers, turbinePowers, turbineTypes, H_R = [1.0], H_A = [1.0], Z_0 = [0.03], V_C = [2.5], V_N = [11.5], 
@@ -184,21 +177,15 @@ class Scenary_Model:
     
     # Cálculo de potencia de los elementos Wind Farm con base en sus parámetros operativos
     def WFGeneration (self, WF_MeteorologicalDataType, airDensity = 1.112, windSpeed = [5.0]):
-        self.WF_Powers = pd.DataFrame(columns = self.WF_Names)
         
         for i in range(self.N_WF):
-            self.V_Profile.append(self.WF_Elements[i].meteorologicalData(WF_MeteorologicalDataType[i], airDensity, windSpeed[i]))
+            self.V_Profile.append(self.WF_Elements[i].meteorologicalData(WF_MeteorologicalDataType[i], airDensity[i], windSpeed[i]))
         
-        if self.operationType == 1:
+        if self.operationType == 1 and self.N_WF > 0:
+            self.WF_Powers = pd.DataFrame(columns = self.WF_Names)
             for i in range(self.N_WF):
                 self.WF_Powers[self.WF_Names[i]] = self.WF_Elements[i].PowerOutput()
-            return self.WF_Powers
-        elif self.operationType == 2:
-            # self.WF_MeteorologicalDataType = WF_MeteorologicalDataType
-            # self.airDensity = airDensity
-            # self.windSpeed = windSpeed
-            return 0
-            
+            return self.WF_Powers            
     
     # Creación de los elementos Biogas con base en sus parámetros constructivos   
     def BiogasElements (self, biogasNames, timestep=1, days=60, reactorVolume1=[30], reactorVolume2=[70], heightRelation1=[2], heightRelation2=[2], 
@@ -206,7 +193,7 @@ class Scenary_Model:
         self.biogasNames = biogasNames
         
         for i in range(self.N_Biogas):
-            self.biogasElements.append(Scenary_BM.biogas_model(timestep, days, reactorVolume1[i], reactorVolume2[i], heightRelation1[i], heightRelation2[i], 
+            self.biogasElements.append(Scenary_BM.biogas_model(timestep, days[i], reactorVolume1[i], reactorVolume2[i], heightRelation1[i], heightRelation2[i], 
                                 heatTransfer1[i], heatTransfer2[i], self.biogasNames[i]))
             
         return self.biogasElements
@@ -228,9 +215,9 @@ class Scenary_Model:
     
     # Cálculo de potencia de los elementos Biogas con base en sus parámetros operativos
     def BiogasGeneration (self):
-        self.biogasPowers = pd.DataFrame(columns = self.biogasNames)
         
-        if self.operationType == 1:
+        if self.operationType == 1 and self.N_Biogas > 0:
+            self.biogasPowers = pd.DataFrame(columns = self.biogasNames)
             for i in range(self.N_Biogas):
                 
                 self.biogasElements[i].AbsoluteVariables()
@@ -244,7 +231,6 @@ class Scenary_Model:
                 
                 self.biogasPowers[self.biogasNames[i]] = [self.biogasElements[i].PowerOutput()[-1]]*self.simulationSteps
                 
-                # print(self.biogasPowers)
             return self.biogasPowers
         elif self.operationType == 2:
             return 0

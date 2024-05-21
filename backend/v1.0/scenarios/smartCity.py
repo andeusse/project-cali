@@ -5,7 +5,7 @@ from simulation_models.Scenarios_models import Smartcity
 class SmartCity(Resource):
   def post(self):
     data = request.get_json()
-    print(data)
+    # print(data)
 
     if data['operationMode'] == 'Manual':
       operationType = 1
@@ -84,8 +84,8 @@ class SmartCity(Resource):
         temperatures.append([solarSystem['temperature']['value']])
       elif solarSystem['informationMode'] == 'Custom':
         informationMode.append(0)
-        radiations.append(solarSystem['radiationArray']['value'])
-        temperatures.append(solarSystem['temperatureArray']['value'])
+        radiations.append(solarSystem['radiationArray'])
+        temperatures.append(solarSystem['temperatureArray'])
 
     BESS_Names = []
     batteryTypes = []
@@ -120,12 +120,12 @@ class SmartCity(Resource):
 
       if batterySystem['informationMode'] == 'Fixed':
         batteryInformationMode.append(1)
-        chargePowers.append([hydraulicSystem['chargePower']['value']])
-        dischargePowers.append([hydraulicSystem['dischargePower']['value']])
+        chargePowers.append([batterySystem['chargePower']['value']])
+        dischargePowers.append([batterySystem['dischargePower']['value']])
       elif batterySystem['informationMode'] == 'Custom':
         batteryInformationMode.append(0)
-        chargePowers.append(hydraulicSystem['chargePowerArray']['value'])
-        dischargePowers.append(hydraulicSystem['dischargePowerArray']['value'])
+        chargePowers.append(batterySystem['chargePowerArray'])
+        dischargePowers.append(batterySystem['dischargePowerArray'])
 
     hydroNames = []
     turbineNumbers = []
@@ -165,8 +165,8 @@ class SmartCity(Resource):
         waterFlows.append([hydraulicSystem['waterFlow']['value']])
       elif hydraulicSystem['informationMode'] == 'Custom':
         turbineInformationMode.append(0)
-        waterHeads.append(hydraulicSystem['waterHeadArray']['value'])
-        waterFlows.append(hydraulicSystem['waterFlowArray']['value'])
+        waterHeads.append(hydraulicSystem['waterHeadArray'])
+        waterFlows.append(hydraulicSystem['waterFlowArray'])
 
     windNames = []
     windTurbineNumbers = []
@@ -201,13 +201,13 @@ class SmartCity(Resource):
       
       if windSystem['informationMode'] == 'Fixed':
         windInformationMode.append(1)
-        windSpeeds.append([solarSystem['windSpeed']['value']])
+        windSpeeds.append([windSystem['windSpeed']['value']])
       elif windSystem['informationMode'] == 'Typical':
         windInformationMode.append(2)
-        windSpeeds.append([solarSystem['windSpeed']['value']])
+        windSpeeds.append([windSystem['windSpeed']['value']])
       elif windSystem['informationMode'] == 'Custom':
         windInformationMode.append(0)
-        windSpeeds.append(solarSystem['windSpeedArray']['value'])
+        windSpeeds.append(windSystem['windSpeedArray'])
 
     loadNames = []
     loadTypes = []
@@ -215,7 +215,6 @@ class SmartCity(Resource):
 
     for loadSystem in data['loadSystems']:
       loadNames.append(loadSystem['name'])
-      loadTypes.append(loadSystem['informationMode'])
       if loadSystem['informationMode'] == 'Fixed':
         loadTypes.append(1)
         loadPowers.append(loadSystem['power']['value'])
@@ -230,7 +229,7 @@ class SmartCity(Resource):
         loadPowers.append(loadSystem['peakPower']['value'])
       elif loadSystem['informationMode'] == 'Custom':
         loadTypes.append(0)
-        loadPowers.append(loadSystem['powerArray']['value'])
+        loadPowers.append(loadSystem['powerArray'])
 
     biogasNames = []
     stabilizationDays = []
@@ -276,11 +275,11 @@ class SmartCity(Resource):
       temperatureSetpoint2.append(biogasSystem['temperatureSetpoint2']['value'])
       controllerTolerance1.append(biogasSystem['controllerTolerance1']['value'])
       controllerTolerance2.append(biogasSystem['controllerTolerance2']['value'])
-      carbonConcentration.append(biogasSystem['carbonConcentration']['value'])
-      hydrogenConcentration.append(biogasSystem['hydrogenConcentration']['value'])
-      oxygenConcentration.append(biogasSystem['oxygenConcentration']['value'])
-      sulfurConcentration.append(biogasSystem['sulfurConcentration']['value'])
-      totalConcentration.append(biogasSystem['totalConcentration']['value'])
+      carbonConcentration.append(biogasSystem['carbonConcentration']['value']/100)
+      hydrogenConcentration.append(biogasSystem['hydrogenConcentration']['value']/100)
+      oxygenConcentration.append(biogasSystem['oxygenConcentration']['value']/100)
+      sulfurConcentration.append(biogasSystem['sulfurConcentration']['value']/100)
+      totalConcentration.append(biogasSystem['totalConcentration']['value']/100)
       substrateDensity.append(biogasSystem['substrateDensity']['value'])
       substrateTemperature.append(biogasSystem['substrateTemperature']['value'])
       substratePressure.append(biogasSystem['substratePressure']['value'])
@@ -295,16 +294,34 @@ class SmartCity(Resource):
                             biogasNames = biogasNames, timestep = 1, days = stabilizationDays, reactorVolume1 = reactorVolume1, reactorVolume2 = reactorVolume2, heightRelation1 = diameterHeightRatio1, heightRelation2 = diameterHeightRatio2, heatTransfer1 = heatTransferCoefficient1, heatTransfer2 = heatTransferCoefficient2, Tset1 = temperatureSetpoint1, tolerancia1 = controllerTolerance1, Tset2 = temperatureSetpoint2, tolerancia2 = controllerTolerance2, Cci = carbonConcentration, Chi = hydrogenConcentration, Coi = oxygenConcentration, Csi = sulfurConcentration, ST = totalConcentration, rho_sus = substrateDensity, Tin_sus = substrateTemperature, Pin_sus = substratePressure, vin_sus = substrateFlow, DeltaP = substratePresurreDrop, Patm = ambientPressure, Tamb = ambientTemperature, genEfficiency = electricGeneratorEfficiency, ratedPower = electricGeneratorPower, 
                             demandNames = loadNames, demandTypes = loadTypes, demandPowersSet = loadPowers)
 
-   
-    weights = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 3.0, 4.0, 1.0, 1.0, 1.0, 2.0, 3.0, 5.0]
-    
+    idList = []
+    weightList = []
+    for item in data['priorityList']:
+      idList.append(item['id'])
+    for system in data['solarSystems']:
+      id = system['id']
+      weightList.append(idList.index(id))
+    for system in data['batterySystems']:
+      weightList.append(0)
+      weightList.append(0)
+    for system in data['hydraulicSystems']:
+      id = system['id']
+      weightList.append(idList.index(id))
+    for system in data['windSystems']:
+      id = system['id']
+      weightList.append(idList.index(id))
+    for system in data['biogasSystems']:
+      id = system['id']
+      weightList.append(idList.index(id))
+    weightList.append(len(data['priorityList']))
 
     results_df = smartcity_model.operation(PV_MeteorologicalDataType = informationMode, temperature = temperatures, irradiance = radiations, 
                   BESS_OperativeDataType = batteryInformationMode, initialSOC = stateOfCharge, chargePower = chargePowers, dischargePower = dischargePowers, 
                   hydroOperativeDataType = turbineInformationMode, head = waterHeads, flux = waterFlows, 
                   WF_MeteorologicalDataType = windInformationMode, airDensity = airDensity, windSpeed = windSpeeds,
-                  weights = weights)
+                  weights = weightList)
 
     response = results_df.to_json(orient='split')
+    print(response)
 
     return response
