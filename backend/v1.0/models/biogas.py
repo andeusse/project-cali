@@ -382,7 +382,24 @@ class Biogas(Resource):
       moles_humidity_V107 = Biogas_plant_DT.mol_H2O_V107                 #[mol]
 
     
+    biogas_output["FlowExit_R101"]=FlowExit_R101
+    biogas_output["FlowExit_R101_1"] = FlowExit_R101_1
+    biogas_output["FlowExit_R101_2"] = FlowExit_R101_2
+    biogas_output["TotalSolidsOutR101"] = TotalSolidsOutR101
+    biogas_output["VolatileSolidsOutR101"] = VolatileSolidsOutR101
+    biogas_output["VolatileSolidsOutR101"] = VolatileSolidsOutR101
+    biogas_output["SubstrateConcentrationOutR101"] = SubstrateConcentrationOutR101
+    biogas_output["FlowExit_R102"] = FlowExit_R102
+    biogas_output["TotalSolidsOutR102"] = TotalSolidsOutR102
+    biogas_output["VolatileSolidsOutR102"] = VolatileSolidsOutR102
+    biogas_output["SubstrateConcentrationOutR102"] = SubstrateConcentrationOutR102
+    biogas_output["FlowExit_R102_1"] = FlowExit_R102_1
+    biogas_output["FlowExit_R102_2"] = FlowExit_R102_2
+
     
+    
+    
+
     print(biogas_input)
     print(biogas_output)
 
