@@ -17,11 +17,6 @@ from datetime import datetime
 
 class BiogasModelTrain:
     def __init__ (self, index_database, VR1, Kini, Eaini):
-
-
-
-class BiogasModelTrain:
-    def __init__ (self, index_database, VR1, Kini):
         self.databaseConnection_df = pd.read_excel(excel_file_path, sheet_name='ConexionDB')
         self.database_df = pd.read_excel(excel_file_path, sheet_name='InfluxDBVariables')
         self.InfluxDB = DBManager.InfluxDBmodel(server = 'http://' + str(self.databaseConnection_df['IP'][index_database])+':'+str(self.databaseConnection_df['Port'][index_database])+'/', org = self.databaseConnection_df['Organization'][index_database], bucket = self.databaseConnection_df['Bucket'][index_database], token = self.databaseConnection_df['Token'][index_database])
@@ -37,6 +32,7 @@ class BiogasModelTrain:
         
         self.VR1 = VR1
         self.Kini = Kini
+        self.Eaini = Eaini
 
     def Get_data_DT (self):
         self.msg = self.InfluxDB.InfluxDBconnection()
