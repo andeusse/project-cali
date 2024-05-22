@@ -157,6 +157,16 @@ export enum BiogasText {
   Custom = 'Personalizado',
 }
 
+export enum BiogasPhaseType {
+  Phase1 = 'Phase1',
+  Phase2 = 'Phase2',
+}
+
+export enum BiogasPhaseText {
+  Phase1 = 'Una etapa',
+  Phase2 = 'Dos etapas',
+}
+
 export type SolarSystem = CommonSystemParameter &
   CommonSolarPanel & {
     id: string;
@@ -187,6 +197,8 @@ export type BatterySystem = CommonSystemParameter &
     stateOfCharge: InputType;
     type: BatteryType;
     informationMode: ScenariosCommonInputInformationType;
+    chargePower: InputType;
+    dischargePower: InputType;
     chargePowerArray: number[];
     dischargePowerArray: number[];
   };
@@ -207,6 +219,8 @@ export type HydraulicSystem = CommonSystemParameter &
     nominalPower: InputType;
     type: HydraulicType;
     informationMode: ScenariosCommonInputInformationType;
+    waterHead: InputType;
+    waterFlow: InputType;
     waterHeadArray: number[];
     waterFlowArray: number[];
   };
@@ -223,6 +237,7 @@ export type WindSystem = CommonSystemParameter &
     airDensity: InputType;
     type: WindType;
     informationMode: ScenariosSolarWindInputInformationType;
+    windSpeed: InputType;
     windSpeedArray: number[];
   };
 
@@ -258,6 +273,7 @@ export type BiogasSystem = CommonSystemParameter &
     electricGeneratorPower: InputType;
     electricGeneratorEfficiency: InputType;
     type: BiogasType;
+    phaseNumber: BiogasPhaseType;
   };
 
 export type LoadSystem = CommonSystemParameter & {
@@ -302,7 +318,7 @@ export type SmartSystemOutput = {
 
 export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   id: uuidv4(),
-  name: 'Sistema solar',
+  name: 'Sistema solar 1',
   modulesNumber: {
     disabled: false,
     value: 10,
@@ -326,12 +342,12 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   ...MONOCRYSTALLINE_PANEL,
   radiation: {
     disabled: false,
-    value: 800,
+    value: 1000,
     tooltip: 'Irradiancia solar',
     unit: 'W / m²',
     variableString: 'Irradiancia solar',
     min: 0,
-    max: 1500,
+    max: 2000,
     step: 100,
   },
   temperature: {
@@ -340,7 +356,7 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
     tooltip: 'Temperatura ambiente',
     unit: '°C',
     variableString: 'Temperatura ambiente',
-    min: -10,
+    min: 0,
     max: 50,
   },
   radiationArray: Array(24).fill(0),
@@ -349,7 +365,7 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
 
 export const COMMON_BATTERY_SYSTEM: BatterySystem = {
   id: uuidv4(),
-  name: 'Sistema de baterías',
+  name: 'Sistema de baterías 1',
   storageCapacity: {
     disabled: false,
     value: 10,
@@ -412,13 +428,31 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
   informationMode: ScenariosCommonInputInformationType.Custom,
   type: BatteryType.Custom,
   ...CUSTOM_BATTERY,
+  chargePower: {
+    disabled: false,
+    value: 5,
+    tooltip: 'Potencia de carga',
+    unit: 'kW',
+    variableString: 'Potencia de carga',
+    min: 0,
+    max: 10,
+  },
+  dischargePower: {
+    disabled: false,
+    value: 5,
+    tooltip: 'Potencia de descarga',
+    unit: 'kW',
+    variableString: 'Potencia de descarga',
+    min: 0,
+    max: 10,
+  },
   chargePowerArray: Array(24).fill(0),
   dischargePowerArray: Array(24).fill(0),
 };
 
 export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
   id: uuidv4(),
-  name: 'Sistema de turbinas',
+  name: 'Sistema de turbinas 1',
   turbineNumber: {
     disabled: false,
     value: 1,
@@ -441,13 +475,31 @@ export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
   type: HydraulicType.Pelton,
   informationMode: ScenariosCommonInputInformationType.Custom,
   ...PELTON_TURBINE,
+  waterHead: {
+    disabled: false,
+    value: 65,
+    tooltip: 'Cabeza de agua',
+    unit: 'm',
+    variableString: 'Cabeza de agua',
+    min: 3,
+    max: 130,
+  },
+  waterFlow: {
+    disabled: false,
+    value: 0.005,
+    tooltip: 'Flujo de agua',
+    unit: 'm³ / s',
+    variableString: 'Flujo de agua',
+    min: 0.0001,
+    max: 0.01,
+  },
   waterHeadArray: Array(24).fill(0),
   waterFlowArray: Array(24).fill(0),
 };
 
 export const COMMON_WIND_SYSTEM: WindSystem = {
   id: uuidv4(),
-  name: 'Sistema eólico',
+  name: 'Sistema eólico 1',
   turbineNumber: {
     disabled: false,
     value: 1,
@@ -480,12 +532,21 @@ export const COMMON_WIND_SYSTEM: WindSystem = {
   type: WindType.Laboratory,
   informationMode: ScenariosSolarWindInputInformationType.Custom,
   ...LABORATORY_WIND_TURBINE,
+  windSpeed: {
+    disabled: false,
+    value: 11.5,
+    tooltip: 'Velocidad del viento',
+    unit: 'm / s',
+    variableString: 'Velocidad del viento',
+    min: 2,
+    max: 65,
+  },
   windSpeedArray: Array(24).fill(0),
 };
 
 export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
   id: uuidv4(),
-  name: 'Sistema de biogas',
+  name: 'Sistema de biogas 1',
   stabilizationDays: {
     disabled: false,
     value: 90,
@@ -533,12 +594,13 @@ export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {
     max: 100,
   },
   type: BiogasType.Laboratory,
+  phaseNumber: BiogasPhaseType.Phase1,
   ...EXAMPLE_BIOGAS,
 };
 
 export const COMMON_LOAD_SYSTEM: LoadSystem = {
   id: uuidv4(),
-  name: 'Carga',
+  name: 'Carga 1',
   informationMode: ScenariosLoadInputInformationType.Custom,
   power: {
     disabled: false,
@@ -585,7 +647,7 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
     max: 100,
     step: 0.1,
   },
-  stepUnit: ScenariosStepUnitType.Second,
+  stepUnit: ScenariosStepUnitType.Hour,
   solarSystemNumber: {
     disabled: false,
     value: 1,
@@ -659,10 +721,6 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
     {
       id: COMMON_SOLAR_SYSTEM.id,
       name: COMMON_SOLAR_SYSTEM.name,
-    },
-    {
-      id: COMMON_BATTERY_SYSTEM.id,
-      name: COMMON_BATTERY_SYSTEM.name,
     },
     {
       id: COMMON_HYDRAULIC_SYSTEM.id,

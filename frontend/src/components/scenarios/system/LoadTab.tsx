@@ -142,7 +142,7 @@ const LoadTab = (props: TabProps) => {
             {system.loadSystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
-                  {`${index + 1}. ${s.name}`}
+                  {`${s.name}`}
                 </MenuItem>
               );
             })}

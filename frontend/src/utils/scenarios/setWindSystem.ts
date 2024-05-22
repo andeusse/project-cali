@@ -9,6 +9,7 @@ import {
   SmartSystemParameters,
   WindType,
   SortableItemParameter,
+  ScenariosSolarWindInputInformationType,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 
@@ -30,6 +31,12 @@ export const setWindSystemById = <T extends SmartSystemParameters>(
           value: parseFloat(value),
         },
       };
+      if (name === 'upperCutoffWindSpeed') {
+        system.windSpeed.max = parseFloat(value);
+      }
+      if (name === 'lowerCutoffWindSpeed') {
+        system.windSpeed.min = parseFloat(value);
+      }
     } else {
       system = { ...system, [name]: e.target.value };
       if (name === 'type') {
@@ -44,6 +51,22 @@ export const setWindSystemById = <T extends SmartSystemParameters>(
           ...system,
           ...params,
         };
+      }
+      if (name === 'informationMode') {
+        if (
+          system.informationMode ===
+          ScenariosSolarWindInputInformationType.Fixed
+        ) {
+          system.windSpeed.tooltip = 'Velocidad del viento';
+          system.windSpeed.variableString = 'Velocidad del viento';
+        }
+        if (
+          system.informationMode ===
+          ScenariosSolarWindInputInformationType.Typical
+        ) {
+          system.windSpeed.tooltip = 'Velocidad del viento máxima';
+          system.windSpeed.variableString = 'Velocidad del viento máxima';
+        }
       }
       if (name === 'name') {
         newState.priorityList = newState.priorityList.map((e) => {

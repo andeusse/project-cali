@@ -154,10 +154,7 @@ const SolarTab = (props: TabProps) => {
             {system.solarSystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
-                  {`${index + 1}. ${s.name} (${getValueByKey(
-                    SolarPanelModuleText,
-                    s.type
-                  )})`}
+                  {`${s.name} (${getValueByKey(SolarPanelModuleText, s.type)})`}
                 </MenuItem>
               );
             })}

@@ -31,6 +31,18 @@ export const setHydraulicSystemById = <T extends SmartSystemParameters>(
           value: parseFloat(value),
         },
       };
+      if (name === 'maximumWaterHead') {
+        system.waterHead.max = parseFloat(value);
+      }
+      if (name === 'maximumWaterFlow') {
+        system.waterFlow.max = parseFloat(value);
+      }
+      if (name === 'minimumWaterHead') {
+        system.waterHead.min = parseFloat(value);
+      }
+      if (name === 'minimumWaterFlow') {
+        system.waterFlow.min = parseFloat(value);
+      }
     } else {
       system = { ...system, [name]: e.target.value };
       if (name === 'type') {
@@ -44,6 +56,18 @@ export const setHydraulicSystemById = <T extends SmartSystemParameters>(
         if (system.type === HydraulicType.Custom) {
           params = CUSTOM_TURBINE;
         }
+        system.waterHead = {
+          ...system.waterHead,
+          min: params.minimumWaterHead.value,
+          max: params.maximumWaterHead.value,
+          value: params.maximumWaterHead.value / 2,
+        };
+        system.waterFlow = {
+          ...system.waterFlow,
+          min: params.minimumWaterFlow.value,
+          max: params.maximumWaterFlow.value,
+          value: params.maximumWaterFlow.value / 2,
+        };
         system = {
           ...system,
           ...params,

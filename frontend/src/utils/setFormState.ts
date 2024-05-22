@@ -60,7 +60,11 @@ export const setFormState = <T extends formType>(
     }
   }
   if ('operationMode' in oldState) {
-    if (name.includes('SystemNumber') || name === 'steps') {
+    if (
+      name.includes('SystemNumber') ||
+      name === 'steps' ||
+      name === 'operationMode'
+    ) {
       return setScenario(e, oldState);
     }
   }

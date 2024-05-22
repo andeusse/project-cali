@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
+  BiogasPhaseText,
+  BiogasPhaseType,
   BiogasSystem,
   BiogasText,
   BiogasType,
@@ -61,10 +63,7 @@ const BiogasTab = (props: TabProps) => {
             {system.biogasSystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
-                  {`${index + 1}. ${s.name} (${getValueByKey(
-                    BiogasText,
-                    s.type
-                  )})`}
+                  {`${s.name} (${getValueByKey(BiogasText, s.type)})`}
                 </MenuItem>
               );
             })}
@@ -145,6 +144,24 @@ const BiogasTab = (props: TabProps) => {
                   </Select>
                 </FormControl>
               </Grid>
+              <Grid item xs={12} md={6} xl={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="phaseType-type">Número de etapa</InputLabel>
+                  <Select
+                    labelId="phaseType-type"
+                    label="Número de etapa"
+                    value={selectedSystem.phaseNumber}
+                    name="phaseNumber"
+                    onChange={handleChange}
+                  >
+                    {Object.keys(BiogasPhaseType).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {getValueByKey(BiogasPhaseText, key)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
           </Grid>
           <Grid item xs={12} md={12} xl={8}>
@@ -159,22 +176,8 @@ const BiogasTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={3}>
                 <CustomNumberField
-                  variable={selectedSystem.reactorVolume2}
-                  name="reactorVolume2"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <CustomNumberField
                   variable={selectedSystem.diameterHeightRatio1}
                   name="diameterHeightRatio1"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <CustomNumberField
-                  variable={selectedSystem.diameterHeightRatio2}
-                  name="diameterHeightRatio2"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
@@ -187,22 +190,8 @@ const BiogasTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={3}>
                 <CustomNumberField
-                  variable={selectedSystem.heatTransferCoefficient2}
-                  name="heatTransferCoefficient2"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <CustomNumberField
                   variable={selectedSystem.temperatureSetpoint1}
                   name="temperatureSetpoint1"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <CustomNumberField
-                  variable={selectedSystem.temperatureSetpoint2}
-                  name="temperatureSetpoint2"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
@@ -213,13 +202,45 @@ const BiogasTab = (props: TabProps) => {
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
-              <Grid item xs={12} md={6} xl={3}>
-                <CustomNumberField
-                  variable={selectedSystem.controllerTolerance2}
-                  name="controllerTolerance2"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
+              {selectedSystem.phaseNumber !== BiogasPhaseType.Phase1 && (
+                <>
+                  <Grid item xs={12} md={6} xl={3}>
+                    <CustomNumberField
+                      variable={selectedSystem.reactorVolume2}
+                      name="reactorVolume2"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={3}>
+                    <CustomNumberField
+                      variable={selectedSystem.diameterHeightRatio2}
+                      name="diameterHeightRatio2"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={3}>
+                    <CustomNumberField
+                      variable={selectedSystem.heatTransferCoefficient2}
+                      name="heatTransferCoefficient2"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={3}>
+                    <CustomNumberField
+                      variable={selectedSystem.temperatureSetpoint2}
+                      name="temperatureSetpoint2"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={3}>
+                    <CustomNumberField
+                      variable={selectedSystem.controllerTolerance2}
+                      name="controllerTolerance2"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                </>
+              )}
               <Grid item xs={12} md={6} xl={3}>
                 <CustomNumberField
                   variable={selectedSystem.carbonConcentration}

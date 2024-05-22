@@ -293,6 +293,10 @@ const SmartCity = () => {
                       label="Unidad"
                       value={system.stepUnit}
                       name="stepUnit"
+                      disabled={
+                        system.operationMode === ScenariosModesType.Automatic &&
+                        system.batterySystemNumber.value !== 0
+                      }
                       onChange={(e: any) => handleChange(e)}
                     >
                       {Object.keys(ScenariosStepUnitType).map((key) => (
@@ -307,7 +311,9 @@ const SmartCity = () => {
                   system.operationMode === ScenariosModesType.Automatic && (
                     <>
                       <Grid item xs={12} md={12} xl={12}>
-                        <Typography variant="h6">Orden de prioridad</Typography>
+                        <Typography variant="h6">
+                          Orden de prioridad de recursos
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} md={12} xl={12}>
                         <div style={{ maxHeight: '470px', overflow: 'auto' }}>

@@ -30,9 +30,19 @@ export const setBatterySystemById = <T extends SmartSystemParameters>(
       };
       if (name === 'maxChargePower') {
         system.minChargePower.max = parseFloat(value);
+        system.chargePower.max = parseFloat(value);
       }
       if (name === 'maxDischargePower') {
         system.minDischargePower.max = parseFloat(value);
+        system.dischargePower.max = parseFloat(value);
+      }
+      if (name === 'minChargePower') {
+        system.maxChargePower.min = parseFloat(value);
+        system.chargePower.min = parseFloat(value);
+      }
+      if (name === 'minDischargePower') {
+        system.maxDischargePower.min = parseFloat(value);
+        system.dischargePower.min = parseFloat(value);
       }
     } else {
       system = { ...system, [name]: e.target.value };
@@ -47,18 +57,6 @@ export const setBatterySystemById = <T extends SmartSystemParameters>(
           ...system,
           ...params,
         };
-      }
-      if (name === 'name') {
-        newState.priorityList = newState.priorityList.map((e) => {
-          if (system && e.id === id) {
-            const value: SortableItemParameter = {
-              id: e.id,
-              name: system.name,
-            };
-            return value;
-          }
-          return e;
-        });
       }
     }
   }

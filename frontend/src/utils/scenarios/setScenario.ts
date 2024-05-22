@@ -6,6 +6,8 @@ import {
   COMMON_LOAD_SYSTEM,
   COMMON_SOLAR_SYSTEM,
   COMMON_WIND_SYSTEM,
+  ScenariosModesType,
+  ScenariosStepUnitType,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +20,35 @@ export const setScenario = (
   const name: string = e.target.name;
   const value: number = parseFloat(e.target.value);
 
+  if (name === 'operationMode') {
+    newState = { ...newState, [name]: e.target.value };
+    if (
+      newState.operationMode === ScenariosModesType.Automatic &&
+      newState.batterySystemNumber.value !== 0
+    ) {
+      newState.steps = {
+        ...newState.steps,
+        value: 24,
+        disabled: true,
+      };
+      newState.stepTime = {
+        ...newState.stepTime,
+        value: 1,
+        disabled: true,
+      };
+      newState.stepUnit = ScenariosStepUnitType.Hour;
+    } else {
+      newState.steps = {
+        ...newState.steps,
+        disabled: false,
+      };
+      newState.stepTime = {
+        ...newState.stepTime,
+        disabled: false,
+      };
+    }
+    return newState;
+  }
   if (name === 'steps') {
     newState.solarSystems.forEach((s) => {
       s.radiationArray = Array(value ? value : 1).fill(0);
@@ -43,6 +74,7 @@ export const setScenario = (
       if (value > newState.solarSystemNumber.value) {
         const newSystem = {
           ...COMMON_SOLAR_SYSTEM,
+          name: `Sistema solar ${newState.solarSystemNumber.value + 1}`,
           radiationArray: Array(newState.steps.value).fill(0),
           temperatureArray: Array(newState.steps.value).fill(0),
           id: uuidv4(),
@@ -64,24 +96,40 @@ export const setScenario = (
       }
     }
     if ('batterySystems' in newState && name.includes('battery')) {
+      if (value === 0) {
+        newState.steps = {
+          ...newState.steps,
+          disabled: false,
+        };
+        newState.stepTime = {
+          ...newState.stepTime,
+          disabled: false,
+        };
+      } else if (newState.operationMode === ScenariosModesType.Automatic) {
+        newState.steps = {
+          ...newState.steps,
+          value: 24,
+          disabled: true,
+        };
+        newState.stepTime = {
+          ...newState.stepTime,
+          value: 1,
+          disabled: true,
+        };
+      }
       if (value > newState.batterySystemNumber.value) {
         const newSystem = {
           ...COMMON_BATTERY_SYSTEM,
+          name: `Sistema de baterías ${newState.batterySystemNumber.value + 1}`,
           chargePowerArray: Array(newState.steps.value).fill(0),
           dischargePowerArray: Array(newState.steps.value).fill(0),
           id: uuidv4(),
         };
-        newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
         newState.batterySystems = [
           ...newState.batterySystems,
           { ...newSystem },
         ];
       } else if (value < newState.batterySystemNumber.value) {
-        const removeSystem =
-          newState.batterySystems[newState.batterySystems.length - 1];
-        newState.priorityList = [
-          ...newState.priorityList.filter((f) => f.id !== removeSystem.id),
-        ];
         newState.batterySystems.splice(-1);
       }
     }
@@ -89,6 +137,9 @@ export const setScenario = (
       if (value > newState.hydraulicSystemNumber.value) {
         const newSystem = {
           ...COMMON_HYDRAULIC_SYSTEM,
+          name: `Sistema de turbinas ${
+            newState.hydraulicSystemNumber.value + 1
+          }`,
           waterHeadArray: Array(newState.steps.value).fill(0),
           waterFlowArray: Array(newState.steps.value).fill(0),
           id: uuidv4(),
@@ -111,6 +162,7 @@ export const setScenario = (
       if (value > newState.windSystemNumber.value) {
         const newSystem = {
           ...COMMON_WIND_SYSTEM,
+          name: `Sistema eólico ${newState.windSystemNumber.value + 1}`,
           windSpeedArray: Array(newState.steps.value).fill(0),
           id: uuidv4(),
         };
@@ -127,7 +179,11 @@ export const setScenario = (
     }
     if ('biogasSystems' in newState && name.includes('biogas')) {
       if (value > newState.biogasSystemNumber.value) {
-        const newSystem = { ...COMMON_BIOGAS_SYSTEM, id: uuidv4() };
+        const newSystem = {
+          ...COMMON_BIOGAS_SYSTEM,
+          name: `Sistema de biogas ${newState.biogasSystemNumber.value + 1}`,
+          id: uuidv4(),
+        };
         newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
         newState.biogasSystems = [...newState.biogasSystems, { ...newSystem }];
       } else if (value < newState.biogasSystemNumber.value) {
@@ -145,6 +201,7 @@ export const setScenario = (
           ...newState.loadSystems,
           {
             ...COMMON_LOAD_SYSTEM,
+            name: `Carga ${newState.loadSystemNumber.value + 1}`,
             powerArray: Array(newState.steps.value).fill(10),
             id: uuidv4(),
           },

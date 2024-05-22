@@ -157,10 +157,7 @@ const BatteryTab = (props: TabProps) => {
             {system.batterySystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
-                  {`${index + 1}. ${s.name} (${getValueByKey(
-                    BatteryText,
-                    s.type
-                  )})`}
+                  {`${s.name} (${getValueByKey(BatteryText, s.type)})`}
                 </MenuItem>
               );
             })}
@@ -268,6 +265,25 @@ const BatteryTab = (props: TabProps) => {
                   </Select>
                 </FormControl>
               </Grid>
+              {selectedSystem.informationMode ===
+                ScenariosCommonInputInformationType.Fixed && (
+                <>
+                  <Grid item xs={12} md={6} xl={4}>
+                    <CustomNumberField
+                      variable={selectedSystem.chargePower}
+                      name="chargePower"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={4}>
+                    <CustomNumberField
+                      variable={selectedSystem.dischargePower}
+                      name="dischargePower"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                </>
+              )}
             </Grid>
           </Grid>
           <Grid item xs={12} md={12} xl={3}>

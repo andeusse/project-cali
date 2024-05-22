@@ -155,10 +155,7 @@ const HydraulicTab = (props: TabProps) => {
             {system.hydraulicSystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
-                  {`${index + 1}. ${s.name} (${getValueByKey(
-                    HydraulicText,
-                    s.type
-                  )})`}
+                  {`${s.name} (${getValueByKey(HydraulicText, s.type)})`}
                 </MenuItem>
               );
             })}
@@ -241,6 +238,25 @@ const HydraulicTab = (props: TabProps) => {
                   </Select>
                 </FormControl>
               </Grid>
+              {selectedSystem.informationMode ===
+                ScenariosCommonInputInformationType.Fixed && (
+                <>
+                  <Grid item xs={12} md={6} xl={4}>
+                    <CustomNumberField
+                      variable={selectedSystem.waterHead}
+                      name="waterHead"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={4}>
+                    <CustomNumberField
+                      variable={selectedSystem.waterFlow}
+                      name="waterFlow"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                </>
+              )}
             </Grid>
           </Grid>
           <Grid item xs={12} md={12} xl={6}>

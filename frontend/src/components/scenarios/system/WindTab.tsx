@@ -144,10 +144,7 @@ const WindTab = (props: TabProps) => {
             {system.windSystems.map((s, index) => {
               return (
                 <MenuItem key={s.id} value={s.id}>
-                  {`${index + 1}. ${s.name} (${getValueByKey(
-                    WindText,
-                    s.type
-                  )})`}
+                  {`${s.name} (${getValueByKey(WindText, s.type)})`}
                 </MenuItem>
               );
             })}
@@ -186,6 +183,31 @@ const WindTab = (props: TabProps) => {
                 ></CustomNumberField>
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
+                <CustomNumberField
+                  variable={selectedSystem.airDensity}
+                  name="airDensity"
+                  handleChange={handleChange}
+                ></CustomNumberField>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
+                <FormControl fullWidth>
+                  <InputLabel id="moduleType-type">Tipo de módulos</InputLabel>
+                  <Select
+                    labelId="moduleType-type"
+                    label="Tipo de módulos"
+                    value={selectedSystem.type}
+                    name="type"
+                    onChange={handleChange}
+                  >
+                    {Object.keys(WindType).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {getValueByKey(WindText, key)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
                 <FormControl fullWidth>
                   <InputLabel id="informationMode-type">
                     Modo de ingreso información meteorológica
@@ -219,24 +241,20 @@ const WindTab = (props: TabProps) => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="moduleType-type">Tipo de módulos</InputLabel>
-                  <Select
-                    labelId="moduleType-type"
-                    label="Tipo de módulos"
-                    value={selectedSystem.type}
-                    name="type"
-                    onChange={handleChange}
-                  >
-                    {Object.keys(WindType).map((key) => (
-                      <MenuItem key={key} value={key}>
-                        {getValueByKey(WindText, key)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
+              {(selectedSystem.informationMode ===
+                ScenariosSolarWindInputInformationType.Fixed ||
+                selectedSystem.informationMode ===
+                  ScenariosSolarWindInputInformationType.Typical) && (
+                <>
+                  <Grid item xs={12} md={6} xl={4}>
+                    <CustomNumberField
+                      variable={selectedSystem.windSpeed}
+                      name="windSpeed"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                </>
+              )}
             </Grid>
           </Grid>
           <Grid item xs={12} md={12} xl={6}>
