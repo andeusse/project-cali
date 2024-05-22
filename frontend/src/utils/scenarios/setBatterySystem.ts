@@ -4,7 +4,6 @@ import {
   BatteryType,
   SetSystemArrayType,
   SmartSystemParameters,
-  SortableItemParameter,
 } from '../../types/scenarios/common';
 import { CellChange2Array } from '../cellChange2Array';
 import { CUSTOM_BATTERY, GEL_BATTERY } from '../../types/common';
@@ -80,8 +79,26 @@ export const setBatterySystemArraysById = <T extends SmartSystemParameters>(
       system.chargePowerArray,
       system.dischargePowerArray,
     ]);
-    system.chargePowerArray = newArrays[0];
-    system.dischargePowerArray = newArrays[1];
+    system.chargePowerArray = newArrays[0].map((v) => {
+      if (system) {
+        v = v < system.maxChargePower.value ? v : system.maxChargePower.value;
+        v = v > system.minChargePower.value ? v : system.minChargePower.value;
+      }
+      return v;
+    });
+    system.dischargePowerArray = newArrays[1].map((v) => {
+      if (system) {
+        v =
+          v < system.maxDischargePower.value
+            ? v
+            : system.maxDischargePower.value;
+        v =
+          v > system.minDischargePower.value
+            ? v
+            : system.minDischargePower.value;
+      }
+      return v;
+    });
   }
   newState.batterySystems = newState.batterySystems.map((s) => {
     if (system && s.id === id) {

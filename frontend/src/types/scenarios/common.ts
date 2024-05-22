@@ -359,8 +359,8 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
     min: 0,
     max: 50,
   },
-  radiationArray: Array(24).fill(0),
-  temperatureArray: Array(24).fill(0),
+  radiationArray: Array(24).fill(800),
+  temperatureArray: Array(24).fill(23),
 };
 
 export const COMMON_BATTERY_SYSTEM: BatterySystem = {
@@ -446,8 +446,8 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
     min: 0,
     max: 10,
   },
-  chargePowerArray: Array(24).fill(0),
-  dischargePowerArray: Array(24).fill(0),
+  chargePowerArray: Array(24).fill(5),
+  dischargePowerArray: Array(24).fill(5),
 };
 
 export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
@@ -493,8 +493,8 @@ export const COMMON_HYDRAULIC_SYSTEM: HydraulicSystem = {
     min: 0.0001,
     max: 0.01,
   },
-  waterHeadArray: Array(24).fill(0),
-  waterFlowArray: Array(24).fill(0),
+  waterHeadArray: Array(24).fill(65),
+  waterFlowArray: Array(24).fill(0.005),
 };
 
 export const COMMON_WIND_SYSTEM: WindSystem = {
@@ -541,7 +541,7 @@ export const COMMON_WIND_SYSTEM: WindSystem = {
     min: 2,
     max: 65,
   },
-  windSpeedArray: Array(24).fill(0),
+  windSpeedArray: Array(24).fill(11.5),
 };
 
 export const COMMON_BIOGAS_SYSTEM: BiogasSystem = {

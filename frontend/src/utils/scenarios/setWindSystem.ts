@@ -99,7 +99,19 @@ export const setWindSystemArraysById = <T extends SmartSystemParameters>(
   let system = newState.windSystems.find((s) => s.id === id);
   if (system) {
     const newArrays = CellChange2Array(e, [system.windSpeedArray]);
-    system.windSpeedArray = newArrays[0];
+    system.windSpeedArray = newArrays[0].map((v) => {
+      if (system) {
+        v =
+          v < system.upperCutoffWindSpeed.value
+            ? v
+            : system.upperCutoffWindSpeed.value;
+        v =
+          v > system.lowerCutoffWindSpeed.value
+            ? v
+            : system.lowerCutoffWindSpeed.value;
+      }
+      return v;
+    });
   }
   newState.windSystems = newState.windSystems.map((s) => {
     if (system && s.id === id) {

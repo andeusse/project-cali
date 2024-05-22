@@ -120,14 +120,24 @@ export const setSolarSystemArraysById = <T extends SmartSystemParameters>(
 ) => {
   const { e, oldState, id } = props;
   const newState = { ...oldState };
+  console.log(e);
+
   let system = newState.solarSystems.find((s) => s.id === id);
   if (system) {
     const newArrays = CellChange2Array(e, [
       system.radiationArray,
       system.temperatureArray,
     ]);
-    system.radiationArray = newArrays[0];
-    system.temperatureArray = newArrays[1];
+    system.radiationArray = newArrays[0].map((v) => {
+      v = v < 2000 ? v : 2000;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+    system.temperatureArray = newArrays[1].map((v) => {
+      v = v < 50 ? v : 50;
+      v = v > 0 ? v : 0;
+      return v;
+    });
   }
   newState.solarSystems = newState.solarSystems.map((s) => {
     if (system && s.id === id) {

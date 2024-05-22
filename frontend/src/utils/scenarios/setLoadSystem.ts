@@ -45,7 +45,11 @@ export const setLoadSystemArraysById = <T extends SmartSystemParameters>(
   let system = newState.loadSystems.find((s) => s.id === id);
   if (system) {
     const newArrays = CellChange2Array(e, [system.powerArray]);
-    system.powerArray = newArrays[0];
+    system.powerArray = newArrays[0].map((v) => {
+      v = v < 10000000 ? v : 10000000;
+      v = v > 0.1 ? v : 0.1;
+      return v;
+    });
   }
   newState.loadSystems = newState.loadSystems.map((s) => {
     if (system && s.id === id) {

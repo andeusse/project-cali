@@ -107,8 +107,24 @@ export const setHydraulicSystemArraysById = <T extends SmartSystemParameters>(
       system.waterHeadArray,
       system.waterFlowArray,
     ]);
-    system.waterHeadArray = newArrays[0];
-    system.waterFlowArray = newArrays[1];
+    system.waterHeadArray = newArrays[0].map((v) => {
+      if (system) {
+        v =
+          v < system.maximumWaterHead.value ? v : system.maximumWaterHead.value;
+        v =
+          v > system.minimumWaterHead.value ? v : system.minimumWaterHead.value;
+      }
+      return v;
+    });
+    system.waterFlowArray = newArrays[1].map((v) => {
+      if (system) {
+        v =
+          v < system.maximumWaterFlow.value ? v : system.maximumWaterFlow.value;
+        v =
+          v > system.minimumWaterFlow.value ? v : system.minimumWaterFlow.value;
+      }
+      return v;
+    });
   }
   newState.hydraulicSystems = newState.hydraulicSystems.map((s) => {
     if (system && s.id === id) {

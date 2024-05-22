@@ -51,19 +51,27 @@ export const setScenario = (
   }
   if (name === 'steps') {
     newState.solarSystems.forEach((s) => {
-      s.radiationArray = Array(value ? value : 1).fill(0);
-      s.temperatureArray = Array(value ? value : 1).fill(0);
+      s.radiationArray = Array(value ? value : 1).fill(800);
+      s.temperatureArray = Array(value ? value : 1).fill(23);
     });
     newState.batterySystems.forEach((s) => {
-      s.chargePowerArray = Array(value ? value : 1).fill(0);
-      s.dischargePowerArray = Array(value ? value : 1).fill(0);
+      s.chargePowerArray = Array(value ? value : 1).fill(
+        s.maxChargePower.value / 2
+      );
+      s.dischargePowerArray = Array(value ? value : 1).fill(
+        s.maxDischargePower.value / 2
+      );
     });
     newState.hydraulicSystems.forEach((s) => {
-      s.waterHeadArray = Array(value ? value : 1).fill(0);
-      s.waterFlowArray = Array(value ? value : 1).fill(0);
+      s.waterHeadArray = Array(value ? value : 1).fill(
+        s.maximumWaterHead.value / 2
+      );
+      s.waterFlowArray = Array(value ? value : 1).fill(
+        s.maximumWaterFlow.value / 2
+      );
     });
     newState.windSystems.forEach((s) => {
-      s.windSpeedArray = Array(value ? value : 1).fill(0);
+      s.windSpeedArray = Array(value ? value : 1).fill(s.ratedWindSpeed.value);
     });
     newState.loadSystems.forEach((s) => {
       s.powerArray = Array(value ? value : 1).fill(10);
