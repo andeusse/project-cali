@@ -1,19 +1,16 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 current_directory = os.getcwd()
-excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory, '..', '..')), "tools", "DB_Mapping.xlsx")
+print(current_directory)
+excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory)), "v1.0", "tools", "DB_Mapping.xlsx")
 print(excel_file_path)
 
 import pandas as pd
 import time
 from datetime import datetime
 from simulation_models.Biogas import ThermoProperties as TP
-from scipy.integrate import odeint
-from scipy.optimize import minimize
-import numpy as np
-import statistics as st
 from  tools import DBManager
 
 
@@ -317,7 +314,7 @@ class BiogasPlantDT:
         self.Online = Online
         self.manual_sustrate = manual_sustrate
 
-        if self.Online == 0 or self.manual_sustrate == 1:
+        if self.Online == False or self.manual_sustrate == True:
             
             self.ST = ST/100
             self.SV = SV/100
@@ -372,7 +369,7 @@ class BiogasPlantDT:
 
     def Pump104_Operation_1_2 (self, manual_P104=0, TRH=30, FT_P104=5, TTO_P104=10):    
         self.manual_P104 = manual_P104
-        if  self.Online == 0 or self.manual_P104 == 1:
+        if  self.Online == False or self.manual_P104 == True:
             self.TRH = TRH
             self.FT_P104 = FT_P104
             self.TTO_P104 = TTO_P104
@@ -411,7 +408,7 @@ class BiogasPlantDT:
 
     def Pump104_Operation_3_4_5 (self, manual_P104=0, TRH=30, FT_P104=5, TTO_P104=10):    
         self.manual_P104 = manual_P104
-        if  self.Online == 0 or self.manual_P104 == 1:
+        if  self.Online == False or self.manual_P104 == True:
             self.TRH = TRH
             self.FT_P104 = FT_P104
             self.TTO_P104 = TTO_P104
@@ -451,7 +448,7 @@ class BiogasPlantDT:
     def Pump101_Operation_2 (self, manual_P101=0, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
         self.manual_P101 = manual_P101
         
-        if self.manual_P101 == 1 or self.Online == 0:
+        if self.manual_P101 == True or self.Online == False:
             self.FT_P101= FT_P101
             self.TTO_P101 = TTO_P101
         
@@ -480,7 +477,7 @@ class BiogasPlantDT:
     def Pump101_Operation_3_5 (self, manual_P101=0):
         self.manual_P101 = manual_P101
         
-        if self.manual_P101 == 1 or self.Online == 0:
+        if self.manual_P101 == True or self.Online == False:
             self.Q_P101 = self.Q_P104
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -496,7 +493,7 @@ class BiogasPlantDT:
     def Pump101_Operation_4 (self, manual_P101=0):         #en este modo de operación primero se ejecuta la función de la bomba 102
         self.manual_P101 = manual_P101
         
-        if self.manual_P101 == 1 or self.Online == 0:
+        if self.manual_P101 == True or self.Online == False:
             self.Q_P101 = self.Q_P104 + self.Q_P102
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -512,7 +509,7 @@ class BiogasPlantDT:
     def Pump102_Operation_4_5 (self, manual_P102=0, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
         self.manual_P102 = manual_P102
 
-        if self.manual_P102 == 1 or self.Online == 0:
+        if self.manual_P102 == True or self.Online == False:
             self.FT_P102= FT_P102
             self.TTO_P102 = TTO_P102
 
@@ -543,7 +540,7 @@ class BiogasPlantDT:
     def Temperature_R101 (self, manual_temp_R101 = 1, Temp_R101=35):
         self.manual_temp_R101 = manual_temp_R101
 
-        if self.manual_temp_R101 == 1 or self.Online == 0:
+        if self.manual_temp_R101 == True or self.Online == False:
             self.Temp_R101 = Temp_R101
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -568,7 +565,7 @@ class BiogasPlantDT:
     def Temperature_R102 (self, manual_temp_R102 = 1, Temp_R102=35):
         self.manual_temp_R102 = manual_temp_R102
 
-        if self.manual_temp_R102 == 1 or self.Online == 0:
+        if self.manual_temp_R102 == True or self.Online == False:
             self.Temp_R102 = Temp_R102
 
             self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -596,9 +593,9 @@ class BiogasPlantDT:
         self.AT103A3v = self.AT103A3v["AT-103A3"]
         self.AT103A4v = self.AT103A4v["AT-103A4"]
         self.AT103A5v = self.AT103A5v["AT-103A5"]
-
-        self.RH_V101 = self.AT103Bv["AT-103B"]
-
+                
+        self.RH_V101v = self.AT103Bv["AT-103B"]
+        
         self.PT103v = self.PT103v["PT-103"]
         self.TT103v = self.TT103v["TT-103"]
         self.SV103v = self.SV103v["SV-103"]
@@ -656,7 +653,7 @@ class BiogasPlantDT:
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][112], variable = self.database_df["Tag"][112], value = self.mol_H2_V101, timestamp = self.timestamp)
 
-        self.RH_V101 = self.AT103Bv.iloc[-1]/100
+        self.RH_V101 = self.RH_V101v.iloc[-1]/100
         self.AH_v101 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V101, self.TT103v.iloc[-1])
         self.mol_H2O_V101 = self.AH_v101*self.V_normal_V101
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -686,7 +683,11 @@ class BiogasPlantDT:
         self.AT104A4v = self.AT104A4v["AT-104A4"]
         self.AT104A5v = self.AT104A5v["AT-104A5"]
 
-        self.RH_V102 = self.AT104Bv["AT-104B"]
+        self.RH_V102v = self.AT104Bv["AT-104B"]
+
+        self.PT104v = self.PT104v["PT-104"]
+        self.TT104v = self.TT104v["TT-104"]
+        #self.SV104v = self.SV104v["SV-104"]
 
         self.V_normal_V102 = ((self.PT104v.iloc[-1]*6.89476)*self.VG2*self.T_std)/(self.P_std*(self.TT104v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -732,7 +733,7 @@ class BiogasPlantDT:
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][127], variable = self.database_df["Tag"][127], value = self.mol_H2_V102, timestamp = self.timestamp)
 
-        self.RH_V102 = self.AT104Bv.iloc[-1]/100
+        self.RH_V102 = self.RH_V102v.iloc[-1]/100
         self.AH_v102 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V102, self.TT104v.iloc[-1])
         self.mol_H2O_V102 = self.AH_v102*self.V_normal_V102
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -762,7 +763,10 @@ class BiogasPlantDT:
         self.AT105A4v = self.AT105A4v["AT-105A4"]
         self.AT105A5v = self.AT105A5v["AT-105A5"]
 
-        self.RH_V107 = self.AT105Bv["AT-105B"]
+        self.RH_V107v = self.AT105Bv["AT-105B"]
+
+        self.PT105v = self.PT105v["PT-105"]
+        self.TT105v = self.TT105v["TT-105"]
 
         self.V_normal_V107 = ((self.PT105v.iloc[-1]*6.89476)*self.VG3*self.T_std)/(self.P_std*(self.TT105v.iloc[-1]+273.15))
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
@@ -808,7 +812,7 @@ class BiogasPlantDT:
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][142], variable = self.database_df["Tag"][142], value = self.mol_H2_V107, timestamp = self.timestamp)
 
-        self.RH_V107 = self.AT105Bv.iloc[-1]/100
+        self.RH_V107 = self.RH_V107v.iloc[-1]/100
         self.AH_v107 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V107, self.TT105v.iloc[-1])
         self.mol_H2O_V107 = self.AH_v107*self.V_normal_V107
         self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))

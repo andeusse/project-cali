@@ -1,9 +1,10 @@
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 current_directory = os.getcwd()
-excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory, '..', '..')), "tools", "DB_Mapping.xlsx")
+print(current_directory)
+excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory)), "v1.0", "tools", "DB_Mapping.xlsx")
 print(excel_file_path)
 
 from  tools import DBManager
@@ -16,12 +17,12 @@ from datetime import datetime
 import statistics as st
 
 
+
 class BiogasModelTrain:
-    def __init__ (self, index_database, VR1, Kini, Eaini):
-        self.databaseConnection_df = pd.read_excel(excel_file_path, sheet_name='ConexionDB')
-        self.database_df = pd.read_excel(excel_file_path, sheet_name='InfluxDBVariables')
-        self.InfluxDB = DBManager.InfluxDBmodel(server = 'http://' + str(self.databaseConnection_df['IP'][index_database])+':'+str(self.databaseConnection_df['Port'][index_database])+'/', org = self.databaseConnection_df['Organization'][index_database], bucket = self.databaseConnection_df['Bucket'][index_database], token = self.databaseConnection_df['Token'][index_database])
-        
+    def __init__ (self, VR1, Kini, Eaini, DatabaseConnection_df, database_df, Influx ):
+        self.databaseConnection_df = DatabaseConnection_df
+        self.database_df = database_df
+        self.InfluxDB = Influx
         self.query_Csus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Csus_exp_R101", location=1, type=1, forecastTime=1)
         self.Csus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Csus_exp_R101)
         self.initial_time = self.Csus_exp_R101["_time"][0]
@@ -60,9 +61,9 @@ class BiogasModelTrain:
             self.t_DT.append(t.total_seconds())
         
         if len(self.t_DT) % 2 == 0:
-            self.n = len(self.t_DT)/2 
+            self.n = int(len(self.t_DT)/2) 
         else:
-            self.n = (len(self.t_DT)+1)/2
+            self.n = int((len(self.t_DT)+1)/2)
 
         #end date to train
         self.end_train_date = t_i[self.n]
@@ -84,75 +85,39 @@ class BiogasModelTrain:
         
     def Operation_1_Optimization(self):
 
-        def Optimization(K, Ea, t, Csus_exp, Q, T):
-            Q = Q[0]
-            T = T[0]
-
-            def Model (K, Ea, t, Csus_exp):
-
-                def DiferentialEquation (C, t):
-                    R=8.314
-                    self.dCsusR101_dt = (Q/self.VR1)*(self.Csus_ini-C)-(K*C*np.exp(Ea/R*T))/self.VR1
-                    return self.dCsusR101_dt
-                Co = Csus_exp[0]
-                self.Csus_R101 = odeint (DiferentialEquation, Co, t)
-                self.obj = np.sum((self.Csus_R101 - Csus_exp)**2)
-                return self.obj
+        def model(C, t, K, Ea, VR, T):
+            R = 8.314
+            dCsus_dt = -(K * C * np.exp(-Ea/(R*T))) / VR
+            return dCsus_dt
+        
+        def Optimization(K, Ea, t, C_exp, y0, VR, temperatures):
+            # Define the objective function to minimize
+            def objective(params):
+                K, Ea = params
+                total_squared_diff = 0
+                for T in temperatures:
+                    # Integrate the model with the current values of K and Ea
+                    C_model = odeint(model, y0, t, args=(K, Ea, VR, T)).flatten()
+                    # Calculate the sum of squared differences for this temperature
+                    squared_diff = np.sum((C_exp - C_model) ** 2)
+                    total_squared_diff += squared_diff
+                return total_squared_diff
             
-            self.Optimization = minimize(Model, K, Ea, arg=(t, Csus_exp))
-            self.K_R101 = self.Optimization.x
-            return self.K_R101, self.Csus_R101
+            # Perform the optimization
+            result = minimize(objective, [K, Ea], method='Nelder-Mead')
+            return result
         
-        self.K_optimizada_R101 = []
-        self.Ea_Optimizada_R101 = []
-        self.C_sus_model_train = []
+        self.Optimization_R101 = Optimization(K = self.Kini, Ea = self.Eaini, t = self.t_train, C_exp=self.Csus_exp_train, y0 = self.Csus_exp_train[0], VR = self.VR1, temperatures=self.TE101_train) 
+        self.K_R101 = float(self.Optimization_R101.x[0])
+        self.Ea_R101 = float(self.Optimization_R101.x[1])
 
-        for i in range (len(self.t_train)):
-                self.tv = self.t_train [i : i+2]
-                self.C_train = self.Csus_exp_train[i : i+2]
-                self.Q_train = self.Q_P104_train[i : i+2]
-                self.T_train = self.TE101_train[i : i+2]
-                self.Ko = self.Kini
-                self.Eao = self.Eaini
+        self.timestamp = self.Date_train[-1]
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.K_R101, timestamp = self.timestamp) 
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][156], variable = self.database_df["Tag"][156], value = self.Ea_R101, timestamp = self.timestamp)            
 
-                self.Optimizacion = Optimization(K = self.Ko, Ea=self.Eaini, t = self.tv, Csus_exp=self.C_train, Q = self.Q_train)
-                self.K_optimizada_R101.append(float(self.Optimizacion[0][0]))
-                self.Ea_Optimizada_R101.append(float(self.Optimizacion[0][1]))
-                self.Kini = float(self.Optimizacion[0][0])
-                self.Eaini = float(self.Optimizacion[0][1])
-                self.C_sus_model_train.append(float(self.Optimizacion[1][0]))
-                
-        self.K_R101 = st.mean(self.K_optimizada_R101)
-        self.Ea_R101 = st.mean(self.Ea_Optimizada_R101)
-        timestamp = int(self.Date_train[-1].timestamp())
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.K_R101, timestamp = timestamp)
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], Value = self.Ea_R101, timestamp = timestamp)
-
-        def Model (K, Ea, t, Q, T, C):
-            Q = Q[0]
-            T = T[0]
-
-            def DiferentialEquation(C,t):
-                R=8.314
-                self.dCsusValR101_dt = (Q/self.VR1)*(self.Csus_ini-C)-(K*C*np.exp(Ea/R*T))/self.VR1
-                return self.dCsusValR101_dt
-            Co = C[0]
-            self.Csus_val_R101 = odeint (DiferentialEquation, Co, t)
-
-            return self.Csus_val_R101
+        self.Csus_model_train = odeint(model, self.Csus_exp_train[0], self.t_train, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_train)))
+        self.Csus_model_val = odeint(model, self.Csus_exp_val[self.n +1], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_val)))
         
-        self.C_sus_model_val = []
-
-        for i in range (len(self.t_val)):
-            self.tv_val = self.t_val[i : i+2]
-            self.C_val = self.Csus_exp_val[i : i+2]
-            self.Q_val = self.Q_P104_val[i + i+2]
-            self.T_val = self.TE101_val[i + i+2]
-            self.K_val = self.K_R101
-            self.Ea_val = self.Ea_R101
-
-            self.Validation = Model(K = self.K_val, Ea = self.Ea_val, t=self.tv_val, Q=self.Q_val, T=self.T_val, C=self.C_val)
-            self.C_sus_model_val.append(float(self.Validation[0]))
 
 
             
