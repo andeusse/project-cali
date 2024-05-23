@@ -44,7 +44,7 @@ const Monitoring = (props: Props) => {
       title: 'Torre de refrigeración',
       children: (
         <IframeFull
-          url={Config.getInstance().params.grafanaUrls[5]}
+          url={Config.getInstance().params.grafanaUrls[4]}
         ></IframeFull>
       ),
     },
@@ -60,7 +60,7 @@ const Monitoring = (props: Props) => {
       title: 'Tablero Eléctrico',
       children: (
         <IframeFull
-          url={Config.getInstance().params.grafanaUrls[0]}
+          url={Config.getInstance().params.grafanaUrls[6]}
         ></IframeFull>
       ),
     },
