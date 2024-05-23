@@ -25,12 +25,15 @@ class BiogasModelTrain:
         self.InfluxDB = Influx
         self.query_Csus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Csus_exp_R101", location=1, type=1, forecastTime=1)
         self.Csus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Csus_exp_R101)
+        
+        
         self.initial_time = self.Csus_exp_R101["_time"][0]
+        self.Csus_ini = self.Csus_exp_R101["Csus_exp_R101"][0]
                 
         self.VR1 = VR1
         self.Kini = Kini
         self.Eaini =Eaini
-        self.Csus_ini = self.Csus_exp_R101["Csus_exp_R101"][0]
+       
         
         self.VR1 = VR1
         self.Kini = Kini
@@ -66,7 +69,7 @@ class BiogasModelTrain:
             self.n = int((len(self.t_DT)+1)/2)
 
         #end date to train
-        self.end_train_date = t_i[self.n]
+        self.end_train_date = t_i[self.n-1]
         #Train Data    
         self.t_train = self.t_DT[: self.n]       #Vector time in seconds without date
         self.data_train = self.Data[: self.n]    #Vector with dates
@@ -79,10 +82,10 @@ class BiogasModelTrain:
         self.data_val = self.Data[self.n + 1 :]      #Vector with dates 
         self.Csus_exp_val = self.Data['Csus_exp_R101'][self.n + 1 :] 
         self.Q_P104_val = self.Q_P104["SE-104v"][self.n + 1 :]
-        self.TE101_val = self.TE101["TE-101v"][self.n + 1 :]  
-
-        self.Csus_ini = self.Csus_exp_train[0]
+        self.TE101_val = self.TE101["TE-101v"][self.n + 1 :]
         
+        self.Csus_ini = self.Csus_exp_train[0]
+            
     def Operation_1_Optimization(self):
 
         def model(C, t, K, Ea, VR, T):
@@ -107,6 +110,7 @@ class BiogasModelTrain:
             result = minimize(objective, [K, Ea], method='Nelder-Mead')
             return result
         
+        
         self.Optimization_R101 = Optimization(K = self.Kini, Ea = self.Eaini, t = self.t_train, C_exp=self.Csus_exp_train, y0 = self.Csus_exp_train[0], VR = self.VR1, temperatures=self.TE101_train) 
         self.K_R101 = float(self.Optimization_R101.x[0])
         self.Ea_R101 = float(self.Optimization_R101.x[1])
@@ -116,9 +120,9 @@ class BiogasModelTrain:
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][156], variable = self.database_df["Tag"][156], value = self.Ea_R101, timestamp = self.timestamp)            
 
         self.Csus_model_train = odeint(model, self.Csus_exp_train[0], self.t_train, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_train)))
-        self.Csus_model_val = odeint(model, self.Csus_exp_val[self.n +1], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_val)))
+        self.Csus_model_val = odeint(model, self.Csus_exp_val[self.n + 1], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_val)))
         
-
+    
 
             
 

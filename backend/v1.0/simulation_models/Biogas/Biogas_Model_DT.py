@@ -325,7 +325,7 @@ class BiogasPlantDT:
             self.Cs = Cs
             self.rho = rho 
         
-        else:
+        elif self.manual_sustrate == False:
 
             self.ST = self.ST["M-ST"].iloc[-1]/100
             self.SV = self.SV["M-SV"].iloc[-1]/100
@@ -540,52 +540,46 @@ class BiogasPlantDT:
     def Temperature_R101 (self, manual_temp_R101 = 1, Temp_R101=35):
         self.manual_temp_R101 = manual_temp_R101
 
-        if self.manual_temp_R101 == True or self.Online == False:
-            self.Temp_R101 = Temp_R101
+        if self.manual_temp_R101 == False or self.Online == False:
+            self.Temp_R101 = float(Temp_R101)
 
-            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = self.Temp_R101, timestamp = self.timestamp)
-            
-            self.query_TE101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=1, forecastTime=1) 
-            self.TE_101v = self.InfluxDB.InfluxDBreader(self.query_TE101)
-            self.TE_101v = self.TE_101v["TE-101v"].tolist()
-
-        else:
+        elif self.manual_temp_R101 == True:
 
             self.TE_101Av = self.TE_101Av["TE-101A"].tolist()
             self.TE_101Bv = self.TE_101Bv["TE-101B"].tolist()
 
-            T1 = self.TE_101Av[-1]
-            T2 = self.TE_101Bv[-1]
-            Tf = (T1 + T2)/2
-
-            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = Tf, timestamp = self.timestamp)
+            T1 = float(self.TE_101Av[-1])
+            T2 = float(self.TE_101Bv[-1])
+            self.Temp_R101 = float((T1 + T2)/2)
+            
+        self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][100], variable = self.database_df["Tag"][100], value = self.Temp_R101, timestamp = self.timestamp)
+       
+        self.query_TE101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=1, forecastTime=1) 
+        self.TE_101v = self.InfluxDB.InfluxDBreader(self.query_TE101)
+        self.TE_101v = self.TE_101v["TE-101v"].tolist()
     
     def Temperature_R102 (self, manual_temp_R102 = 1, Temp_R102=35):
         self.manual_temp_R102 = manual_temp_R102
 
-        if self.manual_temp_R102 == True or self.Online == False:
-            self.Temp_R102 = Temp_R102
+        if self.manual_temp_R102 == False or self.Online == False:
+            self.Temp_R102 = float(Temp_R102)
 
-            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = self.Temp_R102, timestamp = self.timestamp)
-            
-            self.query_TE102 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-102v", location=1, type=1, forecastTime=1) 
-            self.TE_102v = self.InfluxDB.InfluxDBreader(self.query_TE102)
-            self.TE_102v = self.TE_101v["TE-102v"].tolist()
-
-        else:
+        elif self.manual_temp_R102 == True:
 
             self.TE_102Av = self.TE_102Av["TE-102A"].tolist()
             self.TE_102Bv = self.TE_102Bv["TE-102B"].tolist()
 
             T1 = self.TE_102Av[-1]
             T2 = self.TE_102Bv[-1]
-            Tf = (T1 + T2)/2
-
-            self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
-            self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = Tf, timestamp = self.timestamp)
+            self.Temp_R102 = (T1 + T2)/2
+        
+        self.timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][101], variable = self.database_df["Tag"][101], value = self.Temp_R102, timestamp = self.timestamp)
+        
+        self.query_TE102 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-102v", location=1, type=1, forecastTime=1) 
+        self.TE_102v = self.InfluxDB.InfluxDBreader(self.query_TE102)
+        self.TE_102v = self.TE_101v["TE-102v"].tolist()
         
     def V_101_DT (self):
         self.AT103A1v = self.AT103A1v["AT-103A1"]

@@ -47,8 +47,11 @@ class Biogas(Resource):
     biogas_input["inputPump101Flow"]=data["inputPump101Flow"]["value"]
     biogas_input["inputPump101StartTime"]=data["inputPump101StartTime"]["value"]
     biogas_input["inputPump101StartsPerDay"]=data["inputPump101StartsPerDay"]["value"]
+    biogas_input["inputTemperature101_"] = data["inputTemperature101"]['disabled']
     biogas_input["inputTemperature101"]=data["inputTemperature101"]["value"]
+    biogas_input["inputTemperature102_"] = data["inputTemperature102"]['disabled']
     biogas_input["inputTemperature102"]=data["inputTemperature102"]["value"]
+    
 
     if biogas_input["inputDigitalTwin"] == True:
       Biogas_plant_DT_ini = Biogas_Start.BiogasStart()
@@ -62,24 +65,42 @@ class Biogas(Resource):
                                              SV=biogas_input["inputProximateAnalysisVolatileSolids"], Cc=biogas_input["inputElementalAnalysisCarbonContent"], Ch=biogas_input["inputElementalAnalysisHydrogenContent"],
                                              Co=biogas_input["inputElementalAnalysisOxygenContent"], Cn=biogas_input["inputElementalAnalysisNitrogenContent"], Cs=biogas_input["inputElementalAnalysisSulfurContent"], rho = biogas_input["inputProximateAnalysisDensity"])
 
-
-      Machine_learning_ini = MachineLearning_biogas_start.MachineLearningStart()
-      Machine_learning_ini.starting(VR1=biogas_input["anaerobicReactorVolume1"], Kini = biogas_input["inputKineticParameterInitialValue"], Eaini=1, DatabaseConnection_df = Biogas_plant_DT.databaseConnection_df, database_df = Biogas_plant_DT.database_df, Influx = Biogas_plant_DT.InfluxDB)
-      Machine_Learning_Module = Machine_learning_ini.data
-      Machine_Learning_Module.Get_data_DT()
-      Machine_Learning_Module.DT_time_and_data()
-     
+      if len (Biogas_plant_DT.SE104v) > 4:
+        Machine_learning_ini = MachineLearning_biogas_start.MachineLearningStart()
+        Machine_learning_ini.starting(VR1=biogas_input["anaerobicReactorVolume1"], Kini = biogas_input["inputKineticParameterInitialValue"], Eaini=1, DatabaseConnection_df = Biogas_plant_DT.databaseConnection_df, database_df = Biogas_plant_DT.database_df, Influx = Biogas_plant_DT.InfluxDB)
+        Machine_Learning_Module = Machine_learning_ini.data
+        Machine_Learning_Module.Get_data_DT()
+        Machine_Learning_Module.DT_time_and_data()
+      
       if biogas_input["inputOperationMode"] == 1:
         
         Biogas_plant_DT.Pump104_Operation_1_2(manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
-        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = 1, Temp_R101=biogas_input["inputTemperature101"])    #Falta el input de manual automático para temperatura de R101
+        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = biogas_input["inputTemperature101_"], Temp_R101=biogas_input["inputTemperature101"]) 
+        
         Biogas_plant_DT.V_101_DT()
         Biogas_plant_DT.V_102_DT()
         Biogas_plant_DT.V_107_DT()
         Biogas_plant_DT.R101_DT_operation_1()
 
-        Machine_Learning_Module.Operation_1_Optimization()
-              
+        if len (Biogas_plant_DT.SE104v) > 4:
+          Machine_Learning_Module.Operation_1_Optimization()
+          K_R101 = Machine_Learning_Module.K_R101
+          Ea_R101 = Machine_Learning_Module.Ea_R101
+          Csus_model_train_R101 = Machine_Learning_Module.Csus_model_train
+          Csus_model_val_R101 = Machine_Learning_Module.Csus_model_train
+          Csus_exp_train_R101 = Machine_Learning_Module.Csus_exp_train
+          Csus_exp_val = Machine_Learning_Module.Csus_exp_val
+          t_train_R101 = Machine_Learning_Module.t_train
+          t_val_R101 = Machine_Learning_Module.t_val  
+
+          biogas_output["Csus_model_train_R101"] = Csus_model_train_R101
+          biogas_output["Csus_exp_train_R101"] = Csus_exp_train_R101
+          biogas_output["t_train_R101"] = t_train_R101
+          biogas_output["Csus_model_val_R101"] = Csus_model_val_R101
+          biogas_output["Csus_exp_val"] = Csus_exp_val
+          biogas_output["t_val_R101"] = t_val_R101
+          biogas_output["KineticParameter1_R101"] = K_R101
+          biogas_output["KineticParameter2_R101"] = Ea_R101
         
         """
         Salidas solo para el modo de operación 1
@@ -92,19 +113,16 @@ class Biogas(Resource):
         TotalSolidsOutR101 = Biogas_plant_DT.ST_R101                        #Concentración de sólidos totales a la salida de R101 [%]
         VolatileSolidsOutR101 = Biogas_plant_DT.SV_R101                     #Concentración de sólidos volátiles a la salida de R101 [%]
         SubstrateConcentrationOutR101 = Biogas_plant_DT.Csus_ini_R101       #Concentración de sustrato a la salida de R101 [M]
-        K_R101 = Machine_Learning_Module.K_R101
-        Ea_R101 = Machine_Learning_Module.Ea_R101
-       
-        biogas_output["FlowExit_R101"]=FlowExit_R101
-        biogas_output["KineticParameter1"] = K_R101
-        biogas_output["KineticParameter2"] = Ea_R101
+        
 
+        biogas_output["FlowExit_R101"]=FlowExit_R101
+        
 
       elif biogas_input["inputOperationMode"] == 2:
                
         Biogas_plant_DT.Pump104_Operation_1_2 (manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
         Biogas_plant_DT.Pump101_Operation_2 (manual_P101=biogas_input["inputPump101"], FT_P101=biogas_input["inputPump101StartsPerDay"], TTO_P101=biogas_input["inputPump101StartTime"], Q_P101 = biogas_input["inputPump101Flow"])
-        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = 1, Temp_R101=biogas_input["inputTemperature101"])    #Falta el input de manual automático para temperatura de R101
+        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = biogas_input["inputTemperature101_"], Temp_R101=biogas_input["inputTemperature101"])    
         Biogas_plant_DT.V_101_DT()
         Biogas_plant_DT.V_102_DT()
         Biogas_plant_DT.V_107_DT()
@@ -133,8 +151,8 @@ class Biogas(Resource):
        
         Biogas_plant_DT.Pump104_Operation_3_4_5(manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
         Biogas_plant_DT.Pump101_Operation_3_5(manual_P101=biogas_input["inputPump101"])
-        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = 1, Temp_R101=biogas_input["inputTemperature101"])    #Falta el input de manual automático para temperatura de R101
-        Biogas_plant_DT.Temperature_R102(manual_temp_R102=1, Temp_R102=biogas_input["inputTemperature102"])      #Falta el input de manual automático para temperatura de R102
+        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = biogas_input["inputTemperature101_"], Temp_R101=biogas_input["inputTemperature101"])   
+        Biogas_plant_DT.Temperature_R102(manual_temp_R102=biogas_input["inputTemperature102_"], Temp_R102=biogas_input["inputTemperature102"])     
         Biogas_plant_DT.V_101_DT()
         Biogas_plant_DT.V_102_DT()
         Biogas_plant_DT.V_107_DT()
@@ -174,8 +192,8 @@ class Biogas(Resource):
         Biogas_plant_DT.Pump104_Operation_3_4_5(manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
         Biogas_plant_DT.Pump101_Operation_4(manual_P101=biogas_input["inputPump101"])
         Biogas_plant_DT.Pump102_Operation_4_5(manual_P102=biogas_input["inputPump102"], FT_P102=biogas_input["inputPump102StartsPerDay"], TTO_P102=biogas_input["inputPump102StartTime"], Q_P102 = biogas_input["inputPump102Flow"])
-        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = 1, Temp_R101=biogas_input["inputTemperature101"])    #Falta el input de manual automático para temperatura de R101
-        Biogas_plant_DT.Temperature_R102(manual_temp_R102=1, Temp_R102=biogas_input["inputTemperature102"])      #Falta el input de manual automático para temperatura de R102
+        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = biogas_input["inputTemperature101_"], Temp_R101=biogas_input["inputTemperature101"])   
+        Biogas_plant_DT.Temperature_R102(manual_temp_R102 = biogas_input["inputTemperature102_"], Temp_R102=biogas_input["inputTemperature102"])   
         Biogas_plant_DT.V_101_DT()
         Biogas_plant_DT.V_102_DT()
         Biogas_plant_DT.V_107_DT()
@@ -216,8 +234,8 @@ class Biogas(Resource):
         Biogas_plant_DT.Pump104_Operation_3_4_5(manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
         Biogas_plant_DT.Pump101_Operation_3_5(manual_P101=biogas_input["inputPump101"])
         Biogas_plant_DT.Pump102_Operation_4_5(manual_P102=biogas_input["inputPump102"], FT_P102=biogas_input["inputPump102StartsPerDay"], TTO_P102=biogas_input["inputPump102StartTime"], Q_P102 = biogas_input["inputPump102Flow"])
-        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = 1, Temp_R101=biogas_input["inputTemperature101"])    #Falta el input de manual automático para temperatura de R101
-        Biogas_plant_DT.Temperature_R102(manual_temp_R102=1, Temp_R102=biogas_input["inputTemperature102"])      #Falta el input de manual automático para temperatura de R102
+        Biogas_plant_DT.Temperature_R101(manual_temp_R101 = biogas_input["inputTemperature101_"], Temp_R101=biogas_input["inputTemperature101"])    
+        Biogas_plant_DT.Temperature_R102(manual_temp_R102 = biogas_input["inputTemperature102_"], Temp_R102=biogas_input["inputTemperature102"])    
         Biogas_plant_DT.V_101_DT()
         Biogas_plant_DT.V_102_DT()
         Biogas_plant_DT.V_107_DT()
@@ -311,7 +329,7 @@ class Biogas(Resource):
       StorageH2_V101moles = Biogas_plant_DT.mol_H2_V101                 #moles de hidrógeno almacenado (actual) en el tanque V-101 [%]
 
       #Humedad del biogás en humedad relativa
-      Relative_humidity_V101 = Biogas_plant_DT.AT103Bv.iloc[-1]          #[%]
+      Relative_humidity_V101 = Biogas_plant_DT.RH_V101v.iloc[-1]          #[%]
 
       #Humedad del biogás en moles
       moles_humidity_V101 = Biogas_plant_DT.mol_H2O_V101                 #[mol]
@@ -362,7 +380,7 @@ class Biogas(Resource):
       StorageH2_V102moles = Biogas_plant_DT.mol_H2_V102                 #moles de hidrógeno almacenado (actual) en el tanque V-101 [%]
 
       #Humedad del biogás en humedad relativa
-      Relative_humidity_V102 = Biogas_plant_DT.AT104Bv.iloc[-1]          #[%]
+      Relative_humidity_V102 = Biogas_plant_DT.RH_V102v.iloc[-1]          #[%]
 
       #Humedad del biogás en moles
       moles_humidity_V102 = Biogas_plant_DT.mol_H2O_V102                 #[mol]
@@ -411,7 +429,7 @@ class Biogas(Resource):
       StorageH2_V107moles = Biogas_plant_DT.mol_H2_V107                 #moles de hidrógeno almacenado (actual) en el tanque V-101 [%]
 
       #Humedad del biogás en humedad relativa
-      Relative_humidity_V107 = Biogas_plant_DT.AT105Bv.iloc[-1]          #[%]
+      Relative_humidity_V107 = Biogas_plant_DT.RH_V107v.iloc[-1]          #[%]
 
       #Humedad del biogás en moles
       moles_humidity_V107 = Biogas_plant_DT.mol_H2O_V107                 #[mol]
