@@ -6,7 +6,9 @@ import {
   COMMON_LOAD_SYSTEM,
   COMMON_SOLAR_SYSTEM,
   COMMON_WIND_SYSTEM,
+  ScenariosLoadInputInformationType,
   ScenariosModesType,
+  ScenariosSolarWindInputInformationType,
   ScenariosStepUnitType,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
@@ -50,6 +52,38 @@ export const setScenario = (
     return newState;
   }
   if (name === 'steps') {
+    if (value !== 24) {
+      newState.solarSystems.forEach((s) => {
+        if (
+          s.informationMode === ScenariosSolarWindInputInformationType.Typical
+        ) {
+          s.informationMode = ScenariosSolarWindInputInformationType.Fixed;
+          s.radiation.tooltip = 'Irradiancia solar';
+          s.radiation.variableString = 'Irradiancia solar';
+
+          s.temperature.tooltip = 'Temperatura ambiente';
+          s.temperature.variableString = 'Temperatura ambiente';
+        }
+      });
+      newState.windSystems.forEach((s) => {
+        if (
+          s.informationMode === ScenariosSolarWindInputInformationType.Typical
+        ) {
+          s.informationMode = ScenariosSolarWindInputInformationType.Fixed;
+          s.windSpeed.tooltip = 'Velocidad del viento';
+          s.windSpeed.variableString = 'Velocidad del viento';
+        }
+      });
+      newState.loadSystems.forEach((s) => {
+        if (
+          s.informationMode === ScenariosLoadInputInformationType.Commercial ||
+          s.informationMode === ScenariosLoadInputInformationType.Industrial ||
+          s.informationMode === ScenariosLoadInputInformationType.Residential
+        ) {
+          s.informationMode = ScenariosLoadInputInformationType.Fixed;
+        }
+      });
+    }
     newState.solarSystems.forEach((s) => {
       s.radiationArray = Array(value ? value : 1).fill(800);
       s.temperatureArray = Array(value ? value : 1).fill(23);
@@ -74,7 +108,7 @@ export const setScenario = (
       s.windSpeedArray = Array(value ? value : 1).fill(s.ratedWindSpeed.value);
     });
     newState.loadSystems.forEach((s) => {
-      s.powerArray = Array(value ? value : 1).fill(10);
+      s.powerArray = Array(value ? value : 1).fill(100);
     });
   }
   if (name.includes('SystemNumber')) {
@@ -83,8 +117,8 @@ export const setScenario = (
         const newSystem = {
           ...COMMON_SOLAR_SYSTEM,
           name: `Sistema solar ${newState.solarSystemNumber.value + 1}`,
-          radiationArray: Array(newState.steps.value).fill(0),
-          temperatureArray: Array(newState.steps.value).fill(0),
+          radiationArray: Array(newState.steps.value).fill(800),
+          temperatureArray: Array(newState.steps.value).fill(23),
           id: uuidv4(),
         };
         newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
@@ -129,8 +163,12 @@ export const setScenario = (
         const newSystem = {
           ...COMMON_BATTERY_SYSTEM,
           name: `Sistema de baterías ${newState.batterySystemNumber.value + 1}`,
-          chargePowerArray: Array(newState.steps.value).fill(0),
-          dischargePowerArray: Array(newState.steps.value).fill(0),
+          chargePowerArray: Array(newState.steps.value).fill(
+            COMMON_BATTERY_SYSTEM.maxChargePower.value / 2
+          ),
+          dischargePowerArray: Array(newState.steps.value).fill(
+            COMMON_BATTERY_SYSTEM.maxDischargePower.value / 2
+          ),
           id: uuidv4(),
         };
         newState.batterySystems = [
@@ -148,8 +186,12 @@ export const setScenario = (
           name: `Sistema de turbinas ${
             newState.hydraulicSystemNumber.value + 1
           }`,
-          waterHeadArray: Array(newState.steps.value).fill(0),
-          waterFlowArray: Array(newState.steps.value).fill(0),
+          waterHeadArray: Array(newState.steps.value).fill(
+            COMMON_HYDRAULIC_SYSTEM.maximumWaterHead.value / 2
+          ),
+          waterFlowArray: Array(newState.steps.value).fill(
+            COMMON_HYDRAULIC_SYSTEM.maximumWaterFlow.value / 2
+          ),
           id: uuidv4(),
         };
         newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
@@ -171,7 +213,9 @@ export const setScenario = (
         const newSystem = {
           ...COMMON_WIND_SYSTEM,
           name: `Sistema eólico ${newState.windSystemNumber.value + 1}`,
-          windSpeedArray: Array(newState.steps.value).fill(0),
+          windSpeedArray: Array(newState.steps.value).fill(
+            COMMON_WIND_SYSTEM.ratedWindSpeed.value
+          ),
           id: uuidv4(),
         };
         newState.priorityList.push({ id: newSystem.id, name: newSystem.name });
@@ -210,7 +254,7 @@ export const setScenario = (
           {
             ...COMMON_LOAD_SYSTEM,
             name: `Carga ${newState.loadSystemNumber.value + 1}`,
-            powerArray: Array(newState.steps.value).fill(10),
+            powerArray: Array(newState.steps.value).fill(100),
             id: uuidv4(),
           },
         ];

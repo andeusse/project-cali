@@ -31,6 +31,7 @@ const loadingStyle: CSS.Properties = {
   marginLeft: '-200px',
   width: '400px',
   height: '400px',
+  zIndex: 999,
 };
 
 const backGroundStyle: CSS.Properties = {

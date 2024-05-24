@@ -1,12 +1,15 @@
 import { AxiosResponse } from 'axios';
 import api from './api';
 import jsonFile from './df_mock.json';
-import { SmartSystemOutput } from '../types/scenarios/common';
+import {
+  SmartSystemOutput,
+  SmartSystemParameters,
+} from '../types/scenarios/common';
 
-export const updateScenario = <T, R, S = AxiosResponse<R>>(
+export const updateScenario = (
   scenario: string,
-  body: T
-): Promise<S> => {
+  body: SmartSystemParameters
+): Promise<AxiosResponse<string>> => {
   return api.post(`/scenarios/${scenario}`, body);
 };
 

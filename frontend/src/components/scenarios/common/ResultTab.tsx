@@ -6,7 +6,7 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { SmartSystemOutput } from '../../../types/scenarios/common';
 import {
   Chart as ChartJS,
@@ -32,32 +32,46 @@ type Props = {
 const ResultTab = (props: Props) => {
   const { data } = props;
 
-  const getDataFromSerie = (index: number) => {
-    const serie: number[] = [];
-    data.data.forEach((d) => {
-      serie.push(d[index]);
-    });
-    return serie;
-  };
+  const [currentGraphs, setCurrentGraphs] = useState<string[]>([]);
 
-  const getSeriesFromData = () => {
+  const [allSeries, setAllSeries] = useState<any>([]);
+
+  const [mainChartSeries, setMainChartSeries] = useState<any>();
+
+  const [labels, setLabels] = useState<string[]>([]);
+
+  const [selectedVariable, setSelectedVariable] = useState<string>('');
+
+  const getSeriesFromData = useCallback(() => {
     const series: any[] = [];
     data.columns.forEach((d, i) => {
+      const serie: number[] = [];
+      data.data.forEach((d) => {
+        serie.push(d[i]);
+      });
       series.push({
         id: d,
         label: data.columns[i],
-        data: getDataFromSerie(i),
+        data: serie,
         backgroundColor: [randomColorGenerator()],
         borderColor: ['rgba(0,0,0,0.5)'],
         borderWidth: 1,
       });
     });
-    return series;
-  };
+    setLabels(data.index.map((i) => `P ${i + 1}`));
+    setAllSeries(series);
+    let chartSeries = {
+      labels: data.index.map((i) => `P ${i + 1}`),
+      datasets: series.filter(
+        (f: { id: string | string[] }) => !f.id.includes('SOC')
+      ),
+    };
+    setMainChartSeries(chartSeries);
+  }, [data.columns, data.data, data.index]);
 
-  const [currentGraphs, setCurrentGraphs] = useState<string[]>([]);
-
-  const [allSeries] = useState(getSeriesFromData());
+  useEffect(() => {
+    getSeriesFromData();
+  }, [getSeriesFromData]);
 
   const chartRef = useRef<any>(undefined);
 
@@ -78,7 +92,7 @@ const ResultTab = (props: Props) => {
       y: {
         title: {
           display: true,
-          text: `Potencia [W]`.toUpperCase(),
+          text: `Potencia [kW]`.toUpperCase(),
         },
         stacked: true,
       },
@@ -101,7 +115,9 @@ const ResultTab = (props: Props) => {
     },
   };
 
-  const [selectedVariable, setSelectedVariable] = useState<string>('');
+  const handleSelectedVariableChange = (e: any) => {
+    setSelectedVariable(e.target.value);
+  };
 
   const handleAddGraph = () => {
     currentGraphs.push(selectedVariable);
@@ -112,22 +128,27 @@ const ResultTab = (props: Props) => {
     setCurrentGraphs(currentGraphs.filter((f) => f !== e));
   };
 
-  const labels: string[] = data.index.map((i) => `P ${i + 1}`);
-
   let series = {
     labels: labels,
-    datasets: allSeries.filter((f) => !f.id.includes('SOC')),
+    datasets: allSeries.filter(
+      (f: { id: string | string[] }) => !f.id.includes('SOC')
+    ),
   };
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={12} xl={12}>
-        <Bar id={`main-chart`} ref={chartRef} data={series} options={options} />
+        <Bar
+          id={`main-chart`}
+          ref={chartRef}
+          data={mainChartSeries ? mainChartSeries : series}
+          options={options}
+        />
       </Grid>
       <Grid item xs={12} md={12} xl={12}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} xl={3}>
-            <h2>Gráficas de tiempo</h2>
+            <h2>Gráficas individuales</h2>
             <FormControl
               fullWidth
               sx={{ marginBottom: '10px', marginTop: '10px' }}
@@ -137,7 +158,7 @@ const ResultTab = (props: Props) => {
                 labelId="variable-select-label"
                 label="Variable"
                 value={selectedVariable}
-                onChange={(e) => setSelectedVariable(e.target.value)}
+                onChange={(e) => handleSelectedVariableChange(e)}
               >
                 {data.columns.map((v, index) => (
                   <MenuItem key={`${index}${v}`} value={v}>
@@ -165,7 +186,7 @@ const ResultTab = (props: Props) => {
                       handleDeleteChart={handleDeleteGraph}
                       labels={labels}
                       title={g}
-                      serie={allSeries.find((f) => f.id === g)}
+                      serie={allSeries.find((f: any) => f.id === g)}
                     ></BarGraph>
                   </Grid>
                 );

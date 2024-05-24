@@ -67,10 +67,14 @@ import ResultTab from '../../components/scenarios/common/ResultTab';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { updateScenario, updateScenarioMock } from '../../api/scenario';
+import { updateScenario } from '../../api/scenario';
 import { AxiosError } from 'axios';
 import { errorResp } from '../../types/api';
 import SortableList from '../../components/UI/SortableList';
+import { useAppDispatch } from '../../redux/reduxHooks';
+import { setIsLoading } from '../../redux/slices/isLoadingSlice';
+
+const tabs = ['solar', 'battery', 'hydraulic', 'wind', 'biogas', 'load'];
 
 const SmartCity = () => {
   const [system, setSystem] = useState({ ...SMART_CITY });
@@ -84,7 +88,10 @@ const SmartCity = () => {
   const [data, setData] = useState<SmartSystemOutput | undefined>(undefined);
   const [error, setError] = useState('');
 
+  const dispatch = useAppDispatch();
+
   const handleChange = (e: any, variableName?: string) => {
+    chooseTab(e.target.name, parseInt(e.target.value));
     const newState = setFormState<SmartSystemParameters>(
       e,
       system,
@@ -149,24 +156,27 @@ const SmartCity = () => {
   };
 
   const handleQueryScenario = () => {
-    // updateScenario<SmartSystemParameters, SmartSystemOutput>(
-    //   'smartcity',
-    //   system
-    // )
-    //   .then((resp) => {
-    //     setData(resp.data);
-    //   })
-    //   .catch((err: AxiosError<errorResp>) => {
-    //     setData(undefined);
-    //     setError(err.message);
-    //     setIsOpen(true);
-    //   });
-    updateScenarioMock().then((res) => {
-      setData(res);
-    });
+    dispatch(setIsLoading(true));
+    updateScenario('smartcity', system)
+      .then((resp) => {
+        setData(() => {
+          const newData = JSON.parse(resp.data);
+          return newData;
+        });
+        setSelectedTab('result');
+      })
+      .catch((err: AxiosError<errorResp>) => {
+        setData(undefined);
+        setError(err.message);
+        setIsOpen(true);
+      })
+      .finally(() => {
+        dispatch(setIsLoading(false));
+      });
   };
 
   const handleResetScenario = () => {
+    setSelectedTab('solar');
     setData(undefined);
     setError('');
   };
@@ -184,6 +194,52 @@ const SmartCity = () => {
       priorityList: result,
     });
     return result;
+  };
+
+  const chooseTab = (name: string, value: number) => {
+    const currentTab = selectedTab;
+    if (name.includes('SystemNumber')) {
+      let tempTabs = [...tabs];
+      if (
+        (name.includes('solar') && value === 0) ||
+        system.solarSystemNumber.value === 0
+      ) {
+        tempTabs = tempTabs.filter((f) => f !== 'solar');
+      }
+      if (
+        (name.includes('battery') && value === 0) ||
+        system.batterySystemNumber.value === 0
+      ) {
+        tempTabs = tempTabs.filter((f) => f !== 'battery');
+      }
+      if (
+        (name.includes('hydraulic') && value === 0) ||
+        system.hydraulicSystemNumber.value === 0
+      ) {
+        tempTabs = tempTabs.filter((f) => f !== 'hydraulic');
+      }
+      if (
+        (name.includes('wind') && value === 0) ||
+        system.windSystemNumber.value === 0
+      ) {
+        tempTabs = tempTabs.filter((f) => f !== 'wind');
+      }
+      if (
+        (name.includes('biogas') && value === 0) ||
+        system.biogasSystemNumber.value === 0
+      ) {
+        tempTabs = tempTabs.filter((f) => f !== 'biogas');
+      }
+      if (
+        (name.includes('load') && value === 0) ||
+        system.loadSystemNumber.value === 0
+      ) {
+        tempTabs = tempTabs.filter((f) => f !== 'load');
+      }
+      if (!tempTabs.includes(currentTab)) {
+        setSelectedTab(tempTabs[0]);
+      }
+    }
   };
 
   return (
@@ -435,13 +491,17 @@ const SmartCity = () => {
                   <Tab key={'battery'} label={'BESS'} value={'battery'} />
                 )}
                 {system.hydraulicSystemNumber.value !== 0 && (
-                  <Tab key={'hidro'} label={'Hidro'} value={'hidro'} />
+                  <Tab
+                    key={'hydraulic'}
+                    label={'Hidráulico'}
+                    value={'hydraulic'}
+                  />
                 )}
                 {system.windSystemNumber.value !== 0 && (
                   <Tab key={'wind'} label={'Eólico'} value={'wind'} />
                 )}
                 {system.biogasSystemNumber.value !== 0 && (
-                  <Tab key={'biogas'} label={'Biogas'} value={'biogas'} />
+                  <Tab key={'biogas'} label={'Biogás'} value={'biogas'} />
                 )}
                 {system.loadSystemNumber.value !== 0 && (
                   <Tab key={'load'} label={'Carga'} value={'load'} />
@@ -469,7 +529,7 @@ const SmartCity = () => {
                 ></BatteryTab>
               )}
             </TabPanel>
-            <TabPanel key={'hidro'} value={'hidro'}>
+            <TabPanel key={'hydraulic'} value={'hydraulic'}>
               {system.hydraulicSystemNumber.value !== 0 && (
                 <HydraulicTab
                   system={system}
