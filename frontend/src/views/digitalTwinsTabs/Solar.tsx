@@ -20,7 +20,7 @@ import {
   SolarWindOutput,
   MODE_1_CADMIO_MODE_2,
   MODE_1_MODE_3,
-  MODE_2_HYBRID_DIAGRAM_VARIABLES,
+  MODE_2_HYBRID,
   MODE_4,
   MODE_5,
 } from '../../types/models/solar';
@@ -84,7 +84,7 @@ const Solar = () => {
       system.inputOperationMode === OperationModeType.Mode2 &&
       system.hybridInverter.isConnected
     ) {
-      setDiagramVariables(MODE_2_HYBRID_DIAGRAM_VARIABLES);
+      setDiagramVariables(MODE_2_HYBRID);
     } else if (system.inputOperationMode === OperationModeType.Mode4) {
       setDiagramVariables(MODE_4);
     } else if (system.inputOperationMode === OperationModeType.Mode5) {
@@ -788,6 +788,7 @@ const Solar = () => {
                 solarWind={system}
                 data={data}
                 isPlaying={isPlaying}
+                diagramVariables={diagramVariables}
               ></SolarDiagram>
             </Grid>
           </Grid>

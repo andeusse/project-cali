@@ -974,7 +974,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   },
 ];
 
-export const MODE_2_HYBRID_DIAGRAM_VARIABLES: DiagramVariableType[] = [
+export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Potencia carga CA',
     variable: 'inputAlternCurrentLoadPower',

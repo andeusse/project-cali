@@ -74,7 +74,15 @@ import SortableList from '../../components/UI/SortableList';
 import { useAppDispatch } from '../../redux/reduxHooks';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
 
-const tabs = ['solar', 'battery', 'hydraulic', 'wind', 'biogas', 'load'];
+const tabs = [
+  'solar',
+  'battery',
+  'hydraulic',
+  'wind',
+  'biogas',
+  'load',
+  'result',
+];
 
 const SmartCity = () => {
   const [system, setSystem] = useState({ ...SMART_CITY });
@@ -176,7 +184,7 @@ const SmartCity = () => {
   };
 
   const handleResetScenario = () => {
-    setSelectedTab('solar');
+    chooseTab('solarSystemNumber', system.solarSystemNumber.value, true);
     setData(undefined);
     setError('');
   };
@@ -196,10 +204,13 @@ const SmartCity = () => {
     return result;
   };
 
-  const chooseTab = (name: string, value: number) => {
+  const chooseTab = (name: string, value: number, removeResult?: boolean) => {
     const currentTab = selectedTab;
     if (name.includes('SystemNumber')) {
       let tempTabs = [...tabs];
+      if (removeResult) {
+        tempTabs = tempTabs.filter((f) => f !== 'result');
+      }
       if (
         (name.includes('solar') && value === 0) ||
         system.solarSystemNumber.value === 0

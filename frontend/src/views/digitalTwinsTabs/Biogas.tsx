@@ -14,13 +14,16 @@ import React, { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   BIOGAS,
-  BIOGAS_DIAGRAM_VARIABLES,
+  BIOGAS_MODE1,
+  BIOGAS_MODE2,
+  BIOGAS_MODE3,
+  BIOGAS_MODE4,
+  BIOGAS_MODE5,
   BiogasOutput,
   BiogasParameters,
   OperationModeType,
   SpeedLawOrderType,
 } from '../../types/models/biogas';
-import Diagram from '../../components/UI/Diagram';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import { setFormState } from '../../utils/setFormState';
 import PlayerControls from '../../components/UI/PlayerControls';
@@ -28,10 +31,10 @@ import CustomNumberField from '../../components/UI/CustomNumberField';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';
-
-import biogasDiagram from '../../assets/biogas/biogasPlantDiagram.svg';
-import biogasIllustration from '../../assets/illustrations/biogas.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
+
+import biogasIllustration from '../../assets/illustrations/biogas.png';
+import BiogasDiagram from '../../components/models/diagram/BiogasDiagram';
 
 const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
@@ -39,8 +42,28 @@ const Biogas = () => {
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
+  const [diagramVariables, setDiagramVariables] = useState(BIOGAS_MODE1);
+
   const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
     useControlPlayer<BiogasParameters, BiogasOutput>('biogas', system);
+
+  useEffect(() => {
+    if (system.inputOperationMode === OperationModeType.Modo1) {
+      setDiagramVariables(BIOGAS_MODE1);
+    }
+    if (system.inputOperationMode === OperationModeType.Modo2) {
+      setDiagramVariables(BIOGAS_MODE2);
+    }
+    if (system.inputOperationMode === OperationModeType.Modo3) {
+      setDiagramVariables(BIOGAS_MODE3);
+    }
+    if (system.inputOperationMode === OperationModeType.Modo4) {
+      setDiagramVariables(BIOGAS_MODE4);
+    }
+    if (system.inputOperationMode === OperationModeType.Modo5) {
+      setDiagramVariables(BIOGAS_MODE5);
+    }
+  }, [system.inputOperationMode]);
 
   useEffect(() => {
     setSystem((o) => {
@@ -566,13 +589,12 @@ const Biogas = () => {
             </Grid>
             <Grid item xs={12} md={9.5} xl={9.5}>
               {playerControl}
-              <Diagram<BiogasOutput>
-                diagram={biogasDiagram}
+              <BiogasDiagram
+                biogas={system}
                 data={data}
-                variables={BIOGAS_DIAGRAM_VARIABLES}
-                width={255}
-                height={150}
-              ></Diagram>
+                isPlaying={isPlaying}
+                diagramVariables={diagramVariables}
+              ></BiogasDiagram>
             </Grid>
           </Grid>
         </Grid>
@@ -583,7 +605,7 @@ const Biogas = () => {
                 timeMultiplier={system.timeMultiplier}
                 handleChange={handleChange}
                 graphs={graphs}
-                variables={BIOGAS_DIAGRAM_VARIABLES}
+                variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
               ></TimeGraphs>

@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   OperationModeType,
-  MODE_1_CADMIO_MODE_2,
-  MODE_1_MODE_3,
-  MODE_2_HYBRID_DIAGRAM_VARIABLES,
-  MODE_4,
-  MODE_5,
   SolarWindOutput,
   SolarWindParameters,
 } from '../../../types/models/solar';
@@ -29,15 +24,17 @@ import cargaDCOn from '../../../assets/common/cargaDCOn.png';
 import lightOff from '../../../assets/common/lightsOff.png';
 import lightOn from '../../../assets/common/lightsOn.png';
 import BatteryStateOfCharge from '../common/BatteryStateOfCharge';
+import { DiagramVariableType } from '../../../types/models/common';
 
 type Props = {
   solarWind: SolarWindParameters;
   data: SolarWindOutput | undefined;
   isPlaying: boolean;
+  diagramVariables: DiagramVariableType[];
 };
 
 const SolarDiagram = (props: Props) => {
-  const { solarWind, data, isPlaying } = props;
+  const { solarWind, data, isPlaying, diagramVariables } = props;
 
   const [batteryStateOfCharge, setBatteryStateOfCharge] = useState(
     data
@@ -46,38 +43,6 @@ const SolarDiagram = (props: Props) => {
           (solarWind.isBattery2 ? solarWind.battery2.stateOfCharge.value : 0)) /
           2
   );
-
-  const [diagramVariables, setDiagramVariables] = useState(MODE_1_MODE_3);
-
-  useEffect(() => {
-    if (
-      (solarWind.inputOperationMode === OperationModeType.Mode1 &&
-        solarWind.cadmiumTelluridePanel.isConnected) ||
-      (solarWind.inputOperationMode === OperationModeType.Mode2 &&
-        !solarWind.hybridInverter.isConnected)
-    ) {
-      setDiagramVariables(MODE_1_CADMIO_MODE_2);
-    } else if (
-      (solarWind.inputOperationMode === OperationModeType.Mode1 &&
-        !solarWind.cadmiumTelluridePanel.isConnected) ||
-      solarWind.inputOperationMode === OperationModeType.Mode3
-    ) {
-      setDiagramVariables(MODE_1_MODE_3);
-    } else if (
-      solarWind.inputOperationMode === OperationModeType.Mode2 &&
-      solarWind.hybridInverter.isConnected
-    ) {
-      setDiagramVariables(MODE_2_HYBRID_DIAGRAM_VARIABLES);
-    } else if (solarWind.inputOperationMode === OperationModeType.Mode4) {
-      setDiagramVariables(MODE_4);
-    } else if (solarWind.inputOperationMode === OperationModeType.Mode5) {
-      setDiagramVariables(MODE_5);
-    }
-  }, [
-    solarWind.cadmiumTelluridePanel.isConnected,
-    solarWind.hybridInverter.isConnected,
-    solarWind.inputOperationMode,
-  ]);
 
   useEffect(() => {
     let newValue = data

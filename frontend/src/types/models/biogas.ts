@@ -9,6 +9,7 @@ export enum OperationModeType {
   Modo2 = 'Modo2',
   Modo3 = 'Modo3',
   Modo4 = 'Modo4',
+  Modo5 = 'Modo5',
 }
 
 export enum SpeedLawOrderType {
@@ -357,7 +358,7 @@ export const BIOGAS: BiogasParameters = {
   },
   inputTemperature102: {
     disabled: false,
-    value: 1,
+    value: 35,
     tooltip: 'Temperatura reactor 102',
     unit: '°C',
     variableString: 'Temperatura R-102',
@@ -366,4 +367,67 @@ export const BIOGAS: BiogasParameters = {
   },
 };
 
-export const BIOGAS_DIAGRAM_VARIABLES: DiagramVariableType[] = [];
+export const BIOGAS_MODE1: DiagramVariableType[] = [
+  {
+    name: 'Mode1',
+    variable: 'inputAlternCurrentLoadPower',
+    unit: 'W',
+    isShown: true,
+    diagramName: 'Potencia',
+    fixed: 0,
+    x: 0,
+    y: 0,
+  },
+];
+
+export const BIOGAS_MODE2: DiagramVariableType[] = [
+  {
+    name: 'Mode2',
+    variable: 'inputAlternCurrentLoadPower',
+    unit: 'W',
+    isShown: true,
+    diagramName: 'Potencia',
+    fixed: 0,
+    x: 0,
+    y: 0,
+  },
+];
+
+export const BIOGAS_MODE3: DiagramVariableType[] = [
+  {
+    name: 'Mode3',
+    variable: 'inputAlternCurrentLoadPower',
+    unit: 'W',
+    isShown: true,
+    diagramName: 'Potencia',
+    fixed: 0,
+    x: 0,
+    y: 0,
+  },
+];
+
+export const BIOGAS_MODE4: DiagramVariableType[] = [
+  {
+    name: 'Mode4',
+    variable: 'inputAlternCurrentLoadPower',
+    unit: 'W',
+    isShown: true,
+    diagramName: 'Potencia',
+    fixed: 0,
+    x: 0,
+    y: 0,
+  },
+];
+
+export const BIOGAS_MODE5: DiagramVariableType[] = [
+  {
+    name: 'Mode5',
+    variable: 'inputAlternCurrentLoadPower',
+    unit: 'W',
+    isShown: true,
+    diagramName: 'Potencia',
+    fixed: 0,
+    x: 0,
+    y: 0,
+  },
+];
