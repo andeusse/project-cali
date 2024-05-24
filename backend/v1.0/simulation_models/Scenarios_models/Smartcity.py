@@ -46,7 +46,7 @@ class Smartcity:
         
         if self.operationType == 1:
             if self.N_BESS > 0:
-                self.results_df = pd.concat([PVpower, BESS_SOC,chargeP,dischargeP, Hydropower, WFpower, Biogaspower, Gridpower, Demandpower], axis = 1)
+                self.results_df = pd.concat([PVpower, BESS_SOC, chargeP, dischargeP, Hydropower, WFpower, Biogaspower, Gridpower, Demandpower], axis = 1)
                 self.results_df.drop(index=self.results_df.index[-1],axis=0,inplace=True)
             else:
                 self.results_df = pd.concat([PVpower, Hydropower, WFpower, Biogaspower, Gridpower, Demandpower], axis = 1)   

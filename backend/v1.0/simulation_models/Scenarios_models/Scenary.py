@@ -115,13 +115,13 @@ class Scenary_Model:
     def BESSSOC (self, BESS_OperativeDataType, initialSOC = [100.0], chargePower = [0.0], dischargePower = [0.0]):
                 
         for i in range(self.N_BESS):
-            self.BESS_Elements[i].operativeData(BESS_OperativeDataType[i], initialSOC[i], chargePower[i], dischargePower[i])
+            chargePower, dischargePower = self.BESS_Elements[i].operativeData(BESS_OperativeDataType[i], initialSOC[i], chargePower[i], dischargePower[i])
         
         if self.operationType == 1 and self.N_BESS > 0:
             self.BESS_SOC = pd.DataFrame(columns = self.BESS_SOC_Names)
-            self.chargePowers = pd.DataFrame(chargePower).transpose()
+            self.chargePowers = pd.DataFrame(chargePower)#.transpose()
             self.chargePowers.columns = self.BESS_chargeNames
-            self.dischargePowers = pd.DataFrame(dischargePower).transpose()
+            self.dischargePowers = pd.DataFrame(dischargePower)#.transpose()
             self.dischargePowers.columns = self.BESS_dischargeNames
             for i in range(self.N_BESS):
                 self.BESS_SOC[self.BESS_SOC_Names[i]] = self.BESS_Elements[i].SOCOutput(self.stepTime)[0]

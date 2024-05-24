@@ -315,6 +315,8 @@ class SmartCity(Resource):
       weightList.append(idList.index(id))
     weightList.append(len(data['priorityList']))
 
+    # print(weightList)
+
     results_df = smartcity_model.operation(PV_MeteorologicalDataType = informationMode, temperature = temperatures, irradiance = radiations, 
                   BESS_OperativeDataType = batteryInformationMode, initialSOC = stateOfCharge, chargePower = chargePowers, dischargePower = dischargePowers, 
                   hydroOperativeDataType = turbineInformationMode, head = waterHeads, flux = waterFlows, 
@@ -322,6 +324,7 @@ class SmartCity(Resource):
                   weights = weightList)
 
     response = results_df.to_json(orient='split')
-    print(response)
+    # print('#########################################################################')
+    # print(response)
 
     return response
