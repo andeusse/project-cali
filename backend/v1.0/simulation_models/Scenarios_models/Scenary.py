@@ -113,15 +113,23 @@ class Scenary_Model:
     
     # Cálculo de estado de carga de los elementos BESS con base en sus parámetros operativos
     def BESSSOC (self, BESS_OperativeDataType, initialSOC = [100.0], chargePower = [0.0], dischargePower = [0.0]):
-                
+        
+        chargePowersResults = []
+        dischargePowersResults = []
         for i in range(self.N_BESS):
-            chargePower, dischargePower = self.BESS_Elements[i].operativeData(BESS_OperativeDataType[i], initialSOC[i], chargePower[i], dischargePower[i])
+            chargePowerResponse, dischargePowerResponse = self.BESS_Elements[i].operativeData(BESS_OperativeDataType[i], initialSOC[i], chargePower[i], dischargePower[i])
+            if BESS_OperativeDataType[i] == 0:
+                chargePowersResults.append(chargePower[i])
+                dischargePowersResults.append(dischargePower[i])
+            elif(BESS_OperativeDataType[i] == 1):
+                chargePowersResults.append(chargePowerResponse.pop())
+                dischargePowersResults.append(dischargePowerResponse.pop())
         
         if self.operationType == 1 and self.N_BESS > 0:
             self.BESS_SOC = pd.DataFrame(columns = self.BESS_SOC_Names)
-            self.chargePowers = pd.DataFrame(chargePower)#.transpose()
+            self.chargePowers = pd.DataFrame(chargePowersResults).transpose()
             self.chargePowers.columns = self.BESS_chargeNames
-            self.dischargePowers = pd.DataFrame(dischargePower)#.transpose()
+            self.dischargePowers = pd.DataFrame(dischargePowersResults).transpose()
             self.dischargePowers.columns = self.BESS_dischargeNames
             for i in range(self.N_BESS):
                 self.BESS_SOC[self.BESS_SOC_Names[i]] = self.BESS_Elements[i].SOCOutput(self.stepTime)[0]
