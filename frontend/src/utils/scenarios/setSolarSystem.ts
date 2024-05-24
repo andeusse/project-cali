@@ -120,7 +120,6 @@ export const setSolarSystemArraysById = <T extends SmartSystemParameters>(
 ) => {
   const { e, oldState, id } = props;
   const newState = { ...oldState };
-  console.log(e);
 
   let system = newState.solarSystems.find((s) => s.id === id);
   if (system) {

@@ -51,7 +51,7 @@ const BarGraph = (props: Props) => {
       y: {
         title: {
           display: true,
-          text: `Potencia [W]`.toUpperCase(),
+          text: `Potencia [kW]`.toUpperCase(),
         },
         stacked: true,
       },
@@ -73,11 +73,6 @@ const BarGraph = (props: Props) => {
         text: title.toUpperCase(),
       },
     },
-  };
-
-  let series = {
-    labels: labels,
-    datasets: [serie],
   };
 
   const handleSaveCSV = () => {
@@ -126,7 +121,10 @@ const BarGraph = (props: Props) => {
         <Bar
           id={`${title}-chart`}
           ref={chartRef}
-          data={series}
+          data={{
+            labels: labels,
+            datasets: [serie],
+          }}
           options={options}
         />
       </Grid>
