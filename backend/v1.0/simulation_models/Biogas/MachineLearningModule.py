@@ -78,29 +78,58 @@ class BiogasModelTrain:
         self.TE101_train = self.TE101["TE-101v"][: self.n]
         self.Date_train = t_i[: self.n]
         #Test Data
+        self.n_val = int(len(self.t_train))
         self.t_val = self.t_DT[self.n + 1 :]         #Vector time in seconds without date
+        self.t_val = self.t_val[: self.n_val]
         self.data_val = self.Data[self.n + 1 :]      #Vector with dates 
-        self.Csus_exp_val = self.Data['Csus_exp_R101'][self.n + 1 :] 
-        self.Q_P104_val = self.Q_P104["SE-104v"][self.n + 1 :]
-        self.TE101_val = self.TE101["TE-101v"][self.n + 1 :]
+        self.Csus_exp_val = self.Data['Csus_exp_R101'][self.n + 1 :].tolist()
+        self.Csus_exp_val = self.Csus_exp_val[: self.n_val]
+        self.Q_P104_val = self.Q_P104["SE-104v"][self.n + 1 :].tolist()
+        self.Q_P104_val = self.Q_P104_val[: self.n_val]
+        self.TE101_val = self.TE101["TE-101v"][self.n + 1 :].tolist()
+        self.TE101_val = self.TE101_val[: self.n_val]
+
+        if len(self.t_val) != len(self.TE101_val):
+            if len(self.TE101_val) > len(self.t_val):
+                diference = len(self.TE101_val) - len(self.t_val)
+                self.TE101_val = self.TE101_val[: -diference]
+
+            elif len(self.t_val) > len(self.TE101_val):
+                diference = len(self.t_val) - len(self.TE101_val)
+                self.TE101_val = self.TE101_val[: -diference]
         
+        if len(self.t_val) != len(self.Q_P104_val):
+            if len(self.Q_P104_val) > len(self.t_val):
+                diference = len(self.Q_P104_val) - len(self.t_val)
+                self.Q_P104_val = self.Q_P104_val[: -diference]
+
+            elif len(self.t_val) > len(self.Q_P104_val):
+                diference = len(self.t_val) - len(self.Q_P104_val)
+                self.Q_P104_val = self.Q_P104_val[: -diference]
+
         self.Csus_ini = self.Csus_exp_train[0]
             
     def Operation_1_Optimization(self):
 
-        def model(C, t, K, Ea, VR, T):
+        def model(C, t, K, Ea, VR, T_func, Q_func):
             R = 8.314
-            dCsus_dt = -(K * C * np.exp(-Ea/(R*T))) / VR
+            T=T_func(t)
+            Q=Q_func(t)
+            dCsus_dt = ((Q / VR) * (self.Csus_ini - C)) -(K * C * np.exp(-Ea/(R*T))) / VR
             return dCsus_dt
         
-        def Optimization(K, Ea, t, C_exp, y0, VR, temperatures):
+        def Optimization(K, Ea, t, C_exp, y0, VR, temperatures, Qi):
             # Define the objective function to minimize
             def objective(params):
                 K, Ea = params
                 total_squared_diff = 0
-                for T in temperatures:
+                for i in range (len(temperatures)):
+                    T = temperatures[i]
+                    Q = Qi[i]
+                    T_func = lambda t: np.interp(t, self.t_train, temperatures)
+                    Q_func = lambda t: np.interp(t, self.t_train, Qi)
                     # Integrate the model with the current values of K and Ea
-                    C_model = odeint(model, y0, t, args=(K, Ea, VR, T)).flatten()
+                    C_model = odeint(model, y0, t, args=(K, Ea, VR, T_func, Q_func)).flatten()
                     # Calculate the sum of squared differences for this temperature
                     squared_diff = np.sum((C_exp - C_model) ** 2)
                     total_squared_diff += squared_diff
@@ -111,7 +140,7 @@ class BiogasModelTrain:
             return result
         
         
-        self.Optimization_R101 = Optimization(K = self.Kini, Ea = self.Eaini, t = self.t_train, C_exp=self.Csus_exp_train, y0 = self.Csus_exp_train[0], VR = self.VR1, temperatures=self.TE101_train) 
+        self.Optimization_R101 = Optimization(K = self.Kini, Ea = self.Eaini, t = self.t_train, C_exp=self.Csus_exp_train, y0 = self.Csus_exp_train[0], VR = self.VR1, temperatures=self.TE101_train, Qi=self.Q_P104_train) 
         self.K_R101 = float(self.Optimization_R101.x[0])
         self.Ea_R101 = float(self.Optimization_R101.x[1])
 
@@ -119,8 +148,13 @@ class BiogasModelTrain:
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.K_R101, timestamp = self.timestamp) 
         self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][156], variable = self.database_df["Tag"][156], value = self.Ea_R101, timestamp = self.timestamp)            
 
-        self.Csus_model_train = odeint(model, self.Csus_exp_train[0], self.t_train, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_train)))
-        self.Csus_model_val = odeint(model, self.Csus_exp_val[self.n + 1], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, st.mean(self.TE101_val)))
+        T_train_R101 = lambda t: np.interp(t, self.t_train, self.TE101_train)
+        Q_train_R101 = lambda t: np.interp(t, self.t_train, self.Q_P104_train)
+        self.Csus_model_train = odeint(model, self.Csus_exp_train[0], self.t_train, args=(self.K_R101, self.Ea_R101, self.VR1, T_train_R101, Q_train_R101))
+
+        T_val_R101 = lambda t: np.interp(t, self.t_val, self.TE101_val)
+        Q_val_R101 = lambda t: np.interp(t, self.t_val, self.Q_P104_val)
+        self.Csus_model_val = odeint(model, self.Csus_exp_val[0], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, T_val_R101, Q_val_R101))
         
     
 

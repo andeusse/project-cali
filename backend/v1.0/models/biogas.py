@@ -64,13 +64,6 @@ class Biogas(Resource):
       Biogas_plant_DT.Substrate_conditions(Online = biogas_input["inputDigitalTwin"], manual_sustrate=biogas_input["inputSubstrateConditions"], ST=biogas_input["inputProximateAnalysisTotalSolids"], 
                                              SV=biogas_input["inputProximateAnalysisVolatileSolids"], Cc=biogas_input["inputElementalAnalysisCarbonContent"], Ch=biogas_input["inputElementalAnalysisHydrogenContent"],
                                              Co=biogas_input["inputElementalAnalysisOxygenContent"], Cn=biogas_input["inputElementalAnalysisNitrogenContent"], Cs=biogas_input["inputElementalAnalysisSulfurContent"], rho = biogas_input["inputProximateAnalysisDensity"])
-
-      if len (Biogas_plant_DT.SE104v) > 4:
-        Machine_learning_ini = MachineLearning_biogas_start.MachineLearningStart()
-        Machine_learning_ini.starting(VR1=biogas_input["anaerobicReactorVolume1"], Kini = biogas_input["inputKineticParameterInitialValue"], Eaini=1, DatabaseConnection_df = Biogas_plant_DT.databaseConnection_df, database_df = Biogas_plant_DT.database_df, Influx = Biogas_plant_DT.InfluxDB)
-        Machine_Learning_Module = Machine_learning_ini.data
-        Machine_Learning_Module.Get_data_DT()
-        Machine_Learning_Module.DT_time_and_data()
       
       if biogas_input["inputOperationMode"] == 1:
         
@@ -82,7 +75,12 @@ class Biogas(Resource):
         Biogas_plant_DT.V_107_DT()
         Biogas_plant_DT.R101_DT_operation_1()
 
-        if len (Biogas_plant_DT.SE104v) > 4:
+        if len (Biogas_plant_DT.mol_CH4_R101v) > 4:
+          Machine_learning_ini = MachineLearning_biogas_start.MachineLearningStart()
+          Machine_learning_ini.starting(VR1=biogas_input["anaerobicReactorVolume1"], Kini = biogas_input["inputKineticParameterInitialValue"], Eaini=1, DatabaseConnection_df = Biogas_plant_DT.databaseConnection_df, database_df = Biogas_plant_DT.database_df, Influx = Biogas_plant_DT.InfluxDB)
+          Machine_Learning_Module = Machine_learning_ini.data
+          Machine_Learning_Module.Get_data_DT()
+          Machine_Learning_Module.DT_time_and_data()
           Machine_Learning_Module.Operation_1_Optimization()
           K_R101 = Machine_Learning_Module.K_R101
           Ea_R101 = Machine_Learning_Module.Ea_R101
@@ -278,6 +276,7 @@ class Biogas(Resource):
       """
       VolatileSolidsInletR101 = Biogas_plant_DT.Csus_ini    #Concentración de sólidos volátiles que ingresa a la planta por R101 [M][mol/L]
       TotalSolidsInletR101 = Biogas_plant_DT.Csus_ini_ST    #Concentración de sólidos totales que ingresa a la planta por R101 [M][mol/L]
+      MWsus = Biogas_plant_DT.MW_sustrato
       n = Biogas_plant_DT.n                                 #Subindice de carbono en la ecuación empírica del sustrato
       a = Biogas_plant_DT.a                                 #Subindice de hidrógeno en la ecuación empírica del sustrato
       b = Biogas_plant_DT.b                                 #Subindice de oxígeno en la ecuacción empírica del sustrato
@@ -443,6 +442,7 @@ class Biogas(Resource):
       
       biogas_output["VolatileSolidsInletR101"] = VolatileSolidsInletR101
       biogas_output["TotalSolidsInletR101"] = TotalSolidsInletR101
+      biogas_output["MWsus"] = MWsus
       biogas_output["n"] = n
       biogas_output["a"] = a
       biogas_output["b"] = b
