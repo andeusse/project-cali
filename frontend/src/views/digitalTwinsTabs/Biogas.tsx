@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -35,6 +36,9 @@ import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import biogasIllustration from '../../assets/illustrations/biogas.png';
 import BiogasDiagram from '../../components/models/diagram/BiogasDiagram';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import saveAs from 'file-saver';
 
 const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
@@ -44,7 +48,7 @@ const Biogas = () => {
 
   const [diagramVariables, setDiagramVariables] = useState(BIOGAS_MODE1);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
+  const [data, graphs, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<BiogasParameters, BiogasOutput>('biogas', system);
 
   useEffect(() => {
@@ -81,6 +85,35 @@ const Biogas = () => {
     const newState = setFormState<BiogasParameters>(e, system, variableName);
     if (newState) {
       setSystem(newState as BiogasParameters);
+    }
+  };
+
+  const handleSaveSystem = () => {
+    var blob = new Blob([JSON.stringify(system)], {
+      type: 'application/json',
+    });
+    saveAs(blob, `${system.name}.json`);
+  };
+
+  const handleUploadSystem = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length !== 0) {
+      const selectedFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const jsonData: BiogasParameters = JSON.parse(
+          e.target.result
+        ) as BiogasParameters;
+        if ('anaerobicReactorVolume1' in jsonData) {
+          setSystem(jsonData);
+        } else {
+          setError('El archivo no corresponde a un gemelo digital de biogas');
+          setIsOpen(true);
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(selectedFile);
     }
   };
 
@@ -452,6 +485,41 @@ const Biogas = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
+
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSaveSystem}
+            startIcon={<FileDownloadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Guardar
+          </Button>
+          <Button
+            component="label"
+            variant="contained"
+            color="info"
+            startIcon={<FileUploadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Cargar
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleUploadSystem}
+              multiple={false}
+            />
+          </Button>
+        </Grid>
+
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={2.5} xl={2.5}>

@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -35,6 +36,9 @@ import CustomToggle from '../../components/UI/CustomToggle';
 import turbineIllustration from '../../assets/illustrations/turbine.png';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
 import ErrorDialog from '../../components/UI/ErrorDialog';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import saveAs from 'file-saver';
 
 const Turbine = () => {
   const [system, setSystem] = useState<TurbineParameters>({ ...TURBINE });
@@ -42,7 +46,7 @@ const Turbine = () => {
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
+  const [data, graphs, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', system);
 
   useEffect(() => {
@@ -103,6 +107,35 @@ const Turbine = () => {
     const newState = setFormState<TurbineParameters>(e, system, variableName);
     if (newState) {
       setSystem(newState as TurbineParameters);
+    }
+  };
+
+  const handleSaveSystem = () => {
+    var blob = new Blob([JSON.stringify(system)], {
+      type: 'application/json',
+    });
+    saveAs(blob, `${system.name}.json`);
+  };
+
+  const handleUploadSystem = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length !== 0) {
+      const selectedFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const jsonData: TurbineParameters = JSON.parse(
+          e.target.result
+        ) as TurbineParameters;
+        if ('turbineType' in jsonData) {
+          setSystem(jsonData);
+        } else {
+          setError('El archivo no corresponde a un gemelo digital solar');
+          setIsOpen(true);
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(selectedFile);
     }
   };
 
@@ -344,6 +377,41 @@ const Turbine = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
+
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSaveSystem}
+            startIcon={<FileDownloadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Guardar
+          </Button>
+          <Button
+            component="label"
+            variant="contained"
+            color="info"
+            startIcon={<FileUploadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Cargar
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleUploadSystem}
+              multiple={false}
+            />
+          </Button>
+        </Grid>
+
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={2.5} xl={2.5}>

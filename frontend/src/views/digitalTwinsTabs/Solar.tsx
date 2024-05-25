@@ -9,6 +9,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Typography,
+  Button,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -40,6 +41,9 @@ import CustomToggle from '../../components/UI/CustomToggle';
 import solarIllustration from '../../assets/illustrations/solar.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import saveAs from 'file-saver';
 
 const Solar = () => {
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
@@ -49,7 +53,7 @@ const Solar = () => {
     useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop] =
+  const [data, graphs, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', system);
 
   useEffect(() => {
@@ -150,6 +154,35 @@ const Solar = () => {
     const newState = setFormState<SolarWindParameters>(e, system, variableName);
     if (newState) {
       setSystem(newState as SolarWindParameters);
+    }
+  };
+
+  const handleSaveSystem = () => {
+    var blob = new Blob([JSON.stringify(system)], {
+      type: 'application/json',
+    });
+    saveAs(blob, `${system.name}.json`);
+  };
+
+  const handleUploadSystem = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length !== 0) {
+      const selectedFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const jsonData: SolarWindParameters = JSON.parse(
+          e.target.result
+        ) as SolarWindParameters;
+        if ('monocrystallinePanel' in jsonData) {
+          setSystem(jsonData);
+        } else {
+          setError('El archivo no corresponde a un gemelo digital solar');
+          setIsOpen(true);
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(selectedFile);
     }
   };
 
@@ -588,57 +621,90 @@ const Solar = () => {
           </Accordion>
         </Grid>
         <Grid item xs={12} md={12} xl={12}>
+          <Accordion
+            expanded={isMetInformationExpanded}
+            onChange={() =>
+              setIsMetInformationExpanded(!isMetInformationExpanded)
+            }
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+              sx={{ margin: 0 }}
+            >
+              <Typography variant="h4">Información meteorológica</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4} xl={4}>
+                  <Iframe
+                    styles={{
+                      width: '100%',
+                      height: '500px',
+                    }}
+                    url={Config.getInstance().params.windyUrlRadiation}
+                  ></Iframe>
+                </Grid>
+                <Grid item xs={12} md={4} xl={4}>
+                  <Iframe
+                    styles={{
+                      width: '100%',
+                      height: '500px',
+                    }}
+                    url={Config.getInstance().params.windyUrlTemperature}
+                  ></Iframe>
+                </Grid>
+                <Grid item xs={12} md={4} xl={4}>
+                  <Iframe
+                    styles={{
+                      width: '100%',
+                      height: '500px',
+                    }}
+                    url={Config.getInstance().params.windyUrlWindSpeed}
+                  ></Iframe>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSaveSystem}
+            startIcon={<FileDownloadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Guardar
+          </Button>
+          <Button
+            component="label"
+            variant="contained"
+            color="info"
+            startIcon={<FileUploadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Cargar
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleUploadSystem}
+              multiple={false}
+            />
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={12} xl={12}>
-              <Accordion
-                expanded={isMetInformationExpanded}
-                onChange={() =>
-                  setIsMetInformationExpanded(!isMetInformationExpanded)
-                }
-              >
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  sx={{ margin: 0 }}
-                >
-                  <Typography variant="h4">
-                    Información meteorológica
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={4} xl={4}>
-                      <Iframe
-                        styles={{
-                          width: '100%',
-                          height: '500px',
-                        }}
-                        url={Config.getInstance().params.windyUrlRadiation}
-                      ></Iframe>
-                    </Grid>
-                    <Grid item xs={12} md={4} xl={4}>
-                      <Iframe
-                        styles={{
-                          width: '100%',
-                          height: '500px',
-                        }}
-                        url={Config.getInstance().params.windyUrlTemperature}
-                      ></Iframe>
-                    </Grid>
-                    <Grid item xs={12} md={4} xl={4}>
-                      <Iframe
-                        styles={{
-                          width: '100%',
-                          height: '500px',
-                        }}
-                        url={Config.getInstance().params.windyUrlWindSpeed}
-                      ></Iframe>
-                    </Grid>
-                  </Grid>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
             <Grid item xs={12} md={2.5} xl={2.5}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={12} xl={12}>
@@ -793,6 +859,7 @@ const Solar = () => {
             </Grid>
           </Grid>
         </Grid>
+
         {graphs !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>

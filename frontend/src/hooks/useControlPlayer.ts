@@ -106,5 +106,14 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
     setError('');
   };
 
-  return [data, graphs, isPlaying, error, onPlay, onPause, onStop] as const;
+  return [
+    data,
+    graphs,
+    isPlaying,
+    error,
+    onPlay,
+    onPause,
+    onStop,
+    setError,
+  ] as const;
 };

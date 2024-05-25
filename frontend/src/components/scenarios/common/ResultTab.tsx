@@ -24,6 +24,11 @@ import { Bar } from 'react-chartjs-2';
 import { randomColorGenerator } from '../../../utils/randomColorGenerator';
 import AddIcon from '@mui/icons-material/Add';
 import BarGraph from './BarGraph';
+import saveAs from 'file-saver';
+import { CustomIconButton } from '../../UI/CustomIconButton';
+import ImageIcon from '@mui/icons-material/Image';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { array2CSV } from '../../../utils/array2CSV';
 
 type Props = {
   data: SmartSystemOutput;
@@ -63,7 +68,8 @@ const ResultTab = (props: Props) => {
     let chartSeries = {
       labels: data.index.map((i) => `P ${i + 1}`),
       datasets: series.filter(
-        (f: { id: string | string[] }) => !f.id.includes('SOC')
+        (f: { id: string | string[] }) =>
+          !f.id.includes('_SOC') && !f.id.includes('_Energy')
       ),
     };
     setMainChartSeries(chartSeries);
@@ -128,6 +134,23 @@ const ResultTab = (props: Props) => {
     setCurrentGraphs(currentGraphs.filter((f) => f !== e));
   };
 
+  const handleSaveCSV = () => {
+    var blob = new Blob(
+      [array2CSV([data.columns, ...data.data], ['Sistema', ...labels])],
+      {
+        type: 'text/csv;charset=utf-8',
+      }
+    );
+    saveAs(blob, `Sistema-data.csv`);
+  };
+
+  const handleSavePNG = () => {
+    const canvas: any = document.getElementById(`main-chart`);
+    canvas.toBlob((blob: any) => {
+      saveAs(blob, `Sistema.png`);
+    });
+  };
+
   let series = {
     labels: labels,
     datasets: allSeries.filter(
@@ -137,6 +160,26 @@ const ResultTab = (props: Props) => {
 
   return (
     <Grid container spacing={2}>
+      <Grid
+        item
+        xs={12}
+        md={12}
+        xl={12}
+        sx={{
+          textAlign: 'center',
+        }}
+      >
+        <CustomIconButton
+          icon={<FileDownloadIcon fontSize="inherit" />}
+          tooltip="Download CSV"
+          handleClick={handleSaveCSV}
+        ></CustomIconButton>
+        <CustomIconButton
+          icon={<ImageIcon fontSize="inherit" />}
+          tooltip="Download chart PNG"
+          handleClick={handleSavePNG}
+        ></CustomIconButton>
+      </Grid>
       <Grid item xs={12} md={12} xl={12}>
         <Bar
           id={`main-chart`}

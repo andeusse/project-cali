@@ -14,7 +14,7 @@ import {
   Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
   SMART_CITY,
@@ -73,6 +73,9 @@ import { errorResp } from '../../types/api';
 import SortableList from '../../components/UI/SortableList';
 import { useAppDispatch } from '../../redux/reduxHooks';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import saveAs from 'file-saver';
 
 const tabs = [
   'solar',
@@ -87,7 +90,7 @@ const tabs = [
 const SmartCity = () => {
   const [system, setSystem] = useState({ ...SMART_CITY });
   const [isOpen, setIsOpen] = useState(false);
-  const [isImageExpanded, setIsImageExpanded] = useState(false);
+  const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [selectedTab, setSelectedTab] = useState<string>('solar');
 
@@ -250,6 +253,35 @@ const SmartCity = () => {
       if (!tempTabs.includes(currentTab)) {
         setSelectedTab(tempTabs[0]);
       }
+    }
+  };
+
+  const handleSaveSystem = () => {
+    var blob = new Blob([JSON.stringify(system)], {
+      type: 'application/json',
+    });
+    saveAs(blob, `${system.name}.json`);
+  };
+
+  const handleUploadSystem = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (event.target.files && event.target.files.length !== 0) {
+      const selectedFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const jsonData: SmartSystemParameters = JSON.parse(
+          e.target.result
+        ) as SmartSystemParameters;
+        if ('solarSystemNumber' in jsonData) {
+          setSystem(jsonData);
+        } else {
+          setError('El archivo no corresponde a un escenario');
+          setIsOpen(true);
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(selectedFile);
     }
   };
 
@@ -456,36 +488,66 @@ const SmartCity = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
-        <Grid item xs={12} md={12} xl={12}>
-          <div
-            style={{
-              textAlign: 'center',
-              marginTop: '20px',
-              marginBottom: '20px',
-            }}
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSaveSystem}
+            startIcon={<FileDownloadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
           >
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleQueryScenario}
-              startIcon={<PlayArrowIcon />}
-              sx={{ width: '120px', margin: '5px' }}
-            >
-              Simular
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              disabled={data === undefined}
-              onClick={handleResetScenario}
-              startIcon={<RestartAltIcon />}
-              sx={{ width: '120px', margin: '5px' }}
-            >
-              {'Reiniciar'}
-            </Button>
-          </div>
+            Guardar
+          </Button>
+          <Button
+            component="label"
+            variant="contained"
+            color="info"
+            startIcon={<FileUploadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Cargar
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleUploadSystem}
+              multiple={false}
+            />
+          </Button>
         </Grid>
-
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleQueryScenario}
+            startIcon={<PlayArrowIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Simular
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={data === undefined}
+            onClick={handleResetScenario}
+            startIcon={<RestartAltIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Reiniciar
+          </Button>
+        </Grid>
         <Grid item xs={12} md={12} xl={12}>
           <TabContext value={selectedTab}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
