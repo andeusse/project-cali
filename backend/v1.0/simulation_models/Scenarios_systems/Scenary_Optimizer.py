@@ -55,7 +55,7 @@ class Dispatcher:
             InitialBESSEnergy.append(self.BESS_Elements[i].SOC[0]*self.BESS_Elements[i].E_b/100)
             bndl.append(self.BESS_Elements[i].P_cMax*-1)
             bndl.append(self.BESS_Elements[i].P_dMin)
-            bndu.append(self.BESS_Elements[i].P_cMin)        
+            bndu.append(self.BESS_Elements[i].P_cMin*-1)        
             bndu.append(self.BESS_Elements[i].P_dMax)
             columns.append(self.BESS_Elements[i].name + "_ChargePower")
             columns.append(self.BESS_Elements[i].name + "_DischargePower")

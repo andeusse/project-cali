@@ -121,9 +121,11 @@ class Scenary_Model:
             if BESS_OperativeDataType[i] == 0:
                 chargePowersResults.append(chargePower[i])
                 dischargePowersResults.append(dischargePower[i])
-            elif(BESS_OperativeDataType[i] == 1):
-                chargePowersResults.append(chargePowerResponse.pop())
-                dischargePowersResults.append(dischargePowerResponse.pop())
+            elif BESS_OperativeDataType[i] == 1:
+                chargePowerResponse.pop()
+                dischargePowerResponse.pop()
+                chargePowersResults.append(chargePowerResponse)
+                dischargePowersResults.append(dischargePowerResponse)
         
         if self.operationType == 1 and self.N_BESS > 0:
             self.BESS_SOC = pd.DataFrame(columns = self.BESS_SOC_Names)
