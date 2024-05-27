@@ -1190,9 +1190,17 @@ class BiogasPlantDT:
 
             self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.SE104v[-1]-self.SE102v[-1]))*(self.tp/3600))))/self.rho
 
+    def Energy_Biogas (self): 
+        self.LHV_V101 = self.Thermo.LHV(molCH4 = self.mol_CH4_V101, molCO2 = self.mol_CO2_V101, molH2S = self.mol_H2S_V101, molO2 = self.mol_O2_V101, molH2 = self.mol_H2_V101)
+        self.Energy_V101 = self.LHV_V101[1]
+
+        self.LHV_V102 = self.Thermo.LHV(molCH4 = self.mol_CH4_V102, molCO2 = self.mol_CO2_V102, molH2S = self.mol_H2S_V102, molO2 = self.mol_O2_V102, molH2 = self.mol_H2_V102)
+        self.Energy_V102 = self.LHV_V102[1]
+
+        self.LHV_V107 = self.Thermo.LHV(molCH4 = self.mol_CH4_V107, molCO2 = self.mol_CO2_V107, molH2S = self.mol_H2S_V107, molO2 = self.mol_O2_V107, molH2 = self.mol_H2_V107)
+        self.Energy_V107 = self.LHV_V107[1]
 
 
-            
 
         
 

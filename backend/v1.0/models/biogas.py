@@ -74,6 +74,7 @@ class Biogas(Resource):
         Biogas_plant_DT.V_102_DT()
         Biogas_plant_DT.V_107_DT()
         Biogas_plant_DT.R101_DT_operation_1()
+        Biogas_plant_DT.Energy_Biogas()
 
         if len (Biogas_plant_DT.mol_CH4_R101v) > 4:
           Machine_learning_ini = MachineLearning_biogas_start.MachineLearningStart()
@@ -90,15 +91,19 @@ class Biogas(Resource):
           Csus_exp_val = Machine_Learning_Module.Csus_exp_val
           t_train_R101 = Machine_Learning_Module.t_train
           t_val_R101 = Machine_Learning_Module.t_val  
+          X_R101 = (float(Csus_model_train_R101[0])-float(Csus_model_train_R101[-1]))/float(Csus_model_train_R101[0])*100
+          #X_R101 = float((Csus_exp_train_R101[0] - Csus_exp_train_R101[-1])/Csus_exp_train_R101[0])
 
-          biogas_output["Csus_model_train_R101"] = Csus_model_train_R101
-          biogas_output["Csus_exp_train_R101"] = Csus_exp_train_R101
+
+          biogas_output["Csus_model_train_R101"] = float(Csus_model_train_R101[-1])
+          biogas_output["Csus_exp_train_R101"] = float(Csus_exp_train_R101.iloc[-1])
+          biogas_output["x_R101"] = X_R101
           biogas_output["t_train_R101"] = t_train_R101
-          biogas_output["Csus_model_val_R101"] = Csus_model_val_R101
-          biogas_output["Csus_exp_val"] = Csus_exp_val
+          biogas_output["Csus_model_val_R101"] = float(Csus_model_val_R101[-1])
+          biogas_output["Csus_exp_val"] = float(Csus_exp_val[-1])
           biogas_output["t_val_R101"] = t_val_R101
-          biogas_output["KineticParameter1_R101"] = K_R101
-          biogas_output["KineticParameter2_R101"] = Ea_R101
+          biogas_output["K_R101"] = K_R101
+          biogas_output["Ea_R101"] = Ea_R101
         
         """
         Salidas solo para el modo de operación 1
@@ -263,8 +268,8 @@ class Biogas(Resource):
 
         biogas_output["FlowExit_R102_1"] = FlowExit_R102_1
         biogas_output["FlowExit_R102_2"] = FlowExit_R102_2
-        biogas_output["TotalSolidsOutR102"] = TotalSolidsOutR102
-        biogas_output["VolatileSolidsOutR102"] = VolatileSolidsOutR102
+        biogas_output["STsus_R102"] = TotalSolidsOutR102
+        biogas_output["Svsus_R102"] = VolatileSolidsOutR102
         biogas_output["SubstrateConcentrationOutR102"] = SubstrateConcentrationOutR102
 
     
@@ -333,6 +338,9 @@ class Biogas(Resource):
       #Humedad del biogás en moles
       moles_humidity_V101 = Biogas_plant_DT.mol_H2O_V101                 #[mol]
 
+      #Energia en el tanque V_101
+      StorageEnergy_V101 = Biogas_plant_DT.Energy_V101
+
 
       """
       #En el tanque de biogas V-102
@@ -384,6 +392,9 @@ class Biogas(Resource):
       #Humedad del biogás en moles
       moles_humidity_V102 = Biogas_plant_DT.mol_H2O_V102                 #[mol]
 
+      #Energia en el tanque V_102
+      StorageEnergy_V102 = Biogas_plant_DT.Energy_V102
+
       """
       #En el tanque de biogas V-107
 
@@ -433,11 +444,14 @@ class Biogas(Resource):
       #Humedad del biogás en moles
       moles_humidity_V107 = Biogas_plant_DT.mol_H2O_V107                 #[mol]
 
+      #Energia en el tanque V_102
+      StorageEnergy_V107 = Biogas_plant_DT.Energy_V107
+
     
       
       biogas_output["TotalSolidsOutR101"] = TotalSolidsOutR101
-      biogas_output["VolatileSolidsOutR101"] = VolatileSolidsOutR101
-      biogas_output["VolatileSolidsOutR101"] = VolatileSolidsOutR101
+      biogas_output["STsus_R101"] = TotalSolidsOutR101*100
+      biogas_output["Svsus_R101"] = VolatileSolidsOutR101*100
       biogas_output["SubstrateConcentrationOutR101"] = SubstrateConcentrationOutR101    
       
       biogas_output["VolatileSolidsInletR101"] = VolatileSolidsInletR101
@@ -471,6 +485,7 @@ class Biogas(Resource):
       biogas_output["StorageH2_V101moles"] =  StorageH2_V101moles
       biogas_output["Relative_humidity_V101"] = Relative_humidity_V101
       biogas_output["moles_humidity_V101"] = moles_humidity_V101
+      biogas_output["StorageEnergy_V101"] = StorageEnergy_V101
 
       biogas_output["StorageBiogasVolumeV102"] = StorageBiogasVolumeV102
       biogas_output["AcumBiogasVolumenV102"] = AcumBiogasVolumenV102
@@ -493,6 +508,8 @@ class Biogas(Resource):
       biogas_output["StorageH2_V102moles"] =  StorageH2_V102moles
       biogas_output["Relative_humidity_V102"] = Relative_humidity_V102
       biogas_output["moles_humidity_V102"] = moles_humidity_V102
+      biogas_output["StorageEnergy_V102"] = StorageEnergy_V102
+
 
       biogas_output["StorageBiogasVolumeV107"] = StorageBiogasVolumeV107
       biogas_output["AcumBiogasVolumenV107"] = AcumBiogasVolumenV107
@@ -515,8 +532,9 @@ class Biogas(Resource):
       biogas_output["StorageH2_V107moles"] =  StorageH2_V107moles
       biogas_output["Relative_humidity_V107"] = Relative_humidity_V107
       biogas_output["moles_humidity_V107"] = moles_humidity_V107
+      biogas_output["StorageEnergy_V107"] = StorageEnergy_V107
     
     print(biogas_input)
     print(biogas_output)
 
-    return {}, 200
+    return {"model": biogas_output}, 200
