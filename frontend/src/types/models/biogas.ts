@@ -59,6 +59,18 @@ export enum DiagramHumidityText {
   Moles = 'Moles',
 }
 
+export type BiogasInitialAnalysisConditions = {
+  enabled: boolean;
+  totalSubstrateSolids: InputType;
+  volatileSubstrateSolids: InputType;
+  substrateDensity: InputType;
+  atomicCarbonSubstrateConcetration: InputType;
+  atomicHydrogenSubstrateConcetration: InputType;
+  atomicOxygenSubstrateConcetration: InputType;
+  atomicNitrogenSubstrateConcetration: InputType;
+  atomicSulfurSubstrateConcetration: InputType;
+};
+
 export type BiogasParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
     anaerobicReactorVolume1: InputType;
@@ -98,6 +110,8 @@ export type BiogasParameters = CommonSystemParameter &
     inputPump101StartsPerDay: InputType;
     inputTemperature101: InputType;
     inputTemperature102: InputType;
+    initialAnalysisConditions101: BiogasInitialAnalysisConditions;
+    initialAnalysisConditions102: BiogasInitialAnalysisConditions;
     diagramBiogas: DiagramBiogasType;
     diagramBiogasUnit: DiagramBiogasUnitType;
     diagramCompound: DiagramCompoundType;
@@ -497,6 +511,178 @@ export const BIOGAS: BiogasParameters = {
     variableString: 'Temperatura R-102',
     min: 1,
     max: 10,
+  },
+  initialAnalysisConditions101: {
+    enabled: true,
+    totalSubstrateSolids: {
+      disabled: false,
+      value: 10,
+      tooltip: 'Sólidos totales del sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Sólidos totales',
+      min: 0,
+      max: 30,
+    },
+    volatileSubstrateSolids: {
+      disabled: false,
+      value: 1,
+      tooltip: 'Sólidos volátiles del sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Sólidos volátiles',
+      min: 0,
+      max: 10,
+    },
+    substrateDensity: {
+      disabled: false,
+      value: 1000,
+      tooltip: 'Densidad del sustrato en R101 al inicio',
+      unit: 'g / L',
+      variableString: 'Densidad del sustrato',
+      min: 200,
+      max: 2000,
+      step: 10,
+    },
+    atomicCarbonSubstrateConcetration: {
+      disabled: false,
+      value: 40.48,
+      tooltip:
+        'Concentración de carbono atómico en el sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Concentración de carbono atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicHydrogenSubstrateConcetration: {
+      disabled: false,
+      value: 5.29,
+      tooltip:
+        'Concentración de hidrógeno atómico en el sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Concentración de hidrógeno atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicOxygenSubstrateConcetration: {
+      disabled: false,
+      value: 29.66,
+      tooltip:
+        'Concentración de oxígeno atómico en el sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Concentración de oxígeno atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicNitrogenSubstrateConcetration: {
+      disabled: false,
+      value: 1.37,
+      tooltip:
+        'Concentración de nitrógeno atómico en el sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Concentración de nitrógeno atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicSulfurSubstrateConcetration: {
+      disabled: false,
+      value: 0.211,
+      tooltip:
+        'Concentración de azúfre atómico en el sustrato en R101 al inicio',
+      unit: '%',
+      variableString: 'Concentración de azúfre atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+  },
+  initialAnalysisConditions102: {
+    enabled: true,
+    totalSubstrateSolids: {
+      disabled: false,
+      value: 10,
+      tooltip: 'Sólidos totales del sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Sólidos totales',
+      min: 0,
+      max: 30,
+    },
+    volatileSubstrateSolids: {
+      disabled: false,
+      value: 1,
+      tooltip: 'Sólidos volátiles del sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Sólidos volátiles',
+      min: 0,
+      max: 10,
+    },
+    substrateDensity: {
+      disabled: false,
+      value: 1000,
+      tooltip: 'Densidad del sustrato en R102 al inicio',
+      unit: 'g / L',
+      variableString: 'Densidad del sustrato',
+      min: 200,
+      max: 2000,
+      step: 10,
+    },
+    atomicCarbonSubstrateConcetration: {
+      disabled: false,
+      value: 40.48,
+      tooltip:
+        'Concentración de carbono atómico en el sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Concentración de carbono atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicHydrogenSubstrateConcetration: {
+      disabled: false,
+      value: 5.29,
+      tooltip:
+        'Concentración de hidrógeno atómico en el sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Concentración de hidrógeno atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicOxygenSubstrateConcetration: {
+      disabled: false,
+      value: 29.66,
+      tooltip:
+        'Concentración de oxígeno atómico en el sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Concentración de oxígeno atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicNitrogenSubstrateConcetration: {
+      disabled: false,
+      value: 1.37,
+      tooltip:
+        'Concentración de nitrógeno atómico en el sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Concentración de nitrógeno atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
+    atomicSulfurSubstrateConcetration: {
+      disabled: false,
+      value: 0.211,
+      tooltip:
+        'Concentración de azúfre atómico en el sustrato en R102 al inicio',
+      unit: '%',
+      variableString: 'Concentración de azúfre atómico',
+      min: 0,
+      max: 100,
+      step: 0.01,
+    },
   },
 };
 

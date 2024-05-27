@@ -43,7 +43,9 @@ export const setFormState = <T extends formType>(
       name === 'inputPump104' ||
       name === 'inputPump102' ||
       name === 'inputPump101' ||
-      name === 'inputOperationMode'
+      name === 'inputOperationMode' ||
+      name === 'initialAnalysisConditions101.enabled' ||
+      name === 'initialAnalysisConditions102.enabled'
     ) {
       return setBiogas(e, oldState);
     }

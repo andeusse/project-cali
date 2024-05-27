@@ -86,6 +86,91 @@ export const setBiogas = (
       newState.inputPump101StartsPerDay.disabled = false;
     }
   }
+
+  if (e.target.name === 'initialAnalysisConditions101.enabled') {
+    newState.initialAnalysisConditions101.enabled = e.target.checked;
+    newState.initialAnalysisConditions101.totalSubstrateSolids = {
+      ...newState.initialAnalysisConditions101.totalSubstrateSolids,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions101.volatileSubstrateSolids = {
+      ...newState.initialAnalysisConditions101.volatileSubstrateSolids,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions101.substrateDensity = {
+      ...newState.initialAnalysisConditions101.substrateDensity,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions101.atomicCarbonSubstrateConcetration = {
+      ...newState.initialAnalysisConditions101
+        .atomicCarbonSubstrateConcetration,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions101.atomicHydrogenSubstrateConcetration =
+      {
+        ...newState.initialAnalysisConditions101
+          .atomicHydrogenSubstrateConcetration,
+        disabled: !e.target.checked,
+      };
+    newState.initialAnalysisConditions101.atomicOxygenSubstrateConcetration = {
+      ...newState.initialAnalysisConditions101
+        .atomicOxygenSubstrateConcetration,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions101.atomicNitrogenSubstrateConcetration =
+      {
+        ...newState.initialAnalysisConditions101
+          .atomicNitrogenSubstrateConcetration,
+        disabled: !e.target.checked,
+      };
+    newState.initialAnalysisConditions101.atomicSulfurSubstrateConcetration = {
+      ...newState.initialAnalysisConditions101
+        .atomicSulfurSubstrateConcetration,
+      disabled: !e.target.checked,
+    };
+  }
+  if (e.target.name === 'initialAnalysisConditions102.enabled') {
+    newState.initialAnalysisConditions102.enabled = e.target.checked;
+    newState.initialAnalysisConditions102.totalSubstrateSolids = {
+      ...newState.initialAnalysisConditions102.totalSubstrateSolids,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions102.volatileSubstrateSolids = {
+      ...newState.initialAnalysisConditions102.volatileSubstrateSolids,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions102.substrateDensity = {
+      ...newState.initialAnalysisConditions102.substrateDensity,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions102.atomicCarbonSubstrateConcetration = {
+      ...newState.initialAnalysisConditions102
+        .atomicCarbonSubstrateConcetration,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions102.atomicHydrogenSubstrateConcetration =
+      {
+        ...newState.initialAnalysisConditions102
+          .atomicHydrogenSubstrateConcetration,
+        disabled: !e.target.checked,
+      };
+    newState.initialAnalysisConditions102.atomicOxygenSubstrateConcetration = {
+      ...newState.initialAnalysisConditions102
+        .atomicOxygenSubstrateConcetration,
+      disabled: !e.target.checked,
+    };
+    newState.initialAnalysisConditions102.atomicNitrogenSubstrateConcetration =
+      {
+        ...newState.initialAnalysisConditions102
+          .atomicNitrogenSubstrateConcetration,
+        disabled: !e.target.checked,
+      };
+    newState.initialAnalysisConditions102.atomicSulfurSubstrateConcetration = {
+      ...newState.initialAnalysisConditions102
+        .atomicSulfurSubstrateConcetration,
+      disabled: !e.target.checked,
+    };
+  }
   return newState;
 };
 
