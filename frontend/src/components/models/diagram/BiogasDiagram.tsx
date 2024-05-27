@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   BiogasOutput,
   BiogasParameters,
+  DiagramBiogasType,
+  DiagramBiogasUnitType,
+  DiagramCompoundType,
+  DiagramHumidityType,
   OperationModeType,
 } from '../../../types/models/biogas';
 import { DiagramVariableType } from '../../../types/models/common';
+import { useTheme } from '@mui/material';
 
 import mode1 from '../../../assets/biogas/Mode1.png';
 import mode1On from '../../../assets/biogas/Mode1On.gif';
@@ -16,6 +21,7 @@ import mode4 from '../../../assets/biogas/Mode4.png';
 import mode4On from '../../../assets/biogas/Mode4On.gif';
 import mode5 from '../../../assets/biogas/Mode5.png';
 import mode5On from '../../../assets/biogas/Mode5On.gif';
+import DiagramVariables from '../common/DiagramVariables';
 
 type Props = {
   biogas: BiogasParameters;
@@ -26,6 +32,7 @@ type Props = {
 
 const BiogasDiagram = (props: Props) => {
   const { biogas, data, isPlaying, diagramVariables } = props;
+  const theme = useTheme();
 
   const [viewBoxWidth, setViewBoxWidth] = useState(8164);
   const [viewBoxHeight, setViewBoxHeight] = useState(6803);
@@ -77,6 +84,46 @@ const BiogasDiagram = (props: Props) => {
         {biogas.inputOperationMode === OperationModeType.Modo5 && (
           <image href={!isPlaying ? mode5 : mode5On}></image>
         )}
+        <g transform={`translate(1900,300)`}>
+          <text
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `500px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            C H O N S
+          </text>
+        </g>
+        <DiagramVariables
+          data={data}
+          variables={diagramVariables}
+          additionalCondition={[
+            !(
+              biogas.diagramBiogas === DiagramBiogasType.Stored &&
+              biogas.diagramBiogasUnit === DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              biogas.diagramBiogas === DiagramBiogasType.Stored &&
+              biogas.diagramBiogasUnit === DiagramBiogasUnitType.Pressure
+            ),
+            !(
+              biogas.diagramBiogas === DiagramBiogasType.Accumulated &&
+              biogas.diagramBiogasUnit === DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              biogas.diagramBiogas === DiagramBiogasType.Accumulated &&
+              biogas.diagramBiogasUnit === DiagramBiogasUnitType.Pressure
+            ),
+            !(biogas.diagramCompound === DiagramCompoundType.Concentration),
+            !(biogas.diagramCompound === DiagramCompoundType.Moles),
+            !(biogas.diagramCompound === DiagramCompoundType.PartialVolume),
+            !(biogas.diagramHumidity === DiagramHumidityType.Relative),
+            !(biogas.diagramHumidity === DiagramHumidityType.Moles),
+          ]}
+          fontSize={80}
+        ></DiagramVariables>
       </svg>
     </div>
   );

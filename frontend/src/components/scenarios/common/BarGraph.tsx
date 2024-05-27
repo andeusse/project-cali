@@ -51,7 +51,7 @@ const BarGraph = (props: Props) => {
       y: {
         title: {
           display: true,
-          text: `Potencia [kW]`.toUpperCase(),
+          text: ``.toUpperCase(),
         },
         stacked: true,
       },

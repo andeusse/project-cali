@@ -206,6 +206,7 @@ const SolarDiagram = (props: Props) => {
             !solarWind.flexPanel.isConnected,
             !solarWind.cadmiumTelluridePanel.isConnected,
           ]}
+          fontSize={40}
         ></DiagramVariables>
 
         {!(

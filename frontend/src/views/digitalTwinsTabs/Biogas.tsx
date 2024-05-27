@@ -22,6 +22,14 @@ import {
   BIOGAS_MODE5,
   BiogasOutput,
   BiogasParameters,
+  DiagramBiogasText,
+  DiagramBiogasType,
+  DiagramCompoundText,
+  DiagramCompoundType,
+  DiagramHumidityText,
+  DiagramHumidityType,
+  DiagramBiogasUnitText,
+  DiagramBiogasUnitType,
   OperationModeType,
   SpeedLawOrderType,
 } from '../../types/models/biogas';
@@ -39,6 +47,7 @@ import BiogasDiagram from '../../components/models/diagram/BiogasDiagram';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
+import { getValueByKey } from '../../utils/getValueByKey';
 
 const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
@@ -656,13 +665,87 @@ const Biogas = () => {
               )}
             </Grid>
             <Grid item xs={12} md={9.5} xl={9.5}>
-              {playerControl}
-              <BiogasDiagram
-                biogas={system}
-                data={data}
-                isPlaying={isPlaying}
-                diagramVariables={diagramVariables}
-              ></BiogasDiagram>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6} xl={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Biogás</InputLabel>
+                    <Select
+                      label="Biogás"
+                      value={system.diagramBiogas}
+                      name="diagramBiogas"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(DiagramBiogasType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(DiagramBiogasText, key)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Unidades</InputLabel>
+                    <Select
+                      label="Unidades"
+                      value={system.diagramBiogasUnit}
+                      name="diagramBiogasUnit"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(DiagramBiogasUnitType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(DiagramBiogasUnitText, key)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Componentes</InputLabel>
+                    <Select
+                      label="Componentes"
+                      value={system.diagramCompound}
+                      name="diagramCompound"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(DiagramCompoundType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(DiagramCompoundText, key)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6} xl={3}>
+                  <FormControl fullWidth>
+                    <InputLabel>Humedad</InputLabel>
+                    <Select
+                      label="Humedad"
+                      value={system.diagramHumidity}
+                      name="diagramHumidity"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(DiagramHumidityType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(DiagramHumidityText, key)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  {playerControl}
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <BiogasDiagram
+                    biogas={system}
+                    data={data}
+                    isPlaying={isPlaying}
+                    diagramVariables={diagramVariables}
+                  ></BiogasDiagram>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

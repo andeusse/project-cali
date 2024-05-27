@@ -6,10 +6,11 @@ type Props<T> = {
   data: T;
   variables: DiagramVariableType[];
   additionalCondition: boolean[];
+  fontSize: number;
 };
 
 const DiagramVariables = <T,>(props: Props<T>) => {
-  const { data, variables, additionalCondition } = props;
+  const { data, variables, additionalCondition, fontSize } = props;
   const theme = useTheme();
 
   return (
@@ -31,35 +32,51 @@ const DiagramVariables = <T,>(props: Props<T>) => {
         }
         return (
           <g key={v.variable}>
-            {printValue && (
+            {printValue && v.diagramName !== '' && (
               <g transform={`translate(${v.x},${v.y})`}>
                 <text
                   style={{
                     alignmentBaseline: 'central',
-                    fontSize: '40px',
+                    fontSize: `${fontSize}px`,
                     fontWeight: 'bold',
                     fill: theme.palette.text.primary,
                   }}
                 >{`${v.diagramName}`}</text>
-                <g transform={`translate(400,0)`}>
+                <g transform={`translate(${fontSize * 10},0)`}>
                   <rect
-                    width="240"
-                    height="60"
-                    x="-120"
-                    y="-30"
-                    rx="5"
-                    ry="5"
+                    width={`${fontSize * 6}`}
+                    height={`${fontSize * 1.5}`}
+                    x={`${fontSize * -3}`}
+                    y={`${(fontSize * -3) / 4}`}
+                    rx="20"
+                    ry="20"
                     fill="blue"
                   ></rect>
                   <text
                     style={{
                       alignmentBaseline: 'central',
                       textAnchor: 'middle',
-                      fontSize: '40px',
+                      fontSize: `${fontSize}px`,
                       fill: 'white',
                     }}
-                  >{`${printValue} ${printValue !== '-' ? v.unit : ''}`}</text>
+                  >
+                    {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
+                  </text>
                 </g>
+              </g>
+            )}
+            {printValue && v.diagramName === '' && (
+              <g transform={`translate(${v.x},${v.y})`}>
+                <text
+                  style={{
+                    alignmentBaseline: 'central',
+                    textAnchor: 'middle',
+                    fontSize: `${fontSize}px`,
+                    fill: theme.palette.text.primary,
+                  }}
+                >
+                  {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
+                </text>
               </g>
             )}
           </g>

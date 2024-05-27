@@ -116,6 +116,7 @@ const TurbineDiagram = (props: Props) => {
             turbine.inputOfflineOperation,
             turbine.turbineType !== TurbineType.Turgo,
           ]}
+          fontSize={40}
         ></DiagramVariables>
       </svg>
     </div>
