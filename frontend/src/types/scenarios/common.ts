@@ -721,12 +721,28 @@ export const SMART_CITY: SmartSystemParameters = {
 
 export const SMART_FACTORY: SmartSystemParameters = {
   ...SMART_CITY,
+  biogasSystemNumber: {
+    ...SMART_CITY.biogasSystemNumber,
+    max: 1,
+  },
 };
 
 export const SMART_HOME: SmartSystemParameters = {
   ...SMART_CITY,
   solarSystemNumber: {
     ...SMART_CITY.solarSystemNumber,
+    max: 10,
+  },
+  biogasSystemNumber: {
+    ...SMART_CITY.biogasSystemNumber,
+    max: 1,
+  },
+  batterySystemNumber: {
+    ...SMART_CITY.batterySystemNumber,
+    max: 10,
+  },
+  loadSystemNumber: {
+    ...SMART_CITY.loadSystemNumber,
     max: 10,
   },
 };
