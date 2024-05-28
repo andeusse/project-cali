@@ -138,7 +138,7 @@ const SmartHome = () => {
 
   const handleQueryScenario = () => {
     dispatch(setIsLoading(true));
-    updateScenario('smarthouse', system)
+    updateScenario('smarthome', system)
       .then((resp) => {
         setData(() => {
           const newData = JSON.parse(resp.data);
