@@ -191,9 +191,7 @@ export type BatterySystem = CommonSystemParameter &
     id: string;
     storageCapacity: InputType;
     maxChargePower: InputType;
-    minChargePower: InputType;
     maxDischargePower: InputType;
-    minDischargePower: InputType;
     stateOfCharge: InputType;
     type: BatteryType;
     informationMode: ScenariosCommonInputInformationType;
@@ -386,16 +384,6 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
     max: 10000,
     step: 0.1,
   },
-  minChargePower: {
-    disabled: false,
-    value: 0,
-    tooltip: 'Potencia mínima de carga',
-    unit: 'kW',
-    variableString: 'Potencia mínima de carga',
-    min: 0.1,
-    max: 10,
-    step: 0.1,
-  },
   maxDischargePower: {
     disabled: false,
     value: 10,
@@ -404,16 +392,6 @@ export const COMMON_BATTERY_SYSTEM: BatterySystem = {
     variableString: 'Potencia máxima de descarga',
     min: 0.1,
     max: 10000,
-    step: 0.1,
-  },
-  minDischargePower: {
-    disabled: false,
-    value: 0,
-    tooltip: 'Potencia mínima de descarga',
-    unit: 'kW',
-    variableString: 'Potencia mínima de descarga',
-    min: 0.1,
-    max: 10,
     step: 0.1,
   },
   stateOfCharge: {

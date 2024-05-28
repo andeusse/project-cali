@@ -51,7 +51,12 @@ const BarGraph = (props: Props) => {
       y: {
         title: {
           display: true,
-          text: ``.toUpperCase(),
+          text:
+            !title.includes('_SOC') && !title.includes('_Energy')
+              ? 'Potencia [kW]'
+              : title.includes('_SOC')
+              ? 'Estado de carga [%]'
+              : 'Energía [kWh]',
         },
         stacked: true,
       },

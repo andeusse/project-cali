@@ -28,11 +28,9 @@ export const setBatterySystemById = <T extends SmartSystemParameters>(
         },
       };
       if (name === 'maxChargePower') {
-        system.minChargePower.max = parseFloat(value);
         system.chargePower.max = parseFloat(value);
       }
       if (name === 'maxDischargePower') {
-        system.minDischargePower.max = parseFloat(value);
         system.dischargePower.max = parseFloat(value);
       }
       if (name === 'minChargePower') {
@@ -82,7 +80,7 @@ export const setBatterySystemArraysById = <T extends SmartSystemParameters>(
     system.chargePowerArray = newArrays[0].map((v) => {
       if (system) {
         v = v < system.maxChargePower.value ? v : system.maxChargePower.value;
-        v = v > system.minChargePower.value ? v : system.minChargePower.value;
+        v = v > 0 ? v : 0;
       }
       return v;
     });
@@ -92,10 +90,7 @@ export const setBatterySystemArraysById = <T extends SmartSystemParameters>(
           v < system.maxDischargePower.value
             ? v
             : system.maxDischargePower.value;
-        v =
-          v > system.minDischargePower.value
-            ? v
-            : system.minDischargePower.value;
+        v = v > 0 ? v : 0;
       }
       return v;
     });

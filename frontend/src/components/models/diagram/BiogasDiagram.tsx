@@ -84,16 +84,64 @@ const BiogasDiagram = (props: Props) => {
         {biogas.inputOperationMode === OperationModeType.Modo5 && (
           <image href={!isPlaying ? mode5 : mode5On}></image>
         )}
-        <g transform={`translate(1900,300)`}>
+        <g transform={`translate(1000,300)`}>
           <text
             style={{
               alignmentBaseline: 'central',
               textAnchor: 'middle',
-              fontSize: `500px`,
+              fontSize: `250px`,
               fill: theme.palette.text.primary,
             }}
           >
-            C H O N S
+            C
+          </text>
+        </g>
+        <g transform={`translate(1400,300)`}>
+          <text
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `250px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            H
+          </text>
+        </g>
+        <g transform={`translate(1800,300)`}>
+          <text
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `250px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            O
+          </text>
+        </g>
+        <g transform={`translate(2200,300)`}>
+          <text
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `250px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            N
+          </text>
+        </g>
+        <g transform={`translate(2600,300)`}>
+          <text
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `250px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            S
           </text>
         </g>
         <DiagramVariables

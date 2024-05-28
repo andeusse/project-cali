@@ -804,8 +804,8 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: '',
     fixed: 1,
-    x: 1150,
-    y: 500,
+    x: 1200,
+    y: 400,
     scientificNotation: false,
   },
   {
@@ -815,8 +815,8 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: '',
     fixed: 1,
-    x: 1650,
-    y: 500,
+    x: 1600,
+    y: 400,
     scientificNotation: false,
   },
   {
@@ -826,8 +826,8 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: '',
     fixed: 1,
-    x: 2150,
-    y: 500,
+    x: 2000,
+    y: 400,
     scientificNotation: false,
   },
   {
@@ -837,8 +837,8 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: '',
     fixed: 1,
-    x: 2700,
-    y: 500,
+    x: 2400,
+    y: 400,
     scientificNotation: false,
   },
   {
@@ -848,8 +848,8 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: '',
     fixed: 1,
-    x: 3150,
-    y: 500,
+    x: 2800,
+    y: 400,
     scientificNotation: false,
   },
   {
@@ -1118,7 +1118,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Energía total almacenada_V101',
     variable: 'StorageEnergy_V101',
-    unit: 'Joule',
+    unit: 'W',
     isShown: true,
     diagramName: 'Energía',
     fixed: 4,
@@ -1381,7 +1381,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Energía total almacenada_V102',
     variable: 'StorageEnergy_V102',
-    unit: 'Joule',
+    unit: 'W',
     isShown: true,
     diagramName: 'Energía',
     fixed: 4,
@@ -1643,7 +1643,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Energía total almacenada_V107',
     variable: 'StorageEnergy_V107',
-    unit: 'Joule',
+    unit: 'W',
     isShown: true,
     diagramName: 'Energía',
     fixed: 4,

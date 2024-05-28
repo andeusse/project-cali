@@ -196,22 +196,8 @@ const BatteryTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <CustomNumberField
-                  variable={selectedSystem.minChargePower}
-                  name="minChargePower"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <CustomNumberField
                   variable={selectedSystem.maxDischargePower}
                   name="maxDischargePower"
-                  handleChange={handleChange}
-                ></CustomNumberField>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <CustomNumberField
-                  variable={selectedSystem.minDischargePower}
-                  name="minDischargePower"
                   handleChange={handleChange}
                 ></CustomNumberField>
               </Grid>
@@ -221,6 +207,24 @@ const BatteryTab = (props: TabProps) => {
                   name="stateOfCharge"
                   handleChange={handleChange}
                 ></CustomNumberField>
+              </Grid>
+              <Grid item xs={12} md={6} xl={4}>
+                <FormControl fullWidth>
+                  <InputLabel id="type-type">Tipo de batería</InputLabel>
+                  <Select
+                    labelId="type-type"
+                    label="Tipo de batería"
+                    value={selectedSystem.type}
+                    name="type"
+                    onChange={handleChange}
+                  >
+                    {Object.keys(BatteryType).map((key) => (
+                      <MenuItem key={key} value={key}>
+                        {getValueByKey(BatteryText, key)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <FormControl fullWidth>
@@ -244,24 +248,6 @@ const BatteryTab = (props: TabProps) => {
                         </MenuItem>
                       )
                     )}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6} xl={4}>
-                <FormControl fullWidth>
-                  <InputLabel id="type-type">Tipo de batería</InputLabel>
-                  <Select
-                    labelId="type-type"
-                    label="Tipo de batería"
-                    value={selectedSystem.type}
-                    name="type"
-                    onChange={handleChange}
-                  >
-                    {Object.keys(BatteryType).map((key) => (
-                      <MenuItem key={key} value={key}>
-                        {getValueByKey(BatteryText, key)}
-                      </MenuItem>
-                    ))}
                   </Select>
                 </FormControl>
               </Grid>

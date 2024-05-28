@@ -10,16 +10,16 @@ type Props = {};
 const DigitalTwins = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Planta de Biogás',
-      children: <Biogas></Biogas>,
-    },
-    {
       title: 'Turbinas',
       children: <Turbine></Turbine>,
     },
     {
       title: 'Solar - Eólico',
       children: <Solar></Solar>,
+    },
+    {
+      title: 'Planta de Biogás',
+      children: <Biogas></Biogas>,
     },
     {
       title: 'Celda de Hidrógeno',

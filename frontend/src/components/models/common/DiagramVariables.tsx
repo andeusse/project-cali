@@ -33,16 +33,19 @@ const DiagramVariables = <T,>(props: Props<T>) => {
         return (
           <g key={v.variable}>
             {printValue && v.diagramName !== '' && (
-              <g transform={`translate(${v.x},${v.y})`}>
+              <g
+                transform={`translate(${v.x ? v.x + fontSize * 5 : 0},${v.y})`}
+              >
                 <text
                   style={{
                     alignmentBaseline: 'central',
+                    textAnchor: 'end',
                     fontSize: `${fontSize}px`,
                     fontWeight: 'bold',
                     fill: theme.palette.text.primary,
                   }}
                 >{`${v.diagramName}`}</text>
-                <g transform={`translate(${fontSize * 10},0)`}>
+                <g transform={`translate(${fontSize * 5},0)`}>
                   <rect
                     width={`${fontSize * 6}`}
                     height={`${fontSize * 1.5}`}
@@ -71,7 +74,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                   style={{
                     alignmentBaseline: 'central',
                     textAnchor: 'middle',
-                    fontSize: `${fontSize}px`,
+                    fontSize: `${fontSize * 0.9}px`,
                     fill: theme.palette.text.primary,
                   }}
                 >

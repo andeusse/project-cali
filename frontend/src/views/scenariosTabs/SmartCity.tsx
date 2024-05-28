@@ -14,7 +14,7 @@ import {
   Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
   SMART_CITY,

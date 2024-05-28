@@ -9,14 +9,6 @@ type Props = {};
 const Monitoring = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Planta de Biogás',
-      children: (
-        <IframeFull
-          url={Config.getInstance().params.grafanaUrls[0]}
-        ></IframeFull>
-      ),
-    },
-    {
       title: 'Turbinas',
       children: (
         <IframeFull
@@ -29,6 +21,14 @@ const Monitoring = (props: Props) => {
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[2]}
+        ></IframeFull>
+      ),
+    },
+    {
+      title: 'Planta de Biogás',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[0]}
         ></IframeFull>
       ),
     },
