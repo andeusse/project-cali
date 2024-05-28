@@ -36,11 +36,18 @@ class Smarthome:
         Demandpower = self.scenary.DemandPower()
         Gridpower = self.scenary.GridPower()
         
-        if self.operationType == 1:
-            self.results_df = pd.concat([PVpower, BESS_SOC, chargeP, dischargeP, Biogaspower, Gridpower, Demandpower], axis = 1)
-            if self.N_BESS > 0:    
-                self.results_df.drop(index=self.results_df.index[-1],axis=0,inplace=True)
+        # if self.operationType == 1:
+        #     self.results_df = pd.concat([PVpower, BESS_SOC, chargeP, dischargeP, Biogaspower, Gridpower, Demandpower], axis = 1)
+        #     if self.N_BESS > 0:    
+        #         self.results_df.drop(index=self.results_df.index[-1],axis=0,inplace=True)
             
+        if self.operationType == 1:
+            if self.N_BESS > 0:
+                self.results_df = pd.concat([PVpower, BESS_SOC, chargeP, dischargeP, Biogaspower, Gridpower, Demandpower], axis = 1)
+                self.results_df.drop(index=self.results_df.index[-1],axis=0,inplace=True)
+            else:
+                self.results_df = pd.concat([PVpower, Biogaspower, Gridpower, Demandpower], axis = 1)   
+        
         elif self.operationType == 2:
             self.results_df = self.scenary.AutomaticPowerCalculation(weights)[0]
             

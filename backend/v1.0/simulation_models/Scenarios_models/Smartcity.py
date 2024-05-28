@@ -54,5 +54,3 @@ class Smartcity:
             self.results_df = self.scenary.AutomaticPowerCalculation(weights)[0]
             
         return self.results_df
-            
-            

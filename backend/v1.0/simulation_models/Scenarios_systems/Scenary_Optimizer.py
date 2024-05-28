@@ -1,4 +1,4 @@
-import xalglib
+from xalglib import xalglib
 import pandas as pd
 from simulation_models.Scenarios_systems import BiogasModel as BM
 from simulation_models.Scenarios_systems import Scenary_Hydro
