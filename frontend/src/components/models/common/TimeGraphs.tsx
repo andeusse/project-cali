@@ -15,6 +15,7 @@ import TimeGraph from './TimeGraph';
 import { DiagramVariableType } from '../../../types/models/common';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { InputType } from '../../../types/inputType';
+import { compareStrings } from '../../../utils/compareStrings';
 
 type Props = {
   timeMultiplier: InputType;
@@ -112,16 +113,18 @@ const TimeGraphs = (props: Props) => {
               value={selectedVariable}
               onChange={(e) => setSelectedVariable(e.target.value)}
             >
-              {variables.map((v, index) => {
-                if (v.isShown) {
-                  return (
-                    <MenuItem key={`${index}${v.name}`} value={v.variable}>
-                      {v.name}
-                    </MenuItem>
-                  );
-                }
-                return null;
-              })}
+              {variables
+                .sort((a, b) => compareStrings(a.name, b.name))
+                .map((v, index) => {
+                  if (v.isShown) {
+                    return (
+                      <MenuItem key={`${index}${v.name}`} value={v.variable}>
+                        {v.name}
+                      </MenuItem>
+                    );
+                  }
+                  return null;
+                })}
             </Select>
           </FormControl>
           <Button

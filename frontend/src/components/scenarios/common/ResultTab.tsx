@@ -29,6 +29,7 @@ import { CustomIconButton } from '../../UI/CustomIconButton';
 import ImageIcon from '@mui/icons-material/Image';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { array2CSV } from '../../../utils/array2CSV';
+import { compareStrings } from '../../../utils/compareStrings';
 
 type Props = {
   data: SmartSystemOutput;
@@ -203,7 +204,7 @@ const ResultTab = (props: Props) => {
                 value={selectedVariable}
                 onChange={(e) => handleSelectedVariableChange(e)}
               >
-                {data.columns.map((v, index) => (
+                {data.columns.sort(compareStrings).map((v, index) => (
                   <MenuItem key={`${index}${v}`} value={v}>
                     {v}
                   </MenuItem>

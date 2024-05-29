@@ -769,14 +769,14 @@ export const CUSTOM_WIND_TURBINE: WindTypeParameters = {
 export const EXAMPLE_BIOGAS: BiogasTypeParamenters = {
   reactorVolume1: {
     disabled: true,
-    value: 30,
+    value: 3000,
     tooltip: 'Volumen de reactor 1',
     unit: 'L',
     variableString: 'Volumen de reactor 1',
   },
   reactorVolume2: {
     disabled: true,
-    value: 70,
+    value: 7000,
     tooltip: 'Volumen de reactor 2',
     unit: 'L',
     variableString: 'Volumen de reactor 2',
@@ -912,24 +912,24 @@ export const EXAMPLE_BIOGAS: BiogasTypeParamenters = {
 export const CUSTOM_BIOGAS: BiogasTypeParamenters = {
   reactorVolume1: {
     disabled: false,
-    value: 30,
+    value: 3000,
     tooltip: 'Volumen de reactor 1',
     unit: 'L',
     variableString: 'Volumen de reactor 1',
     variableSubString: undefined,
-    min: 30,
-    max: 3000,
+    min: 10,
+    max: 100000,
     step: 10,
   },
   reactorVolume2: {
     disabled: false,
-    value: 70,
+    value: 7000,
     tooltip: 'Volumen de reactor 2',
     unit: 'L',
     variableString: 'Volumen de reactor 2',
     variableSubString: undefined,
-    min: 30,
-    max: 3000,
+    min: 10,
+    max: 100000,
     step: 10,
   },
   diameterHeightRatio1: {

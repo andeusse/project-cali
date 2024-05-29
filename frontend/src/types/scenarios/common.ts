@@ -743,6 +743,6 @@ export const SMART_HOME: SmartSystemParameters = {
   },
   loadSystemNumber: {
     ...SMART_CITY.loadSystemNumber,
-    max: 10,
+    max: 1,
   },
 };
