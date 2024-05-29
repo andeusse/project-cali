@@ -1,0 +1,1744 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 3,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "panels": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 132,
+              "min": 108,
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 100
+                  }
+                ]
+              },
+              "unit": "volt",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 0,
+            "y": 1
+          },
+          "id": 1,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto",
+            "text": {}
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Voltaje\" or r[\"_field\"] == \"L2 Voltaje\" or r[\"_field\"] == \"L3 Voltaje\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Voltajes LN",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 228,
+              "min": 187,
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 100
+                  }
+                ]
+              },
+              "unit": "volt",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 3,
+            "y": 1
+          },
+          "id": 8,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1-L2 Voltaje\" or r[\"_field\"] == \"L2-L3 Voltaje\" or r[\"_field\"] == \"L3-L1 Voltaje\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Voltajes LL",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 50,
+              "min": 0,
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "text"
+                  }
+                ]
+              },
+              "unit": "amp",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 6,
+            "y": 1
+          },
+          "id": 12,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Corriente\" or r[\"_field\"] == \"L2 Corriente\" or r[\"_field\"] == \"L3 Corriente\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Corrientes",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": true,
+              "mappings": [],
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "text"
+                  }
+                ]
+              },
+              "unit": "kwatt",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 9,
+            "y": 1
+          },
+          "id": 19,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Potencia Activa\" or r[\"_field\"] == \"L2 Potencia Activa\" or r[\"_field\"] == \"L3 Potencia Activa\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Potencia activa",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": true,
+              "mappings": [],
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "text"
+                  }
+                ]
+              },
+              "unit": "kvoltampreact",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 12,
+            "y": 1
+          },
+          "id": 20,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Potencia Reactiva\" or r[\"_field\"] == \"L2 Potencia Reactiva\" or r[\"_field\"] == \"L3 Potencia Reactiva\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Potencia reactiva",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 50,
+              "min": 0,
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "color": "text"
+                  }
+                ]
+              },
+              "unit": "kvoltamp",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 15,
+            "y": 1
+          },
+          "id": 21,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Potencia Aparente\" or r[\"_field\"] == \"L2 Potencia Aparente\" or r[\"_field\"] == \"L3 Potencia Aparente\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Potencia aparente",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "fieldMinMax": true,
+              "mappings": [],
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-red"
+                  },
+                  {
+                    "color": "text",
+                    "value": 0.9
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 18,
+            "y": 1
+          },
+          "id": 22,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Factor de Potencia\" or r[\"_field\"] == \"L2 Factor de Potencia\" or r[\"_field\"] == \"L3 Factor de Potencia\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Factor de potencia",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 61,
+              "min": 59,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "dark-red"
+                  },
+                  {
+                    "color": "text",
+                    "value": 59.8
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 60.2
+                  }
+                ]
+              },
+              "unit": "hertz",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 21,
+            "y": 1
+          },
+          "id": 18,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"Frecuencia\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Frecuencia",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 10,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 8
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 0,
+            "y": 16
+          },
+          "id": 13,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 THD Voltaje\" or r[\"_field\"] == \"L2 THD Voltaje\" or r[\"_field\"] == \"L3 THD Voltaje\")",
+              "refId": "A"
+            }
+          ],
+          "title": "THD voltaje",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": false,
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "red",
+                    "value": 5
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 7,
+            "x": 3,
+            "y": 16
+          },
+          "id": 9,
+          "options": {
+            "displayMode": "basic",
+            "maxVizHeight": 300,
+            "minVizHeight": 0,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "text": {
+              "valueSize": 10
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Armónico Voltaje 02\" or r[\"_field\"] == \"L1 Armónico Voltaje 03\" or r[\"_field\"] == \"L1 Armónico Voltaje 04\" or r[\"_field\"] == \"L1 Armónico Voltaje 05\" or r[\"_field\"] == \"L1 Armónico Voltaje 06\" or r[\"_field\"] == \"L1 Armónico Voltaje 07\" or r[\"_field\"] == \"L1 Armónico Voltaje 08\" or r[\"_field\"] == \"L1 Armónico Voltaje 09\" or r[\"_field\"] == \"L1 Armónico Voltaje 10\" or r[\"_field\"] == \"L1 Armónico Voltaje 11\" or r[\"_field\"] == \"L1 Armónico Voltaje 12\" or r[\"_field\"] == \"L1 Armónico Voltaje 13\" or r[\"_field\"] == \"L1 Armónico Voltaje 14\" or r[\"_field\"] == \"L1 Armónico Voltaje 15\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Armónicos de voltaje L1",
+          "transformations": [
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "desc": false,
+                    "field": "Time"
+                  }
+                ]
+              }
+            }
+          ],
+          "transparent": true,
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": false,
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "red",
+                    "value": 5
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 7,
+            "x": 10,
+            "y": 16
+          },
+          "id": 10,
+          "options": {
+            "displayMode": "basic",
+            "maxVizHeight": 300,
+            "minVizHeight": 0,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "text": {
+              "valueSize": 10
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L2 Armónico Voltaje 02\" or r[\"_field\"] == \"L2 Armónico Voltaje 03\" or r[\"_field\"] == \"L2 Armónico Voltaje 04\" or r[\"_field\"] == \"L2 Armónico Voltaje 05\" or r[\"_field\"] == \"L2 Armónico Voltaje 06\" or r[\"_field\"] == \"L2 Armónico Voltaje 07\" or r[\"_field\"] == \"L2 Armónico Voltaje 08\" or r[\"_field\"] == \"L2 Armónico Voltaje 09\" or r[\"_field\"] == \"L2 Armónico Voltaje 10\" or r[\"_field\"] == \"L2 Armónico Voltaje 11\" or r[\"_field\"] == \"L2 Armónico Voltaje 12\" or r[\"_field\"] == \"L2 Armónico Voltaje 13\" or r[\"_field\"] == \"L2 Armónico Voltaje 14\" or r[\"_field\"] == \"L2 Armónico Voltaje 15\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Armónicos de voltaje L2",
+          "transparent": true,
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": false,
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "red",
+                    "value": 5
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 7,
+            "x": 17,
+            "y": 16
+          },
+          "id": 11,
+          "options": {
+            "displayMode": "basic",
+            "maxVizHeight": 300,
+            "minVizHeight": 0,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "text": {
+              "valueSize": 10
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L3 Armónico Voltaje 02\" or r[\"_field\"] == \"L3 Armónico Voltaje 03\" or r[\"_field\"] == \"L3 Armónico Voltaje 04\" or r[\"_field\"] == \"L3 Armónico Voltaje 05\" or r[\"_field\"] == \"L3 Armónico Voltaje 06\" or r[\"_field\"] == \"L3 Armónico Voltaje 07\" or r[\"_field\"] == \"L3 Armónico Voltaje 08\" or r[\"_field\"] == \"L3 Armónico Voltaje 09\" or r[\"_field\"] == \"L3 Armónico Voltaje 10\" or r[\"_field\"] == \"L3 Armónico Voltaje 11\" or r[\"_field\"] == \"L3 Armónico Voltaje 12\" or r[\"_field\"] == \"L3 Armónico Voltaje 13\" or r[\"_field\"] == \"L3 Armónico Voltaje 14\" or r[\"_field\"] == \"L3 Armónico Voltaje 15\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Armónicos de voltaje L3",
+          "transparent": true,
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "mappings": [],
+              "max": 15,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "dark-red",
+                    "value": 12
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 3,
+            "x": 0,
+            "y": 31
+          },
+          "id": 14,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 THD Corriente\" or r[\"_field\"] == \"L2 THD Corriente\" or r[\"_field\"] == \"L3 THD Corriente\")",
+              "refId": "A"
+            }
+          ],
+          "title": "THD corriente",
+          "transparent": true,
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": false,
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "red",
+                    "value": 10
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 7,
+            "x": 3,
+            "y": 31
+          },
+          "id": 15,
+          "options": {
+            "displayMode": "basic",
+            "maxVizHeight": 300,
+            "minVizHeight": 0,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "text": {
+              "valueSize": 10
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Armónico Corriente 02\" or r[\"_field\"] == \"L1 Armónico Corriente 03\" or r[\"_field\"] == \"L1 Armónico Corriente 04\" or r[\"_field\"] == \"L1 Armónico Corriente 05\" or r[\"_field\"] == \"L1 Armónico Corriente 06\" or r[\"_field\"] == \"L1 Armónico Corriente 07\" or r[\"_field\"] == \"L1 Armónico Corriente 08\" or r[\"_field\"] == \"L1 Armónico Corriente 09\" or r[\"_field\"] == \"L1 Armónico Corriente 10\" or r[\"_field\"] == \"L1 Armónico Corriente 11\" or r[\"_field\"] == \"L1 Armónico Corriente 12\" or r[\"_field\"] == \"L1 Armónico Corriente 13\" or r[\"_field\"] == \"L1 Armónico Corriente 14\" or r[\"_field\"] == \"L1 Armónico Corriente 15\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Armónicos de corriente L1",
+          "transparent": true,
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": false,
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "red",
+                    "value": 10
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 7,
+            "x": 10,
+            "y": 31
+          },
+          "id": 16,
+          "options": {
+            "displayMode": "basic",
+            "maxVizHeight": 300,
+            "minVizHeight": 0,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "text": {
+              "valueSize": 10
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L2 Armónico Corriente 02\" or r[\"_field\"] == \"L2 Armónico Corriente 03\" or r[\"_field\"] == \"L2 Armónico Corriente 04\" or r[\"_field\"] == \"L2 Armónico Corriente 05\" or r[\"_field\"] == \"L2 Armónico Corriente 06\" or r[\"_field\"] == \"L2 Armónico Corriente 07\" or r[\"_field\"] == \"L2 Armónico Corriente 08\" or r[\"_field\"] == \"L2 Armónico Corriente 09\" or r[\"_field\"] == \"L2 Armónico Corriente 10\" or r[\"_field\"] == \"L2 Armónico Corriente 11\" or r[\"_field\"] == \"L2 Armónico Corriente 12\" or r[\"_field\"] == \"L2 Armónico Corriente 13\" or r[\"_field\"] == \"L2 Armónico Corriente 14\" or r[\"_field\"] == \"L2 Armónico Corriente 15\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Armónicos de corriente L2",
+          "transparent": true,
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "decimals": 2,
+              "fieldMinMax": false,
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  },
+                  {
+                    "color": "red",
+                    "value": 10
+                  }
+                ]
+              },
+              "unit": "percent",
+              "unitScale": true
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 7,
+            "x": 17,
+            "y": 31
+          },
+          "id": 17,
+          "options": {
+            "displayMode": "basic",
+            "maxVizHeight": 300,
+            "minVizHeight": 0,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "text": {
+              "valueSize": 10
+            },
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L3 Armónico Corriente 02\" or r[\"_field\"] == \"L3 Armónico Corriente 03\" or r[\"_field\"] == \"L3 Armónico Corriente 04\" or r[\"_field\"] == \"L3 Armónico Corriente 05\" or r[\"_field\"] == \"L3 Armónico Corriente 06\" or r[\"_field\"] == \"L3 Armónico Corriente 07\" or r[\"_field\"] == \"L3 Armónico Corriente 08\" or r[\"_field\"] == \"L3 Armónico Corriente 09\" or r[\"_field\"] == \"L3 Armónico Corriente 10\" or r[\"_field\"] == \"L3 Armónico Corriente 11\" or r[\"_field\"] == \"L3 Armónico Corriente 12\" or r[\"_field\"] == \"L3 Armónico Corriente 13\" or r[\"_field\"] == \"L3 Armónico Corriente 14\" or r[\"_field\"] == \"L3 Armónico Corriente 15\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Armónicos de corriente L3",
+          "transparent": true,
+          "type": "bargauge"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "#ffffff",
+                "mode": "shades"
+              },
+              "custom": {
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                }
+              },
+              "decimals": 1,
+              "fieldMinMax": false,
+              "mappings": [],
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Activa - Exportación"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#b4b4b4",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Activa - Importación"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#ffffff",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Reactiva - Exportación"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#e6e6e6",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Reactiva - Importación"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "#cdcdcd",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 8,
+            "x": 0,
+            "y": 46
+          },
+          "id": 23,
+          "options": {
+            "displayLabels": [],
+            "legend": {
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "values": [
+                "percent"
+              ]
+            },
+            "pieType": "pie",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"Total Energía Activa - Importación\" or r[\"_field\"] == \"Total Energía Activa - Exportación\" or r[\"_field\"] == \"Total Energía Reactiva - Importación\" or r[\"_field\"] == \"Total Energía Reactiva - Exportación\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Energía",
+          "transparent": true,
+          "type": "piechart"
+        },
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "text"
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Activa - Exportación"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "kwatth"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Activa - Importación"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "kwatth"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Aparente"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "kVAh"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Reactiva - Exportación"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "kVArh"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Reactiva - Importación"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "kVArh"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Activa - Exportación"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Energía Activa - Exportación"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Activa - Importación"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Energía Activa - Importación"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Reactiva - Exportación"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Energía Reactiva - Exportación"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Reactiva - Importación"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Energía Reactiva - Importación"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Total Energía Aparente"
+                },
+                "properties": [
+                  {
+                    "id": "displayName",
+                    "value": "Energía Aparente"
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 16,
+            "x": 8,
+            "y": 46
+          },
+          "id": 24,
+          "options": {
+            "displayMode": "gradient",
+            "maxVizHeight": 300,
+            "minVizHeight": 16,
+            "minVizWidth": 8,
+            "namePlacement": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "sizing": "auto",
+            "valueMode": "color"
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": {
+                "type": "influxdb",
+                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+              },
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"Total Energía Activa - Exportación\" or r[\"_field\"] == \"Total Energía Activa - Importación\" or r[\"_field\"] == \"Total Energía Reactiva - Exportación\" or r[\"_field\"] == \"Total Energía Reactiva - Importación\" or r[\"_field\"] == \"Total Energía Aparente\")",
+              "refId": "A"
+            }
+          ],
+          "title": "Energía",
+          "transformations": [],
+          "transparent": true,
+          "type": "bargauge"
+        }
+      ],
+      "title": "TP_Totalizador",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 4,
+      "panels": [],
+      "title": "TP_Sistema PBM",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 3,
+      "panels": [],
+      "title": "TP_Analizador Biogás",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "panels": [],
+      "title": "TP_Planta de Biogás",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 40,
+      "panels": [],
+      "title": "TP_Tunel de viento - Potencia",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 39,
+      "panels": [],
+      "title": "TP_Ventilador sistema eólico",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 38,
+      "panels": [],
+      "title": "TP_Torre de enfriamiento",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 37,
+      "panels": [],
+      "title": "TP_Banco de trabajo turbinas",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 36,
+      "panels": [],
+      "title": "TP_Tablero Paneles",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 35,
+      "panels": [],
+      "title": "TP_Iluminación Área 3",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 34,
+      "panels": [],
+      "title": "TP_Video Wall Smart Grid",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 33,
+      "panels": [],
+      "title": "TP_Iluminación Área 2",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 32,
+      "panels": [],
+      "title": "TP_Video Controller Smart Grid",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 31,
+      "panels": [],
+      "title": "TP_Iluminación Área 1",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 30,
+      "panels": [],
+      "title": "TP_Mesa Biogás Fotovoltaico",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 29,
+      "panels": [],
+      "title": "TP_Nevera Biogás",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 28,
+      "panels": [],
+      "title": "TP_Mesón Sala Biogás",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 27,
+      "panels": [],
+      "title": "TP_Tunel de viento - control",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 26,
+      "panels": [],
+      "title": "TP_Modulo fotovoltaico eólico",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 25,
+      "panels": [],
+      "title": "TP_Modulo control turbinas",
+      "type": "row"
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Tablero Eléctrico",
+  "uid": "bfedcf0d-2f67-4072-94c8-1fec90595b06",
+  "version": 11,
+  "weekStart": ""
+}
