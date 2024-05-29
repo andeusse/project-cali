@@ -1,4 +1,47 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_LABORATORIO",
+      "label": "Laboratorio",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.3.3"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -18,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -35,7 +78,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -91,7 +134,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Voltaje\" or r[\"_field\"] == \"L2 Voltaje\" or r[\"_field\"] == \"L3 Voltaje\")",
               "refId": "A"
@@ -104,7 +147,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -159,7 +202,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1-L2 Voltaje\" or r[\"_field\"] == \"L2-L3 Voltaje\" or r[\"_field\"] == \"L3-L1 Voltaje\")",
               "refId": "A"
@@ -172,7 +215,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -223,7 +266,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Corriente\" or r[\"_field\"] == \"L2 Corriente\" or r[\"_field\"] == \"L3 Corriente\")",
               "refId": "A"
@@ -236,7 +279,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -286,7 +329,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Potencia Activa\" or r[\"_field\"] == \"L2 Potencia Activa\" or r[\"_field\"] == \"L3 Potencia Activa\")",
               "refId": "A"
@@ -299,7 +342,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -349,7 +392,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Potencia Reactiva\" or r[\"_field\"] == \"L2 Potencia Reactiva\" or r[\"_field\"] == \"L3 Potencia Reactiva\")",
               "refId": "A"
@@ -362,7 +405,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -413,7 +456,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Potencia Aparente\" or r[\"_field\"] == \"L2 Potencia Aparente\" or r[\"_field\"] == \"L3 Potencia Aparente\")",
               "refId": "A"
@@ -426,7 +469,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -479,7 +522,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Factor de Potencia\" or r[\"_field\"] == \"L2 Factor de Potencia\" or r[\"_field\"] == \"L3 Factor de Potencia\")",
               "refId": "A"
@@ -492,7 +535,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -551,7 +594,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"Frecuencia\")",
               "refId": "A"
@@ -564,7 +607,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -619,7 +662,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 THD Voltaje\" or r[\"_field\"] == \"L2 THD Voltaje\" or r[\"_field\"] == \"L3 THD Voltaje\")",
               "refId": "A"
@@ -632,7 +675,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -693,7 +736,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Armónico Voltaje 02\" or r[\"_field\"] == \"L1 Armónico Voltaje 03\" or r[\"_field\"] == \"L1 Armónico Voltaje 04\" or r[\"_field\"] == \"L1 Armónico Voltaje 05\" or r[\"_field\"] == \"L1 Armónico Voltaje 06\" or r[\"_field\"] == \"L1 Armónico Voltaje 07\" or r[\"_field\"] == \"L1 Armónico Voltaje 08\" or r[\"_field\"] == \"L1 Armónico Voltaje 09\" or r[\"_field\"] == \"L1 Armónico Voltaje 10\" or r[\"_field\"] == \"L1 Armónico Voltaje 11\" or r[\"_field\"] == \"L1 Armónico Voltaje 12\" or r[\"_field\"] == \"L1 Armónico Voltaje 13\" or r[\"_field\"] == \"L1 Armónico Voltaje 14\" or r[\"_field\"] == \"L1 Armónico Voltaje 15\")",
               "refId": "A"
@@ -720,7 +763,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -781,7 +824,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L2 Armónico Voltaje 02\" or r[\"_field\"] == \"L2 Armónico Voltaje 03\" or r[\"_field\"] == \"L2 Armónico Voltaje 04\" or r[\"_field\"] == \"L2 Armónico Voltaje 05\" or r[\"_field\"] == \"L2 Armónico Voltaje 06\" or r[\"_field\"] == \"L2 Armónico Voltaje 07\" or r[\"_field\"] == \"L2 Armónico Voltaje 08\" or r[\"_field\"] == \"L2 Armónico Voltaje 09\" or r[\"_field\"] == \"L2 Armónico Voltaje 10\" or r[\"_field\"] == \"L2 Armónico Voltaje 11\" or r[\"_field\"] == \"L2 Armónico Voltaje 12\" or r[\"_field\"] == \"L2 Armónico Voltaje 13\" or r[\"_field\"] == \"L2 Armónico Voltaje 14\" or r[\"_field\"] == \"L2 Armónico Voltaje 15\")",
               "refId": "A"
@@ -794,7 +837,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -855,7 +898,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L3 Armónico Voltaje 02\" or r[\"_field\"] == \"L3 Armónico Voltaje 03\" or r[\"_field\"] == \"L3 Armónico Voltaje 04\" or r[\"_field\"] == \"L3 Armónico Voltaje 05\" or r[\"_field\"] == \"L3 Armónico Voltaje 06\" or r[\"_field\"] == \"L3 Armónico Voltaje 07\" or r[\"_field\"] == \"L3 Armónico Voltaje 08\" or r[\"_field\"] == \"L3 Armónico Voltaje 09\" or r[\"_field\"] == \"L3 Armónico Voltaje 10\" or r[\"_field\"] == \"L3 Armónico Voltaje 11\" or r[\"_field\"] == \"L3 Armónico Voltaje 12\" or r[\"_field\"] == \"L3 Armónico Voltaje 13\" or r[\"_field\"] == \"L3 Armónico Voltaje 14\" or r[\"_field\"] == \"L3 Armónico Voltaje 15\")",
               "refId": "A"
@@ -868,7 +911,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -923,7 +966,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 THD Corriente\" or r[\"_field\"] == \"L2 THD Corriente\" or r[\"_field\"] == \"L3 THD Corriente\")",
               "refId": "A"
@@ -936,7 +979,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -997,7 +1040,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L1 Armónico Corriente 02\" or r[\"_field\"] == \"L1 Armónico Corriente 03\" or r[\"_field\"] == \"L1 Armónico Corriente 04\" or r[\"_field\"] == \"L1 Armónico Corriente 05\" or r[\"_field\"] == \"L1 Armónico Corriente 06\" or r[\"_field\"] == \"L1 Armónico Corriente 07\" or r[\"_field\"] == \"L1 Armónico Corriente 08\" or r[\"_field\"] == \"L1 Armónico Corriente 09\" or r[\"_field\"] == \"L1 Armónico Corriente 10\" or r[\"_field\"] == \"L1 Armónico Corriente 11\" or r[\"_field\"] == \"L1 Armónico Corriente 12\" or r[\"_field\"] == \"L1 Armónico Corriente 13\" or r[\"_field\"] == \"L1 Armónico Corriente 14\" or r[\"_field\"] == \"L1 Armónico Corriente 15\")",
               "refId": "A"
@@ -1010,7 +1053,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1071,7 +1114,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L2 Armónico Corriente 02\" or r[\"_field\"] == \"L2 Armónico Corriente 03\" or r[\"_field\"] == \"L2 Armónico Corriente 04\" or r[\"_field\"] == \"L2 Armónico Corriente 05\" or r[\"_field\"] == \"L2 Armónico Corriente 06\" or r[\"_field\"] == \"L2 Armónico Corriente 07\" or r[\"_field\"] == \"L2 Armónico Corriente 08\" or r[\"_field\"] == \"L2 Armónico Corriente 09\" or r[\"_field\"] == \"L2 Armónico Corriente 10\" or r[\"_field\"] == \"L2 Armónico Corriente 11\" or r[\"_field\"] == \"L2 Armónico Corriente 12\" or r[\"_field\"] == \"L2 Armónico Corriente 13\" or r[\"_field\"] == \"L2 Armónico Corriente 14\" or r[\"_field\"] == \"L2 Armónico Corriente 15\")",
               "refId": "A"
@@ -1084,7 +1127,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "description": "",
           "fieldConfig": {
@@ -1146,7 +1189,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"L3 Armónico Corriente 02\" or r[\"_field\"] == \"L3 Armónico Corriente 03\" or r[\"_field\"] == \"L3 Armónico Corriente 04\" or r[\"_field\"] == \"L3 Armónico Corriente 05\" or r[\"_field\"] == \"L3 Armónico Corriente 06\" or r[\"_field\"] == \"L3 Armónico Corriente 07\" or r[\"_field\"] == \"L3 Armónico Corriente 08\" or r[\"_field\"] == \"L3 Armónico Corriente 09\" or r[\"_field\"] == \"L3 Armónico Corriente 10\" or r[\"_field\"] == \"L3 Armónico Corriente 11\" or r[\"_field\"] == \"L3 Armónico Corriente 12\" or r[\"_field\"] == \"L3 Armónico Corriente 13\" or r[\"_field\"] == \"L3 Armónico Corriente 14\" or r[\"_field\"] == \"L3 Armónico Corriente 15\")",
               "refId": "A"
@@ -1159,7 +1202,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1189,7 +1232,7 @@
                   {
                     "id": "color",
                     "value": {
-                      "fixedColor": "#b4b4b4",
+                      "fixedColor": "#646464",
                       "mode": "fixed"
                     }
                   }
@@ -1219,7 +1262,7 @@
                   {
                     "id": "color",
                     "value": {
-                      "fixedColor": "#e6e6e6",
+                      "fixedColor": "#c8c8c8",
                       "mode": "fixed"
                     }
                   }
@@ -1234,7 +1277,7 @@
                   {
                     "id": "color",
                     "value": {
-                      "fixedColor": "#cdcdcd",
+                      "fixedColor": "#969696",
                       "mode": "fixed"
                     }
                   }
@@ -1277,7 +1320,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"Total Energía Activa - Importación\" or r[\"_field\"] == \"Total Energía Activa - Exportación\" or r[\"_field\"] == \"Total Energía Reactiva - Importación\" or r[\"_field\"] == \"Total Energía Reactiva - Exportación\")",
               "refId": "A"
@@ -1290,7 +1333,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -1462,7 +1505,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"TP_Totalizador\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"Total Energía Activa - Exportación\" or r[\"_field\"] == \"Total Energía Activa - Importación\" or r[\"_field\"] == \"Total Energía Reactiva - Exportación\" or r[\"_field\"] == \"Total Energía Reactiva - Importación\" or r[\"_field\"] == \"Total Energía Aparente\")",
               "refId": "A"
@@ -1732,13 +1775,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Tablero Eléctrico",
   "uid": "bfedcf0d-2f67-4072-94c8-1fec90595b06",
-  "version": 11,
+  "version": 13,
   "weekStart": ""
 }

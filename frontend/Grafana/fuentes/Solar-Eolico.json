@@ -1,4 +1,47 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_LABORATORIO",
+      "label": "Laboratorio",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "canvas",
+      "name": "Canvas",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.3.3"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -18,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -35,7 +78,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -47,8 +90,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "#0000fa",
-                    "value": null
+                    "color": "#0000fa"
                   }
                 ]
               },
@@ -83,10 +125,6 @@
                 },
                 "width": 0
               },
-              "constraint": {
-                "horizontal": "left",
-                "vertical": "top"
-              },
               "elements": [
                 {
                   "background": {
@@ -107,7 +145,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "fixed": "Voltaje",
+                      "fixed": "Velocidad de Viento",
                       "mode": "fixed"
                     },
                     "valign": "middle"
@@ -120,9 +158,9 @@
                   "name": "Voltaje disipadora",
                   "placement": {
                     "height": 25,
-                    "left": 368,
+                    "left": 314,
                     "top": 392,
-                    "width": 120
+                    "width": 174
                   },
                   "type": "text"
                 },
@@ -183,7 +221,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "fixed": "Temperatura",
+                      "fixed": "RPM",
                       "mode": "fixed"
                     },
                     "valign": "middle"
@@ -222,12 +260,13 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "Time",
+                      "field": "VV001",
                       "fixed": "0",
-                      "mode": "fixed"
+                      "mode": "field"
                     },
                     "valign": "middle"
                   },
+                  "connections": [],
                   "constraint": {
                     "horizontal": "left",
                     "vertical": "top"
@@ -263,12 +302,13 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "PG001",
+                      "field": "PG002",
                       "fixed": "0",
-                      "mode": "fixed"
+                      "mode": "field"
                     },
                     "valign": "middle"
                   },
+                  "connections": [],
                   "constraint": {
                     "horizontal": "left",
                     "vertical": "top"
@@ -304,9 +344,9 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "PG001",
+                      "field": "RPM001",
                       "fixed": "26.5",
-                      "mode": "fixed"
+                      "mode": "field"
                     },
                     "valign": "middle"
                   },
@@ -342,7 +382,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "fixed": "Voltaje",
+                      "fixed": "Potencia",
                       "mode": "fixed"
                     },
                     "valign": "middle"
@@ -379,7 +419,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "fixed": "Corriente",
+                      "fixed": "Temperatura",
                       "mode": "fixed"
                     },
                     "valign": "middle"
@@ -416,7 +456,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "fixed": "Potencia",
+                      "fixed": "Radiación",
                       "mode": "fixed"
                     },
                     "valign": "middle"
@@ -452,7 +492,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "VB002",
+                      "field": "PG001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -489,7 +529,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "IC002",
+                      "field": "TE001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -526,7 +566,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "PB002",
+                      "field": "RS001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -711,8 +751,8 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "IC001",
-                      "fixed": "150",
+                      "field": "TB001",
+                      "fixed": "5",
                       "mode": "fixed"
                     },
                     "valign": "middle"
@@ -748,7 +788,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "TE003",
+                      "field": "TB001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -1787,7 +1827,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "VB001",
+                      "field": "VDC001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -1824,7 +1864,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "IC001",
+                      "field": "IG001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -1861,7 +1901,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "PB001",
+                      "field": "PDC001",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -2046,7 +2086,7 @@
                     },
                     "size": 16,
                     "text": {
-                      "field": "IC001",
+                      "field": "IG005",
                       "fixed": "",
                       "mode": "field"
                     },
@@ -2104,12 +2144,6 @@
                 }
               ],
               "name": "Element 1716159519987",
-              "placement": {
-                "height": 100,
-                "left": 0,
-                "top": 0,
-                "width": 100
-              },
               "type": "frame"
             },
             "showAdvancedTypes": true
@@ -2119,10 +2153,10 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"ED001\" or r[\"_field\"] == \"EG001\" or r[\"_field\"] == \"EI001\" or r[\"_field\"] == \"FIT001\" or r[\"_field\"] == \"FP001\" or r[\"_field\"] == \"IAC001\" or r[\"_field\"] == \"IC001\" or r[\"_field\"] == \"IC002\" or r[\"_field\"] == \"IG001\" or r[\"_field\"] == \"IG002\" or r[\"_field\"] == \"LEH001\" or r[\"_field\"] == \"LEL001\" or r[\"_field\"] == \"PB001\" or r[\"_field\"] == \"PB002\" or r[\"_field\"] == \"PG001\" or r[\"_field\"] == \"PKVA001\" or r[\"_field\"] == \"PG002\" or r[\"_field\"] == \"PKVAR001\" or r[\"_field\"] == \"PKW001\" or r[\"_field\"] == \"PT001\" or r[\"_field\"] == \"PT002\" or r[\"_field\"] == \"TE001\" or r[\"_field\"] == \"TE002\" or r[\"_field\"] == \"TE003\" or r[\"_field\"] == \"TE004\" or r[\"_field\"] == \"VAC001\" or r[\"_field\"] == \"VB001\" or r[\"_field\"] == \"VB002\" or r[\"_field\"] == \"VBU001\" or r[\"_field\"] == \"VCH001\" or r[\"_field\"] == \"VDF001\" or r[\"_field\"] == \"VDN001\" or r[\"_field\"] == \"VFL001\" or r[\"_field\"] == \"VG001\" or r[\"_field\"] == \"VG002\")",
-              "refId": "Turbinas"
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"EG001\" or r[\"_field\"] == \"EG002\" or r[\"_field\"] == \"EI001\" or r[\"_field\"] == \"ER001\" or r[\"_field\"] == \"FP001\" or r[\"_field\"] == \"FP002\" or r[\"_field\"] == \"IAC001\" or r[\"_field\"] == \"IAC002\" or r[\"_field\"] == \"IG001\" or r[\"_field\"] == \"IG005\" or r[\"_field\"] == \"PB001\" or r[\"_field\"] == \"PB002\" or r[\"_field\"] == \"PDC001\" or r[\"_field\"] == \"PG001\" or r[\"_field\"] == \"PG002\" or r[\"_field\"] == \"PG003\" or r[\"_field\"] == \"PG004\" or r[\"_field\"] == \"PKVA002\" or r[\"_field\"] == \"PKVA001\" or r[\"_field\"] == \"PKVAR001\" or r[\"_field\"] == \"PKVAR002\" or r[\"_field\"] == \"PKW001\" or r[\"_field\"] == \"PKW002\" or r[\"_field\"] == \"RPM001\" or r[\"_field\"] == \"RS001\" or r[\"_field\"] == \"RS002\" or r[\"_field\"] == \"TB001\" or r[\"_field\"] == \"TB002\" or r[\"_field\"] == \"TE001\" or r[\"_field\"] == \"TE002\" or r[\"_field\"] == \"TE003\" or r[\"_field\"] == \"TE004\" or r[\"_field\"] == \"VAC001\" or r[\"_field\"] == \"VAC002\" or r[\"_field\"] == \"VB001\" or r[\"_field\"] == \"VB002\" or r[\"_field\"] == \"VBU001\" or r[\"_field\"] == \"VBU002\" or r[\"_field\"] == \"VCH001\" or r[\"_field\"] == \"VCH002\" or r[\"_field\"] == \"VDC001\" or r[\"_field\"] == \"VFL001\" or r[\"_field\"] == \"VFL002\" or r[\"_field\"] == \"VG001\" or r[\"_field\"] == \"VG002\" or r[\"_field\"] == \"VG003\" or r[\"_field\"] == \"VG004\" or r[\"_field\"] == \"VGR001\" or r[\"_field\"] == \"VV001\")",
+              "refId": "Solar-Eolico"
             }
           ],
           "title": "Proceso",
@@ -2132,7 +2166,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2142,14 +2176,13 @@
               "decimals": 2,
               "displayName": "Potencia",
               "mappings": [],
-              "max": 623,
+              "max": 200,
               "min": 0,
               "thresholds": {
                 "mode": "percentage",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "#EAB839",
@@ -2193,20 +2226,20 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"PG001\")",
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"PG002\")",
               "refId": "A"
             }
           ],
-          "title": "Turbina Pelton",
+          "title": "Aerogenerador",
           "transparent": true,
           "type": "gauge"
         },
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2216,14 +2249,13 @@
               "decimals": 2,
               "displayName": "Potencia",
               "mappings": [],
-              "max": 1042,
+              "max": 100,
               "min": 0,
               "thresholds": {
                 "mode": "percentage",
                 "steps": [
                   {
-                    "color": "#73BF69",
-                    "value": null
+                    "color": "#73BF69"
                   },
                   {
                     "color": "#EAB839",
@@ -2267,20 +2299,20 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"PG002\")",
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"PG001\")",
               "refId": "A"
             }
           ],
-          "title": "Turbina Turgo",
+          "title": "Paneles Solares",
           "transparent": true,
           "type": "gauge"
         },
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2296,8 +2328,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "#73BF69",
-                    "value": null
+                    "color": "#73BF69"
                   }
                 ]
               },
@@ -2333,9 +2364,9 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"VB001\")",
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"VB001\")",
               "refId": "A"
             }
           ],
@@ -2346,7 +2377,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2362,8 +2393,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "#73BF69",
-                    "value": null
+                    "color": "#73BF69"
                   }
                 ]
               },
@@ -2399,9 +2429,9 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"TE003\")",
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"TE003\")",
               "refId": "A"
             }
           ],
@@ -2412,7 +2442,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2428,8 +2458,7 @@
                 "mode": "percentage",
                 "steps": [
                   {
-                    "color": "#73BF69",
-                    "value": null
+                    "color": "#73BF69"
                   },
                   {
                     "color": "#EAB839",
@@ -2473,9 +2502,9 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"PKW001\")",
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"PKW001\")",
               "refId": "A"
             }
           ],
@@ -2486,7 +2515,7 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2540,68 +2569,7 @@
               },
               "unitScale": true
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "FIT001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Flujo de agua"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "IG002"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Corriente"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "PT001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Presión"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "PG002"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Potencia"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "VG002"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Voltaje"
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
             "h": 8,
@@ -2626,20 +2594,22 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"FIT001\" or r[\"_field\"] == \"PT001\" or r[\"_field\"] == \"VG002\" or r[\"_field\"] == \"IG002\" or r[\"_field\"] == \"PG002\")",
               "refId": "Turbina Turgo"
             }
           ],
-          "title": "Pelton",
+          "title": "Aerogenerador",
+          "transparent": true,
           "type": "timeseries"
         },
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2692,68 +2662,7 @@
               },
               "unitScale": true
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "FIT001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Flujo de agua"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "IG001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Corriente"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "PG001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Presión"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "PT001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Potencia"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "VG001"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Voltaje"
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
             "h": 8,
@@ -2778,19 +2687,20 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"FIT001\" or r[\"_field\"] == \"PT001\" or r[\"_field\"] == \"VG001\" or r[\"_field\"] == \"IG001\" or r[\"_field\"] == \"PG001\")",
               "refId": "Turbina Turgo"
             }
           ],
-          "title": "Turgo",
+          "title": "Paneles Solares",
+          "transparent": true,
           "type": "timeseries"
         },
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -2906,19 +2816,20 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"VB001\" or r[\"_field\"] == \"IC001\" or r[\"_field\"] == \"TE003\")",
               "refId": "Baterías"
             }
           ],
           "title": "Baterías",
+          "transparent": true,
           "type": "timeseries"
         },
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -3070,19 +2981,47 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
               "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"VAC001\" or r[\"_field\"] == \"IAC001\" or r[\"_field\"] == \"PKVA001\" or r[\"_field\"] == \"PKVAR001\" or r[\"_field\"] == \"FP001\" or r[\"_field\"] == \"PKW001\")",
               "refId": "Carga"
             }
           ],
           "title": "Carga",
+          "transparent": true,
           "type": "timeseries"
-        },
+        }
+      ],
+      "title": "Sistema Autónomo",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 28,
+      "panels": [],
+      "title": "Sistema Híbrido",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 2
+      },
+      "id": 29,
+      "panels": [
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+            "uid": "${DS_LABORATORIO}"
           },
           "fieldConfig": {
             "defaults": {
@@ -3136,40 +3075,13 @@
               },
               "unitScale": true
             },
-            "overrides": [
-              {
-                "__systemRef": "hideSeriesFrom",
-                "matcher": {
-                  "id": "byNames",
-                  "options": {
-                    "mode": "exclude",
-                    "names": [
-                      "IAC001",
-                      "IC001",
-                      "IG001"
-                    ],
-                    "prefix": "All except:",
-                    "readOnly": true
-                  }
-                },
-                "properties": [
-                  {
-                    "id": "custom.hideFrom",
-                    "value": {
-                      "legend": false,
-                      "tooltip": false,
-                      "viz": true
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
           "gridPos": {
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 44
           },
           "id": 10,
           "options": {
@@ -3188,30 +3100,18 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "df3615c7-4382-40b6-9de4-61fb52f100fd"
+                "uid": "${DS_LABORATORIO}"
               },
-              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo de turbinas\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"FIT001\" or r[\"_field\"] == \"PT001\" or r[\"_field\"] == \"VG001\" or r[\"_field\"] == \"IG001\" or r[\"_field\"] == \"PG001\" or r[\"_field\"] == \"VB001\" or r[\"_field\"] == \"IC001\" or r[\"_field\"] == \"TE001\" or r[\"_field\"] == \"VAC001\" or r[\"_field\"] == \"IAC001\" or r[\"_field\"] == \"PKVA001\" or r[\"_field\"] == \"PKVAR001\" or r[\"_field\"] == \"FP001\" or r[\"_field\"] == \"PKW001\")",
+              "query": "from(bucket: \"Laboratorio\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"Módulo solar-eólico\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"EG001\" or r[\"_field\"] == \"EG002\" or r[\"_field\"] == \"EI001\" or r[\"_field\"] == \"ER001\" or r[\"_field\"] == \"FP001\" or r[\"_field\"] == \"FP002\" or r[\"_field\"] == \"IAC001\" or r[\"_field\"] == \"IAC002\" or r[\"_field\"] == \"IG001\" or r[\"_field\"] == \"IG005\" or r[\"_field\"] == \"PB001\" or r[\"_field\"] == \"PB002\" or r[\"_field\"] == \"PDC001\" or r[\"_field\"] == \"PG001\" or r[\"_field\"] == \"PG002\" or r[\"_field\"] == \"PG003\" or r[\"_field\"] == \"PG004\" or r[\"_field\"] == \"PKVA002\" or r[\"_field\"] == \"PKVA001\" or r[\"_field\"] == \"PKVAR001\" or r[\"_field\"] == \"PKVAR002\" or r[\"_field\"] == \"PKW001\" or r[\"_field\"] == \"PKW002\" or r[\"_field\"] == \"RPM001\" or r[\"_field\"] == \"RS001\" or r[\"_field\"] == \"RS002\" or r[\"_field\"] == \"TB001\" or r[\"_field\"] == \"TB002\" or r[\"_field\"] == \"TE001\" or r[\"_field\"] == \"TE002\" or r[\"_field\"] == \"TE003\" or r[\"_field\"] == \"TE004\" or r[\"_field\"] == \"VAC001\" or r[\"_field\"] == \"VAC002\" or r[\"_field\"] == \"VB001\" or r[\"_field\"] == \"VB002\" or r[\"_field\"] == \"VBU001\" or r[\"_field\"] == \"VBU002\" or r[\"_field\"] == \"VCH001\" or r[\"_field\"] == \"VCH002\" or r[\"_field\"] == \"VDC001\" or r[\"_field\"] == \"VFL001\" or r[\"_field\"] == \"VFL002\" or r[\"_field\"] == \"VG001\" or r[\"_field\"] == \"VG002\" or r[\"_field\"] == \"VG003\" or r[\"_field\"] == \"VG004\" or r[\"_field\"] == \"VGR001\" or r[\"_field\"] == \"VV001\")",
               "refId": "Variables"
             }
           ],
           "title": "Variables",
+          "transparent": true,
           "type": "timeseries"
         }
       ],
-      "title": "Sistema Autónomo",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 28,
-      "panels": [],
-      "title": "Sistema Híbrido",
+      "title": "Variables",
       "type": "row"
     }
   ],
@@ -3222,13 +3122,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Módulo Solar-Eólico",
   "uid": "ba25b7c0-382b-4d8d-99c7-d4e2740681fe",
-  "version": 8,
+  "version": 11,
   "weekStart": ""
 }
