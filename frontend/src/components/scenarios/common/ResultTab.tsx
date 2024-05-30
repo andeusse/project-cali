@@ -204,7 +204,7 @@ const ResultTab = (props: Props) => {
                 value={selectedVariable}
                 onChange={(e) => handleSelectedVariableChange(e)}
               >
-                {data.columns.sort(compareStrings).map((v, index) => (
+                {data.columns.map((v, index) => (
                   <MenuItem key={`${index}${v}`} value={v}>
                     {v}
                   </MenuItem>
