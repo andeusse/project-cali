@@ -28,11 +28,12 @@ class Smarthome:
     
     def operation(self, PV_MeteorologicalDataType = 2, temperature = [25.0], irradiance = [1000.0], 
                   BESS_OperativeDataType = 0, initialSOC = [100.0], chargePower = [0.0], dischargePower = [0.0], 
+                  biogasStages = [1],
                   weights = [0.0]):
     
         PVpower = self.scenary.PVGeneration(PV_MeteorologicalDataType, temperature, irradiance)
         BESS_SOC,chargeP,dischargeP = self.scenary.BESSSOC(BESS_OperativeDataType, initialSOC, chargePower, dischargePower)
-        Biogaspower = self.scenary.BiogasGeneration()
+        Biogaspower = self.scenary.BiogasGeneration(biogasStages)
         Demandpower = self.scenary.DemandPower()
         Gridpower = self.scenary.GridPower()
         

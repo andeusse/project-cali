@@ -152,6 +152,7 @@ class SmartHome(Resource):
     ambientTemperature = []
     electricGeneratorPower = []
     electricGeneratorEfficiency = []
+    biogasStages = []
     reactorVolume1 = []
     reactorVolume2 = []
     diameterHeightRatio1 = []
@@ -180,6 +181,10 @@ class SmartHome(Resource):
       ambientTemperature.append(biogasSystem['ambientTemperature']['value'])
       electricGeneratorPower.append(biogasSystem['electricGeneratorPower']['value'])
       electricGeneratorEfficiency.append(biogasSystem['electricGeneratorEfficiency']['value'])
+      if biogasSystem['phaseNumber'] == 'Phase1':
+        biogasStages.append(1)
+      else:
+        biogasStages.append(2)
       reactorVolume1.append(biogasSystem['reactorVolume1']['value'])
       reactorVolume2.append(biogasSystem['reactorVolume2']['value'])
       diameterHeightRatio1.append(biogasSystem['diameterHeightRatio1']['value'])
@@ -221,9 +226,9 @@ class SmartHome(Resource):
       weightList.append(idList.index(id))
     weightList.append(len(data['priorityList']))
 
-    # print(weightList)
     results_df = smarthome_model.operation(PV_MeteorologicalDataType = informationMode, temperature = temperatures, irradiance = radiations, 
                   BESS_OperativeDataType = batteryInformationMode, initialSOC = stateOfCharge, chargePower = chargePowers, dischargePower = dischargePowers, 
+                  biogasStages = biogasStages,
                   weights = weightList)
 
     results_df = results_df.reindex(sorted(results_df.columns), axis=1)
