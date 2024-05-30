@@ -181,6 +181,8 @@ class SmartFactory(Resource):
     results_df = smartfactory_model.operation(PV_MeteorologicalDataType = informationMode, temperature = temperatures, irradiance = radiations, 
                                               weights = weightList)
 
+    results_df = results_df.reindex(sorted(results_df.columns), axis=1)
+
     response = results_df.to_json(orient='split')
     # print(response)
 
