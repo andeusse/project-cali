@@ -1,4 +1,4 @@
-from xalglib import xalglib
+import xalglib
 import pandas as pd
 from simulation_models.Scenarios_systems import BiogasModel as BM
 from simulation_models.Scenarios_systems import Scenary_Hydro
@@ -7,7 +7,7 @@ from simulation_models.Scenarios_systems import Scenary_WF
 
 class Dispatcher:
     # Inicialización del modelo de optimización con los elementos creados en el escenario (ver script Scenario.py)
-    def __init__(self, simulationSteps, stepTime, resourceWeights, PV_Elements, biogasElements, hydroElements, WF_Elements, BESS_Elements, loadProfile, G_Profile, T_Profile, H_Profile, Q_Profile, V_Profile):
+    def __init__(self, simulationSteps, stepTime, resourceWeights, PV_Elements, biogasElements, hydroElements, WF_Elements, BESS_Elements, loadProfile, G_Profile, T_Profile, H_Profile, Q_Profile, V_Profile, biogasStages):
         
         self.simulationSteps = simulationSteps # Pasos de simulación definidos por el usuarios
         self.stepTime = stepTime # Equivalencia de tiempo en horas de cada paso de simulación
@@ -25,6 +25,7 @@ class Dispatcher:
         self.H_Profile = H_Profile # Perfil de cabeza de agua
         self.Q_Profile = Q_Profile # Perfil de caudal de agua
         self.V_Profile = V_Profile # Perfil de velocidad de viento
+        self.biogasStages = biogasStages
     
     # Función de cálculo óptimo de potencia para cada elemento del escenario
     def dispatchCalculation(self):
@@ -55,7 +56,7 @@ class Dispatcher:
             InitialBESSEnergy.append(self.BESS_Elements[i].SOC[0]*self.BESS_Elements[i].E_b/100)
             bndl.append(self.BESS_Elements[i].P_cMax*-1)
             bndl.append(self.BESS_Elements[i].P_dMin)
-            bndu.append(self.BESS_Elements[i].P_cMin*-1)        
+            bndu.append(self.BESS_Elements[i].P_cMin)        
             bndu.append(self.BESS_Elements[i].P_dMax)
             columns.append(self.BESS_Elements[i].name + "_ChargePower")
             columns.append(self.BESS_Elements[i].name + "_DischargePower")
@@ -211,7 +212,8 @@ class Dispatcher:
                     biogasModel.BoundaryConditionsR1()
                     biogasModel.Reactor1Simulation()
                     biogasModel.BoundaryConditionsR2()
-                    biogasModel.Reactor2Simulation()
+                    if self.biogasStages[j] == 2:   
+                        biogasModel.Reactor2Simulation()
                     biogasModel.ScenariosResults()
                     biogasModel.GeneratorParameters(self.biogasElements[j].genEfficiency, self.biogasElements[j].P_max)
                     

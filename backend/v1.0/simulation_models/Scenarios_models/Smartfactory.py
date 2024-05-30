@@ -25,10 +25,11 @@ class Smartfactory:
         self.scenary.DemandElements(demandNames, demandTypes, demandPowersSet)
     
     def operation(self, PV_MeteorologicalDataType = 2, temperature = [25.0], irradiance = [1000.0], 
+                  biogasStages = [1],
                   weights = [0.0]):
     
         PVpower = self.scenary.PVGeneration(PV_MeteorologicalDataType, temperature, irradiance)
-        Biogaspower = self.scenary.BiogasGeneration()
+        Biogaspower = self.scenary.BiogasGeneration(biogasStages)
         Demandpower = self.scenary.DemandPower()
         Gridpower = self.scenary.GridPower()
         

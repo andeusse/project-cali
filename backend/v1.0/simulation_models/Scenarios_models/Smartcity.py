@@ -34,13 +34,14 @@ class Smartcity:
                   BESS_OperativeDataType = 0, initialSOC = [100.0], chargePower = [0.0], dischargePower = [0.0], 
                   hydroOperativeDataType = 0, head = [20.0], flux = [0.1], 
                   WF_MeteorologicalDataType = 2, airDensity = 1.112, windSpeed = [5.0],
+                  biogasStages = [1],
                   weights = [0.0]):
     
         PVpower = self.scenary.PVGeneration(PV_MeteorologicalDataType, temperature, irradiance)
         BESS_SOC,chargeP,dischargeP = self.scenary.BESSSOC(BESS_OperativeDataType, initialSOC, chargePower, dischargePower)
         Hydropower = self.scenary.HydroGeneration(hydroOperativeDataType, head, flux)
         WFpower = self.scenary.WFGeneration(WF_MeteorologicalDataType, airDensity, windSpeed)
-        Biogaspower = self.scenary.BiogasGeneration()
+        Biogaspower = self.scenary.BiogasGeneration(biogasStages)
         Demandpower = self.scenary.DemandPower()
         Gridpower = self.scenary.GridPower()
         

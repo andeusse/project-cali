@@ -112,6 +112,7 @@ class SmartFactory(Resource):
     ambientTemperature = []
     electricGeneratorPower = []
     electricGeneratorEfficiency = []
+    biogasStages = []
     reactorVolume1 = []
     reactorVolume2 = []
     diameterHeightRatio1 = []
@@ -140,6 +141,10 @@ class SmartFactory(Resource):
       ambientTemperature.append(biogasSystem['ambientTemperature']['value'])
       electricGeneratorPower.append(biogasSystem['electricGeneratorPower']['value'])
       electricGeneratorEfficiency.append(biogasSystem['electricGeneratorEfficiency']['value'])
+      if biogasSystem['phaseNumber'] == 'Phase1':
+        biogasStages.append(1)
+      else:
+        biogasStages.append(2)
       reactorVolume1.append(biogasSystem['reactorVolume1']['value'])
       reactorVolume2.append(biogasSystem['reactorVolume2']['value'])
       diameterHeightRatio1.append(biogasSystem['diameterHeightRatio1']['value'])
@@ -177,8 +182,8 @@ class SmartFactory(Resource):
       weightList.append(idList.index(id))
     weightList.append(len(data['priorityList']))
 
-    # print(weightList)
     results_df = smartfactory_model.operation(PV_MeteorologicalDataType = informationMode, temperature = temperatures, irradiance = radiations, 
+                                              biogasStages = biogasStages,
                                               weights = weightList)
 
     response = results_df.to_json(orient='split')

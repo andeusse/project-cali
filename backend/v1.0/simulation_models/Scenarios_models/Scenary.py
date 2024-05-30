@@ -198,7 +198,7 @@ class Scenary_Model:
             return self.WF_Powers            
     
     # Creación de los elementos Biogas con base en sus parámetros constructivos   
-    def BiogasElements (self, biogasNames, timestep=1, days=60, reactorVolume1=[30], reactorVolume2=[70], heightRelation1=[2], heightRelation2=[2], 
+    def BiogasElements (self, biogasNames, timestep=1, days=[60], reactorVolume1=[30], reactorVolume2=[70], heightRelation1=[2], heightRelation2=[2], 
                         heatTransfer1=[0.05], heatTransfer2=[0.05]):
         self.biogasNames = biogasNames
         
@@ -224,7 +224,8 @@ class Scenary_Model:
             self.biogasElements[i].GeneratorParameters(genEfficiency[i], ratedPower[i])
     
     # Cálculo de potencia de los elementos Biogas con base en sus parámetros operativos
-    def BiogasGeneration (self):
+    def BiogasGeneration (self, biogasStages=[1]):
+        self.biogasStages = biogasStages
         
         if self.operationType == 1 and self.N_Biogas > 0:
             self.biogasPowers = pd.DataFrame(columns = self.biogasNames)
@@ -236,7 +237,8 @@ class Scenary_Model:
                 self.biogasElements[i].BoundaryConditionsR1()
                 self.biogasElements[i].Reactor1Simulation()
                 self.biogasElements[i].BoundaryConditionsR2()
-                self.biogasElements[i].Reactor2Simulation()
+                if self.biogasStages[i] == 2:
+                    self.biogasElements[i].Reactor2Simulation()
                 self.biogasElements[i].ScenariosResults()
                 
                 self.biogasPowers[self.biogasNames[i]] = [self.biogasElements[i].PowerOutput()[-1]]*self.simulationSteps
@@ -300,7 +302,7 @@ class Scenary_Model:
                 # Ejecución de la optimización utilizando la clase Optimizer
                 self.PowerCalculationModel = Scenary_Optimizer.Dispatcher(self.simulationSteps, self.stepTime, resourceWeights, self.PV_Elements, self.biogasElements,
                                                                   self.hydroElements, self.WF_Elements, self.BESS_Elements, self.loadProfile, 
-                                                                  self.G_Profile, self.T_Profile, self.H_Profile, self.Q_Profile, self.V_Profile)
+                                                                  self.G_Profile, self.T_Profile, self.H_Profile, self.Q_Profile, self.V_Profile, self.biogasStages)
                 PowerCalculationResults = self.PowerCalculationModel.dispatchCalculation()
                 
                 PV_PowerResults = PowerCalculationResults.iloc[:, 0 : self.N_PV]
