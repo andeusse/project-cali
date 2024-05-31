@@ -3,13 +3,16 @@ import {
   COMMON_BATTERY_SYSTEM,
   COMMON_BIOGAS_SYSTEM,
   COMMON_HYDRAULIC_SYSTEM,
-  COMMON_LOAD_SYSTEM,
   COMMON_SOLAR_SYSTEM,
   COMMON_WIND_SYSTEM,
+  SMART_CITY_LOAD_SYSTEM,
+  SMART_FACTORY_LOAD_SYSTEM,
+  SMART_HOME_LOAD_SYSTEM,
   ScenariosLoadInputInformationType,
   ScenariosModesType,
   ScenariosSolarWindInputInformationType,
   ScenariosStepUnitType,
+  SmartScenarioType,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
 import { v4 as uuidv4 } from 'uuid';
@@ -248,11 +251,21 @@ export const setScenario = (
       }
     }
     if ('loadSystems' in newState && name.includes('load')) {
+      let loadSystem = SMART_CITY_LOAD_SYSTEM;
+      if (newState.smartScenarioType === SmartScenarioType.smartCity) {
+        loadSystem = SMART_CITY_LOAD_SYSTEM;
+      } else if (
+        newState.smartScenarioType === SmartScenarioType.smartFactory
+      ) {
+        loadSystem = SMART_FACTORY_LOAD_SYSTEM;
+      } else if (newState.smartScenarioType === SmartScenarioType.smartHome) {
+        loadSystem = SMART_HOME_LOAD_SYSTEM;
+      }
       if (value > newState.loadSystemNumber.value) {
         newState.loadSystems = [
           ...newState.loadSystems,
           {
-            ...COMMON_LOAD_SYSTEM,
+            ...loadSystem,
             name: `Carga ${newState.loadSystemNumber.value + 1}`,
             powerArray: Array(newState.steps.value).fill(100),
             id: uuidv4(),

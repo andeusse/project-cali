@@ -29,7 +29,6 @@ import { CustomIconButton } from '../../UI/CustomIconButton';
 import ImageIcon from '@mui/icons-material/Image';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { array2CSV } from '../../../utils/array2CSV';
-import { compareStrings } from '../../../utils/compareStrings';
 
 type Props = {
   data: SmartSystemOutput;

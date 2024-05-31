@@ -3,6 +3,7 @@ import {
   LoadSystem,
   ScenariosLoadInputInformationText,
   ScenariosLoadInputInformationType,
+  SmartScenarioType,
   SmartSystemType,
   TabProps,
 } from '../../../types/scenarios/common';
@@ -185,6 +186,26 @@ const LoadTab = (props: TabProps) => {
                             key ===
                               ScenariosLoadInputInformationType.Residential) &&
                           system.steps.value !== 24
+                        ) {
+                          return null;
+                        }
+                        if (
+                          system.smartScenarioType ===
+                            SmartScenarioType.smartFactory &&
+                          (key ===
+                            ScenariosLoadInputInformationType.Commercial ||
+                            key ===
+                              ScenariosLoadInputInformationType.Residential)
+                        ) {
+                          return null;
+                        }
+                        if (
+                          system.smartScenarioType ===
+                            SmartScenarioType.smartHome &&
+                          (key ===
+                            ScenariosLoadInputInformationType.Commercial ||
+                            key ===
+                              ScenariosLoadInputInformationType.Industrial)
                         ) {
                           return null;
                         }

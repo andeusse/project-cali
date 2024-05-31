@@ -7,6 +7,7 @@ import {
   PELTON_TURBINE,
   LABORATORY_WIND_TURBINE,
   EXAMPLE_BIOGAS,
+  CUSTOM_BIOGAS,
 } from '../common';
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,6 +28,12 @@ export type SetSystemArrayType<T> = {
   oldState: T;
   id: string;
 };
+
+export enum SmartScenarioType {
+  smartCity,
+  smartFactory,
+  smartHome,
+}
 
 export enum SmartSystemType {
   Solar = 'Solar',
@@ -288,6 +295,7 @@ export type SortableItemParameter = {
 };
 
 export type SmartSystemParameters = CommonSystemParameter & {
+  smartScenarioType: SmartScenarioType;
   operationMode: ScenariosModesType;
   steps: InputType;
   stepTime: InputType;
@@ -604,6 +612,7 @@ export const COMMON_LOAD_SYSTEM: LoadSystem = {
 };
 
 export const COMMON_SCENARIO: SmartSystemParameters = {
+  smartScenarioType: SmartScenarioType.smartCity,
   name: 'Nombre',
   operationMode: ScenariosModesType.Manual,
   steps: {
@@ -693,8 +702,96 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
   batterySystems: [{ ...COMMON_BATTERY_SYSTEM }],
   hydraulicSystems: [{ ...COMMON_HYDRAULIC_SYSTEM }],
   biogasSystems: [{ ...COMMON_BIOGAS_SYSTEM }],
-  loadSystems: [{ ...COMMON_LOAD_SYSTEM }],
+  loadSystems: [],
   windSystems: [{ ...COMMON_WIND_SYSTEM }],
+  priorityList: [],
+};
+
+export const SMART_CITY_BIOGAS: BiogasTypeParamenters = {
+  ...CUSTOM_BIOGAS,
+  reactorVolume1: {
+    ...CUSTOM_BIOGAS.reactorVolume1,
+    disabled: false,
+    value: 3000,
+    min: 10,
+    max: 1000000,
+  },
+  reactorVolume2: {
+    ...CUSTOM_BIOGAS.reactorVolume2,
+    disabled: false,
+    value: 7000,
+    min: 10,
+    max: 1000000,
+  },
+};
+
+export const SMART_FACTORY_BIOGAS: BiogasTypeParamenters = {
+  ...CUSTOM_BIOGAS,
+  reactorVolume1: {
+    ...CUSTOM_BIOGAS.reactorVolume1,
+    disabled: false,
+    value: 3000,
+    min: 1000,
+    max: 30000,
+  },
+  reactorVolume2: {
+    ...CUSTOM_BIOGAS.reactorVolume2,
+    disabled: false,
+    value: 7000,
+    min: 1000,
+    max: 30000,
+  },
+};
+
+export const SMART_HOME_BIOGAS: BiogasTypeParamenters = {
+  ...CUSTOM_BIOGAS,
+  reactorVolume1: {
+    ...CUSTOM_BIOGAS.reactorVolume1,
+    disabled: false,
+    value: 30,
+    min: 10,
+    max: 3000,
+  },
+  reactorVolume2: {
+    ...CUSTOM_BIOGAS.reactorVolume2,
+    disabled: false,
+    value: 70,
+    min: 10,
+    max: 3000,
+  },
+};
+
+export const SMART_HOME_EXAMPLE_BIOGAS = {
+  ...EXAMPLE_BIOGAS,
+  reactorVolume1: {
+    ...EXAMPLE_BIOGAS.reactorVolume1,
+    value: 30,
+  },
+  reactorVolume2: {
+    ...EXAMPLE_BIOGAS.reactorVolume2,
+    value: 70,
+  },
+};
+
+export const SMART_CITY_LOAD_SYSTEM: LoadSystem = {
+  ...COMMON_LOAD_SYSTEM,
+  informationMode: ScenariosLoadInputInformationType.Commercial,
+};
+
+export const SMART_FACTORY_LOAD_SYSTEM: LoadSystem = {
+  ...COMMON_LOAD_SYSTEM,
+  informationMode: ScenariosLoadInputInformationType.Industrial,
+};
+
+export const SMART_HOME_LOAD_SYSTEM: LoadSystem = {
+  ...COMMON_LOAD_SYSTEM,
+  informationMode: ScenariosLoadInputInformationType.Residential,
+};
+
+export const SMART_CITY: SmartSystemParameters = {
+  ...COMMON_SCENARIO,
+  smartScenarioType: SmartScenarioType.smartCity,
+  loadSystems: [{ ...SMART_CITY_LOAD_SYSTEM }],
   priorityList: [
     {
       id: COMMON_SOLAR_SYSTEM.id,
@@ -715,20 +812,29 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
   ],
 };
 
-export const SMART_CITY: SmartSystemParameters = {
-  ...COMMON_SCENARIO,
-};
-
 export const SMART_FACTORY: SmartSystemParameters = {
   ...SMART_CITY,
+  smartScenarioType: SmartScenarioType.smartFactory,
   biogasSystemNumber: {
     ...SMART_CITY.biogasSystemNumber,
     max: 1,
   },
+  loadSystems: [{ ...SMART_FACTORY_LOAD_SYSTEM }],
+  priorityList: [
+    {
+      id: COMMON_SOLAR_SYSTEM.id,
+      name: COMMON_SOLAR_SYSTEM.name,
+    },
+    {
+      id: COMMON_BIOGAS_SYSTEM.id,
+      name: COMMON_BIOGAS_SYSTEM.name,
+    },
+  ],
 };
 
 export const SMART_HOME: SmartSystemParameters = {
   ...SMART_CITY,
+  smartScenarioType: SmartScenarioType.smartHome,
   solarSystemNumber: {
     ...SMART_CITY.solarSystemNumber,
     max: 10,
@@ -745,4 +851,16 @@ export const SMART_HOME: SmartSystemParameters = {
     ...SMART_CITY.loadSystemNumber,
     max: 1,
   },
+  biogasSystems: [{ ...COMMON_BIOGAS_SYSTEM, ...SMART_HOME_EXAMPLE_BIOGAS }],
+  loadSystems: [{ ...SMART_HOME_LOAD_SYSTEM }],
+  priorityList: [
+    {
+      id: COMMON_SOLAR_SYSTEM.id,
+      name: COMMON_SOLAR_SYSTEM.name,
+    },
+    {
+      id: COMMON_BIOGAS_SYSTEM.id,
+      name: COMMON_BIOGAS_SYSTEM.name,
+    },
+  ],
 };

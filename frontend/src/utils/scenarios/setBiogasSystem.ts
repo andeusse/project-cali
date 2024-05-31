@@ -3,6 +3,11 @@ import { InputType } from '../../types/inputType';
 import {
   BiogasSystem,
   BiogasType,
+  SMART_CITY_BIOGAS,
+  SMART_FACTORY_BIOGAS,
+  SMART_HOME_BIOGAS,
+  SMART_HOME_EXAMPLE_BIOGAS,
+  SmartScenarioType,
   SmartSystemParameters,
   SortableItemParameter,
 } from '../../types/scenarios/common';
@@ -43,10 +48,20 @@ export const setBiogasSystemById = <T extends SmartSystemParameters>(
       if (name === 'type') {
         let params = EXAMPLE_BIOGAS;
         if (system.type === BiogasType.Laboratory) {
-          params = EXAMPLE_BIOGAS;
+          if (newState.smartScenarioType === SmartScenarioType.smartHome) {
+            params = SMART_HOME_EXAMPLE_BIOGAS;
+          }
         }
         if (system.type === BiogasType.Custom) {
-          params = CUSTOM_BIOGAS;
+          if (newState.smartScenarioType === SmartScenarioType.smartCity) {
+            params = SMART_CITY_BIOGAS;
+          }
+          if (newState.smartScenarioType === SmartScenarioType.smartFactory) {
+            params = SMART_FACTORY_BIOGAS;
+          }
+          if (newState.smartScenarioType === SmartScenarioType.smartHome) {
+            params = SMART_HOME_BIOGAS;
+          }
         }
         system = {
           ...system,
