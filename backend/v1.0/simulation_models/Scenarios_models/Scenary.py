@@ -95,8 +95,8 @@ class Scenary_Model:
                       gamma_sd = [2.5], eta_bc = [98.0], eta_bd = [98.0]):
         self.BESS_Names = BESS_Names
         self.BESS_SOC_Names = [name + '_SOC' for name in self.BESS_Names]
-        self.BESS_chargeNames = [name + '_ChargePower' for name in BESS_Names]
-        self.BESS_dischargeNames = [name + '_DischargePower' for name in BESS_Names]
+        self.BESS_chargeNames = [name + '_Carga' for name in BESS_Names]
+        self.BESS_dischargeNames = [name + '_Descarga' for name in BESS_Names]
         
         j=0
         
@@ -274,7 +274,7 @@ class Scenary_Model:
         if self.operationType == 1:
             gridPowers = - (pd.DataFrame(self.PV_Powers.sum(axis=1) + self.hydroPowers.sum(axis=1) + self.WF_Powers.sum(axis=1) + self.biogasPowers.sum(axis=1) + self.dischargePowers.sum(axis=1)
                                          - self.chargePowers.sum(axis=1) - self.demandPowers.sum(axis=1)))
-            gridPowers.columns = ["Grid"]
+            gridPowers.columns = ["Red"]
             return gridPowers
         elif self.operationType == 2:
             return 0

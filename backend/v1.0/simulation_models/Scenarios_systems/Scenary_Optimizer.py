@@ -58,8 +58,8 @@ class Dispatcher:
             bndl.append(self.BESS_Elements[i].P_dMin)
             bndu.append(self.BESS_Elements[i].P_cMin)        
             bndu.append(self.BESS_Elements[i].P_dMax)
-            columns.append(self.BESS_Elements[i].name + "_ChargePower")
-            columns.append(self.BESS_Elements[i].name + "_DischargePower")
+            columns.append(self.BESS_Elements[i].name + "_Carga")
+            columns.append(self.BESS_Elements[i].name + "_Descarga")
             
         for i in range(len(self.hydroElements)):
             x.append(0.0)
@@ -83,10 +83,10 @@ class Dispatcher:
         x.append(self.loadProfile[0])
         bndl.append(-1e6) # Límite de 10^6 kW de exportación del escenario
         bndu.append(1e6) # Límite de 10^6 kW de importación del escenario
-        columns.append("Grid")
+        columns.append("Red")
             
         for j in range(len(self.BESS_Elements)):
-            columns.append(self.BESS_Elements[j].name + "_Energy")
+            columns.append(self.BESS_Elements[j].name + "_Energia")
             
         for j in range(len(self.BESS_Elements)):
             columns.append(self.BESS_Elements[j].name + "_SOC" )
