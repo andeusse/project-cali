@@ -1,4 +1,4 @@
-import { CUSTOM_BIOGAS, EXAMPLE_BIOGAS } from '../../types/common';
+import { EXAMPLE_BIOGAS } from '../../types/common';
 import { InputType } from '../../types/inputType';
 import {
   BiogasSystem,

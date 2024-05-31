@@ -69,7 +69,7 @@ const ResultTab = (props: Props) => {
       labels: data.index.map((i) => `P ${i + 1}`),
       datasets: series.filter(
         (f: { id: string | string[] }) =>
-          !f.id.includes('_SOC') && !f.id.includes('_Energy')
+          !f.id.includes('_SOC') && !f.id.includes('_Energia')
       ),
     };
     setMainChartSeries(chartSeries);
