@@ -80,10 +80,10 @@ export const setSolar = (
 
         newState.isBattery2 = true;
 
-        newState.offgridInverter.isConnected = false;
-        newState.offgridInverter.isConnectedDisabled = true;
-        newState.hybridInverter.isConnected = true;
-        newState.hybridInverter.isConnectedDisabled = false;
+        newState.offgridInverter.isConnected = true;
+        newState.offgridInverter.isConnectedDisabled = false;
+        newState.hybridInverter.isConnected = false;
+        newState.hybridInverter.isConnectedDisabled = true;
 
         newState.controller.chargeVoltageBulk.value = 27.2;
         newState.controller.chargeVoltageFloat.value = 27.8;

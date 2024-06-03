@@ -406,6 +406,20 @@ const SmartCity = () => {
                     </Select>
                   </FormControl>
                 </Grid>
+                {system.operationMode === ScenariosModesType.Manual && (
+                  <Grid item xs={12} md={12} xl={12}>
+                    <Typography variant="subtitle1">
+                      Modo manual: Las potencias de los generadores, sistemas de almacenamiento y cargas de la red se determinan por los parámetros y condiciones operativas que configure el usuario.
+                    </Typography>
+                  </Grid>
+                )}
+                {system.operationMode === ScenariosModesType.Automatic && (
+                  <Grid item xs={12} md={12} xl={12}>
+                    <Typography variant="subtitle1">
+                      Modo automático: La herramienta realiza el cálculo óptimo de generación y consumo de potencia de los recursos, basado en la solución óptima de un problema de balance de energía sujeto a restricciones, considerando el orden de prioridad de los generadores.
+                    </Typography>
+                  </Grid>
+                )}
                 {system.priorityList.length !== 0 &&
                   system.operationMode === ScenariosModesType.Automatic && (
                     <>
