@@ -305,6 +305,14 @@ const WindTab = (props: TabProps) => {
             </Grid>
           </Grid>
           {selectedSystem.informationMode ===
+            ScenariosSolarWindInputInformationType.Typical && (
+            <Grid item xs={12} md={12} xl={12}>
+              <InputLabel>
+                AQUÍ VA LA GRÁFICA DE VELOCIDAD DE TIEMPO TÍPICA
+              </InputLabel>
+            </Grid>
+          )}
+          {selectedSystem.informationMode ===
             ScenariosSolarWindInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div

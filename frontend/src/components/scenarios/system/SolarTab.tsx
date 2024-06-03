@@ -329,6 +329,14 @@ const SolarTab = (props: TabProps) => {
             </Grid>
           </Grid>
           {selectedSystem.informationMode ===
+            ScenariosSolarWindInputInformationType.Typical && (
+            <Grid item xs={12} md={12} xl={12}>
+              <InputLabel>
+                AQUÍ VAN LAS GRÁFICAS DE RADIACIÓN Y TEMPERATURA TÍPICAS
+              </InputLabel>
+            </Grid>
+          )}
+          {selectedSystem.informationMode ===
             ScenariosSolarWindInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>
               <div
