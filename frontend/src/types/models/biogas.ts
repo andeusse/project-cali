@@ -183,7 +183,7 @@ export type BiogasOutput = {
   AcumBiogasVolumenV107: number;
   StorageBiogasPressureV107: number;
   AcumBiogasPressureV107: number;
-  SotrageCH4_V107Volume: number;
+  StorageCH4_V107Volume: number;
   StorageCO2_V107Volume: number;
   StorageH2S_V107Volume: number;
   StorageO2_V107Volume: number;
@@ -866,7 +866,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Biogas Almacenado en volumen normal en el tanque V101',
     variable: 'StorageBiogasVolumeV101',
-    unit: 'LN',
+    unit: 'NL',
     isShown: true,
     diagramName: 'Volumen',
     fixed: 2,
@@ -878,7 +878,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Biogas Producido en volumen normal por el R101 - V101',
     variable: 'AcumBiogasVolumenV101',
-    unit: 'LN',
+    unit: 'NL',
     isShown: true,
     diagramName: 'Volumen',
     fixed: 2,
@@ -1129,7 +1129,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Biogas Almacenado en volumen normal en el tanque V102',
     variable: 'StorageBiogasVolumeV102',
-    unit: 'LN',
+    unit: 'NL',
     isShown: true,
     diagramName: 'Volumen',
     fixed: 2,
@@ -1141,7 +1141,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Biogas Producido en volumen normal por el R101 - V102',
     variable: 'AcumBiogasVolumenV102',
-    unit: 'LN',
+    unit: 'NL',
     isShown: true,
     diagramName: 'Volumen',
     fixed: 2,
@@ -1392,7 +1392,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Biogas Almacenado en volumen normal en el tanque V107',
     variable: 'StorageBiogasVolumeV107',
-    unit: 'LN',
+    unit: 'NL',
     isShown: true,
     diagramName: 'Volumen',
     fixed: 2,
@@ -1404,7 +1404,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Biogas Producido en volumen normal por el R101 - V107',
     variable: 'AcumBiogasVolumenV107',
-    unit: 'LN',
+    unit: 'NL',
     isShown: true,
     diagramName: 'Volumen',
     fixed: 2,
@@ -1439,7 +1439,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
-    variable: 'SotrageCH4_V107Volume',
+    variable: 'StorageCH4_V107Volume',
     unit: 'NL',
     isShown: true,
     diagramName: 'CH4',
