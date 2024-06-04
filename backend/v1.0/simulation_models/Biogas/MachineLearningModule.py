@@ -1,13 +1,3 @@
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
-current_directory = os.getcwd()
-print(current_directory)
-excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory)), "v1.0", "tools", "DB_Mapping.xlsx")
-print(excel_file_path)
-
-from  tools import DBManager
 import pandas as pd
 from scipy.integrate import odeint
 from scipy.optimize import minimize
@@ -17,97 +7,61 @@ from datetime import datetime
 import statistics as st
 
 
-
 class BiogasModelTrain:
-    def __init__ (self, VR1, Kini, Eaini, DatabaseConnection_df, database_df, Influx ):
-        self.databaseConnection_df = DatabaseConnection_df
-        self.database_df = database_df
-        self.InfluxDB = Influx
-        self.query_Csus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Csus_exp_R101", location=1, type=1, forecastTime=1)
-        self.Csus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Csus_exp_R101)
-        
-        
-        self.initial_time = self.Csus_exp_R101["_time"][0]
-        self.Csus_ini = self.Csus_exp_R101["Csus_exp_R101"][0]
-                
-        self.VR1 = VR1
+    def __init__ (self, t_train, OperationMode, Kini, Eaini, VR1): 
+        self.t_train = t_train
+        self.points = int(round((self.t_train*3600)/30))
+        self.OperationMode = OperationMode
         self.Kini = Kini
-        self.Eaini =Eaini
-       
-        
+        self.Eaini = Eaini    
         self.VR1 = VR1
-        self.Kini = Kini
-        self.Eaini = Eaini
 
-    def Get_data_DT (self):
-        self.msg = self.InfluxDB.InfluxDBconnection()
-
-        self.query_Msus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Msus_exp_R102", location=1, type=1, forecastTime=1)
-        self.Msus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Msus_exp_R101)
+        self.train_data = pd.DataFrame()
+        if self.OperationMode == 1:
+            self.train_data ["timestamp"] = None
+            self.train_data ["Pre_exponential_factor"] = None
+            self.train_data ["Energy_of_activation"] = None
+            
+    def Get_data_DT (self, DataBase):
+        self.Database = DataBase
+        if self.OperationMode == 1:    
+            self.timestamp = self.Database["timestamp"].tail(self.points) 
+            self.Msus_exp_R101 = self.Database["mol_sus_int_ini_R101"].tail(self.points)        
+            self.Csus_exp_R101 = self.Database["Csus_ini_R101"].tail(self.points)
+            self.Q_P104 = self.Database["Q_P104"].tail(self.points)
+            self.TE101 = self.Database["Temp_R101"].tail(self.points)
         
-        self.query_Csus_exp_R101 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "Csus_exp_R101", location=1, type=1, forecastTime=1)
-        self.Csus_exp_R101 = self.InfluxDB.InfluxDBreader(self.query_Csus_exp_R101)
-
-        self.query_P104 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "SE-104v", location=1, type=1, forecastTime=1) 
-        self.Q_P104 = self.InfluxDB.InfluxDBreader(self.query_P104)
-        
-        self.query_TE101 =self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "TE-101v", location=1, type=1, forecastTime=1)
-        self.TE101 = self.InfluxDB.InfluxDBreader(self.query_TE101)
-    
     def DT_time_and_data (self):
         self.t_DT = []
-        t_i = self.Csus_exp_R101["_time"].tolist()
-        self.Data = self.Csus_exp_R101[['_time', 'Csus_exp_R101']]
-        
-        for i in range (len(self.Csus_exp_R101["_time"].tolist())):
+        t_i = self.timestamp.tolist()
+        self.initial_time = t_i[0]
+                
+        for i in range (len(t_i)):
             t = t_i[i] - self.initial_time 
             self.t_DT.append(t.total_seconds())
-        
+    
         if len(self.t_DT) % 2 == 0:
             self.n = int(len(self.t_DT)/2) 
         else:
             self.n = int((len(self.t_DT)+1)/2)
 
         #end date to train
-        self.end_train_date = t_i[self.n-1]
+        self.end_train_date = t_i[self.n]
         #Train Data    
         self.t_train = self.t_DT[: self.n]       #Vector time in seconds without date
-        self.data_train = self.Data[: self.n]    #Vector with dates
-        self.Csus_exp_train = self.Data['Csus_exp_R101'][: self.n]
-        self.Q_P104_train = self.Q_P104["SE-104v"][: self.n]
-        self.TE101_train = self.TE101["TE-101v"][: self.n]
+        self.Csus_exp_train_R101 = self.Csus_exp_R101[: self.n].tolist()
+        self.Q_P104_train = self.Q_P104[: self.n].tolist()
+        self.TE101_train = self.TE101[: self.n].tolist()
         self.Date_train = t_i[: self.n]
         #Test Data
-        self.n_val = int(len(self.t_train))
         self.t_val = self.t_DT[self.n + 1 :]         #Vector time in seconds without date
-        self.t_val = self.t_val[: self.n_val]
-        self.data_val = self.Data[self.n + 1 :]      #Vector with dates 
-        self.Csus_exp_val = self.Data['Csus_exp_R101'][self.n + 1 :].tolist()
-        self.Csus_exp_val = self.Csus_exp_val[: self.n_val]
-        self.Q_P104_val = self.Q_P104["SE-104v"][self.n + 1 :].tolist()
-        self.Q_P104_val = self.Q_P104_val[: self.n_val]
-        self.TE101_val = self.TE101["TE-101v"][self.n + 1 :].tolist()
-        self.TE101_val = self.TE101_val[: self.n_val]
+        self.Csus_exp_val_R101 = self.Csus_exp_R101[self.n + 1 :].tolist()
+        self.Q_P104_val = self.Q_P104[self.n + 1 :].tolist()
+        self.TE101_val = self.TE101[self.n + 1 :] .tolist()   
+        self.Date_val = t_i[self.n + 1 :] 
 
-        if len(self.t_val) != len(self.TE101_val):
-            if len(self.TE101_val) > len(self.t_val):
-                diference = len(self.TE101_val) - len(self.t_val)
-                self.TE101_val = self.TE101_val[: -diference]
-
-            elif len(self.t_val) > len(self.TE101_val):
-                diference = len(self.t_val) - len(self.TE101_val)
-                self.TE101_val = self.TE101_val[: -diference]
-        
-        if len(self.t_val) != len(self.Q_P104_val):
-            if len(self.Q_P104_val) > len(self.t_val):
-                diference = len(self.Q_P104_val) - len(self.t_val)
-                self.Q_P104_val = self.Q_P104_val[: -diference]
-
-            elif len(self.t_val) > len(self.Q_P104_val):
-                diference = len(self.t_val) - len(self.Q_P104_val)
-                self.Q_P104_val = self.Q_P104_val[: -diference]
-
-        self.Csus_ini = self.Csus_exp_train[0]
+        self.Csus_ini_R101 =  self.Csus_exp_train_R101[0]
+        self.X_R101 = (self.Csus_ini_R101 - self.Csus_exp_val_R101[-1]) / self.Csus_ini_R101 
             
     def Operation_1_Optimization(self):
 
@@ -115,7 +69,7 @@ class BiogasModelTrain:
             R = 8.314
             T=T_func(t)
             Q=Q_func(t)
-            dCsus_dt = ((Q / VR) * (self.Csus_ini - C)) -(K * C * np.exp(-Ea/(R*T))) / VR
+            dCsus_dt = ((Q / VR) * (self.Csus_ini_R101 - C)) -(K * C * np.exp(-Ea/(R*T))) / VR
             return dCsus_dt
         
         def Optimization(K, Ea, t, C_exp, y0, VR, temperatures, Qi):
@@ -138,23 +92,30 @@ class BiogasModelTrain:
             # Perform the optimization
             result = minimize(objective, [K, Ea], method='Nelder-Mead')
             return result
-        
-        
-        self.Optimization_R101 = Optimization(K = self.Kini, Ea = self.Eaini, t = self.t_train, C_exp=self.Csus_exp_train, y0 = self.Csus_exp_train[0], VR = self.VR1, temperatures=self.TE101_train, Qi=self.Q_P104_train) 
-        self.K_R101 = float(self.Optimization_R101.x[0])
-        self.Ea_R101 = float(self.Optimization_R101.x[1])
 
-        self.timestamp = self.Date_train[-1]
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][155], variable = self.database_df["Tag"][155], value = self.K_R101, timestamp = self.timestamp) 
-        self.InfluxDB.InfluxDBwriter(load = self.database_df["Device"][156], variable = self.database_df["Tag"][156], value = self.Ea_R101, timestamp = self.timestamp)            
+        if len (self.train_data)>0:
+            self.Kini = self.K_R101
+            self.Eaini = self.Ea_R101
+
+        self.Optimization_R101 = Optimization(K = self.Kini, Ea = self.Eaini, t = self.t_train, C_exp=self.Csus_exp_train_R101, y0 = self.Csus_exp_train_R101[0], VR = self.VR1, temperatures=self.TE101_train, Qi=self.Q_P104_train) 
+        self.K_R101 = float(self.Optimization_R101.x[0])
+        self.Ea_R101 = float(self.Optimization_R101.x[1])          
 
         T_train_R101 = lambda t: np.interp(t, self.t_train, self.TE101_train)
         Q_train_R101 = lambda t: np.interp(t, self.t_train, self.Q_P104_train)
-        self.Csus_model_train = odeint(model, self.Csus_exp_train[0], self.t_train, args=(self.K_R101, self.Ea_R101, self.VR1, T_train_R101, Q_train_R101))
+        self.Csus_model_train = odeint(model, self.Csus_exp_train_R101[0], self.t_train, args=(self.K_R101, self.Ea_R101, self.VR1, T_train_R101, Q_train_R101))
 
         T_val_R101 = lambda t: np.interp(t, self.t_val, self.TE101_val)
         Q_val_R101 = lambda t: np.interp(t, self.t_val, self.Q_P104_val)
-        self.Csus_model_val = odeint(model, self.Csus_exp_val[0], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, T_val_R101, Q_val_R101))
+        self.Csus_model_val = odeint(model, self.Csus_exp_val_R101[0], self.t_val, args=(self.K_R101, self.Ea_R101, self.VR1, T_val_R101, Q_val_R101))
+
+    def StorageData (self):
+        self.timestamp = datetime.now()
+        if self.OperationMode == 1:
+             new_row = pd.DataFrame({"timestamp": [self.timestamp],
+                                    "Pre_exponential_factor" : [self.K_R101],
+                                    "Energy_of_activation": [self.Ea_R101],})
+             self.train_data = pd.concat([self.train_data, new_row], ignore_index=True)
         
     
 
