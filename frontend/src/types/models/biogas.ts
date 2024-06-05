@@ -73,7 +73,7 @@ export type BiogasInitialAnalysisConditions = {
 
 export type BiogasParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
-    restartFlag : boolean;
+    restartFlag: boolean;
     anaerobicReactorVolume1: InputType;
     anaerobicReactorVolume2: InputType;
     biogasTankVolume1: InputType;
@@ -209,7 +209,7 @@ export type BiogasOutputHistoric = CommonGraphType & {};
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
   queryTime: Config.QUERY_TIME_OFFLINE,
-  restartFlag : false,
+  restartFlag: false,
   diagramBiogas: DiagramBiogasType.Accumulated,
   diagramBiogasUnit: DiagramBiogasUnitType.NormalVolume,
   diagramCompound: DiagramCompoundType.Concentration,
