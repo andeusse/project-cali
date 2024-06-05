@@ -16,10 +16,10 @@ class Solar(Resource):
       database_dic = excelReader.data
       database_df = database_dic['ConexionDB']
       variables_df = database_dic['InfluxDBVariables']
-      variables_df = variables_df.drop(variables_df[variables_df['Device'] != 'Módulo solar-eólico'].index)
-      values_df = pd.DataFrame(columns=["Tag", "Value"])
-      values_df["Tag"] = variables_df["Tag"]
-      values_df.set_index('Tag', inplace=True)
+      variables_df = variables_df.drop(variables_df[variables_df['measurement'] != 'Módulo solar-eólico'].index)
+      values_df = pd.DataFrame(columns=["field", "Value"])
+      values_df["field"] = variables_df["field"]
+      values_df.set_index('field', inplace=True)
 
       influxDB_Connection = InfluxDbConnection()
       # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
@@ -32,8 +32,8 @@ class Solar(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       for index in variables_df.index:
-          query = influxDB.QueryCreator(device= variables_df["Device"][index], variable= variables_df["Tag"][index], location= '', type= 0, forecastTime= 0)
-          values_df.loc[variables_df["Tag"][index], "Value"] = influxDB.InfluxDBreader(query)[variables_df["Tag"][index]][0]
+          query = influxDB.QueryCreator(measurement = variables_df["measurement"][index], device = variables_df["device"][index], variable= variables_df["field"][index], location= '', type= 0, forecastTime= 0)
+          values_df.loc[variables_df["field"][index], "Value"] = influxDB.InfluxDBreader(query)[variables_df["field"][index]][0]
       influxDB.InfluxDBclose()
 
     name = data["name"]

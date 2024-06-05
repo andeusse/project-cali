@@ -30,9 +30,9 @@ class InfluxDBmodel:
             return self.ERROR_MESSAGE
 
     # %%  InfluxDB Writer         
-    def InfluxDBwriter(self, load, variable, value, timestamp):
+    def InfluxDBwriter(self, measurement, device, variable, value, timestamp):
         write_api = self.influxDBclient.write_api(write_options=SYNCHRONOUS)
-        payload = influxdb_client.Point(load).field(variable, value).time(timestamp, write_precision=WritePrecision.S)
+        payload = influxdb_client.Point(measurement).tag('device',device).field(variable, value).time(timestamp, write_precision=WritePrecision.S)
         
         try:
             write_api.write(self.bucket, self.org, payload)
@@ -45,24 +45,26 @@ class InfluxDBmodel:
         self.influxDBclient.close()
 
     # %% InfluxDB query creator
-    def QueryCreator(self, device, variable, location, type, forecastTime): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
+    def QueryCreator(self, measurement, device, variable, location, type, forecastTime): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
         if type == 0:
             self.query = '''from(bucket: "''' + self.bucket + '''")
             |> range(start: -1m)
-            |> filter(fn: (r) => r["_measurement"] == "''' + device + '''")
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            |> filter(fn: (r) => r["device"] == "''' + device + '''")
             |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
-            |> last() |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")''' #-10m
+            |> last() |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'''
         elif type == 1:
             self.query ='''from(bucket: "''' + self.bucket + '''")
             |> range(start: -120m, stop: now()) 
-            |> filter(fn: (r) => r["_measurement"] == "''' + device + '''")
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            |> filter(fn: (r) => r["device"] == "''' + device + '''")
             |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'''
         elif type == 2:
             self.query ='''import "experimental"\nfrom(bucket: "''' + self.bucket + '''")
             |> range(start: -60m, stop: experimental.addDuration(d: ''' + str(forecastTime) + '''s, to: now()))
             |> filter(fn: (r) => r["_measurement"] == "forecast")
-            |> filter(fn: (r) => r["_field"] == "''' + device + '''")
+            |> filter(fn: (r) => r["_field"] == "''' + measurement + '''")
             |> filter(fn: (r) => r["location"] == "''' + location + '''")
             |> filter(fn: (r) => r["period"] == "0")
             |> last()'''
@@ -71,7 +73,7 @@ class InfluxDBmodel:
             from(bucket: "''' + self.bucket + '''")
             |> range(start: ''' + forecastTime + ''', stop: experimental.addDuration(d: 24h, to: ''' + forecastTime + '''))
             |> filter(fn: (r) => r["_measurement"] == "forecast")
-            |> filter(fn: (r) => r["_field"] == "''' + device + '''")
+            |> filter(fn: (r) => r["_field"] == "''' + measurement + '''")
             |> filter(fn: (r) => r["location"] == "''' + location + '''")
             |> filter(fn: (r) => r["period"] == "0")'''
         else:
