@@ -62,13 +62,10 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
             |> last()'''
         elif type == 2:
-            self.query ='''import "experimental"\nfrom(bucket: "''' + self.bucket + '''")
-            |> range(start: -60m, stop: experimental.addDuration(d: ''' + str(forecastTime) + '''s, to: now()))
-            |> filter(fn: (r) => r["_measurement"] == "forecast")
-            |> filter(fn: (r) => r["_field"] == "''' + measurement + '''")
-            |> filter(fn: (r) => r["location"] == "''' + location + '''")
-            |> filter(fn: (r) => r["period"] == "0")
-            |> last()'''
+            self.query ='''from(bucket: "''' + self.bucket + '''")
+            |> range(start: -120m, stop: now()) 
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            '''
         elif type == 3:
             self.query ='''import "experimental"
             from(bucket: "''' + self.bucket + '''")
