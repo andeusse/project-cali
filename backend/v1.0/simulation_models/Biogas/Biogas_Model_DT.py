@@ -246,11 +246,18 @@ class BiogasPlantDT:
                       
     def GetValuesFromBiogasPlant (self):
         
-        self.msg = self.InfluxDB.InfluxDBconnection()
-
+        msg = self.InfluxDB.InfluxDBconnection()
+        if not msg:
+            return {"message":self.influxDB.ERROR_MESSAGE}, 503
+        
+        query = self.InfluxDB.QueryCreator(measurement = "Planta Biogás", type = 1)
+        data_biogas = self.InfluxDB.InfluxDBreader(query)
+        data_biogas.set_index("_field", inplace = True)
+        
         #Get total solids from real biogas plant interface (HMI)
-        self.queryST = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-ST", location=1, type=1, forecastTime=1) 
-        self.ST = self.InfluxDB.InfluxDBreader(self.queryST)
+        #self.queryST = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-ST", location=1, type=1, forecastTime=1) 
+        #self.ST = self.InfluxDB.InfluxDBreader(self.queryST)
+        self.ST = data_biogas["_value"]["M-ST"]
 
         #Get volatile solids from real biogas plant interface (HMI)
         self.querySV = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-SV", location=1, type=1, forecastTime=1) 
