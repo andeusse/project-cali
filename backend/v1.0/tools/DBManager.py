@@ -1,5 +1,7 @@
 import influxdb_client
 from influxdb_client import InfluxDBClient
+import warnings
+from influxdb_client.client.warnings import MissingPivotFunction
 from influxdb_client.client.write_api import SYNCHRONOUS, WritePrecision
 
 
@@ -11,6 +13,7 @@ class InfluxDBmodel:
         self.org = org
         self.token = token
         self.bucket = bucket
+        warnings.simplefilter("ignore", MissingPivotFunction)
 
     # %%  InfluxDB Connection         
     def InfluxDBconnection(self):
@@ -45,7 +48,7 @@ class InfluxDBmodel:
         self.influxDBclient.close()
 
     # %% InfluxDB query creator
-    def QueryCreator(self, measurement, device, variable, location, type, forecastTime): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
+    def QueryCreator(self, measurement='', device='', variable='', location='', type=0, forecastTime=0): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
         if type == 0:
             self.query = '''from(bucket: "''' + self.bucket + '''")
             |> range(start: -1m)
@@ -55,11 +58,9 @@ class InfluxDBmodel:
             |> last() |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'''
         elif type == 1:
             self.query ='''from(bucket: "''' + self.bucket + '''")
-            |> range(start: -120m, stop: now()) 
+            |> range(start: -1m)
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
-            |> filter(fn: (r) => r["device"] == "''' + device + '''")
-            |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
-            |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'''
+            |> last()'''
         elif type == 2:
             self.query ='''import "experimental"\nfrom(bucket: "''' + self.bucket + '''")
             |> range(start: -60m, stop: experimental.addDuration(d: ''' + str(forecastTime) + '''s, to: now()))

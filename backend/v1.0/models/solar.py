@@ -15,15 +15,12 @@ class Solar(Resource):
       excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
       database_dic = excelReader.data
       database_df = database_dic['ConexionDB']
-      variables_df = database_dic['InfluxDBVariables']
-      variables_df = variables_df.drop(variables_df[variables_df['measurement'] != 'Módulo solar-eólico'].index)
       values_df = pd.DataFrame(columns=["field", "Value"])
-      values_df["field"] = variables_df["field"]
-      values_df.set_index('field', inplace=True)
+      
 
       influxDB_Connection = InfluxDbConnection()
-      # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2]
-      db = 0
+      # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2], checho = [3]
+      db = 1
       influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
       influxDB = influxDB_Connection.data
 
@@ -31,9 +28,11 @@ class Solar(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
-      for index in variables_df.index:
-          query = influxDB.QueryCreator(measurement = variables_df["measurement"][index], device = variables_df["device"][index], variable= variables_df["field"][index], location= '', type= 0, forecastTime= 0)
-          values_df.loc[variables_df["field"][index], "Value"] = influxDB.InfluxDBreader(query)[variables_df["field"][index]][0]
+      query = influxDB.QueryCreator(measurement='Módulo solar-eólico', type=1)
+      values_df_temp = influxDB.InfluxDBreader(query)
+      values_df['field'] = values_df_temp['_field']
+      values_df['Value'] = values_df_temp['_value']
+      values_df.set_index('field', inplace=True)
       influxDB.InfluxDBclose()
 
     name = data["name"]
