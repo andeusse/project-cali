@@ -27,7 +27,7 @@ class BiogasPlantDT:
         self.VG3 = VG3
         self.databaseConnection_df = pd.read_excel(excel_file_path, sheet_name='ConexionDB')
         self.database_df = pd.read_excel(excel_file_path, sheet_name='InfluxDBVariables')
-        index=3
+        index = 1
         self.InfluxDB = DBManager.InfluxDBmodel(server = 'http://' + str(self.databaseConnection_df['IP'][index])+':'+str(self.databaseConnection_df['Port'][index])+'/', org = self.databaseConnection_df['Organization'][index], bucket = self.databaseConnection_df['Bucket'][index], token = self.databaseConnection_df['Token'][index])
         self.Thermo = TP.ThermoProperties()
         self.tp = tp
@@ -250,7 +250,7 @@ class BiogasPlantDT:
         if not msg:
             return {"message":self.influxDB.ERROR_MESSAGE}, 503
         
-        query = self.InfluxDB.QueryCreator(measurement = "Planta Biogás", type = 1)
+        query = self.InfluxDB.QueryCreator(measurement = "Planta Biogás", type = 2)
         data_biogas = self.InfluxDB.InfluxDBreader(query)
         data_biogas.set_index("_field", inplace = True)
         
@@ -262,7 +262,7 @@ class BiogasPlantDT:
         #Get volatile solids from real biogas plant interface (HMI)
         # self.querySV = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-SV", location=1, type=1, forecastTime=1) 
         # self.SV = self.InfluxDB.InfluxDBreader(self.querySV)
-        self.SV = data_biogas["_value"][" MSV"]
+        self.SV = data_biogas["_value"]["MSV"]
 
         #Get Carbon concentration from real biogas plant interface (HMI)
         # self.queryCc = self.InfluxDB.QueryCreator(device="Planta Biogas", variable = "M-Cc", location=1, type=1, forecastTime=1) 
@@ -483,14 +483,14 @@ class BiogasPlantDT:
         
         elif self.manual_sustrate == False:
 
-            self.ST = self.ST["M-ST"].iloc[-1]/100
-            self.SV = self.SV["M-SV"].iloc[-1]/100
-            self.Cc = self.Cc["M-Cc"].iloc[-1]
-            self.Ch = self.Ch["M-Ch"].iloc[-1]
-            self.Co = self.Co["M-Co"].iloc[-1]
-            self.Cn = self.Cn["M-Cn"].iloc[-1]
-            self.Cs = self.Cs["M-Cs"].iloc[-1]
-            self.rho = self.rho["M-d"].iloc[-1]
+            self.ST = self.ST["MST"].iloc[-1]/100
+            self.SV = self.SV["MSV"].iloc[-1]/100
+            self.Cc = self.Cc["MCc"].iloc[-1]
+            self.Ch = self.Ch["MCh"].iloc[-1]
+            self.Co = self.Co["MCo"].iloc[-1]
+            self.Cn = self.Cn["MCn"].iloc[-1]
+            self.Cs = self.Cs["MCs"].iloc[-1]
+            self.rho = self.rho["Md"].iloc[-1]
         
         self.molC = self.Cc*(1/12.01)
         self.molH = self.Ch*(1/1.01)
@@ -553,7 +553,7 @@ class BiogasPlantDT:
                    
         else:
 
-            self.SE104v = self.SE104v["SE-104"].tolist()
+            self.SE104v = self.SE104v["SE104"].tolist()
             self.Q_P104 = float(self.SE104v[-1])
 
     def Pump104_Operation_3_4_5 (self, manual_P104=0, TRH=30, FT_P104=5, TTO_P104=10):    
@@ -586,7 +586,7 @@ class BiogasPlantDT:
         
         else:
 
-            self.SE104v = self.SE104v["SE-104"].tolist()
+            self.SE104v = self.SE104v["SE104"].tolist()
             self.Q_P104 = float(self.SE104v[-1])
     
     def Pump101_Operation_2 (self, manual_P101=0, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
@@ -610,7 +610,7 @@ class BiogasPlantDT:
 
         else:
 
-            self.SE101v = self.SE101v["SE-101"].tolist()
+            self.SE101v = self.SE101v["SE101"].tolist()
             self.Q_P101 = float(self.SE101v[-1])
     
     def Pump101_Operation_3_5 (self, manual_P101=0):
@@ -621,7 +621,7 @@ class BiogasPlantDT:
 
         else:
 
-            self.SE101v = self.SE101v["SE-101"].tolist()
+            self.SE101v = self.SE101v["SE101"].tolist()
             self.Q_P101 = float(self.SE101v[-1])
     
     def Pump101_Operation_4 (self, manual_P101=0):         #en este modo de operación primero se ejecuta la función de la bomba 102
@@ -632,7 +632,7 @@ class BiogasPlantDT:
 
         else:
 
-            self.SE101v = self.SE101v["SE-101"].tolist()
+            self.SE101v = self.SE101v["SE101"].tolist()
             self.Q_P101 = float(self.SE101v[-1])
         
     def Pump102_Operation_4_5 (self, manual_P102=0, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
@@ -656,7 +656,7 @@ class BiogasPlantDT:
 
         else:
 
-            self.SE102v = self.SE102v["SE-102"].tolist()
+            self.SE102v = self.SE102v["SE102"].tolist()
             self.Q_P102 = float(self.SE102v)
     
            
@@ -668,8 +668,8 @@ class BiogasPlantDT:
 
         elif self.manual_temp_R101 == True:
 
-            self.TE_101Av = self.TE_101Av["TE-101A"].tolist()
-            self.TE_101Bv = self.TE_101Bv["TE-101B"].tolist()
+            self.TE_101Av = self.TE_101Av["TE101A"].tolist()
+            self.TE_101Bv = self.TE_101Bv["TE101B"].tolist()
 
             T1 = float(self.TE_101Av[-1])
             T2 = float(self.TE_101Bv[-1])
@@ -683,25 +683,25 @@ class BiogasPlantDT:
 
         elif self.manual_temp_R102 == True:
 
-            self.TE_102Av = self.TE_102Av["TE-102A"].tolist()
-            self.TE_102Bv = self.TE_102Bv["TE-102B"].tolist()
+            self.TE_102Av = self.TE_102Av["TE102A"].tolist()
+            self.TE_102Bv = self.TE_102Bv["TE102B"].tolist()
 
             T1 = self.TE_102Av[-1]
             T2 = self.TE_102Bv[-1]
             self.Temp_R102 = (T1 + T2)/2
         
     def V_101_DT (self):
-        self.AT103A1v = self.AT103A1v["AT-103A1"]
-        self.AT103A2v = self.AT103A2v["AT-103A2"]
-        self.AT103A3v = self.AT103A3v["AT-103A3"]
-        self.AT103A4v = self.AT103A4v["AT-103A4"]
-        self.AT103A5v = self.AT103A5v["AT-103A5"]
+        self.AT103A1v = self.AT103A1v["AT103A1"]
+        self.AT103A2v = self.AT103A2v["AT103A2"]
+        self.AT103A3v = self.AT103A3v["AT103A3"]
+        self.AT103A4v = self.AT103A4v["AT103A4"]
+        self.AT103A5v = self.AT103A5v["AT103A5"]
                 
-        self.RH_V101v = self.AT103Bv["AT-103B"]
+        self.RH_V101v = self.AT103Bv["AT103B"]
         
-        self.PT103v = self.PT103v["PT-103"]
-        self.TT103v = self.TT103v["TT-103"]
-        self.SV103v = self.SV103v["SV-103"]
+        self.PT103v = self.PT103v["PT103"]
+        self.TT103v = self.TT103v["TT103"]
+        self.SV103v = self.SV103v["SV103"]
 
         self.P_std = 100        #[kPa]
         self.T_std = 273.15     #[K]    
@@ -761,16 +761,16 @@ class BiogasPlantDT:
         self.mol_H2_acum_V101 = self.V_normal_H2_acum_V101/self.V_mol_H2
 
     def V_102_DT (self):
-        self.AT104A1v = self.AT104A1v["AT-104A1"]
-        self.AT104A2v = self.AT104A2v["AT-104A2"]
-        self.AT104A3v = self.AT104A3v["AT-104A3"]
-        self.AT104A4v = self.AT104A4v["AT-104A4"]
-        self.AT104A5v = self.AT104A5v["AT-104A5"]
+        self.AT104A1v = self.AT104A1v["AT104A1"]
+        self.AT104A2v = self.AT104A2v["AT104A2"]
+        self.AT104A3v = self.AT104A3v["AT104A3"]
+        self.AT104A4v = self.AT104A4v["AT104A4"]
+        self.AT104A5v = self.AT104A5v["AT104A5"]
 
-        self.RH_V102v = self.AT104Bv["AT-104B"]
+        self.RH_V102v = self.AT104Bv["AT104B"]
 
-        self.PT104v = self.PT104v["PT-104"]
-        self.TT104v = self.TT104v["TT-104"]
+        self.PT104v = self.PT104v["PT104"]
+        self.TT104v = self.TT104v["TT104"]
         #self.SV104v = self.SV104v["SV-104"]
 
         self.V_normal_V102 = ((self.PT104v.iloc[-1]*6.89476)*self.VG2*self.T_std)/(self.P_std*(self.TT104v.iloc[-1]+273.15))
@@ -823,16 +823,16 @@ class BiogasPlantDT:
         
         
     def V_107_DT (self):
-        self.AT105A1v = self.AT105A1v["AT-105A1"]
-        self.AT105A2v = self.AT105A2v["AT-105A2"]
-        self.AT105A3v = self.AT105A3v["AT-105A3"]
-        self.AT105A4v = self.AT105A4v["AT-105A4"]
-        self.AT105A5v = self.AT105A5v["AT-105A5"]
+        self.AT105A1v = self.AT105A1v["AT105A1"]
+        self.AT105A2v = self.AT105A2v["AT105A2"]
+        self.AT105A3v = self.AT105A3v["AT105A3"]
+        self.AT105A4v = self.AT105A4v["AT105A4"]
+        self.AT105A5v = self.AT105A5v["AT105A5"]
 
-        self.RH_V107v = self.AT105Bv["AT-105B"]
+        self.RH_V107v = self.AT105Bv["AT105B"]
 
-        self.PT105v = self.PT105v["PT-105"]
-        self.TT105v = self.TT105v["TT-105"]
+        self.PT105v = self.PT105v["PT105"]
+        self.TT105v = self.TT105v["TT105"]
 
         self.V_normal_V107 = ((self.PT105v.iloc[-1]*6.89476)*self.VG3*self.T_std)/(self.P_std*(self.TT105v.iloc[-1]+273.15))
         
