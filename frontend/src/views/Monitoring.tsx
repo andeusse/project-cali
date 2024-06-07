@@ -12,7 +12,7 @@ const Monitoring = (props: Props) => {
       title: 'Turbinas',
       children: (
         <IframeFull
-          url={Config.getInstance().params.grafanaUrls[1]}
+          url={Config.getInstance().params.grafanaUrls[0]}
         ></IframeFull>
       ),
     },
@@ -20,7 +20,7 @@ const Monitoring = (props: Props) => {
       title: 'Solar - Eólico',
       children: (
         <IframeFull
-          url={Config.getInstance().params.grafanaUrls[2]}
+          url={Config.getInstance().params.grafanaUrls[1]}
         ></IframeFull>
       ),
     },
@@ -28,7 +28,7 @@ const Monitoring = (props: Props) => {
       title: 'Planta de Biogás',
       children: (
         <IframeFull
-          url={Config.getInstance().params.grafanaUrls[0]}
+          url={Config.getInstance().params.grafanaUrls[2]}
         ></IframeFull>
       ),
     },
