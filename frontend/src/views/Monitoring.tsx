@@ -1,10 +1,69 @@
-import { Box, Container } from '@mui/material';
+import { Box, Container, Tab } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
 import IframeFull from '../components/UI/IframeFull';
 import Config from '../config/config';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { useState } from 'react';
 
 type Props = {};
+
+const ElectricalTabs = () => {
+  const electricalTabs = [
+    'Totalizador',
+    'Sistema PBM',
+    'Analizador Biogás',
+    'Planta de Biogás',
+    'Tunel de viento - Potencia',
+    'Ventilador sistema eolico',
+    'Torre de enfriamiento',
+    'Banco de trabajo turbinas',
+    'Tablero Paneles',
+    'Iluminación área 3',
+    'Video Wall Smart Grid',
+    'Iluminación área 2',
+    'Video Controller Smart Grid',
+    'Iluminación área 1',
+    'Mesa Biogás Fotovoltaico',
+    'Nevera Biogás',
+    'Mesón Sala Biogás',
+    'Tunel de viento - control',
+    'Modulo fotovoltaico eolico',
+    'Modulo control turbinas',
+  ];
+
+  const [selectedTab, setSelectedTab] = useState<string>(electricalTabs[0]);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setSelectedTab(newValue);
+  };
+
+  return (
+    <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={selectedTab}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList
+            onChange={handleChange}
+            aria-label="Monitoring tabs"
+            variant="scrollable"
+            allowScrollButtonsMobile
+          >
+            {electricalTabs.map((tab) => (
+              <Tab key={tab} label={tab} value={tab} />
+            ))}
+          </TabList>
+        </Box>
+        {electricalTabs.map((tab, index) => (
+          <TabPanel key={tab} value={tab}>
+            <IframeFull
+              url={Config.getInstance().params.electricalUrls[index]}
+            ></IframeFull>
+          </TabPanel>
+        ))}
+      </TabContext>
+    </Box>
+  );
+};
 
 const Monitoring = (props: Props) => {
   const tabs: TabType[] = [
@@ -58,11 +117,7 @@ const Monitoring = (props: Props) => {
     },
     {
       title: 'Tablero Eléctrico',
-      children: (
-        <IframeFull
-          url={Config.getInstance().params.grafanaUrls[6]}
-        ></IframeFull>
-      ),
+      children: <ElectricalTabs></ElectricalTabs>,
     },
   ];
 
