@@ -123,6 +123,9 @@ export type BiogasOutput = {
   K_R101: number;
   Ea_R101: number;
   Temp_R101: number;
+  pH_R101: number;
+  organic_charge_R101_in: number;
+  organic_charge_R101_out: number;
   Csus_exp_train_R101: number;
   x_R101: number;
   STsus_R101: number;
@@ -203,7 +206,7 @@ export type BiogasOutput = {
   moles_humidity_V107: number;
   Relative_humidity_V107: number;
   StorageEnergy_V107: number;
-  Pump101Flow: number;
+  Pump101Flow: number; 
 };
 
 export type BiogasOutputHistoric = CommonGraphType & {};
@@ -720,9 +723,42 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T',
     fixed: 2,
-    x: 2200,
+    x: 2150,
     y: 6150,
     scientificNotation: true,
+  },
+  {
+    name: 'pH R101',
+    variable: 'pH_R101',
+    unit: '',
+    isShown: true,
+    diagramName: 'pH',
+    fixed: 2,
+    x: 2150,
+    y: 6300,
+    scientificNotation: false,
+  },
+  {
+    name: 'Carga Orgánica de Entrada R101 [g_SV/L-día]',
+    variable: 'organic_charge_R101_in',
+    unit: 'gSV/L-día',
+    isShown: true,
+    diagramName: 'CO_in',
+    fixed: 2,
+    x: 400,
+    y: 4750,
+    scientificNotation: false,
+  },
+  {
+    name: 'Carga Orgánica de Salida R101 [g_SV/L-día]',
+    variable: 'organic_charge_R101_out',
+    unit: 'gSV/L-día',
+    isShown: true,
+    diagramName: 'CO_out',
+    fixed: 2,
+    x: 400,
+    y: 6000,
+    scientificNotation: false,
   },
   {
     name: 'Concentración sustrato a la salida de R101',
@@ -1699,9 +1735,20 @@ export const BIOGAS_MODE2: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T',
     fixed: 2,
-    x: 2200,
+    x: 2150,
     y: 6150,
     scientificNotation: true,
+  },
+  {
+    name: 'pH R101',
+    variable: 'pH_R101',
+    unit: '',
+    isShown: true,
+    diagramName: 'pH',
+    fixed: 2,
+    x: 2150,
+    y: 6300,
+    scientificNotation: false,
   },
   {
     name: 'Concentración sustrato a la salida de R101',
