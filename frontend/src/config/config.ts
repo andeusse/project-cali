@@ -9,6 +9,10 @@ export default class Config {
   public static QUERY_TIME_OFFLINE_BIOGAS: number = 30000;
   public static QUERY_TIME_ONLINE_BIOGAS: number = 30000;
 
+  public static TYPICAL_ARRAY_X_AXIS: string[] = Array(24)
+    .fill(0)
+    .map((_, i) => `P${i + 1}`);
+
   public params: ConfigType;
 
   private constructor() {
@@ -49,6 +53,38 @@ export default class Config {
       windyUrlWindSpeed: process.env.REACT_APP_WINDY_URL_WIND_SPEED
         ? process.env.REACT_APP_WINDY_URL_WIND_SPEED
         : '',
+      typicalTemperatureProfile: process.env.REACT_APP_TYPICAL_TEMP_PROFILE
+        ? process.env.REACT_APP_TYPICAL_TEMP_PROFILE.split(' ').map((n) =>
+            parseFloat(n)
+          )
+        : [],
+      typicalRadiationProfile: process.env.REACT_APP_TYPICAL_RADIATION_PROFILE
+        ? process.env.REACT_APP_TYPICAL_RADIATION_PROFILE.split(' ').map((n) =>
+            parseFloat(n)
+          )
+        : [],
+      typicalWindSpeedProfile: process.env.REACT_APP_TYPICAL_WIND_SPEED_PROFILE
+        ? process.env.REACT_APP_TYPICAL_WIND_SPEED_PROFILE.split(' ').map((n) =>
+            parseFloat(n)
+          )
+        : [],
+      typicalHomeLoadProfile: process.env.REACT_APP_TYPICAL_HOME_LOAD_PROFILE
+        ? process.env.REACT_APP_TYPICAL_HOME_LOAD_PROFILE.split(' ').map((n) =>
+            parseFloat(n)
+          )
+        : [],
+      typicalCommercialLoadProfile: process.env
+        .REACT_APP_TYPICAL_COMMERCIAL_LOAD_PROFILE
+        ? process.env.REACT_APP_TYPICAL_COMMERCIAL_LOAD_PROFILE.split(' ').map(
+            (n) => parseFloat(n)
+          )
+        : [],
+      typicalIndustrialLoadProfile: process.env
+        .REACT_APP_TYPICAL_INDUSTRIAL_LOAD_PROFILE
+        ? process.env.REACT_APP_TYPICAL_INDUSTRIAL_LOAD_PROFILE.split(' ').map(
+            (n) => parseFloat(n)
+          )
+        : [],
     };
   }
 

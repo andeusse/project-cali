@@ -28,6 +28,8 @@ import {
   CellChange,
 } from '@silevis/reactgrid';
 import './table.scss';
+import TypicalCurves from '../../TypicalCurves';
+import Config from '../../../config/config';
 
 const SolarTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
@@ -330,11 +332,30 @@ const SolarTab = (props: TabProps) => {
           </Grid>
           {selectedSystem.informationMode ===
             ScenariosSolarWindInputInformationType.Typical && (
-            <Grid item xs={12} md={12} xl={12}>
-              <InputLabel>
-                AQUÍ VAN LAS GRÁFICAS DE RADIACIÓN Y TEMPERATURA TÍPICAS
-              </InputLabel>
-            </Grid>
+            <>
+              <Grid item xs={12} md={12} xl={6}>
+                <TypicalCurves
+                  title="Radiación"
+                  maxValue={selectedSystem.radiation.value}
+                  xAxis="Periodo"
+                  yAxis="Radiación [W / m²]"
+                  xValues={Config.TYPICAL_ARRAY_X_AXIS}
+                  yValues={Config.getInstance().params.typicalRadiationProfile}
+                ></TypicalCurves>
+              </Grid>
+              <Grid item xs={12} md={12} xl={6}>
+                <TypicalCurves
+                  title="Temperatura"
+                  maxValue={selectedSystem.temperature.value}
+                  xAxis="Periodo"
+                  yAxis="Temperatura [°C]"
+                  xValues={Config.TYPICAL_ARRAY_X_AXIS}
+                  yValues={
+                    Config.getInstance().params.typicalTemperatureProfile
+                  }
+                ></TypicalCurves>
+              </Grid>
+            </>
           )}
           {selectedSystem.informationMode ===
             ScenariosSolarWindInputInformationType.Custom && (

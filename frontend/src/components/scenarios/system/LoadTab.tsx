@@ -26,6 +26,8 @@ import { useAppSelector } from '../../../redux/reduxHooks';
 import { getValueByKey } from '../../../utils/getValueByKey';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { ThemeType } from '../../../types/theme';
+import TypicalCurves from '../../TypicalCurves';
+import Config from '../../../config/config';
 
 const LoadTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
@@ -249,6 +251,35 @@ const LoadTab = (props: TabProps) => {
                 )}
             </Grid>
           </Grid>
+          {(selectedSystem.informationMode ===
+            ScenariosLoadInputInformationType.Residential ||
+            selectedSystem.informationMode ===
+              ScenariosLoadInputInformationType.Commercial ||
+            selectedSystem.informationMode ===
+              ScenariosLoadInputInformationType.Industrial) && (
+            <>
+              <Grid item xs={12} md={12} xl={3}></Grid>
+              <Grid item xs={12} md={12} xl={6}>
+                <TypicalCurves
+                  title="Carga"
+                  maxValue={selectedSystem.peakPower.value}
+                  xAxis="Periodo"
+                  yAxis="Carga [kW]"
+                  xValues={Config.TYPICAL_ARRAY_X_AXIS}
+                  yValues={
+                    selectedSystem.informationMode ===
+                    ScenariosLoadInputInformationType.Residential
+                      ? Config.getInstance().params.typicalHomeLoadProfile
+                      : selectedSystem.informationMode ===
+                        ScenariosLoadInputInformationType.Commercial
+                      ? Config.getInstance().params.typicalCommercialLoadProfile
+                      : Config.getInstance().params.typicalIndustrialLoadProfile
+                  }
+                ></TypicalCurves>
+                <Grid item xs={12} md={12} xl={3}></Grid>
+              </Grid>
+            </>
+          )}
           {selectedSystem.informationMode ===
             ScenariosLoadInputInformationType.Custom && (
             <Grid item xs={12} md={12} xl={12}>

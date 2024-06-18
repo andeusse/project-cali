@@ -6,4 +6,10 @@ export type ConfigType = {
   windyUrlRadiation: string;
   windyUrlTemperature: string;
   windyUrlWindSpeed: string;
+  typicalTemperatureProfile: number[];
+  typicalRadiationProfile: number[];
+  typicalWindSpeedProfile: number[];
+  typicalHomeLoadProfile: number[];
+  typicalCommercialLoadProfile: number[];
+  typicalIndustrialLoadProfile: number[];
 };

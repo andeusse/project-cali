@@ -27,6 +27,8 @@ import {
 import { getValueByKey } from '../../../utils/getValueByKey';
 import CustomNumberField from '../../UI/CustomNumberField';
 import { ThemeType } from '../../../types/theme';
+import TypicalCurves from '../../TypicalCurves';
+import Config from '../../../config/config';
 
 const WindTab = (props: TabProps) => {
   const { system, handleSystemChange, handleTableChange } = props;
@@ -306,11 +308,22 @@ const WindTab = (props: TabProps) => {
           </Grid>
           {selectedSystem.informationMode ===
             ScenariosSolarWindInputInformationType.Typical && (
-            <Grid item xs={12} md={12} xl={12}>
-              <InputLabel>
-                AQUÍ VA LA GRÁFICA DE VELOCIDAD DE TIEMPO TÍPICA
-              </InputLabel>
-            </Grid>
+            <>
+              <Grid item xs={12} md={12} xl={3}></Grid>
+              <Grid item xs={12} md={12} xl={6}>
+                <TypicalCurves
+                  title="Velocidad del viento"
+                  maxValue={selectedSystem.windSpeed.value}
+                  xAxis="Periodo"
+                  yAxis="Velocidad [m / s]"
+                  xValues={Config.TYPICAL_ARRAY_X_AXIS}
+                  yValues={
+                    Config.getInstance().params.typicalTemperatureProfile
+                  }
+                ></TypicalCurves>
+                <Grid item xs={12} md={12} xl={3}></Grid>
+              </Grid>
+            </>
           )}
           {selectedSystem.informationMode ===
             ScenariosSolarWindInputInformationType.Custom && (
