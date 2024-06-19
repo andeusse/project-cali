@@ -85,6 +85,14 @@ const Biogas = () => {
   }, [isPlaying]);
 
   useEffect(() => {
+    if (data !== undefined) {
+      setSystem({ ...system, restartFlag: false });
+    } else {
+      setSystem({ ...system, restartFlag: true });
+    }
+  }, [data, system]);
+
+  useEffect(() => {
     if (error !== '') {
       setIsOpen(true);
     }

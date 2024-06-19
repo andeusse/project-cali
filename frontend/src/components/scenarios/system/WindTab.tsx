@@ -317,9 +317,7 @@ const WindTab = (props: TabProps) => {
                   xAxis="Periodo"
                   yAxis="Velocidad [m / s]"
                   xValues={Config.TYPICAL_ARRAY_X_AXIS}
-                  yValues={
-                    Config.getInstance().params.typicalTemperatureProfile
-                  }
+                  yValues={Config.getInstance().params.typicalWindSpeedProfile}
                 ></TypicalCurves>
                 <Grid item xs={12} md={12} xl={3}></Grid>
               </Grid>
