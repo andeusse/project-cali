@@ -222,6 +222,48 @@ const BATTERY: Battery = {
   },
 };
 
+export const PELTON_TURBINE_CONST: TurbineConsts = {
+  inputPressure: {
+    disabled: false,
+    value: 22,
+    tooltip: 'Presión',
+    unit: 'mH₂O',
+    variableString: 'Presión',
+    min: 0,
+    max: 30,
+  },
+  inputFlow: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Flujo',
+    unit: 'L / s',
+    variableString: 'Flujo',
+    min: 0,
+    max: 15,
+  },
+};
+
+export const TURGO_TURBINE_CONST: TurbineConsts = {
+  inputPressure: {
+    disabled: false,
+    value: 19,
+    tooltip: 'Presión',
+    unit: 'mH₂O',
+    variableString: 'Presión',
+    min: 0,
+    max: 30,
+  },
+  inputFlow: {
+    disabled: false,
+    value: 11,
+    tooltip: 'Flujo',
+    unit: 'L / s',
+    variableString: 'Flujo',
+    min: 0,
+    max: 20,
+  },
+};
+
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
   queryTime: Config.QUERY_TIME_OFFLINE,
@@ -255,24 +297,6 @@ export const TURBINE: TurbineParameters = {
     variableSubString: 'inverter',
   },
   inputOfflineOperation: true,
-  inputPressure: {
-    disabled: false,
-    value: 31,
-    tooltip: 'Presión',
-    unit: 'psi',
-    variableString: 'Presión',
-    min: 4.2,
-    max: 185,
-  },
-  inputFlow: {
-    disabled: false,
-    value: 360,
-    tooltip: 'Flujo',
-    unit: 'L / min',
-    variableString: 'Flujo',
-    min: 6,
-    max: 600,
-  },
   inputDirectCurrentPower: false,
   inputActivePower: {
     disabled: false,
@@ -293,6 +317,7 @@ export const TURBINE: TurbineParameters = {
     max: 1,
     step: 0.1,
   },
+  ...PELTON_TURBINE_CONST,
 };
 
 export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
@@ -330,7 +355,7 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     name: 'Potencia controlador',
     variable: 'controllerPower',
     x: 2040,
-    y: 400,
+    y: 320,
     diagramName: 'Potencia',
     unit: 'W',
     fixed: 1,
@@ -340,7 +365,7 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
     x: 2040,
-    y: 480,
+    y: 400,
     diagramName: 'Voltaje',
     unit: 'Vcd',
     fixed: 1,
@@ -350,9 +375,19 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
     x: 2040,
-    y: 560,
+    y: 480,
     diagramName: 'Corriente',
     unit: 'Acd',
+    fixed: 1,
+    isShown: true,
+  },
+  {
+    name: 'Eficiencia controlador',
+    variable: 'a',
+    x: 2040,
+    y: 560,
+    diagramName: 'Eficiencia',
+    unit: '%',
     fixed: 1,
     isShown: true,
   },
@@ -422,7 +457,7 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     variable: 'inverterInputCurrent',
     x: 3600,
     y: 560,
-    diagramName: 'I entrada',
+    diagramName: 'I. entrada',
     unit: 'Acd',
     fixed: 1,
     isShown: true,
@@ -434,6 +469,16 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 640,
     diagramName: 'Estado',
     unit: '',
+    fixed: 1,
+    isShown: true,
+  },
+  {
+    name: 'Eficiencia inversor',
+    variable: 'b',
+    x: 3600,
+    y: 720,
+    diagramName: 'Eficiencia',
+    unit: '%',
     fixed: 1,
     isShown: true,
   },
@@ -603,6 +648,16 @@ export const TURGO_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
   },
   {
+    name: 'Eficiencia controlador',
+    variable: 'a',
+    x: 960,
+    y: 2240,
+    diagramName: 'Eficiencia',
+    unit: '%',
+    fixed: 1,
+    isShown: true,
+  },
+  {
     name: 'Estado de carga batería',
     variable: 'batteryStateOfCharge',
     x: 2580,
@@ -701,7 +756,7 @@ export const TURGO_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     variable: 'inverterInputCurrent',
     x: 3600,
     y: 560,
-    diagramName: 'I entrada',
+    diagramName: 'I. entrada',
     unit: 'Acd',
     fixed: 1,
     isShown: true,
@@ -713,6 +768,16 @@ export const TURGO_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 640,
     diagramName: 'Estado',
     unit: '',
+    fixed: 1,
+    isShown: true,
+  },
+  {
+    name: 'Eficiencia inversor',
+    variable: 'b',
+    x: 3600,
+    y: 720,
+    diagramName: 'Eficiencia',
+    unit: '%',
     fixed: 1,
     isShown: true,
   },
@@ -855,17 +920,17 @@ export const PELTON_TURBINE: InputType[] = [
   },
   {
     disabled: true,
-    value: 0.0001,
+    value: 0.1,
     tooltip: 'Mínimo caudal de operación de la turbina',
-    unit: 'm³ / s',
+    unit: 'L / s',
     variableString: 'Q',
     variableSubString: 'min',
   },
   {
     disabled: true,
-    value: 0.01,
+    value: 10,
     tooltip: 'Máximo caudal de operación de la turbina',
-    unit: 'm³ / s',
+    unit: 'L / s',
     variableString: 'Q',
     variableSubString: 'max',
   },
@@ -906,17 +971,17 @@ export const TURGO_TURBINE: InputType[] = [
   },
   {
     disabled: true,
-    value: 0.008,
+    value: 8,
     tooltip: 'Mínimo caudal de operación de la turbina',
-    unit: 'm³ / s',
+    unit: 'L / s',
     variableString: 'Q',
     variableSubString: 'min',
   },
   {
     disabled: true,
-    value: 0.016,
+    value: 16,
     tooltip: 'Máximo caudal de operación de la turbina',
-    unit: 'm³ / s',
+    unit: 'L / s',
     variableString: 'Q',
     variableSubString: 'max',
   },
@@ -925,46 +990,4 @@ export const TURGO_TURBINE: InputType[] = [
 type TurbineConsts = {
   inputPressure: InputType;
   inputFlow: InputType;
-};
-
-export const PELTON_TURBINE_CONST: TurbineConsts = {
-  inputPressure: {
-    disabled: false,
-    value: 31,
-    tooltip: 'Presión',
-    unit: 'psi',
-    variableString: 'Presión',
-    min: 4.2,
-    max: 185,
-  },
-  inputFlow: {
-    disabled: false,
-    value: 360,
-    tooltip: 'Flujo',
-    unit: 'L / min',
-    variableString: 'Flujo',
-    min: 6,
-    max: 600,
-  },
-};
-
-export const TURGO_TURBINE_CONST: TurbineConsts = {
-  inputPressure: {
-    disabled: false,
-    value: 27,
-    tooltip: 'Presión',
-    unit: 'psi',
-    variableString: 'Presión',
-    min: 2.8,
-    max: 43,
-  },
-  inputFlow: {
-    disabled: false,
-    value: 678,
-    tooltip: 'Flujo',
-    unit: 'L / min',
-    variableString: 'Flujo',
-    min: 480,
-    max: 960,
-  },
 };

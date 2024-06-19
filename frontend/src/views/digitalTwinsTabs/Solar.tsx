@@ -48,6 +48,7 @@ import saveAs from 'file-saver';
 const Solar = () => {
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
+  const [isSingleDiagramExpanded, setIsSingleDiagramExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isMetInformationExpanded, setIsMetInformationExpanded] =
     useState(false);
@@ -227,6 +228,35 @@ const Solar = () => {
                 src={solarIllustration}
                 alt="solarIllustration"
               ></img>
+            </AccordionDetails>
+          </Accordion>
+        </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          <Accordion
+            expanded={isSingleDiagramExpanded}
+            onChange={() =>
+              setIsSingleDiagramExpanded(!isSingleDiagramExpanded)
+            }
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+              sx={{ margin: 0 }}
+            >
+              <Typography variant="h4">Unifilar</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {/* <img
+                style={{
+                  height: '500px',
+                  display: 'block',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                }}
+                src={turbineIllustration}
+                alt="turbineIllustration"
+              ></img> */}
             </AccordionDetails>
           </Accordion>
         </Grid>
