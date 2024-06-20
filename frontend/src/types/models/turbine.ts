@@ -234,7 +234,7 @@ export const PELTON_TURBINE_CONST: TurbineConsts = {
   },
   inputFlow: {
     disabled: false,
-    value: 1,
+    value: 6,
     tooltip: 'Flujo',
     unit: 'L / s',
     variableString: 'Flujo',
