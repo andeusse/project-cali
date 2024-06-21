@@ -69,7 +69,7 @@ class BiogasModelTrain:
             R = 8.314
             T=T_func(t)
             Q=Q_func(t)
-            dCsus_dt = ((Q / VR) * (self.Csus_ini_R101 - C)) -(K * C * np.exp(-Ea/(R*T))) / VR
+            dCsus_dt = ((Q / VR) * (self.Csus_ini_R101 - C)) - (C * K * np.exp(-Ea/(R*T))) / VR
             return dCsus_dt
         
         def Optimization(K, Ea, t, C_exp, y0, VR, temperatures, Qi):
