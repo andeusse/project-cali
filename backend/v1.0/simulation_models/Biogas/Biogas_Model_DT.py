@@ -350,22 +350,23 @@ class BiogasPlantDT:
             self.FT_P101 = data_biogas["_value"]["MFTP101"]
             self.TTO_P101 = data_biogas["_value"]["MTTOP101"]
             self.Qset_P101 = data_biogas["_value"]["MQP101"]
-            self.SE101v = data_biogas["_value"]["SE101"]
+            self.SE101 = data_biogas["_value"]["SE101"]
         
         elif self.OperationMode == 3:
-            self.SE101v = data_biogas["_value"]["SE101"]
+            self.SE101 = data_biogas["_value"]["SE101"]
             #Get Values for R102
-            self.TE_102Av = data_biogas["_value"]["TE102A"]
-            self.TE_102Bv = data_biogas["_value"]["TE102B"]
+            self.TE_102A = data_biogas["_value"]["TE102A"]
+            self.TE_102B = data_biogas["_value"]["TE102B"]
             self.AT_102 = data_biogas["_value"]["AT102"]
             self.SE_109 = data_biogas["_value"]["SE109"]
             self.LT_102 = data_biogas["_value"]["LT102"]
         
         elif self.OperationMode == 4 or self.OperationMode == 5:
+            self.SE101 = data_biogas["_value"]["SE101"]
             self.FT_P102 = data_biogas["_value"]["MFTP102"]
             self.TTO_P102 = data_biogas["_value"]["MTTOP102"]
             self.Qset_P102 = data_biogas["_value"]["MQP102"]
-            self.SE102v = data_biogas["_value"]["SE102"]
+            self.SE102 = data_biogas["_value"]["SE102"]
             #Get Values for R102
             self.TE_102Av = data_biogas["_value"]["TE102A"]
             self.TE_102Bv = data_biogas["_value"]["TE102B"]
@@ -374,34 +375,34 @@ class BiogasPlantDT:
             self.LT_102 = data_biogas["_value"]["LT102"]
         
         #Get values from V-101
-        self.AT103A1v = data_biogas["_value"]["AT103ACH4"]
-        self.AT103A2v = data_biogas["_value"]["AT103ACO2"]
-        self.AT103A3v = data_biogas["_value"]["AT103AH2S"]
-        self.AT103A4v = data_biogas["_value"]["AT103AO2"]
-        self.AT103A5v = data_biogas["_value"]["AT103AH2"]
-        self.AT103Bv = data_biogas["_value"]["AT103B"]
-        self.PT103v = data_biogas["_value"]["PT103"]
-        self.TT103v = data_biogas["_value"]["TT103"]
+        self.AT103A1 = data_biogas["_value"]["AT103ACH4"]
+        self.AT103A2 = data_biogas["_value"]["AT103ACO2"]
+        self.AT103A3 = data_biogas["_value"]["AT103AH2S"]
+        self.AT103A4 = data_biogas["_value"]["AT103AO2"]
+        self.AT103A5 = data_biogas["_value"]["AT103AH2"]
+        self.AT103B = data_biogas["_value"]["AT103B"]
+        self.PT103 = data_biogas["_value"]["PT103"]
+        self.TT103 = data_biogas["_value"]["TT103"]
 
         #Get values from V-102
-        self.AT104A1v = data_biogas["_value"]["AT104ACH4"]
-        self.AT104A2v = data_biogas["_value"]["AT104ACO2"]
-        self.AT104A3v = data_biogas["_value"]["AT104AH2S"]
-        self.AT104A4v = data_biogas["_value"]["AT104AO2"]
-        self.AT104A5v = data_biogas["_value"]["AT104AH2"]
-        self.AT104Bv = data_biogas["_value"]["AT104B"]
-        self.PT104v = data_biogas["_value"]["PT104"]
-        self.TT104v = data_biogas["_value"]["TT104"]
+        self.AT104A1 = data_biogas["_value"]["AT104ACH4"]
+        self.AT104A2 = data_biogas["_value"]["AT104ACO2"]
+        self.AT104A3 = data_biogas["_value"]["AT104AH2S"]
+        self.AT104A4 = data_biogas["_value"]["AT104AO2"]
+        self.AT104A5 = data_biogas["_value"]["AT104AH2"]
+        self.AT104B = data_biogas["_value"]["AT104B"]
+        self.PT104 = data_biogas["_value"]["PT104"]
+        self.TT104 = data_biogas["_value"]["TT104"]
 
         #Get values from V-107
-        self.AT105A1v = data_biogas["_value"]["AT105ACH4"]
-        self.AT105A2v = data_biogas["_value"]["AT105ACO2"]
-        self.AT105A3v = data_biogas["_value"]["AT105AH2S"]
-        self.AT105A4v = data_biogas["_value"]["AT105AO2"]
-        self.AT105A5v = data_biogas["_value"]["AT105AH2"]
-        self.AT105Bv = data_biogas["_value"]["AT105B"]
-        self.PT105v = data_biogas["_value"]["PT105"]
-        self.TT105v = data_biogas["_value"]["TT105"]
+        self.AT105A1 = data_biogas["_value"]["AT105ACH4"]
+        self.AT105A2 = data_biogas["_value"]["AT105ACO2"]
+        self.AT105A3 = data_biogas["_value"]["AT105AH2S"]
+        self.AT105A4 = data_biogas["_value"]["AT105AO2"]
+        self.AT105A5 = data_biogas["_value"]["AT105AH2"]
+        self.AT105B = data_biogas["_value"]["AT105B"]
+        self.PT105 = data_biogas["_value"]["PT105"]
+        self.TT105 = data_biogas["_value"]["TT105"]
 
     def Substrate_conditions (self): 
         
@@ -445,6 +446,7 @@ class BiogasPlantDT:
             self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2 + self.Cn3*self.substrateproportion3 + self.Cn4*self.substrateproportion4
             self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2 + self.Cs3*self.substrateproportion3 + self.Cs4*self.substrateproportion4   
         
+        #Mix of substrates
         self.molC = self.Cc*(1/12.01)
         self.molH = self.Ch*(1/1.01)
         self.molO = self.Co*(1/16)
@@ -466,11 +468,8 @@ class BiogasPlantDT:
         self.s_H2S = self.d
         
         self.MW_sustrato = self.n*12.01+self.a*1.01+self.b*16+self.c*14+self.d*32
-        
         self.Csus_ini = (self.rho*self.SV)/self.MW_sustrato
-        
         self.Csus_ini_ST = (self.rho*self.ST)/self.MW_sustrato
-        
         self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini
 
     def Pump104 (self, manual_P104=False, TRH=30, FT_P104=5, TTO_P104=10):    
@@ -507,83 +506,87 @@ class BiogasPlantDT:
             print("Caudal de la bomba P_104: "+ str(self.Q_P104))
         
         else:
-
+            
             self.Q_P104 = self.SE104
             self.TRH = self.TRH
             self.FT_P104 = self.FT_P104
             self.TTO_P104 = self.TTO_P104
             
     
-    def Pump101_Operation_2 (self, manual_P101=0, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
+    def Pump101 (self, manual_P101=False, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
+        
         self.manual_P101 = manual_P101
-        
-        if self.manual_P101 == True or self.Offline == False:
-            self.FT_P101= FT_P101
-            self.TTO_P101 = TTO_P101
-        
-            self.TurnOnDailyStep_P101 = 24/self.FT_P101
+    
+        if self.manual_P101 == True:
+
+            if self.OperationMode == 1:
+                pass
+
+            elif self.OperationMode == 2:
+                self.FT_P101= FT_P101
+                self.TTO_P101 = TTO_P101
             
-            if self.TimeCounterPump_P101<self.TTO_P101*60:
-               self.Q_P101 = Q_P101
+                self.TurnOnDailyStep_P101 = 24/self.FT_P101
+                
+                if self.TimeCounterPump_P101<self.TTO_P101*60:
+                    self.Q_P101 = Q_P101
+                else:
+                    self.Q_P101= float(0)
+                
+                self.TimeCounterPump_P101 = self.TimeCounterPump_P101 + self.tp
+            
+                if self.TimeCounterPump_P101>=self.TurnOnDailyStep_P101*3600:
+                    self.TimeCounterPump_P101 = 0
+
+            elif self.OperationMode == 3 or self.OperationMode == 5:
+                self.Q_P101 = self.Q_P104
+
+            elif self.OperationMode == 4:
+                try:
+                    self.Q_P102 = self.Q_P102
+                except NameError:
+                    self.Q_P102 = 0
+
+                self.Q_P101 = self.Q_P101 + self.Q_P102
+                self.FT_P101 = self.FT_P101
+                self.TTO_P101 = self.TTO_P101
+                self.Qset_P101 = self.Qset_P101
+
+        
+        else:
+
+            if self.OperationMode == 1:
+                pass
             else:
-               self.Q_P101= float(0)
-            
-            self.TimeCounterPump_P101 = self.TimeCounterPump_P101 + self.tp
-            
-            if self.TimeCounterPump_P101>=self.TurnOnDailyStep_P101*3600:
-                self.TimeCounterPump_P101 = 0
-
-        else:
-
-            self.SE101v = self.SE101v["SE101"].tolist()
-            self.Q_P101 = float(self.SE101v[-1])
+                self.Q_P101 = self.SE101
     
-    def Pump101_Operation_3_5 (self, manual_P101=0):
-        self.manual_P101 = manual_P101
-        
-        if self.manual_P101 == True or self.Offline == False:
-            self.Q_P101 = self.Q_P104
-
-        else:
-
-            self.SE101v = self.SE101v["SE101"].tolist()
-            self.Q_P101 = float(self.SE101v[-1])
-    
-    def Pump101_Operation_4 (self, manual_P101=0):         #en este modo de operación primero se ejecuta la función de la bomba 102
-        self.manual_P101 = manual_P101
-        
-        if self.manual_P101 == True or self.Offline == False:
-            self.Q_P101 = self.Q_P104 + self.Q_P102
-
-        else:
-
-            self.SE101v = self.SE101v["SE101"].tolist()
-            self.Q_P101 = float(self.SE101v[-1])
-        
-    def Pump102_Operation_4_5 (self, manual_P102=0, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
+    def Pump102 (self, manual_P102=False, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
         self.manual_P102 = manual_P102
 
-        if self.manual_P102 == True or self.Offline == False:
-            self.FT_P102= FT_P102
-            self.TTO_P102 = TTO_P102
+        if self.manual_P102 == True:
 
-            self.TurnOnDailyStep_P102 = 24/self.FT_P102
+            if self.OperationMode == 1 or self.OperationMode == 2 or self.OperationMode == 3:
+                pass
 
-            if self.TimeCounterPump_P102<self.TTO_P102*60:
-               self.Q_P102 = Q_P102
-            else:
-               self.Q_P102= float(0)
-            
-            self.TimeCounterPump_P102 = self.TimeCounterPump_P102 + self.tp
+            if self.OperationMode == 4 or self.OperationMode == 5:
+                self.FT_P102= FT_P102
+                self.TTO_P102 = TTO_P102
 
-            if self.TimeCounterPump_P102>=self.TurnOnDailyStep_P102*3600:
-                self.TimeCounterPump_P102 = 0
+                self.TurnOnDailyStep_P102 = 24/self.FT_P102
+
+                if self.TimeCounterPump_P102<self.TTO_P102*60:
+                    self.Q_P102 = Q_P102
+                else:
+                    self.Q_P102= float(0)
+                
+                self.TimeCounterPump_P102 = self.TimeCounterPump_P102 + self.tp
+
+                if self.TimeCounterPump_P102>=self.TurnOnDailyStep_P102*3600:
+                    self.TimeCounterPump_P102 = 0
 
         else:
 
-            self.SE102v = self.SE102v["SE102"].tolist()
-            self.Q_P102 = float(self.SE102v)
-    
+            self.Q_P102 = self.SE102
            
     def Temperature_R101 (self, manual_temp_R101 = False, Temp_R101=35):
         self.manual_temp_R101 = manual_temp_R101
