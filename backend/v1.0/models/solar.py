@@ -161,6 +161,10 @@ class Solar(Resource):
       WT_Results = twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
       twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
+    solarWind["controllerEfficiency"] = twinPVWF.n_controller
+    solarWind["inverterEfficiency"] = twinPVWF.n_inverter
+    solarWind["hybridEfficiency"] = twinPVWF.n_hybrid
+
     if data["inputOperationMode"] == 'Mode2' and hybridState:
       twinResults = twinPVWF.ongridTwinOutput(gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
                                 batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
