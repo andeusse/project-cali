@@ -37,8 +37,8 @@ class Turbine(Resource):
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
-    inputPressure = (data["inputPressure"]["value"] if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT001'],2)) * 6.89476 # psi to kPa conversion
-    inputFlow = (data["inputFlow"]["value"] if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FIT001'],2)) / 60 # L/min to L/s conversion
+    inputPressure = (data["inputPressure"]["value"] if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT001'],2)) * 9.8064 # mH2O to kPa conversion
+    inputFlow = (data["inputFlow"]["value"] if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FIT001'],2))
     inputActivePower = data["inputActivePower"]["value"] if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW001'],2)
     inputPowerFactor = data["inputPowerFactor"]["value"] if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
@@ -88,8 +88,8 @@ class Turbine(Resource):
       simulatedSinkLoadState = bool(int(values_df["Value"]['ED001']))
       simulatedInverterState = bool(int(values_df["Value"]['EI001']))
 
-      if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 6.89476, 2) # kPa to psi conversion
-      if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow * 60, 2) # L/s to L/min conversion
+      if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 9.8064, 2) # kPa to mH2O conversion
+      if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow, 2)
     else:
       T_bat = 30.0
       V_CA = 0
@@ -105,6 +105,9 @@ class Turbine(Resource):
       twinHydro.optimal_n_t(twinHydro.n_t, P_h_meas, inputPressure, inputFlow)
       P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
       twinHydro.optimal_n_controller(controllerEfficiency, P_h, inputDirectCurrentPower, P_CC_meas)
+    
+    turbine["controllerEfficiency"] = twinHydro.n_controller
+    turbine["inverterEfficiency"] = twinHydro.n_inverter
 
     results = twinHydro.twinOutput(inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
                                      controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 

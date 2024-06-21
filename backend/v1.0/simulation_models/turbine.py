@@ -13,20 +13,20 @@ class TwinHydro:
         # Pelton
         if type == 1:
             self.n_t = 75.0
-            self.H_min = 3.0
+            self.H_min = 0.0
             self.H_max = 130.0
-            self.Q_min = 0.0001
-            self.Q_max = 0.01
+            self.Q_min = 0.1
+            self.Q_max = 10.0
             self.f_h = 0.0
             self.P_max = 623.0
             self.V_t = 40.0
         # Turgo
         elif type == 2:
             self.n_t = 75.0
-            self.H_min = 2.0
+            self.H_min = 0.0
             self.H_max = 30.0
-            self.Q_min = 0.008
-            self.Q_max = 0.016
+            self.Q_min = 8.0
+            self.Q_max = 16.0
             self.f_h = 0.0
             self.P_max = 1042.0
             self.V_t = 80.0
@@ -38,9 +38,6 @@ class TwinHydro:
         self.Q = Flux
         #Calculo de potencia de la turbina kW
         self.P_h = ((self.n_t/100) * self.Press * self.Q * (1 - (self.f_h/100)))
-
-        if self.P_h > self.P_max:
-            self.P_h = self.P_max
 
         return self.P_h
     
@@ -75,7 +72,7 @@ class TwinHydro:
         def controllerPowerOuput(n_controller, P_h, P_CD, P_CC_meas):
             return (P_h * n_controller / 100) - P_CD - P_CC_meas
         n_controller_0 = n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (80, 98), args = (P_h, P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (70, 98), args = (P_h, P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
 
         return n_controller.x[0]
