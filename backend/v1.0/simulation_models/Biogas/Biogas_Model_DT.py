@@ -542,25 +542,27 @@ class BiogasPlantDT:
                 self.Q_P101 = self.Q_P104
 
             elif self.OperationMode == 4:
+                
                 try:
                     self.Q_P102 = self.Q_P102
                 except NameError:
                     self.Q_P102 = 0
 
                 self.Q_P101 = self.Q_P101 + self.Q_P102
-                self.FT_P101 = self.FT_P101
-                self.TTO_P101 = self.TTO_P101
-                self.Qset_P101 = self.Qset_P101
-
-        
+                
         else:
 
             if self.OperationMode == 1:
                 pass
             else:
                 self.Q_P101 = self.SE101
+                self.FT_P101 = self.FT_P101
+                self.TTO_P101 = self.TTO_P101
+                self.Qset_P101 = self.Qset_P101
+
     
     def Pump102 (self, manual_P102=False, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
+        
         self.manual_P102 = manual_P102
 
         if self.manual_P102 == True:
@@ -568,7 +570,7 @@ class BiogasPlantDT:
             if self.OperationMode == 1 or self.OperationMode == 2 or self.OperationMode == 3:
                 pass
 
-            if self.OperationMode == 4 or self.OperationMode == 5:
+            elif self.OperationMode == 4 or self.OperationMode == 5:
                 self.FT_P102= FT_P102
                 self.TTO_P102 = TTO_P102
 
@@ -586,9 +588,17 @@ class BiogasPlantDT:
 
         else:
 
-            self.Q_P102 = self.SE102
-           
+            if self.OperationMode == 1 or self.OperationMode == 2 or self.OperationMode == 3:
+                pass
+
+            else:
+                self.Q_P102 = self.SE102
+                self.FT_P102 = self.FT_P102
+                self.TTO_P102 = self.TTO_P102
+                self.Qset_P102 = self.Qset_P102
+
     def Temperature_R101 (self, manual_temp_R101 = False, Temp_R101=35):
+        
         self.manual_temp_R101 = manual_temp_R101
 
         if self.manual_temp_R101 == False or self.Offline == True:
@@ -810,7 +820,8 @@ class BiogasPlantDT:
         self.V_normal_H2_acum_V107 = self.AT104A5v.iloc[-1]/1000000*self.Vnormal_acum_V107
         self.mol_H2_acum_V107 = self.V_normal_H2_acum_V107/self.V_mol_H2    
         
-    def R101_DT_operation_1 (self):      
+    def R101_DT (self):      
+        
         self.mol_CH4_R101v = self.DT_Data["mol_CH4_acum_V101"].tolist()
         self.organic_charge_R101_in = self.SV*self.rho*self.Q_P104*24
 
@@ -829,162 +840,63 @@ class BiogasPlantDT:
 
             self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
             self.mol_sus_in_R101 = self.Q_P104*self.Csus_ini*(self.tp/3600)
-            
-            self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600)))
 
             self.volatilemass_int_ini_R101 = self.SV_R101*self.rho_R101*self.VR1
             self.volatilemass_in_R101 = self.Q_P104*self.SV*self.rho*(self.tp/3600)
-
-            self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P104*(self.tp/3600))))/self.rho
 
             self.TotalSolids_int_ini_R101 = self.ST_R101*self.rho_R101*self.VR1
             self.TotalSolids_in_R101 = self.Q_P104*self.ST*self.rho*(self.tp/3600)
-
-            self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600))))/self.rho
-
-            self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-           
-        else:
             
-            self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-            return ("Data is required to continue, please wait...")
-    
-    def R101_DT_Operation_2 (self):
-        self.mol_CH4_R101v = self.DT_Data["mol_CH4_acum_V101"].tolist()
-
-        if len(self.mol_CH4_R101v)>=2:
-            self.mol_CH4_R101 = self.mol_CH4_R101v[-1]
-            self.mol_CH4_R101_i = self.mol_CH4_R101v[-2]
-
-            if self.mol_CH4_R101 < self.mol_CH4_R101_i:
-                self.mol_sus_stoichometricFR_R101 = 0
-                self.volatilemass_stoichometricFR_R101 = 0
-                self.TotalSolids_stoichometricFR_R101 = 0
-            else:
-                self.mol_sus_stoichometricFR_R101 =  (1/self.s_CH4)*(self.mol_CH4_R101 - self.mol_CH4_R101_i)
-                self.volatilemass_stoichometricFR_R101 = self.mol_sus_stoichometricFR_R101*self.MW_sustrato
-                self.TotalSolids_stoichometricFR_R101 = self.mol_sus_stoichometricFR_R101*self.MW_sustrato
+            if self.OperationMode == 1:
+                
+                self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600)))
+                self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P104*(self.tp/3600))))/self.rho
+                self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600))))/self.rho
+                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
             
-            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-            self.mol_sus_in_R101 = self.Q_P104*self.Csus_ini*(self.tp/3600)
+            elif self.OperationMode == 2:
 
-            self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.Q_P104+self.SE101v[-1])*(self.tp/3600))
+                self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600))
+                self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
+                self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
+                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
 
-            self.volatilemass_int_ini_R101 = self.SV_R101*self.rho_R101*self.VR1
-            self.volatilemass_in_R101 = self.Q_P104*self.SV*self.rho*(self.tp/3600)
+            elif self.OperationMode == 3 or self.OperationMode == 5:
 
-            self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.Q_P104+self.SE101v[-1])*(self.tp/3600)))/self.rho
+                self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P101*(self.tp/3600)))
+                self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P101*(self.tp/3600))))/self.rho
+                self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P101*(self.tp/3600))))/self.rho
+                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
 
-            self.TotalSolids_int_ini_R101 = self.ST_R101*self.rho_R101*self.VR1
-            self.TotalSolids_in_R101 = self.Q_P104*self.ST*(self.tp/3600)
+            elif self.OperationMode == 4:
+                self.mol_sus_in_R101_2 = self.Q_P102*self.Csus_ini_R102
+                self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*self.tp)
 
-            self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 - self.SE101v[-1]*(self.tp/3600) + (self.Q_P104+self.SE101v[-1])*(self.tp/3600)))/self.rho
-        
-            self.organic_charge_R101_in = self.SV*self.rho*self.Q_P104*24
-            self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-        else:
+                self.volatilemass_in_R101_2 = self.Q_P102*self.SV_R102*self.rho*(self.tp/3600)
+                self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 + self.volatilemass_in_R101_2 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600)))/self.rho
 
-            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-            return ("Data is required to continue, please wait...")
-
-    def R101_DT_operation_3_5 (self):      
-        self.mol_CH4_R101v = self.DT_Data["mol_CH4_acum_V101"].tolist()
-
-        if len(self.mol_CH4_R101v)>=2:
-            self.mol_CH4_R101 = self.mol_CH4_R101v[-1]
-            self.mol_CH4_R101_i = self.mol_CH4_R101v[-2]
-
-            if self.mol_CH4_R101 < self.mol_CH4_R101_i:
-                self.mol_sus_stoichometricFR_R101 = 0
-                self.volatilemass_stoichometricFR_R101 = 0
-                self.TotalSolids_stoichometricFR_R101 = 0
-            else:
-                self.mol_sus_stoichometricFR_R101 =  (1/self.s_CH4)*(self.mol_CH4_R101 - self.mol_CH4_R101_i)
-                self.volatilemass_stoichometricFR_R101 = self.mol_sus_stoichometricFR_R101*self.MW_sustrato
-                self.TotalSolids_stoichometricFR_R101 = self.mol_sus_stoichometricFR_R101*self.MW_sustrato
-
-            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-            self.mol_sus_in_R101 = self.Q_P104*self.Csus_ini*(self.tp/3600)
-           
-            self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.SE101v[-1]*(self.tp/3600)))
-
-            self.volatilemass_int_ini_R101 = self.SV_R101*self.rho_R101*self.VR1
-            self.volatilemass_in_R101 = self.Q_P104*self.SV*self.rho*(self.tp/3600)
-
-            self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1]*(self.tp/3600))))/self.rho
-
-            self.TotalSolids_int_ini_R101 = self.ST_R101*self.rho_R101*self.VR1
-            self.TotalSolids_in_R101 = self.Q_P104*self.ST*(self.tp/3600)
-
-            self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.SE101v[-1]*(self.tp/3600))))/self.rho
-
-            print("----------------",self.SV)
-            print("----------------", self.SV_R101)
-            # self.organic_charge_R101_in = self.SV[-1]*self.rho*self.Q_P104*24
-            # self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-
-            # print("--------------", self.organic_charge_R101_in)
-            # print("--------------", self.organic_charge_R101_out)
-
-
+                self.TotalSolids_in_R101_2 = self.Q_P102*self.ST_R102*(self.tp/3600)
+                self.ST_R101 = (self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 + self.TotalSolids_in_R101_2 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600))/self.rho
+                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
+            
         else:
             self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-            return ("Data is required to continue, please wait...")
-    
-    def R101_DT_Operation_4 (self):
-        self.mol_CH4_R101v = self.DT_Data["mol_CH4_acum_V101"].tolist()
 
-        if len(self.mol_CH4_R101v)>=2:
-            self.mol_CH4_R101 = self.mol_CH4_R101v[-1]
-            self.mol_CH4_R101_i = self.mol_CH4_R101v[-2]
+            if self.OperationMode == 1 or self.OperationMode == 2:
+                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
+                
+            elif self.OperationMode == 3 or self.OperationMode == 4 or self.OperationMode == 5:
+                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
 
-            if self.mol_CH4_R101 < self.mol_CH4_R101_i:
-                self.mol_sus_stoichometricFR_R101 = 0
-                self.volatilemass_stoichometricFR_R101 = 0
-                self.TotalSolids_stoichometricFR_R101 = 0
-            else:
-                self.mol_sus_stoichometricFR_R101 =  (1/self.s_CH4)*(self.mol_CH4_R101 - self.mol_CH4_R101_i)
-                self.volatilemass_stoichometricFR_R101 = self.mol_sus_stoichometricFR_R101*self.MW_sustrato
-                self.TotalSolids_stoichometricFR_R101 = self.mol_sus_stoichometricFR_R101*self.MW_sustrato
-            
-            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-            self.mol_sus_in_R101_1 = self.Q_P104*self.Csus_ini*(self.tp/3600)
-            self.mol_sus_in_R101_2 = self.SE102v[-1]*self.Csus_ini_R102*(self.tp/3600)
+    def R102_DT (self):
 
-            self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101_1 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1])*self.tp) 
-
-            self.volatilemass_int_ini_R101 = self.SV_R101*self.rho_R101*self.VR1
-            self.volatilemass_in_R101_1 = self.Q_P104*self.SV*self.rho*(self.tp/3600)
-            self.volatilemass_in_R101_2 = self.SE102v[-1]*self.SV_R102*self.rho*(self.tp/3600)
-
-            self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101_1 + self.volatilemass_in_R101_2 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1])*(self.tp/3600)))/self.rho
-
-            self.TotalSolids_int_ini_R101 = self.ST_R101*self.rho_R101*self.VR1
-            self.TotalSolids_in_R101_1 = self.Q_P104*self.ST*(self.tp/3600)
-            self.TotalSolids_in_R101_2 = self.SE102v[-1]*self.ST_R102*(self.tp/3600)
-
-            self.ST_R101 = (self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101_1 + self.TotalSolids_in_R101_2 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 + (self.SE101v[-1])*(self.tp/3600))/self.rho
-
-            self.organic_charge_R101_in = self.SV*self.rho*self.Q_P104*24
-            self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-        else:
-
-            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
-
-            return ("Data is required to continue, please wait...")
-            
-
-        
-    def R102_DT_Operation_3 (self):
-        
         self.mol_CH4_R102v = self.DT_Data["mol_CH4_acum_V102"] .tolist()
 
         if len(self.mol_CH4_R101v)>=2:
             self.mol_CH4_R102 = self.mol_CH4_R102v[-1]
             self.mol_CH4_R102_i = self.mol_CH4_R102v[-2]
-
-            #El biogas de ambos tanques pasa por V-102
+        
+             #El biogas de ambos tanques pasa por V-102
             if self.Pacum_V101 < 50:                                           #Este valor es el valor de presión máximo que puede almacenar V-101
                 self.mol_CH4_R102 = self.mol_CH4_R102
                 self.mol_CH4_R102_i = self.mol_CH4_R102_i
@@ -1003,116 +915,30 @@ class BiogasPlantDT:
                 self.TotalSolids_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
             
             self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR2
-            self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
-
-            self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600)))
+            self.mol_sus_in_R102 = self.Q_P101*self.Csus_ini_R101*(self.tp/3600)
 
             self.volatilemass_int_ini_R102 = self.SV_R102*self.rho_R102*self.VR2
-            self.volatilemass_in_R102 = self.SE101v[-1]*self.SV_R101*self.rho*(self.tp/3600)
-
-            self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600))))/self.rho
+            self.volatilemass_in_R102 = self.Q_P101*self.SV_R101*self.rho*(self.tp/3600)
 
             self.TotalSolids_int_ini_R102 = self.ST_R102*self.rho_R102*self.VR2
-            self.TotalSolids_in_R102 = self.SE101v[-1]*self.ST_R101*(self.tp/3600)
+            self.TotalSolids_in_R102 = self.Q_P101*self.ST_R101*(self.tp/3600)
 
-            self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.SE101v[-1]*(self.tp/3600))))/self.rho           
+            if self.OperationMode == 1 or self.OperationMode == 2:
+                pass
 
-        else:
-            return ("Data is required to continue, please wait...")
-    
-    def R102_DT_Operation_4 (self):
-        self.query_mol_CH4_R102 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "M-molT_CH4_V102", location=1, type=1, forecastTime=1)
-        self.mol_CH4_R102v = self.InfluxDB.InfluxDBreader(self.query_mol_CH4_R102)
-        self.mol_CH4_R102v = self.mol_CH4_R102v["M-molT_CH4_V102"].tolist()
+            elif self.OperationMode == 3:
+                self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600)))
+                self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho
+                self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho           
 
-        if len(self.mol_CH4_R101v)>=2:
-            self.mol_CH4_R102 = self.mol_CH4_R102v[-1]
-            self.mol_CH4_R102_i = self.mol_CH4_R102v[-2]
+            self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P104*24
 
-            #El biogas de ambos tanques pasa por V-102
-            if self.Pacum_V101 < 50:                                           #Este valor es el valor de presión máximo que puede almacenar V-101
-                self.mol_CH4_R102 = self.mol_CH4_R102
-                self.mol_CH4_R102_i = self.mol_CH4_R102_i
-            else:
-                self.mol_CH4_R102 = self.mol_CH4_R102 - self.mol_CH4_R101
-                self.mol_CH4_R102_i = self.mol_CH4_R102_i - self.mol_CH4_R101_i
+
+
             
-            if self.mol_CH4_R102 < self.mol_CH4_R102_i:
-                self.mol_sus_stoichometricFR_R102 = 0
-                self.volatilemass_stoichometricFR_R102 = 0
-                self.TotalSolids_stoichometricFR_R102 = 0
+
             
-            else:
-                self.mol_sus_stoichometricFR_R102 =  (1/self.s_CH4)*(self.mol_CH4_R102 - self.mol_CH4_R102_i)
-                self.volatilemass_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
-                self.TotalSolids_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
-            
-            self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR2
-            self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
 
-            self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+self.Q_P104)*(self.tp/3600)))
-
-            self.volatilemass_int_ini_R102 = self.SV_R102*self.rho_R102*self.VR2
-            self.volatilemass_in_R102 = self.SE101v[-1]*self.SV_R101*self.rho*(self.tp/3600)
-
-            self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+self.Q_P104)*(self.tp/3600))))/self.rho
-
-            self.TotalSolids_int_ini_R102 = self.ST_R102*self.rho_R102*self.VR2
-            self.TotalSolids_in_R102 = self.SE101v[-1]*self.ST_R101*(self.tp/3600)
-
-            self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+self.Q_P104)*(self.tp/3600))))/self.rho 
-
-    def R102_DT_Operation_5(self):
-        self.query_mol_CH4_R102 = self.InfluxDB.QueryCreator(device="DTPlantaBiogas", variable = "M-molT_CH4_V102", location=1, type=1, forecastTime=1)
-        self.mol_CH4_R102v = self.InfluxDB.InfluxDBreader(self.query_mol_CH4_R102)
-        self.mol_CH4_R102v = self.mol_CH4_R102v["M-molT_CH4_V102"].tolist()
-
-        if len(self.mol_CH4_R101v)>=2:
-            self.mol_CH4_R102 = self.mol_CH4_R102v[-1]
-            self.mol_CH4_R102_i = self.mol_CH4_R102v[-2]
-
-            #El biogas de ambos tanques pasa por V-102
-            if self.Pacum_V101 < 50:                                           #Este valor es el valor de presión máximo que puede almacenar V-101
-                self.mol_CH4_R102 = self.mol_CH4_R102
-                self.mol_CH4_R102_i = self.mol_CH4_R102_i
-            else:
-                self.mol_CH4_R102 = self.mol_CH4_R102 - self.mol_CH4_R101
-                self.mol_CH4_R102_i = self.mol_CH4_R102_i - self.mol_CH4_R101_i
-            
-            if self.mol_CH4_R102 < self.mol_CH4_R102_i:
-                self.mol_sus_stoichometricFR_R102 = 0
-                self.volatilemass_stoichometricFR_R102 = 0
-                self.TotalSolids_stoichometricFR_R102 = 0
-            
-            else:
-                self.mol_sus_stoichometricFR_R102 =  (1/self.s_CH4)*(self.mol_CH4_R102 - self.mol_CH4_R102_i)
-                self.volatilemass_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
-                self.TotalSolids_stoichometricFR_R102 = self.mol_sus_stoichometricFR_R102*self.MW_sustrato
-            
-            self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR2
-            self.mol_sus_in_R102 = self.SE101v[-1]*self.Csus_ini_R101*(self.tp/3600)
-
-            self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.Q_P104-self.SE102v[-1]))*(self.tp/3600)))
-
-            self.volatilemass_int_ini_R102 = self.SV_R102*self.rho_R102*self.VR2
-            self.volatilemass_in_R102 = self.SE101v[-1]*self.SV_R101*self.rho*(self.tp/3600)
-
-            self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.Q_P104-self.SE102v[-1]))*(self.tp/3600))))/self.rho
-
-            self.TotalSolids_int_ini_R102 = self.ST_R102*self.rho_R102*self.VR2
-            self.TotalSolids_in_R102 = self.SE101v[-1]*self.ST_R101*(self.tp/3600)
-
-            self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.SE102v[-1]+(self.Q_P104-self.SE102v[-1]))*(self.tp/3600))))/self.rho
-
-    def Energy_Biogas (self): 
-        self.LHV_V101 = self.Thermo.LHV(molCH4 = self.mol_CH4_V101, molCO2 = self.mol_CO2_V101, molH2S = self.mol_H2S_V101, molO2 = self.mol_O2_V101, molH2 = self.mol_H2_V101)
-        self.Energy_V101 = self.LHV_V101[1]
-
-        self.LHV_V102 = self.Thermo.LHV(molCH4 = self.mol_CH4_V102, molCO2 = self.mol_CO2_V102, molH2S = self.mol_H2S_V102, molO2 = self.mol_O2_V102, molH2 = self.mol_H2_V102)
-        self.Energy_V102 = self.LHV_V102[1]
-
-        self.LHV_V107 = self.Thermo.LHV(molCH4 = self.mol_CH4_V107, molCO2 = self.mol_CO2_V107, molH2S = self.mol_H2S_V107, molO2 = self.mol_O2_V107, molH2 = self.mol_H2_V107)
-        self.Energy_V107 = self.LHV_V107[1]
     
     def StorageData (self):
         self.timestamp = datetime.now()
