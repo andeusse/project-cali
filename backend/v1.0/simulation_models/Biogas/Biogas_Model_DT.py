@@ -86,14 +86,11 @@ class BiogasPlantDT:
             , "SV_R101"
             , "ST_R101"]
             
-            
-        
         elif self.OperationMode == 2:
             columns = ["timestamp"
             , "Q_P104"
             , "Q_P101"
             , "Temp_R101"
-            , "V_normal_V101"
             , "V_normal_V101"
             , "V_normal_CH4_V101"
             , "V_normal_CO2_V101"
@@ -121,7 +118,6 @@ class BiogasPlantDT:
             , "Temp_R101" 
             , "Temp_R102"
             , "V_normal_V101"
-            , "V_normal_V101"
             , "V_normal_CH4_V101"
             , "V_normal_CO2_V101"
             , "V_normal_H2S_V101"
@@ -136,7 +132,6 @@ class BiogasPlantDT:
             , "Pacum_V101"
             , "Vnormal_acum_V101"
             , "mol_CH4_acum_V101"
-            , "V_normal_V102"
             , "V_normal_V102"
             , "V_normal_CH4_V102"
             , "V_normal_CO2_V102"
@@ -169,7 +164,6 @@ class BiogasPlantDT:
             , "Temp_R101" 
             , "Temp_R102"
             , "V_normal_V101"
-            , "V_normal_V101"
             , "V_normal_CH4_V101"
             , "V_normal_CO2_V101"
             , "V_normal_H2S_V101"
@@ -184,7 +178,6 @@ class BiogasPlantDT:
             , "Pacum_V101"
             , "Vnormal_acum_V101"
             , "mol_CH4_acum_V101"
-            , "V_normal_V102"
             , "V_normal_V102"
             , "V_normal_CH4_V102"
             , "V_normal_CO2_V102"
@@ -331,7 +324,7 @@ class BiogasPlantDT:
             self.rho4 = data_biogas["_value"]["Md4"]
         
         #Get RPM from TK-100
-        self.SE_107 = data_biogas["_value"]["Md4"]
+        self.SE_107 = data_biogas["_value"]["SE107"]
         #Get values for P104
         self.TRH = data_biogas["_value"]["MTRH"]
         self.FT_P104 = data_biogas["_value"]["MFTP104"]
@@ -860,6 +853,7 @@ class BiogasPlantDT:
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
                 self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
+                self.organic_charge_R101_out_1 = self.SV_R101*self.rho*self.Q_P101*24
 
             elif self.OperationMode == 3 or self.OperationMode == 5:
 
@@ -929,16 +923,45 @@ class BiogasPlantDT:
             elif self.OperationMode == 3:
                 self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600)))
                 self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho
-                self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho           
+                self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho   
+                self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
 
-            self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P104*24
+            elif self.OperationMode == 4:
+                self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600)))
+                self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600))))/self.rho
+                self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600))))/self.rho 
+                self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
+                self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
 
+            elif self.OperationMode == 5:
+                self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600)))
+                self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
+                self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
+                self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
+                self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
+       
+        else:
+            self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
 
-
+            if self.OperationMode == 1 or self.OperationMode == 2:
+                pass
+                
+            elif self.OperationMode == 3:
+                self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
             
+            elif self.OperationMode == 4 or self.OperationMode == 5:
+                self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
+                self.organic_charge_R101_out_1 = self.SV_R102*self.rho*self.Q_P102*24
+    
+    def Energy_Biogas (self): 
+        self.LHV_V101 = self.Thermo.LHV(molCH4 = self.mol_CH4_V101, molCO2 = self.mol_CO2_V101, molH2S = self.mol_H2S_V101, molO2 = self.mol_O2_V101, molH2 = self.mol_H2_V101)
+        self.Energy_V101 = self.LHV_V101[1]
 
-            
+        self.LHV_V102 = self.Thermo.LHV(molCH4 = self.mol_CH4_V102, molCO2 = self.mol_CO2_V102, molH2S = self.mol_H2S_V102, molO2 = self.mol_O2_V102, molH2 = self.mol_H2_V102)
+        self.Energy_V102 = self.LHV_V102[1]
 
+        self.LHV_V107 = self.Thermo.LHV(molCH4 = self.mol_CH4_V107, molCO2 = self.mol_CO2_V107, molH2S = self.mol_H2S_V107, molO2 = self.mol_O2_V107, molH2 = self.mol_H2_V107)
+        self.Energy_V107 = self.LHV_V107[1]
     
     def StorageData (self):
         self.timestamp = datetime.now()
@@ -966,13 +989,127 @@ class BiogasPlantDT:
                                     "SV_R101":[self.SV_R101],
                                     "ST_R101":[self.ST_R101]
                                     })
-            self.DT_Data = pd.concat([self.DT_Data, new_row], ignore_index=True)
+            
+        elif self.OperationMode == 2:
+            new_row = pd.DataFrame({"timestamp":[self.timestamp],
+                                     "Q_P104":[self.Q_P104],
+                                     "Q_P101":[self.Q_P101],
+                                     "Temp_R101":[self.Temp_R101],
+                                     "V_normal_V101":[self.V_normal_V101],
+                                     "V_normal_CH4_V101":[self.V_normal_CH4_V101],
+                                     "V_normal_CO2_V101":[self.V_normal_CO2_V101],
+                                     "V_normal_H2S_V101":[self.V_normal_H2S_V101],
+                                     "V_normal_O2_V101":[self.V_normal_O2_V101],
+                                     "V_normal_H2_V101":[self.V_normal_H2_V101],
+                                     "mol_CH4_V101":[self.mol_CH4_R101],
+                                     "mol_CO2_V101":[self.mol_CO2_V101],
+                                     "mol_H2S_V101":[self.mol_H2S_V101],
+                                     "mol_O2_V101":[self.mol_O2_V101],
+                                     "mol_H2_V101":[self.mol_H2_V101],
+                                     "mol_H2O_V101":[self.mol_H2O_V101],
+                                     "Pacum_V101":[self.Pacum_V101],
+                                     "Vnormal_acum_V101":[self.Vnormal_acum_V101],
+                                     "mol_CH4_acum_V101":[self.mol_CH4_acum_V101],
+                                     "mol_sus_int_ini_R101":[self.mol_sus_int_ini_R101],
+                                     "Csus_ini_R101":[self.Csus_ini_R101],
+                                     "SV_R101":[self.SV_R101],
+                                     "ST_R101":[self.ST_R101]
+                                    })
+            
+        elif self.OperationMode == 3:
+            new_row = pd.DataFrame({"timestamp":[self.timestamp],
+                                     "Q_P104":[self.Q_P104],
+                                     "Q_P101":[self.Q_P101],
+                                     "Temp_R101":[self.Temp_R101], 
+                                     "Temp_R102":[self.Temp_R102],
+                                     "V_normal_V101":[self.V_normal_V101],
+                                     "V_normal_CH4_V101":[self.V_normal_CH4_V101],
+                                     "V_normal_CO2_V101":[self.V_normal_CO2_V101],
+                                     "V_normal_H2S_V101":[self.V_normal_H2S_V101],
+                                     "V_normal_O2_V101":[self.V_normal_O2_V101],
+                                     "V_normal_H2_V101":[self.V_normal_H2_V101],
+                                     "mol_CH4_V101":[self.mol_CH4_V101],
+                                     "mol_CO2_V101":[self.mol_CO2_V101],
+                                     "mol_H2S_V101":[self.mol_H2S_V101],
+                                     "mol_O2_V101":[self.mol_O2_V101],
+                                     "mol_H2_V101":[self.mol_H2_V101],
+                                     "mol_H2O_V101":[self.mol_H2O_V101],
+                                     "Pacum_V101":[self.Pacum_V101],
+                                     "Vnormal_acum_V101":[self.Vnormal_acum_V101],
+                                     "mol_CH4_acum_V101":[self.mol_CH4_acum_V101],
+                                     "V_normal_V102":[self.V_normal_V102],
+                                     "V_normal_CH4_V102":[self.V_normal_CH4_V102],
+                                     "V_normal_CO2_V102":[self.V_normal_CO2_V102],
+                                     "V_normal_H2S_V102":[self.V_normal_H2S_V102],
+                                     "V_normal_O2_V102":[self.V_normal_O2_V102],
+                                     "V_normal_H2_V102":[self.V_normal_H2_V102],
+                                     "mol_CH4_V102":[self.mol_CH4_V102],
+                                     "mol_CO2_V102":[self.mol_CO2_V102],
+                                     "mol_H2S_V102":[self.mol_H2S_V102],
+                                     "mol_O2_V102":[self.mol_O2_V102],
+                                     "mol_H2_V102":[self.mol_H2_V102],
+                                     "mol_H2O_V102":[self.mol_H2O_V102],
+                                     "Pacum_V102":[self.Pacum_V102],
+                                     "Vnormal_acum_V102":[self.Vnormal_acum_V102],
+                                     "mol_CH4_acum_V102":[self.mol_CH4_acum_V102],
+                                     "mol_sus_int_ini_R101":[self.mol_sus_int_ini_R101],
+                                     "Csus_ini_R101":[self.Csus_ini_R101],
+                                     "SV_R101":[self.SV_R101],
+                                     "ST_R101":[self.ST_R101],
+                                     "mol_sus_int_ini_R102":[self.mol_sus_int_ini_R102],
+                                     "Csus_ini_R102":[self.Csus_ini_R102],
+                                     "SV_R102":[self.SV_R102],
+                                     "ST_R102":[self.ST_R102]
+                                    })
+            
+        elif self.OperationMode == 4 or self.OperationMode == 5:
+             new_row = pd.DataFrame({"timestamp":[self.timestamp],
+                                     "Q_P104":[self.Q_P104],
+                                     "Q_P101":[self.Q_P101],
+                                     "Q_P102":[self.Q_P102],
+                                     "Temp_R101":[self.Temp_R101], 
+                                     "Temp_R102":[self.Temp_R102],
+                                     "V_normal_V101":[self.V_normal_V101],
+                                     "V_normal_CH4_V101":[self.V_normal_CH4_V101],
+                                     "V_normal_CO2_V101":[self.V_normal_CO2_V101],
+                                     "V_normal_H2S_V101":[self.V_normal_H2S_V101],
+                                     "V_normal_O2_V101":[self.V_normal_O2_V101],
+                                     "V_normal_H2_V101":[self.V_normal_H2_V101],
+                                     "mol_CH4_V101":[self.mol_CH4_V101],
+                                     "mol_CO2_V101":[self.mol_CO2_V101],
+                                     "mol_H2S_V101":[self.mol_H2S_V101],
+                                     "mol_O2_V101":[self.mol_O2_V101],
+                                     "mol_H2_V101":[self.mol_H2_V101],
+                                     "mol_H2O_V101":[self.mol_H2O_V101],
+                                     "Pacum_V101":[self.Pacum_V101],
+                                     "Vnormal_acum_V101":[self.Vnormal_acum_V101],
+                                     "mol_CH4_acum_V101":[self.mol_CH4_acum_V101],
+                                     "V_normal_V102":[self.V_normal_V102],
+                                     "V_normal_CH4_V102":[self.V_normal_CH4_V102],
+                                     "V_normal_CO2_V102":[self.V_normal_CO2_V102],
+                                     "V_normal_H2S_V102":[self.V_normal_H2S_V102],
+                                     "V_normal_O2_V102":[self.V_normal_O2_V102],
+                                     "V_normal_H2_V102":[self.V_normal_H2_V102],
+                                     "mol_CH4_V102":[self.mol_CH4_V102],
+                                     "mol_CO2_V102":[self.mol_CO2_V102],
+                                     "mol_H2S_V102":[self.mol_H2S_V102],
+                                     "mol_O2_V102":[self.mol_O2_V102],
+                                     "mol_H2_V102":[self.mol_H2_V102],
+                                     "mol_H2O_V102":[self.mol_H2O_V102],
+                                     "Pacum_V102":[self.Pacum_V102],
+                                     "Vnormal_acum_V102":[self.Vnormal_acum_V102],
+                                     "mol_CH4_acum_V102":[self.mol_CH4_acum_V102],
+                                     "mol_sus_int_ini_R101":[self.mol_sus_int_ini_R101],
+                                     "Csus_ini_R101":[self.Csus_ini_R101],
+                                     "SV_R101":[self.SV_R101],
+                                     "ST_R101":[self.ST_R101],
+                                     "mol_sus_int_ini_R102":[self.mol_sus_int_ini_R102],
+                                     "Csus_ini_R102":[self.Csus_ini_R102],
+                                     "SV_R102":[self.SV_R102],
+                                     "ST_R102":[self.ST_R102]
+                                    })
 
-
-
-
-        
-
+        self.DT_Data = pd.concat([self.DT_Data, new_row], ignore_index=True)
 
         
 
