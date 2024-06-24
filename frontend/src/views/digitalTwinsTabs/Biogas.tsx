@@ -86,11 +86,11 @@ const Biogas = () => {
 
   useEffect(() => {
     if (data !== undefined) {
-      setSystem({ ...system, restartFlag: false });
+      setSystem((o) => ({ ...o, restartFlag: false }));
     } else {
-      setSystem({ ...system, restartFlag: true });
+      setSystem((o) => ({ ...o, restartFlag: true }));
     }
-  }, [data, system]);
+  }, [data]);
 
   useEffect(() => {
     if (error !== '') {

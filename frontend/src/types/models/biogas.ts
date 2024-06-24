@@ -206,14 +206,14 @@ export type BiogasOutput = {
   moles_humidity_V107: number;
   Relative_humidity_V107: number;
   StorageEnergy_V107: number;
-  Pump101Flow: number; 
+  Pump101Flow: number;
 };
 
 export type BiogasOutputHistoric = CommonGraphType & {};
 
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
-  queryTime: Config.QUERY_TIME_OFFLINE,
+  queryTime: Config.QUERY_TIME_OFFLINE_BIOGAS,
   restartFlag: false,
   diagramBiogas: DiagramBiogasType.Accumulated,
   diagramBiogasUnit: DiagramBiogasUnitType.NormalVolume,
