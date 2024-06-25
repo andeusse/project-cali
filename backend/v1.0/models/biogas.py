@@ -95,6 +95,9 @@ class Biogas(Resource):
       Biogas_Plant.R102_DT()
       Biogas_Plant.Energy_Biogas()
       Biogas_Plant.StorageData()
+    
+    else:
+      pass
 
     print(biogas_input)
     print(biogas_output)
