@@ -71,7 +71,6 @@ class Biogas(Resource):
     biogas_input["InitialCsR102"] = data["initialAnalysisConditions102"]["atomicSulfurSubstrateConcetration"]["value"]
     biogas_input["InitialDensityR102"] = data["initialAnalysisConditions102"]["substrateDensity"]["value"]
     
-    
     if data.get("reset", False):                  #Enviar un flag con el boton iniciar para restablecer el singleton
       Biogas_Start.BiogasStart.reset_instance()
       MachineLearning_biogas_start.MachineLearningStart.reset_instance()
@@ -83,6 +82,19 @@ class Biogas(Resource):
 
       Biogas_Plant = Biogas_Plant_ini.data
       Biogas_Plant.GetValuesFromBiogasPlant()
+      Biogas_Plant.Substrate_conditions()
+      Biogas_Plant.Pump104(manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
+      Biogas_Plant.Pump101(manual_P101=biogas_input["inputPump101"], FT_P101=biogas_input["inputPump101StartsPerDay"], TTO_P101=biogas_input["inputPump101StartTime"], Q_P101=biogas_input["inputPump101Flow"])
+      Biogas_Plant.Pump102(manual_P102=biogas_input["inputPump102"], FT_P102=biogas_input["inputPump102StartsPerDay"], TTO_P102=biogas_input["inputPump102StartTime"], Q_P102=biogas_input["inputPump102Flow"])
+      Biogas_Plant.Temperature_R101(manual_temp_R101=biogas_input["inputTemperature101_"], Temp_R101=biogas_input["inputTemperature101"])
+      Biogas_Plant.Temperature_R102(manual_temp_R102=biogas_input["inputTemperature102_"], Temp_R102=biogas_input["inputTemperature102"])
+      Biogas_Plant.V_101_DT()
+      Biogas_Plant.V_102_DT()
+      Biogas_Plant.V_107_DT()
+      Biogas_Plant.R101_DT()
+      Biogas_Plant.R102_DT()
+      Biogas_Plant.Energy_Biogas()
+      Biogas_Plant.StorageData()
 
     print(biogas_input)
     print(biogas_output)
