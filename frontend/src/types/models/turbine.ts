@@ -649,7 +649,7 @@ export const TURGO_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   },
   {
     name: 'Eficiencia controlador',
-    variable: 'a',
+    variable: 'controllerEfficiency',
     x: 960,
     y: 2240,
     diagramName: 'Eficiencia',
@@ -773,7 +773,7 @@ export const TURGO_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   },
   {
     name: 'Eficiencia inversor',
-    variable: 'b',
+    variable: 'inverterEfficiency',
     x: 3600,
     y: 720,
     diagramName: 'Eficiencia',
