@@ -646,7 +646,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   },
   {
     name: 'Eficiencia controlador',
-    variable: 'a',
+    variable: 'controllerEfficiency',
     unit: '%',
     isShown: true,
     diagramName: 'Eficiencia',
@@ -765,8 +765,8 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     y: 700,
   },
   {
-    name: 'Eficiencia controlador',
-    variable: 'b',
+    name: 'Eficiencia inversor',
+    variable: 'inverterEfficiency',
     unit: '%',
     isShown: true,
     diagramName: 'Eficiencia',
@@ -934,7 +934,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   },
   {
     name: 'Eficiencia controlador',
-    variable: 'a',
+    variable: 'controllerEfficiency',
     unit: '%',
     isShown: true,
     diagramName: 'Eficiencia',
@@ -1251,8 +1251,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     y: 1600,
   },
   {
-    name: 'Eficiencia inversor',
-    variable: 'a',
+    name: 'Eficiencia inversor híbrido',
+    variable: 'hybridEfficiency',
     unit: '%',
     isShown: true,
     diagramName: 'Eficiencia',
@@ -1345,8 +1345,8 @@ export const MODE_4: DiagramVariableType[] = [
     y: 1610,
   },
   {
-    name: 'Eficiencia inversor',
-    variable: 'a',
+    name: 'Eficiencia controlador',
+    variable: 'controllerEfficiency',
     unit: '%',
     isShown: true,
     diagramName: 'Eficiencia',
@@ -1554,8 +1554,8 @@ export const MODE_5: DiagramVariableType[] = [
     y: 1610,
   },
   {
-    name: 'Eficiencia inversor',
-    variable: 'a',
+    name: 'Eficiencia controlador',
+    variable: 'controllerEfficiency',
     unit: '%',
     isShown: true,
     diagramName: 'Eficiencia',

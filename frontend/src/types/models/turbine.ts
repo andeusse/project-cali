@@ -383,7 +383,7 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   },
   {
     name: 'Eficiencia controlador',
-    variable: 'a',
+    variable: 'controllerEfficiency',
     x: 2040,
     y: 560,
     diagramName: 'Eficiencia',
@@ -474,7 +474,7 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   },
   {
     name: 'Eficiencia inversor',
-    variable: 'b',
+    variable: 'inverterEfficiency',
     x: 3600,
     y: 720,
     diagramName: 'Eficiencia',
