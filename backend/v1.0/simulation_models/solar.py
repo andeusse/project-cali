@@ -242,6 +242,9 @@ class TwinPVWF:
         else:
             self.inverterState = False
         
+        if not self.inverterState and V_CD > 24.0:
+            self.inverterState = True
+        
         if self.V_CD <= V_charge or not self.inverterState:
             self.P_CA = 0.0
             self.inverterState = False
@@ -286,6 +289,19 @@ class TwinPVWF:
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
             self.P_CC = self.P_bat + self.P_inv
+        elif self.SOC < 0.0:
+            self.SOC = 0.0
+            if self.P_bat < 0.0:
+                self.P_CC = 0.0
+                self.P_inv = 0.0
+                self.P_CA = 0.0
+                self.S_CA = 0.0
+                self.Q_CA = 0.0
+                self.V_CA = 0.0
+                self.P_CD = 0.0
+                self.V_CDload = 0.0
+            self.P_bat = 0.0
+            self.I_bat = 0.0
         
         # Actualización de voltaje de CD
         if self.P_bat > 0 and self.V_bat < V_bulk:
@@ -300,9 +316,9 @@ class TwinPVWF:
         else:
             self.I_PV = 0.0
         self.I_WT = self.P_WT / (self.V_WT * ((3)**(1/2)))
-        self.I_CD = self.P_CD / self.V_CDload
+        self.I_CD = (self.P_CD / self.V_CDload if self.V_CDload != 0.0 else 0.0)
         self.I_CC = self.P_CC / self.V_CD
-        self.I_CA = self.S_CA / self.V_CA
+        self.I_CA = (self.S_CA / self.V_CA if self.V_CA != 0.0 else 0.0)
         self.I_inv = self.P_inv / self.V_CD
         
         return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_PV,2), round(self.V_WT,2), round(self.V_CDload,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), round(self.V_CA,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), round(self.P_CD,2), self.inverterState, round(self.I_PV,2), round(self.I_WT,2), round(self.I_CD,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2)
@@ -353,11 +369,12 @@ class TwinPVWF:
             if SOC > 50.0 and chargeCycle:
                 chargeCycle = False
             if SOC <= 50.0 and chargeCycle and self.P_bat < 0.0:
-                self.P_bat = 0.0
+                self.P_bat = (self.P_PV * self.n_hybrid / 100)
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.Q_CA = 0.0
                 self.S_CA = 0.0
+                self.V_CA = 0.0
             if self.V_CD <= V_charge and self.P_bat < 0.0:
                 chargeCycle = True
                 self.P_bat = (self.P_PV * self.n_hybrid / 100)
@@ -365,6 +382,7 @@ class TwinPVWF:
                 self.P_CA = 0.0
                 self.Q_CA = 0.0
                 self.S_CA = 0.0
+                self.V_CA = 0.0
             # Corriente de la batería
             self.I_bat = self.P_bat / self.V_CD
             
@@ -390,6 +408,16 @@ class TwinPVWF:
             self.SOC = 1.0
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
+        elif self.SOC < 0.0:
+            self.SOC = 0.0
+            if self.P_bat < 0.0:
+                self.P_inv = 0.0
+                self.P_CA = 0.0
+                self.S_CA = 0.0
+                self.Q_CA = 0.0
+                self.V_CA = 0.0
+            self.P_bat = 0.0
+            self.I_bat = 0.0
         
         # Actualización de voltaje de CD
         if self.P_bat > 0 and self.V_bat < V_bulk:
@@ -404,7 +432,7 @@ class TwinPVWF:
         else:
             self.I_PV = 0.0
         self.I_grid = self.P_grid / self.V_grid
-        self.I_CA = self.S_CA / self.V_CA
+        self.I_CA = (self.S_CA / self.V_CA if self.V_CA != 0.0 else 0.0)
         
         return round(self.P_grid,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_grid,2), round(self.V_PV,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), round(self.V_CA,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.gridState, chargeCycle, round(self.I_PV,2), round(self.I_bat,2), round(self.I_grid,2), round(self.I_CA,2)
     

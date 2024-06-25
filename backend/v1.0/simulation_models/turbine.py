@@ -96,6 +96,9 @@ class TwinHydro:
         else:
             self.V_CA = 120.0
         
+        if not self.inverterState and V_CD > 24.0:
+            self.inverterState = True
+
         if self.V_CD <= V_charge or not self.inverterState:
             self.P_CA = 0.0
             self.inverterState = False
@@ -134,8 +137,27 @@ class TwinHydro:
         # Cálculo de voltaje de batería
         self.V_bat = 12 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
         
+        # Condiciones límite de SOC
         if self.SOC > 1.0:
             self.SOC = 1.0
+            self.P_bat = (self.sigma_bat * delta_t / 100)
+            self.I_bat = self.P_bat / self.V_CD
+            self.P_CC = self.P_bat + self.P_inv
+        elif self.SOC < 0.0:
+            self.SOC = 0.0
+            if self.P_bat < 0.0:
+                self.P_CC = 0.0
+                self.P_inv = 0.0
+                self.P_sink = 0.0
+                self.P_CA = 0.0
+                self.S_CA = 0.0
+                self.Q_CA = 0.0
+                self.V_CA = 0.0
+                P_CD = 0.0
+                V_CDload = 0.0
+            self.P_bat = 0.0
+            self.I_bat = 0.0
+
         
         # Actualización de voltaje de CD
         if self.P_bat > 0 and self.V_bat < V_bulk:
@@ -154,8 +176,8 @@ class TwinHydro:
         
         self.I_t = self.P_h / self.V_t
         self.I_CC = self.P_CC / self.V_CD
-        self.I_CA = self.S_CA / self.V_CA
+        self.I_CA = (self.S_CA / self.V_CA if self.V_CA != 0.0 else 0.0)
         self.I_inv = self.P_inv / self.V_CD
-        I_CDload = P_CD / V_CDload
+        I_CDload = (P_CD / V_CDload if V_CDload != 0.0 else 0.0)
         
         return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_t,2), round(self.V_CA,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), self.sinkState, round(self.P_sink,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.inverterState,  round(self.I_t,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2), round(P_CD,2), round(V_CDload,2), I_CDload
