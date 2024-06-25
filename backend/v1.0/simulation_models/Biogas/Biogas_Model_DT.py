@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__))))
 current_directory = os.getcwd()
 print(current_directory)
 excel_file_path = os.path.join(os.path.abspath(os.path.join(current_directory)), "v1.0", "tools", "DB_Mapping.xlsx")
+#excel_file_path = r"C:\Users\Sergio\OneDrive - UCO\Documents\GitHub\backend\v1.0\tools\DB_Mapping.xlsx"
 print(excel_file_path)
 
 import pandas as pd
@@ -409,47 +410,60 @@ class BiogasPlantDT:
         self.PT105 = data_biogas["_value"]["PT105"]
         self.TT105 = data_biogas["_value"]["TT105"]
 
-    def Substrate_conditions (self): 
-        
-        if self.substrateNumber == 1:
-            self.ST = self.ST1/100
-            self.SV = self.SV1/100
-            self.Cc = self.Cc1
-            self.Ch = self.Ch1
-            self.Co = self.Co1
-            self.Cn = self.Cn1
-            self.Cs = self.Cs1
-            self.rho = self.rho1  
+    def Substrate_conditions (self, manual_substrate, Cc, Ch, Co, Cn, Cs, rho, ST, SV):
 
-        elif self.substrateNumber == 2:
-            self.ST = self.ST1*self.substrateproportion1 + self.ST2*self.substrateproportion2
-            self.SV = self.SV1*self.substrateproportion1 + self.SV2*self.substrateproportion2
-            self.rho = self.rho1*self.substrateproportion1 + self.rho2*self.substrateproportion2 + 1000*self.WaterPorportion
-            self.Cc = self.Cc1*self.substrateproportion1 + self.Cc2*self.substrateproportion2
-            self.Ch = self.Ch1*self.substrateproportion1 + self.Ch2*self.substrateproportion2
-            self.Co = self.Co1*self.substrateproportion1 + self.Co2*self.substrateproportion2
-            self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2
-            self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2
         
-        elif self.substrateNumber == 3:
-            self.ST = self.ST1*self.substrateproportion1 + self.ST2*self.substrateproportion2 + self.ST3*self.substrateproportion3
-            self.SV = self.SV1*self.substrateproportion1 + self.SV2*self.substrateproportion2 + self.ST3*self.substrateproportion3
-            self.rho = self.rho1*self.substrateproportion1 + self.rho2*self.substrateproportion2 + self.rho3*self.substrateproportion3 + 1000*self.WaterPorportion
-            self.Cc = self.Cc1*self.substrateproportion1 + self.Cc2*self.substrateproportion2 + self.Cc3*self.substrateproportion3
-            self.Ch = self.Ch1*self.substrateproportion1 + self.Ch2*self.substrateproportion2 + self.Ch3*self.substrateproportion3
-            self.Co = self.Co1*self.substrateproportion1 + self.Co2*self.substrateproportion2 + self.Co3*self.substrateproportion3
-            self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2 + self.Cn3*self.substrateproportion3
-            self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2 + self.Cs3*self.substrateproportion3   
+        if manual_substrate == True:
+            self.ST = ST
+            self.SV = SV
+            self.Cc = Cc
+            self.Ch = Ch
+            self.Co = Co
+            self.Cn = Cn
+            self.Cs = Cs
+            self.rho = rho
+        
+        else:
             
-        elif self.substrateNumber == 4:
-            self.ST = self.ST1*self.substrateproportion1 + self.ST2*self.substrateproportion2 + self.ST3*self.substrateproportion3 + self.ST4*self.substrateproportion4
-            self.SV = self.SV1*self.substrateproportion1 + self.SV2*self.substrateproportion2 + self.ST3*self.substrateproportion3 + self.ST4*self.substrateproportion4
-            self.rho = self.rho1*self.substrateproportion1 + self.rho2*self.substrateproportion2 + self.rho3*self.substrateproportion3 + 1000*self.WaterPorportion
-            self.Cc = self.Cc1*self.substrateproportion1 + self.Cc2*self.substrateproportion2 + self.Cc3*self.substrateproportion3 + self.Cc4*self.substrateproportion4
-            self.Ch = self.Ch1*self.substrateproportion1 + self.Ch2*self.substrateproportion2 + self.Ch3*self.substrateproportion3 + self.Ch4*self.substrateproportion4
-            self.Co = self.Co1*self.substrateproportion1 + self.Co2*self.substrateproportion2 + self.Co3*self.substrateproportion3 + self.Co4*self.substrateproportion4
-            self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2 + self.Cn3*self.substrateproportion3 + self.Cn4*self.substrateproportion4
-            self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2 + self.Cs3*self.substrateproportion3 + self.Cs4*self.substrateproportion4   
+            if self.substrateNumber == 1:
+                self.ST = self.ST1/100
+                self.SV = self.SV1/100
+                self.Cc = self.Cc1
+                self.Ch = self.Ch1
+                self.Co = self.Co1
+                self.Cn = self.Cn1
+                self.Cs = self.Cs1
+                self.rho = self.rho1  
+
+            elif self.substrateNumber == 2:
+                self.ST = self.ST1*self.substrateproportion1 + self.ST2*self.substrateproportion2
+                self.SV = self.SV1*self.substrateproportion1 + self.SV2*self.substrateproportion2
+                self.rho = self.rho1*self.substrateproportion1 + self.rho2*self.substrateproportion2 + 1000*self.WaterPorportion
+                self.Cc = self.Cc1*self.substrateproportion1 + self.Cc2*self.substrateproportion2
+                self.Ch = self.Ch1*self.substrateproportion1 + self.Ch2*self.substrateproportion2
+                self.Co = self.Co1*self.substrateproportion1 + self.Co2*self.substrateproportion2
+                self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2
+                self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2
+            
+            elif self.substrateNumber == 3:
+                self.ST = self.ST1*self.substrateproportion1 + self.ST2*self.substrateproportion2 + self.ST3*self.substrateproportion3
+                self.SV = self.SV1*self.substrateproportion1 + self.SV2*self.substrateproportion2 + self.ST3*self.substrateproportion3
+                self.rho = self.rho1*self.substrateproportion1 + self.rho2*self.substrateproportion2 + self.rho3*self.substrateproportion3 + 1000*self.WaterPorportion
+                self.Cc = self.Cc1*self.substrateproportion1 + self.Cc2*self.substrateproportion2 + self.Cc3*self.substrateproportion3
+                self.Ch = self.Ch1*self.substrateproportion1 + self.Ch2*self.substrateproportion2 + self.Ch3*self.substrateproportion3
+                self.Co = self.Co1*self.substrateproportion1 + self.Co2*self.substrateproportion2 + self.Co3*self.substrateproportion3
+                self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2 + self.Cn3*self.substrateproportion3
+                self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2 + self.Cs3*self.substrateproportion3   
+                
+            elif self.substrateNumber == 4:
+                self.ST = self.ST1*self.substrateproportion1 + self.ST2*self.substrateproportion2 + self.ST3*self.substrateproportion3 + self.ST4*self.substrateproportion4
+                self.SV = self.SV1*self.substrateproportion1 + self.SV2*self.substrateproportion2 + self.ST3*self.substrateproportion3 + self.ST4*self.substrateproportion4
+                self.rho = self.rho1*self.substrateproportion1 + self.rho2*self.substrateproportion2 + self.rho3*self.substrateproportion3 + 1000*self.WaterPorportion
+                self.Cc = self.Cc1*self.substrateproportion1 + self.Cc2*self.substrateproportion2 + self.Cc3*self.substrateproportion3 + self.Cc4*self.substrateproportion4
+                self.Ch = self.Ch1*self.substrateproportion1 + self.Ch2*self.substrateproportion2 + self.Ch3*self.substrateproportion3 + self.Ch4*self.substrateproportion4
+                self.Co = self.Co1*self.substrateproportion1 + self.Co2*self.substrateproportion2 + self.Co3*self.substrateproportion3 + self.Co4*self.substrateproportion4
+                self.Cn = self.Cn1*self.substrateproportion1 + self.Cn2*self.substrateproportion2 + self.Cn3*self.substrateproportion3 + self.Cn4*self.substrateproportion4
+                self.Cs = self.Cs1*self.substrateproportion1 + self.Cs2*self.substrateproportion2 + self.Cs3*self.substrateproportion3 + self.Cs4*self.substrateproportion4   
         
         #Mix of substrates
         self.molC = self.Cc*(1/12.01)
@@ -685,7 +699,7 @@ class BiogasPlantDT:
         self.AH_v101 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V101, self.TT103)
         self.mol_H2O_V101 = self.AH_v101*self.V_normal_V101
 
-        if (len (self.DT_Data["P_V101"]) > 1) and (self.PT103*1.05 < self.DT_Data["P_V101"][-1]):  #Cambiar cuando se conecte con la planta real
+        if (len (self.DT_Data["P_V101"]) > 1) and (self.PT103*1.05 < self.DT_Data["P_V101"].iloc[-1]):  #Cambiar cuando se conecte con la planta real
             self.P_ini_V101 = self.Pacum_V101
         
         self.Pacum_V101 = self.PT103 + self.P_ini_V101
@@ -745,7 +759,7 @@ class BiogasPlantDT:
         self.AH_v102 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V102, self.TT104)
         self.mol_H2O_V102 = self.AH_v102*self.V_normal_V102
         
-        if (len (self.DT_Data["P_V102"]) > 1) and (self.PT104*1.05 < self.DT_Data["P_V102"][-1]):  #Cambiar cuando se conecte con la planta real
+        if (len (self.DT_Data["P_V102"]) > 1) and (self.PT104*1.05 < self.DT_Data["P_V102"].iloc[-1]):  #Cambiar cuando se conecte con la planta real
             self.P_ini_V102 = self.Pacum_V102
         
         self.Pacum_V102 = self.PT104 + self.P_ini_V102
@@ -806,7 +820,7 @@ class BiogasPlantDT:
         self.AH_v107 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V107, self.TT105)
         self.mol_H2O_V107 = self.AH_v107*self.V_normal_V107
         
-        if (len (self.DT_Data["P_V107"]) > 1) and (self.PT105*1.05 < self.DT_Data["P_V107"][-1]):  #Cambiar cuando se conecte con la planta real
+        if (len (self.DT_Data["P_V107"]) > 1) and (self.PT105*1.05 < self.DT_Data["P_V107"].iloc[-1]):  #Cambiar cuando se conecte con la planta real
             self.P_ini_V107 = self.Pacum_V107
         
         self.Pacum_V107 = self.PT105 + self.P_ini_V107

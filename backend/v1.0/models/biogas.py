@@ -82,7 +82,9 @@ class Biogas(Resource):
 
       Biogas_Plant = Biogas_Plant_ini.data
       Biogas_Plant.GetValuesFromBiogasPlant()
-      Biogas_Plant.Substrate_conditions()
+      Biogas_Plant.Substrate_conditions(manual_substrate=biogas_input["inputSubstrateConditions"], Cc = biogas_input["inputElementalAnalysisCarbonContent"], Ch = biogas_input["inputElementalAnalysisHydrogenContent"],
+                                        Co = biogas_input["inputElementalAnalysisOxygenContent"], Cn = biogas_input["inputElementalAnalysisNitrogenContent"], Cs = biogas_input["inputElementalAnalysisSulfurContent"],
+                                        rho = biogas_input["inputProximateAnalysisDensity"], ST = biogas_input["inputProximateAnalysisTotalSolids"], SV = biogas_input["inputProximateAnalysisVolatileSolids"])
       Biogas_Plant.Pump104(manual_P104=biogas_input["inputPump104"], TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
       Biogas_Plant.Pump101(manual_P101=biogas_input["inputPump101"], FT_P101=biogas_input["inputPump101StartsPerDay"], TTO_P101=biogas_input["inputPump101StartTime"], Q_P101=biogas_input["inputPump101Flow"])
       Biogas_Plant.Pump102(manual_P102=biogas_input["inputPump102"], FT_P102=biogas_input["inputPump102StartsPerDay"], TTO_P102=biogas_input["inputPump102StartTime"], Q_P102=biogas_input["inputPump102Flow"])
