@@ -818,7 +818,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos volatiles a la entrada de R101',
     variable: 'VolatileSolidsInletR101',
-    unit: 'mol / L',
+    unit: 'g / L',
     isShown: true,
     diagramName: 'C_SV',
     fixed: 4,
@@ -829,7 +829,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos totales a la entrada de R101',
     variable: 'TotalSolidsInletR101',
-    unit: 'mol / L',
+    unit: 'g / L',
     isShown: true,
     diagramName: 'C_ST',
     fixed: 4,
