@@ -27,6 +27,7 @@ export type Controller = CommonController & {
 
 export type TurbineParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
+    isBatteryConnected: boolean;
     turbineType: TurbineType;
     controller: Controller;
     battery: Battery;
@@ -266,6 +267,7 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
 
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
+  isBatteryConnected: true,
   queryTime: Config.QUERY_TIME_OFFLINE,
   disableParameters: false,
   timeMultiplier: {
@@ -306,7 +308,7 @@ export const TURBINE: TurbineParameters = {
     variableString: 'Potencia activa',
     min: 0,
     max: 100000,
-    step: 10
+    step: 10,
   },
   inputPowerFactor: {
     disabled: false,

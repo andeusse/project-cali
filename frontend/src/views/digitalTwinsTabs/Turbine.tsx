@@ -512,6 +512,18 @@ const Turbine = () => {
                     disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <h3>Conexión baterías</h3>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                  <CustomToggle
+                    name="isBatteryConnected"
+                    value={system.isBatteryConnected}
+                    handleChange={handleChange}
+                    trueString="Conectada"
+                    falseString="Desconectada"
+                  ></CustomToggle>
+                </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12} md={9.5} xl={9.5}>

@@ -39,6 +39,7 @@ export enum OperationModeText {
 
 export type SolarWindParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
+    isBatteryConnected: boolean;
     inputOperationMode: OperationModeType;
     monocrystallinePanel: SolarPanel;
     policrystallinePanel: SolarPanel;
@@ -393,6 +394,7 @@ export type SolarWindOutputHistoric = CommonGraphType & {
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
+  isBatteryConnected: true,
   queryTime: Config.QUERY_TIME_OFFLINE,
   disableParameters: false,
   timeMultiplier: {
