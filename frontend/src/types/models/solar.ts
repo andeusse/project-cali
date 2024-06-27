@@ -473,7 +473,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     variableString: 'Potencia',
     min: 0,
     max: 2000,
-    step: 100,
+    step: 10,
   },
   alternCurrentLoadPowerFactor: {
     disabled: false,
@@ -493,7 +493,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     variableString: 'Potencia',
     min: 0,
     max: 2000,
-    step: 100,
+    step: 10,
   },
   externalGridState: false,
 };

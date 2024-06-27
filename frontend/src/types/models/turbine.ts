@@ -306,6 +306,7 @@ export const TURBINE: TurbineParameters = {
     variableString: 'Potencia activa',
     min: 0,
     max: 100000,
+    step: 10
   },
   inputPowerFactor: {
     disabled: false,
