@@ -117,8 +117,10 @@ class TwinHydro:
         self.P_bat = self.P_CC - self.P_inv - self.P_sink # Potencia de la bateria, + carga, - descarga
         
         # Corriente de la batería
-        self.I_bat = self.P_bat / self.V_CD
-        
+        if SOC_0 > 0.0 or (SOC_0 == 0.0 and self.P_bat >= 0.0):
+            self.I_bat = self.P_bat / self.V_CD
+        elif self.P_bat < 0.0:
+            self.I_bat = 0.0
         # Corrección de capacidad por temperatura
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
         
@@ -143,7 +145,7 @@ class TwinHydro:
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
             self.P_CC = self.P_bat + self.P_inv
-        elif self.SOC < 0.0:
+        elif self.SOC <= 0.0:
             self.SOC = 0.0
             if self.P_bat < 0.0:
                 self.P_CC = 0.0
