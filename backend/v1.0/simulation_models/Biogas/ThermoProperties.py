@@ -59,7 +59,7 @@ class ThermoProperties:
         
         return EntalpiaMolar
     
-    def Hgases(self, xCH4, xCO2, xH2O, xO2, xN2, xH2S, xH2, P, Patm, T):
+    def Hgases(self, xCH4, xCO2, xH2O, xO2, xN2, xH2S, xH2, P, Patm, T, xNH3=0,):
         self.xCH4 = xCH4
         self.xCO2 = xCO2
         self.xH2O = xH2O
@@ -67,6 +67,7 @@ class ThermoProperties:
         self.xN2 = xN2
         self.xH2S = xH2S
         self.xH2 = xH2
+        self.xNH3 = xNH3
         self.P = P
         self.Patm = Patm
         self.T = T+273.15
@@ -81,6 +82,7 @@ class ThermoProperties:
         # Peso molecular del sulfuro de hidrÃ³geno [kg/kmol]
         self.MWH2S = 34.082
         self.MWH2 = 2.016
+        self.MWNH3 = 17.031
 
         # Temperaturas crÃÂ­ticas de los compuestos
         self.TcCH4 = 190.564  # Temperatura crÃÂ­tica del metano [K]
@@ -91,6 +93,7 @@ class ThermoProperties:
         self.TcH2O = 647.19  # Temperatura crÃÂ­tica del agua [k]
         self.TcH2S = 373.53  # Temperatura critica del sulfuro de hidrogeno [K]
         self.TcH2 = 33.19
+        self.TcNH3 = 405.65
 
         # Presiones crÃÂ­ticas
         self.PcCH4 = 4599  # presiÃÂ³n crÃÂ­tica del metano [kPa]
@@ -101,6 +104,7 @@ class ThermoProperties:
         self.PcH2O = 22055  # PresiÃÂ³n crÃÂ­tica del agua [kPa]
         self.PcH2S = 8962.9  # Presion critica del sulfuro de hidrogeno [kPa]
         self.PcH2 = 1313
+        self.PcNH3 = 11280
 
         # Factores acÃÂ©ntricos
         self.wCH4 = 0.01153
@@ -110,10 +114,11 @@ class ThermoProperties:
         self.wH2O = 0.34486
         self.wH2S = 0.09417
         self.wH2 = -0.21599
+        self.wNH3 = 0.25261
 
         # EstimaciÃÂ³n del peso molecular de la mezcla
         self.MWgas = self.xCH4 * self.MWCH4 + self.xCO2 * self.MWCO2 + self.xH2O * \
-            self.MWH20 + self.xO2 * self.MWO2 + self.xN2 * self.MWN2 + self.xH2S * self.MWH2S + self.xH2 * self.MWH2
+            self.MWH20 + self.xO2 * self.MWO2 + self.xN2 * self.MWN2 + self.xH2S * self.MWH2S + self.xH2 * self.MWH2 + self.xNH3 * self.MWNH3
 
         # constante universal de ls gases
         self.R = 8.314  # [kJ/kmol-K]
@@ -126,6 +131,7 @@ class ThermoProperties:
         self.PrH20 = (self.P+self.Patm)/self.PcH2O
         self.PrH2S = (self.P+self.Patm)/self.PcH2S
         self.PrH2 = (self.P+self.Patm)/self.PcH2
+        self.PrNH3 = (self.P+self.Patm)/self.PcNH3
 
         # Temperaturas de referencia
         self.TrCH4 = self.T/self.TcCH4
@@ -135,6 +141,7 @@ class ThermoProperties:
         self.TrH2O = self.T/self.TcH2O
         self.TrH2S = self.T/self.TcH2S
         self.TrH2 = self.T/self.TcH2
+        self.TrNH3 = self.T/self.TcNH3
 
         # Factor de ocmpresibilidad
 
@@ -146,6 +153,7 @@ class ThermoProperties:
         self.BoH2O = 0.083-(0.422/pow(self.TrH2O, 1.6))
         self.BoH2S = 0.083-(0.422/pow(self.TrH2S, 1.6))
         self.BoH2 = 0.083-(0.422/pow(self.TrH2, 1.6))
+        self.BoNH3 = 0.083-(0.422/pow(self.TrNH3, 1.6))
 
         # ParÃÂ¡metro B1
         self.B1CH4 = 0.139-(0.172/pow(self.TrCH4, 4.2))
@@ -155,6 +163,7 @@ class ThermoProperties:
         self.B1H2O = 0.139-(0.172/pow(self.TrH2O, 4.2))
         self.B1H2S = 0.139-(0.172/pow(self.TrH2S, 4.2))
         self.B1H2 = 0.139-(0.172/pow(self.TrH2, 4.2))
+        self.B1NH3 = 0.139-(0.172/pow(self.TrNH3, 4.2))
 
         # EstimaciÃÂ³n del factor de compresiÃÂ³n
         self.ZCH4 = 1+(self.BoCH4+self.wCH4*self.B1CH4)*(self.PrCH4/self.TrCH4)
@@ -164,6 +173,7 @@ class ThermoProperties:
         self.ZH2O = 1+(self.BoH2O+self.wH2O*self.B1H2O)*(self.PrH20/self.TrH2O)
         self.ZH2S = 1+(self.BoH2S+self.wH2S*self.B1H2S)*(self.PrH2S/self.TrH2S)
         self.ZH2 = 1+(self.BoH2+self.wH2*self.B1H2)*(self.PrH2/self.TrH2)
+        self.ZNH3 = 1+(self.BoNH3+self.wNH3*self.B1NH3)*(self.PrNH3/self.TrNH3)
 
         # Volumen especÃÂ­fico
         self.vCH4 = (self.ZCH4*self.R*self.T)/(self.P+self.Patm)  # [m3/kmol]
@@ -173,6 +183,7 @@ class ThermoProperties:
         self.vH2O = (self.ZH2O*self.R*self.T)/(self.P+self.Patm)  # [m3/kmol]
         self.vH2S = (self.ZH2S*self.R*self.T)/(self.P+self.Patm)  # [m3/kmol]
         self.vH2 = (self.ZH2*self.R*self.T)/(self.P+self.Patm)
+        self.vNH3 = (self.ZNH3*self.R*self.T)/(self.P+self.Patm)
 
         # entalpias individuales
         self.TrefH = 25+273.15  # Temperatura de refrencia pra soluciÃÂ³n de integral
@@ -196,16 +207,19 @@ class ThermoProperties:
                          1.176E-8, self.TrefH, self.T) + (self.P+self.Patm)*(self.vH2S/self.MWH2S)
         self.HH2 = integrate(3.249, 1.436E-3, 2.432E-5, -
                          1.176E-8, self.TrefH, self.T) + (self.P+self.Patm)*(self.vH2S/self.MWH2S)  #Buscar en el libro 
+        self.HNH3 = integrate(2.731E+1, 2.383E-2, 1.707E-5, -
+                         1.185E-8, self.TrefH, self.T) + (self.P+self.Patm)*(self.vH2S/self.MWH2S) 
+        
 
         # Entalpia mezcla
 
         self.Hbiogasmolar = self.xCH4*self.HCH4 + self.xCO2*self.HCO2 + self.xN2*self.HN2 + \
-            self.xO2*self.HO2 + self.xH2O*self.HH2O + self.xH2S*self.HH2S + self.xH2*self.HH2  # [kJ/kmol]
+            self.xO2*self.HO2 + self.xH2O*self.HH2O + self.xH2S*self.HH2S + self.xH2*self.HH2 + self.xNH3*self.HNH3 # [kJ/kmol]
         
         self.Hbiogasmas = self.Hbiogasmolar/self.MWgas  # [kJ/kg]
         
         self.Volumenespbio = self.xCH4*self.vCH4 + self.xCO2*self.vCO2 + self.xN2*self.vN2 + \
-            self.xO2*self.vO2 + self.xH2O*self.vH2O + self.xH2S*self.vH2S + self.xH2*self.vH2  # [m^3/kmol]
+            self.xO2*self.vO2 + self.xH2O*self.vH2O + self.xH2S*self.vH2S + self.xH2*self.vH2 + self.xNH3*self.vNH3  # [m^3/kmol]
 
         return self.Hbiogasmolar, self.Hbiogasmas, self.Volumenespbio
     

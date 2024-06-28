@@ -7,9 +7,9 @@ class MachineLearningStart:
           cls._instance = super().__new__(cls)
           cls._instance._data = None
         return cls._instance
-    def starting(self, t_train, OperationMode, Kini, Eaini, VR1):
+    def starting(self, t_train, OperationMode, Model, A_R101, B_R101, C_R101, A_R102, B_R102, C_R102, VR1, VR2):
         if self._data is None:
-          self._data = MachineLearningModule.BiogasModelTrain(t_train, OperationMode, Kini, Eaini, VR1)
+          self._data = MachineLearningModule.BiogasModelTrain(t_train, OperationMode, Model, A_R101, B_R101, C_R101, A_R102, B_R102, C_R102, VR1, VR2)
     @property
     def data(self):
         if self._data is None:

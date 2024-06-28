@@ -16,7 +16,9 @@ from  tools import DBManager
 
 class BiogasPlantDT:
 
-    def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, rho_R101=1000, rho_R102=1000, OperationMode=1):
+    def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, 
+                 ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101=1000,
+                 ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102=1000, OperationMode=1):
 
         #Interface Inputs
         self.VR1 = VR1
@@ -32,7 +34,7 @@ class BiogasPlantDT:
         self.tp = tp
         #Initial values
         #Global time
-        self.TotalTime = 0
+        #self.TotalTime = 0
         #Pumps
         self.TimeCounterPump_P104 = 0
         self.TimeCounterPump_P101 = 0
@@ -48,18 +50,82 @@ class BiogasPlantDT:
         self.P_ini_V107 = 0
         
         #Reactor 101 initial conditions
-        self.ST_R101 = 0
-        self.SV_R101 = 0
+        self.ST_R101 = ST_R101
+        self.SV_R101 = SV_R101
+        self.Cc_R101 = Cc_R101
+        self.Ch_R101 = Ch_R101
+        self.Co_R101 = Co_R101
+        self.Cn_R101 = Cn_R101
+        self.Cs_R101 = Cs_R101
         self.rho_R101 = rho_R101
-        self.Csus_ini_R101 = 0
-        self.Csus_ini_ST_R101 = 0
+        if self.ST_R101 == 0:
+            self.Csus_ini_R101 = 0
+            self.Csus_ini_ST_R101 = 0
+        else:
+            self.molC_R101 = self.Cc_R101*(1/12.01)
+            self.molH_R101 = self.Ch_R101*(1/1.01)
+            self.molO_R101 = self.Co_R101*(1/16)
+            self.molN_R101 = self.Cn_R101*(1/14)
+            self.molS_R101 = self.Cs_R101*(1/32)
+
+            self.mol_min_R101 = min(self.molC_R101, self.molH_R101, self.molO_R101, self.molN_R101, self.molS_R101)
+
+            self.n_R101 = self.molC_R101/self.mol_min_R101
+            self.a_R101 = self.molH_R101/self.mol_min_R101
+            self.b_R101 = self.molO_R101/self.mol_min_R101
+            self.c_R101 = self.molN_R101/self.mol_min_R101
+            self.d_R101 = self.molS_R101/self.mol_min_R101
+            
+            self.s_H2O_R101 = self.n_R101-(self.a_R101/4)-(self.b_R101/2)+(3/4)*self.c_R101+(self.d_R101/2)
+            self.s_CH4_R101 = (self.n_R101/2)+(self.a_R101/8)-(self.b_R101/4)-(3/8)*self.c_R101-(self.d_R101/4)
+            self.s_CO2_R101 = (self.n_R101/2)-(self.a_R101/8)+(self.b_R101/4)+(3/8)*self.c_R101-(self.d_R101/4)
+            self.s_NH3_R101 = self.c_R101
+            self.s_H2S_R101 = self.d_R101
+            
+            self.MW_sustrato_R101 = self.n_R101*12.01+self.a_R101*1.01+self.b_R101*16+self.c_R101*14+self.d_R101*32
+            self.Csus_ini_R101 = (self.rho_R101*self.SV_R101)/self.MW_sustrato_R101
+            self.Csus_ini_ST_R101 = (self.rho_R101*self.ST_R101)/self.MW_sustrato_R101
+            self.Csus_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_R101
+            
 
         #Reactor 102 initial conditions
-        self.ST_R102 = 0
-        self.SV_R102 = 0
+        self.ST_R102 = ST_R102
+        self.SV_R102 = SV_R102
+        self.Cc_R102 = Cc_R102
+        self.Ch_R102 = Ch_R102
+        self.Co_R102 = Co_R102
+        self.Cn_R102 = Cn_R102
+        self.Cs_R102 = Cs_R102
         self.rho_R102 = rho_R102
-        self.Csus_ini_R102 = 0
-        self.Csus_ini_ST_R102 = 0
+        if self.ST_R102 == 0:
+            self.Csus_ini_R102 = 0
+            self.Csus_ini_ST_R102 = 0
+        else:
+            self.molC_R102 = self.Cc_R102*(1/12.01)
+            self.molH_R102 = self.Ch_R102*(1/1.01)
+            self.molO_R102 = self.Co_R102*(1/16)
+            self.molN_R102 = self.Cn_R102*(1/14)
+            self.molS_R102 = self.Cs_R102*(1/32)
+
+            self.mol_min_R102 = min(self.molC_R102, self.molH_R102, self.molO_R102, self.molN_R102, self.molS_R102)
+
+            self.n_R102 = self.molC_R102/self.mol_min_R102
+            self.a_R102 = self.molH_R102/self.mol_min_R102
+            self.b_R102 = self.molO_R102/self.mol_min_R102
+            self.c_R102 = self.molN_R102/self.mol_min_R102
+            self.d_R102 = self.molS_R102/self.mol_min_R102
+            
+            self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
+            self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
+            self.s_CO2_R102 = (self.n_R102/2)-(self.a_R102/8)+(self.b_R102/4)+(3/8)*self.c_R102-(self.d_R102/4)
+            self.s_NH3_R102 = self.c_R102
+            self.s_H2S_R102 = self.d_R102
+            
+            self.MW_sustrato_R102 = self.n_R102*12.01+self.a_R102*1.01+self.b_R102*16+self.c_R102*14+self.d_R102*32
+            self.Csus_ini_R102 = (self.rho_R102*self.SV_R102)/self.MW_sustrato_R102
+            self.Csus_ini_ST_R102 = (self.rho_R102*self.ST_R102)/self.MW_sustrato_R102
+            self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
+        
         
         #Create DataFrames to storage Data
         self.OperationMode = OperationMode
@@ -88,7 +154,8 @@ class BiogasPlantDT:
             , "mol_sus_int_ini_R101"
             , "Csus_ini_R101"
             , "SV_R101"
-            , "ST_R101"]
+            , "ST_R101"
+            , "yt_R101"]
             
         elif self.OperationMode == 2:
             columns = ["timestamp"
@@ -116,7 +183,8 @@ class BiogasPlantDT:
             , "mol_sus_int_ini_R101"
             , "Csus_ini_R101"
             , "SV_R101"
-            , "ST_R101"]
+            , "ST_R101"
+            , "yt_R101"]
 
         elif self.OperationMode == 3:
             columns = ["timestamp"
@@ -164,7 +232,9 @@ class BiogasPlantDT:
             , "mol_sus_int_ini_R102"
             , "Csus_ini_R102"
             , "SV_R102"
-            , "ST_R102"]
+            , "ST_R102"
+            , "yt_R101"
+            , "yt_R102"]
         
         elif self.OperationMode == 4 or self.OperationMode == 5:
             columns = ["timestamp"
@@ -213,7 +283,9 @@ class BiogasPlantDT:
             , "mol_sus_int_ini_R102"
             , "Csus_ini_R102"
             , "SV_R102"
-            , "ST_R102"]
+            , "ST_R102"
+            , "yt_R101"
+            , "yt_R102"]
 
         self.DT_Data = pd.DataFrame(columns= columns)
 
@@ -374,8 +446,8 @@ class BiogasPlantDT:
             self.Qset_P102 = data_biogas["_value"]["MQP102"]
             self.SE102 = data_biogas["_value"]["SE102"]
             #Get Values for R102
-            self.TE_102Av = data_biogas["_value"]["TE102A"]
-            self.TE_102Bv = data_biogas["_value"]["TE102B"]
+            self.TE_102A = data_biogas["_value"]["TE102A"]
+            self.TE_102B = data_biogas["_value"]["TE102B"]
             self.AT_102 = data_biogas["_value"]["AT102"]
             self.SE_109 = data_biogas["_value"]["SE109"]
             self.LT_102 = data_biogas["_value"]["LT102"]
@@ -412,7 +484,6 @@ class BiogasPlantDT:
 
     def Substrate_conditions (self, manual_substrate, Cc, Ch, Co, Cn, Cs, rho, ST, SV):
 
-        
         if manual_substrate == True:
             self.ST = ST
             self.SV = SV
@@ -499,8 +570,10 @@ class BiogasPlantDT:
             self.TRH = TRH
             self.FT_P104 = FT_P104
             self.TTO_P104 = TTO_P104
-            
-            self.TurnOnDailyStep_P104 = 24/self.FT_P104
+            try:
+                self.TurnOnDailyStep_P104 = 24/self.FT_P104
+            except ZeroDivisionError:
+                self.TurnOnDailyStep_P104=0
             
             if self.OperationMode == 1 or self.OperationMode == 2:
                 self.Q_daily = self.VR1/self.TRH
@@ -544,9 +617,13 @@ class BiogasPlantDT:
             elif self.OperationMode == 2:
                 self.FT_P101= FT_P101
                 self.TTO_P101 = TTO_P101
-            
-                self.TurnOnDailyStep_P101 = 24/self.FT_P101
-                
+
+                try:
+                    self.TurnOnDailyStep_P101 = 24/self.FT_P101
+                except ZeroDivisionError:
+                    self.TurnOnDailyStep_P101 = 0
+
+
                 if self.TimeCounterPump_P101<self.TTO_P101*60:
                     self.Q_P101 = Q_P101
                 else:
@@ -564,10 +641,10 @@ class BiogasPlantDT:
                 
                 try:
                     self.Q_P102 = self.Q_P102
-                except NameError:
+                except:
                     self.Q_P102 = 0
 
-                self.Q_P101 = self.Q_P101 + self.Q_P102
+                self.Q_P101 = self.Q_P104 + self.Q_P102
                 
         else:
 
@@ -593,7 +670,10 @@ class BiogasPlantDT:
                 self.FT_P102= FT_P102
                 self.TTO_P102 = TTO_P102
 
-                self.TurnOnDailyStep_P102 = 24/self.FT_P102
+                try:
+                    self.TurnOnDailyStep_P102 = 24/self.FT_P102
+                except ZeroDivisionError:
+                    self.TurnOnDailyStep_P102 = 0
 
                 if self.TimeCounterPump_P102<self.TTO_P102*60:
                     self.Q_P102 = Q_P102
@@ -620,16 +700,16 @@ class BiogasPlantDT:
         
         self.manual_temp_R101 = manual_temp_R101
 
-        if self.manual_temp_R101 == False:
+        if self.manual_temp_R101 == True:
             self.Temp_R101 = float(Temp_R101)
 
-        elif self.manual_temp_R101 == True:
+        else:
 
-            self.TE_101Av = self.TE_101Av["TE101A"].tolist()
-            self.TE_101Bv = self.TE_101Bv["TE101B"].tolist()
+            self.TE_101Av = self.TE_101Av
+            self.TE_101Bv = self.TE_101Bv
 
-            T1 = float(self.TE_101Av[-1])
-            T2 = float(self.TE_101Bv[-1])
+            T1 = float(self.TE_101Av)
+            T2 = float(self.TE_101Bv)
             self.Temp_R101 = float((T1 + T2)/2)
     
     def Temperature_R102 (self, manual_temp_R102 = 1, Temp_R102=35):
@@ -640,29 +720,19 @@ class BiogasPlantDT:
 
         else:
 
-            if self.manual_temp_R102 == False or self.Offline == False:
+            if self.manual_temp_R102 == True:
                 self.Temp_R102 = float(Temp_R102)
 
-            elif self.manual_temp_R102 == True:
+            else:
+                self.TE_102Av = self.TE_102A
+                self.TE_102Bv = self.TE_102B
 
-                self.TE_102Av = self.TE_102Av["TE102A"].tolist()
-                self.TE_102Bv = self.TE_102Bv["TE102B"].tolist()
-
-                T1 = self.TE_102Av[-1]
-                T2 = self.TE_102Bv[-1]
+                T1 = self.TE_102Av
+                T2 = self.TE_102Bv
                 self.Temp_R102 = (T1 + T2)/2
         
-    def V_101_DT (self):
-        self.AT103A1 = self.AT103A1
-        self.AT103A2 = self.AT103A2
-        self.AT103A3 = self.AT103A3
-        self.AT103A4 = self.AT103A4
-        self.AT103A5 = self.AT103A5
-                
+    def V_101_DT (self):               
         self.RH_V101 = self.AT103B
-        
-        self.PT103 = self.PT103
-        self.TT103 = self.TT103
 
         self.P_std = 100        #[kPa]
         self.T_std = 273.15     #[K]    
@@ -684,6 +754,7 @@ class BiogasPlantDT:
         self.V_mol_H2S = self.Thermo.Hgases(xCH4=0, xCO2=0, xH2O=0, xO2=0, xN2=0, xH2S=1, xH2=0, P=self.PT103, Patm=100, T=self.TT103)[2]
         self.V_mol_O2 = self.Thermo.Hgases(xCH4=0, xCO2=0, xH2O=0, xO2=1, xN2=0, xH2S=0, xH2=0, P=self.PT103, Patm=100, T=self.TT103)[2]
         self.V_mol_H2 = self.Thermo.Hgases(xCH4=0, xCO2=0, xH2O=0, xO2=0, xN2=0, xH2S=0, xH2=1, P=self.PT103, Patm=100, T=self.TT103)[2]
+        self.V_mol_NH3 = self.Thermo.Hgases(xCH4=0, xCO2=0, xH2O=0, xO2=0, xN2=0, xH2S=0, xH2=0, P=self.PT103, Patm=100, T=self.TT103, xNH3=1)[2]
 
         self.mol_CH4_V101 = self.V_normal_CH4_V101/self.V_mol_CH4     
         
@@ -694,7 +765,15 @@ class BiogasPlantDT:
         self.mol_O2_V101 = self.V_normal_O2_V101/self.V_mol_O2
         
         self.mol_H2_V101 = self.V_normal_H2_V101/self.V_mol_H2
-        
+
+        #Amonio
+        self.mol_NH3_V101 = (self.s_NH3/self.s_CH4)*self.mol_CH4_V101
+        self.V_normal_NH3_V101 = self.mol_NH3_V101*self.V_mol_NH3
+        try:
+            self.AT103A6 =  self.mol_NH3_V101/(self.mol_CH4_V101 + self.mol_CO2_V101 + self.mol_H2S_V101 + self.mol_O2_V101 + self.mol_H2_V101 + self.mol_NH3_V101)*1000000
+        except ZeroDivisionError:
+            self.AT103A6 = 0
+
         self.RH_V101 = self.RH_V101/100
         self.AH_v101 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V101, self.TT103)
         self.mol_H2O_V101 = self.AH_v101*self.V_normal_V101
@@ -722,16 +801,8 @@ class BiogasPlantDT:
         self.mol_H2_acum_V101 = self.V_normal_H2_acum_V101/self.V_mol_H2
 
     def V_102_DT (self):
-        self.AT104A1 = self.AT104A1
-        self.AT104A2 = self.AT104A2
-        self.AT104A3 = self.AT104A3
-        self.AT104A4 = self.AT104A4
-        self.AT104A5 = self.AT104A5
 
         self.RH_V102 = self.AT104B
-
-        self.PT104 = self.PT104
-        self.TT104 = self.TT104
 
         self.V_normal_V102 = ((self.PT104*6.89476)*self.VG2*self.T_std)/(self.P_std*(self.TT104+273.15))
         
@@ -754,7 +825,17 @@ class BiogasPlantDT:
         self.mol_O2_V102 = self.V_normal_O2_V102/self.V_mol_O2
         
         self.mol_H2_V102 = self.V_normal_H2_V102/self.V_mol_H2
+
+        #Amonio
+        self.mol_NH3_V102 = (self.s_NH3/self.s_CH4)*self.mol_CH4_V102
+        self.V_normal_NH3_V102 = self.mol_NH3_V102*self.V_mol_NH3
         
+        try:
+            self.AT104A6 =  self.mol_NH3_V102/(self.mol_CH4_V102 + self.mol_CO2_V102 + self.mol_H2S_V102 + self.mol_O2_V102 + self.mol_H2_V102 + self.mol_NH3_V102)*1000000
+        except ZeroDivisionError:
+            self.AT104A6 = 0
+
+
         self.RH_V102 = self.RH_V102/100
         self.AH_v102 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V102, self.TT104)
         self.mol_H2O_V102 = self.AH_v102*self.V_normal_V102
@@ -783,16 +864,7 @@ class BiogasPlantDT:
         
         
     def V_107_DT (self):
-        self.AT105A1 = self.AT105A1
-        self.AT105A2 = self.AT105A2
-        self.AT105A3 = self.AT105A3
-        self.AT105A4 = self.AT105A4
-        self.AT105A5 = self.AT105A5
-
         self.RH_V107 = self.AT105B
-
-        self.PT105 = self.PT105
-        self.TT105 = self.TT105
 
         self.V_normal_V107 = ((self.PT105*6.89476)*self.VG3*self.T_std)/(self.P_std*(self.TT105+273.15))
         
@@ -815,7 +887,16 @@ class BiogasPlantDT:
         self.mol_O2_V107 = self.V_normal_O2_V107/self.V_mol_O2
         
         self.mol_H2_V107 = self.V_normal_H2_V107/self.V_mol_H2
+
+        #Amonio
+        self.mol_NH3_V107 = (self.s_NH3/self.s_CH4)*self.mol_CH4_V107
+        self.V_normal_NH3_V107 = self.mol_NH3_V107*self.V_mol_NH3
         
+        try:
+            self.AT105A6 =  self.mol_NH3_V107/(self.mol_CH4_V107 + self.mol_CO2_V107 + self.mol_H2S_V107 + self.mol_O2_V107 + self.mol_H2_V107 + self.mol_NH3_V107)*1000000
+        except ZeroDivisionError:
+            self.AT105A6 = 0
+
         self.RH_V107 = self.RH_V107/100
         self.AH_v107 = self.Thermo.BiogasAbsoluteHumidity(self.RH_V107, self.TT105)
         self.mol_H2O_V107 = self.AH_v107*self.V_normal_V107
@@ -893,7 +974,7 @@ class BiogasPlantDT:
 
             elif self.OperationMode == 4:
                 self.mol_sus_in_R101_2 = self.Q_P102*self.Csus_ini_R102
-                self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*self.tp)
+                self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600))
 
                 self.volatilemass_in_R101_2 = self.Q_P102*self.SV_R102*self.rho*(self.tp/3600)
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 + self.volatilemass_in_R101_2 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600)))/self.rho
@@ -902,8 +983,15 @@ class BiogasPlantDT:
                 self.ST_R101 = (self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 + self.TotalSolids_in_R101_2 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600))/self.rho
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
             
+            self.SV_R101_gL = self.SV_R101*self.rho
+            self.X_R101 = (self.mol_sus_in_R101 - self.mol_sus_int_ini_R101)/self.mol_sus_in_R101
+            self.y_gompertz_R101 = (self.V_normal_CH4_acum_V101/self.SV_R101_gL)*self.VR1
+            
         else:
             self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
+            self.SV_R101_gL = self.SV_R101*self.rho
+            self.X_R101 = (self.Csus_ini - self.Csus_ini_R101)/self.Csus_ini
+            self.y_gompertz_R101 = (self.V_normal_CH4_acum_V101/self.SV_R101_gL)*self.VR1
 
             if self.OperationMode == 1 or self.OperationMode == 2:
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
@@ -914,6 +1002,7 @@ class BiogasPlantDT:
     def R102_DT (self):
         if self.OperationMode == 1 or self.OperationMode ==2:
             pass
+
         else:
             self.mol_CH4_R102v = self.DT_Data["mol_CH4_acum_V102"] .tolist()
 
@@ -925,6 +1014,7 @@ class BiogasPlantDT:
                 if self.Pacum_V101 < 50:                                           #Este valor es el valor de presión máximo que puede almacenar V-101
                     self.mol_CH4_R102 = self.mol_CH4_R102
                     self.mol_CH4_R102_i = self.mol_CH4_R102_i
+    
                 else:
                     self.mol_CH4_R102 = self.mol_CH4_R102 - self.mol_CH4_R101
                     self.mol_CH4_R102_i = self.mol_CH4_R102_i - self.mol_CH4_R101_i
@@ -970,9 +1060,17 @@ class BiogasPlantDT:
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
                     self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
                     self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
+                
+                self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR1
+                self.SV_R102_gL = self.SV_R102*self.rho
+                self.X_R102= (self.mol_sus_in_R102- self.mol_sus_int_ini_R102)/self.mol_sus_in_R102
+                self.y_gompertz_R102 = (self.mol_CH4_R102*self.V_mol_CH4/self.SV_R102_gL)*self.VR2
         
             else:
-                self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
+                self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR1
+                self.SV_R102_gL = self.SV_R102*self.rho
+                self.X_R102= 0
+                self.y_gompertz_R102 = (self.V_normal_CH4_acum_V102/self.SV_R102_gL)*self.VR2
 
                 if self.OperationMode == 1 or self.OperationMode == 2:
                     pass
@@ -982,7 +1080,7 @@ class BiogasPlantDT:
                 
                 elif self.OperationMode == 4 or self.OperationMode == 5:
                     self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
-                    self.organic_charge_R101_out_1 = self.SV_R102*self.rho*self.Q_P102*24
+                    self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
     
     def Energy_Biogas (self): 
         self.LHV_V101 = self.Thermo.LHV(molCH4 = self.mol_CH4_V101, molCO2 = self.mol_CO2_V101, molH2S = self.mol_H2S_V101, molO2 = self.mol_O2_V101, molH2 = self.mol_H2_V101)
@@ -1021,7 +1119,8 @@ class BiogasPlantDT:
                                     "mol_sus_int_ini_R101":[self.mol_sus_int_ini_R101],
                                     "Csus_ini_R101":[self.Csus_ini_R101],
                                     "SV_R101":[self.SV_R101],
-                                    "ST_R101":[self.ST_R101]
+                                    "ST_R101":[self.ST_R101],
+                                    "yt_R101":[self.y_gompertz_R101]
                                     })
             
         elif self.OperationMode == 2:
@@ -1035,7 +1134,7 @@ class BiogasPlantDT:
                                      "V_normal_H2S_V101":[self.V_normal_H2S_V101],
                                      "V_normal_O2_V101":[self.V_normal_O2_V101],
                                      "V_normal_H2_V101":[self.V_normal_H2_V101],
-                                     "mol_CH4_V101":[self.mol_CH4_R101],
+                                     "mol_CH4_V101":[self.mol_CH4_V101],
                                      "mol_CO2_V101":[self.mol_CO2_V101],
                                      "mol_H2S_V101":[self.mol_H2S_V101],
                                      "mol_O2_V101":[self.mol_O2_V101],
@@ -1050,7 +1149,8 @@ class BiogasPlantDT:
                                      "mol_sus_int_ini_R101":[self.mol_sus_int_ini_R101],
                                      "Csus_ini_R101":[self.Csus_ini_R101],
                                      "SV_R101":[self.SV_R101],
-                                     "ST_R101":[self.ST_R101]
+                                     "ST_R101":[self.ST_R101],
+                                     "yt_R101":[self.y_gompertz_R101]
                                     })
             
         elif self.OperationMode == 3:
@@ -1099,7 +1199,9 @@ class BiogasPlantDT:
                                      "mol_sus_int_ini_R102":[self.mol_sus_int_ini_R102],
                                      "Csus_ini_R102":[self.Csus_ini_R102],
                                      "SV_R102":[self.SV_R102],
-                                     "ST_R102":[self.ST_R102]
+                                     "ST_R102":[self.ST_R102],
+                                     "yt_R101":[self.y_gompertz_R101],
+                                     "yt_R102":[self.y_gompertz_R102]
                                     })
             
         elif self.OperationMode == 4 or self.OperationMode == 5:
@@ -1149,7 +1251,9 @@ class BiogasPlantDT:
                                      "mol_sus_int_ini_R102":[self.mol_sus_int_ini_R102],
                                      "Csus_ini_R102":[self.Csus_ini_R102],
                                      "SV_R102":[self.SV_R102],
-                                     "ST_R102":[self.ST_R102]
+                                     "ST_R102":[self.ST_R102],
+                                     "yt_R101":[self.y_gompertz_R101],
+                                     "yt_R102":[self.y_gompertz_R102]
                                     })
 
         self.DT_Data = pd.concat([self.DT_Data, new_row], ignore_index=True)
