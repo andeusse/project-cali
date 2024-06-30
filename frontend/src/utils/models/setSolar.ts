@@ -123,13 +123,13 @@ export const setSolar = (
         break;
       case OperationModeType.Mode5:
         newState.monocrystallinePanel.isConnected = true;
-        newState.policrystallinePanel.isConnected = true;
+        newState.policrystallinePanel.isConnected = false;
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
 
         newState.monocrystallinePanel.isConnectedDisabled = false;
         newState.policrystallinePanel.isConnectedDisabled = false;
-        newState.flexPanel.isConnectedDisabled = true;
+        newState.flexPanel.isConnectedDisabled = false;
 
         newState.isBattery2 = false;
 
@@ -245,6 +245,17 @@ export const setSolar = (
           newState.hybridInverter.isConnected = e.target.checked;
           break;
       }
+
+      if (newState.inputOperationMode === OperationModeType.Mode5) {
+        if (
+          newState.monocrystallinePanel.isConnected &&
+          newState.policrystallinePanel.isConnected &&
+          newState.flexPanel.isConnected
+        ) {
+          newState.flexPanel.isConnected = false;
+        }
+      }
+
       const allFalse =
         newState.monocrystallinePanel.isConnected ||
         newState.policrystallinePanel.isConnected ||
