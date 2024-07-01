@@ -46,6 +46,7 @@ class Turbine(Resource):
     turbine["inputActivePower"] = inputActivePower
     turbine["inputPowerFactor"] = inputPowerFactor
 
+    batteryState = data['isBatteryConnected']
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
     simulatedDirectCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
     simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
@@ -109,7 +110,7 @@ class Turbine(Resource):
     turbine["controllerEfficiency"] = twinHydro.n_controller
     turbine["inverterEfficiency"] = twinHydro.n_inverter
 
-    results = twinHydro.twinOutput(inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
+    results = twinHydro.twinOutput(batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
                                      controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
 

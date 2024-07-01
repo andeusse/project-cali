@@ -12,7 +12,7 @@ class TwinHydro:
     def turbineType (self, type):
         # Pelton
         if type == 1:
-            self.n_t = 75.0
+            self.n_t = 55.0
             self.H_min = 0.0
             self.H_max = 130.0
             self.Q_min = 0.1
@@ -22,7 +22,7 @@ class TwinHydro:
             self.V_t = 40.0
         # Turgo
         elif type == 2:
-            self.n_t = 75.0
+            self.n_t = 44.0
             self.H_min = 0.0
             self.H_max = 30.0
             self.Q_min = 8.0
@@ -77,7 +77,7 @@ class TwinHydro:
 
         return n_controller.x[0]
     
-    def twinOutput(self, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA):
+    def twinOutput(self, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA):
         
         self.inverterState = inverterState
         self.sinkState = sinkState
@@ -117,9 +117,9 @@ class TwinHydro:
         self.P_bat = self.P_CC - self.P_inv - self.P_sink # Potencia de la bateria, + carga, - descarga
         
         # Corriente de la batería
-        if SOC_0 > 0.0 or (SOC_0 == 0.0 and self.P_bat >= 0.0):
+        if (SOC_0 > 0.0 or (SOC_0 == 0.0 and self.P_bat >= 0.0)) and batteryState:
             self.I_bat = self.P_bat / self.V_CD
-        elif self.P_bat < 0.0:
+        elif self.P_bat < 0.0 or not batteryState:
             self.I_bat = 0.0
         # Corrección de capacidad por temperatura
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
@@ -139,14 +139,8 @@ class TwinHydro:
         # Cálculo de voltaje de batería
         self.V_bat = 12 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
         
-        # Condiciones límite de SOC
-        if self.SOC > 1.0:
-            self.SOC = 1.0
-            self.P_bat = (self.sigma_bat * delta_t / 100)
-            self.I_bat = self.P_bat / self.V_CD
-            self.P_CC = self.P_bat + self.P_inv
-        elif self.SOC <= 0.0:
-            self.SOC = 0.0
+        # Condiciones límite de batería
+        if not batteryState or self.SOC <= 0.0:
             if self.P_bat < 0.0:
                 self.P_CC = 0.0
                 self.P_inv = 0.0
@@ -159,7 +153,13 @@ class TwinHydro:
                 V_CDload = 0.0
             self.P_bat = 0.0
             self.I_bat = 0.0
-
+            if self.SOC <= 0.0:
+                self.SOC = 0.0
+        elif self.SOC > 1.0:
+            self.SOC = 1.0
+            self.P_bat = (self.sigma_bat * delta_t / 100)
+            self.I_bat = self.P_bat / self.V_CD
+            self.P_CC = self.P_bat + self.P_inv
         
         # Actualización de voltaje de CD
         if self.P_bat > 0 and self.V_bat < V_bulk:

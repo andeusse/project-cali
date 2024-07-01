@@ -59,6 +59,7 @@ class Solar(Resource):
     inverterState = data["offgridInverter"]["isConnected"]
     hybridState = data["hybridInverter"]["isConnected"]
     gridState = data["externalGridState"]
+    batteryState = data['isBatteryConnected']
 
     solarRadiation1 = (data["solarRadiation1"]["value"] if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS001'],2))
     solarRadiation2 = (data["solarRadiation2"]["value"] if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS002'],2))
@@ -166,7 +167,7 @@ class Solar(Resource):
     solarWind["hybridEfficiency"] = twinPVWF.n_hybrid
 
     if data["inputOperationMode"] == 'Mode2' and hybridState:
-      twinResults = twinPVWF.ongridTwinOutput(gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
+      twinResults = twinPVWF.ongridTwinOutput(batteryState, gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
                                 batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
                                 hybridChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
@@ -195,7 +196,7 @@ class Solar(Resource):
       solarWind['externalGridCurrent'] = twinResults[16]
       solarWind['hybridInverterOutputCurrent'] = twinResults[17]
     else:
-      twinResults = twinPVWF.offgridTwinOutput(simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
+      twinResults = twinPVWF.offgridTwinOutput(batteryState, simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
                                  batteryTemperature, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, 
                                  controllerChargeVoltageFloat, controllerChargingMinimunVoltage, PV_Voltage, WT_Voltage, 
                                  directCurrentLoadVoltage, inverterVoltage, delta_t*timeMultiplier)
