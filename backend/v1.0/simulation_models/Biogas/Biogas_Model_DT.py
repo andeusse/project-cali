@@ -1257,6 +1257,8 @@ class BiogasPlantDT:
                                     })
 
         self.DT_Data = pd.concat([self.DT_Data, new_row], ignore_index=True)
+    
+
 
         
 
