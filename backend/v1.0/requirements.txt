@@ -9,3 +9,4 @@ xalglib==3.16
 pymodbus==3.2.2
 numpy==1.26.4
 importlib-metadata==7.0.1
+python-dotenv==1.0.1
