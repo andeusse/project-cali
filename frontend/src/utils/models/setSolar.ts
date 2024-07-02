@@ -163,13 +163,21 @@ export const setSolar = (
             newState.controller.chargeVoltageBulk.value = 13.6;
             newState.controller.chargeVoltageFloat.value = 13.9;
             newState.controller.chargingMinimunVoltage.value = 11.5;
-          } else {
+          } else if (newState.inputOperationMode !== OperationModeType.Mode5) {
             newState.policrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
 
             newState.monocrystallinePanel.isConnectedDisabled = true;
             newState.policrystallinePanel.isConnectedDisabled = false;
             newState.flexPanel.isConnectedDisabled = false;
+          } else {
+            if (
+              newState.monocrystallinePanel.isConnected &&
+              newState.policrystallinePanel.isConnected &&
+              newState.flexPanel.isConnected
+            ) {
+              newState.flexPanel.isConnected = false;
+            }
           }
           break;
         case 'policrystallinePanel':
@@ -182,13 +190,21 @@ export const setSolar = (
             newState.controller.chargeVoltageBulk.value = 13.6;
             newState.controller.chargeVoltageFloat.value = 13.9;
             newState.controller.chargingMinimunVoltage.value = 11.5;
-          } else {
+          } else if (newState.inputOperationMode !== OperationModeType.Mode5) {
             newState.monocrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
 
             newState.monocrystallinePanel.isConnectedDisabled = false;
             newState.policrystallinePanel.isConnectedDisabled = true;
             newState.flexPanel.isConnectedDisabled = false;
+          } else {
+            if (
+              newState.monocrystallinePanel.isConnected &&
+              newState.policrystallinePanel.isConnected &&
+              newState.flexPanel.isConnected
+            ) {
+              newState.flexPanel.isConnected = false;
+            }
           }
           break;
         case 'flexPanel':
@@ -201,13 +217,21 @@ export const setSolar = (
             newState.controller.chargeVoltageBulk.value = 13.6;
             newState.controller.chargeVoltageFloat.value = 13.9;
             newState.controller.chargingMinimunVoltage.value = 11.5;
-          } else {
+          } else if (newState.inputOperationMode !== OperationModeType.Mode5) {
             newState.monocrystallinePanel.isConnected = true;
             newState.policrystallinePanel.isConnected = true;
 
             newState.monocrystallinePanel.isConnectedDisabled = false;
             newState.policrystallinePanel.isConnectedDisabled = false;
             newState.flexPanel.isConnectedDisabled = true;
+          } else {
+            if (
+              newState.monocrystallinePanel.isConnected &&
+              newState.policrystallinePanel.isConnected &&
+              newState.flexPanel.isConnected
+            ) {
+              newState.policrystallinePanel.isConnected = false;
+            }
           }
           break;
         case 'cadmiumTelluridePanel':
@@ -244,16 +268,6 @@ export const setSolar = (
           }
           newState.hybridInverter.isConnected = e.target.checked;
           break;
-      }
-
-      if (newState.inputOperationMode === OperationModeType.Mode5) {
-        if (
-          newState.monocrystallinePanel.isConnected &&
-          newState.policrystallinePanel.isConnected &&
-          newState.flexPanel.isConnected
-        ) {
-          newState.flexPanel.isConnected = false;
-        }
       }
 
       const allFalse =
