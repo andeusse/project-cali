@@ -213,9 +213,15 @@ class Biogas(Resource):
       Biogas_Plant.Pump101(FT_P101=biogas_input["inputPump101StartsPerDay"], TTO_P101=biogas_input["inputPump101StartTime"], Q_P101=biogas_input["inputPump101Flow"])
       Biogas_Plant.Pump102(FT_P102=biogas_input["inputPump102StartsPerDay"], TTO_P102=biogas_input["inputPump102StartTime"], Q_P102=biogas_input["inputPump102Flow"])
       Biogas_Plant.Data_simulation(Temperature_R101 = biogas_input["inputTemperature101"], Temperature_R102 = biogas_input["inputTemperature102"])
-      Biogas_Plant.ReactorSimulation(Model = "Arrhenius", A_R101=1, B_R101 = 1, C_R101=1, A_R102=1, B_R102=1, C_R102=1)
+      Biogas_Plant.ReactorSimulation(Model = "Arrhenius", A_R101=100, B_R101 = 1000000, C_R101=1, A_R102=100, B_R102=1000000, C_R102=1)
 
-    
+      print(Biogas_Plant.Operation_Data)
+      # print(Biogas_Plant.x_R101)
+      # try:
+      #   print(Biogas_Plant.x_R102)
+      # except NameError:
+      #   pass
+
 
 
     # #print(biogas_input)

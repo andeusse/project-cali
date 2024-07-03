@@ -210,11 +210,13 @@ class BiogasPlantSimulation:
             self.Q_P104 = (self.Q_time/self.TTO_P104)*60
         else:
             self.Q_P104= float(0)
+            self.Csus_ini = 0
         
         self.TimeCounterPump_P104 = self.TimeCounterPump_P104 + self.tp
 
         if self.TimeCounterPump_P104>=self.TurnOnDailyStep_P104*3600:
             self.TimeCounterPump_P104 = 0
+        
 
         #testing model    
         print("Tiempo de encendido de la bomba P_104: "+str(self.TimeCounterPump_P104))
@@ -324,19 +326,33 @@ class BiogasPlantSimulation:
     def ReactorSimulation(self, Model, A_R101, B_R101, C_R101, A_R102=1, B_R102=1, C_R102=1):
         self.Model = Model
 
-        def model_Arrehenius(C, t, K, Ea, VR, T_func, Q_func, Csus_ini_func):
+        def model_Arrehenius(C, t, K, Ea, VR, T_func, Q_func_1, Q_func_2, Csus_ini_func_1, Csus_ini_func_2, Operation):
             R = 8.314
             T=T_func(t)
-            Q=Q_func(t)
-            Csus_ini = Csus_ini_func(t)
-            dCsus_dt = ((Q / VR) * (Csus_ini - C)) - (C * K * np.exp(-Ea/(R*T))) / VR
+            Q_1=Q_func_1(t)
+            Q_2=Q_func_2(t)
+            Csus_ini_1 = Csus_ini_func_1(t)
+            Csus_ini_2 = Csus_ini_func_2(t)
+            if Operation == 1:         #Sin recirculación
+                dCsus_dt = ((Q_1 / VR) * (Csus_ini_1 - C)) - (C * K * np.exp(-Ea/(R*T))) / VR
+            elif Operation == 2:       #dos entradas 
+                dCsus_dt = (Q_1 * Csus_ini_1)/VR + (Q_2 * Csus_ini_2)/VR - ((Q_1+Q_2)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
+            elif Operation == 3:       #Recirculación interna
+                dCsus_dt = (Q_1 * Csus_ini_1)/VR + (Q_2 * C)/VR - ((Q_1)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
             return dCsus_dt
         
-        def model_ADM1(C, t, K, VR, Q_func, Csus_ini_func):
+        def model_ADM1(C, t, K, VR,  Q_func_1, Q_func_2, Csus_ini_func_1, Csus_ini_func_2, Operation):
             R = 8.314
-            Q=Q_func(t)
-            Csus_ini = Csus_ini_func(t)
-            dCsus_dt = ((Q / VR) * (Csus_ini - C)) - (C * K) / VR
+            Q_1=Q_func_1(t)
+            Q_2=Q_func_2(t)
+            Csus_ini_1 = Csus_ini_func_1(t)
+            Csus_ini_2 = Csus_ini_func_2(t)
+            if Operation == 1:         #Sin recirculación
+                dCsus_dt = ((Q_1 / VR) * (Csus_ini_1 - C)) - (C * K) / VR
+            elif Operation == 2:       #dos entradas 
+                dCsus_dt = (Q_1 * Csus_ini_1)/VR + (Q_2 * Csus_ini_2)/VR - ((Q_1 + Q_2)*C)/VR - (C * K) / VR
+            elif Operation == 3:       #Recirculación interna
+                dCsus_dt = (Q_1 * Csus_ini_1)/VR + (Q_2 * C)/VR - ((Q_1 + Q_2)*C)/VR - (C * K) / VR
             return dCsus_dt
         
         def model_Gompertz(t, ym, U, L):
@@ -365,106 +381,68 @@ class BiogasPlantSimulation:
     
         if self.Model == "Arrhenius":
 
-            if self.OperationMode == 1:
-                time = self.Operation_Data.time.tolist()
-                Qi = self.Operation_Data.Q_P104.tolist()
-                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
-                Csus_ini = self.Operation_Data.Csus_ini.tolist()
-                y0 = self.Operation_Data.Csus_ini_R101[0]
-                VR =self.VR1
-                Q_func = lambda t: np.interp(t, time, Qi)
-                T_func = lambda t: np.interp(t, time, temperatures_R101)
-                Csus_ini_func = lambda t: np.interp(t, time, Csus_ini)
-                self.Csus_ini_R101 = odeint(model_Arrehenius, y0, time, args=(self.K_R101, self.Ea_R101, VR, T_func, Q_func, Csus_ini_func)).flatten()
+            if self.OperationMode in [1,2] :
+                # R_101 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
+                VR_R101 = self.VR1                                                                     #Reactor volume
+                T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
+                T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
+                Qin_R101_1 = self.Operation_Data.Q_P104.astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
+                Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
+                Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101_1, Q_func_R101_1, Csus_in_func_R101_1, Csus_in_func_R101_1, 1)).flatten()
                 self.Csus_ini_R101 = self.Csus_ini_R101[-1]
-
-            elif self.OperationMode == 2:
-                time = self.Operation_Data.time.tolist()
-                Qi = (self.Operation_Data.Q_P104 + self.Operation_Data.Q_P101).tolist()
-                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
-                Csus_ini = (self.Operation_Data.Csus_ini + self.Operation_Data.Csus_ini_R101).tolist()
-                y0 = self.Operation_Data.Csus_ini_R101[0]
-                VR =self.VR1
-                Q_func = lambda t: np.interp(t, time, Qi)
-                T_func = lambda t: np.interp(t, time, temperatures_R101)
-                Csus_ini_func = lambda t: np.interp(t, time, Csus_ini)
-                self.Csus_ini_R101 = odeint(model_Arrehenius, y0, time, args=(self.K_R101, self.Ea_R101, VR, T_func, Q_func, Csus_ini_func)).flatten()
-                self.Csus_ini_R101 = self.Csus_ini_R101[-1]    
-
-            elif self.OperationMode == 3:
-                #Correr R_101
-                time = self.Operation_Data.time.tolist()
-                Qi_R101 = self.Operation_Data.Q_P104.tolist()
-                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
-                Csus_ini = self.Operation_Data.Csus_ini.tolist()
-                y0_R101 = self.Operation_Data.Csus_ini_R101[0]
-                VR_R101 = self.VR1
-                Q_func_R101 = lambda t: np.interp(t, time, Qi_R101)
-                T_func_R101 = lambda t: np.interp(t, time, temperatures_R101)
-                Csus_ini_func_R101 = lambda t: np.interp(t, time, Csus_ini)
-                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101, Csus_ini_func_R101)).flatten()
-                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
-
-                #Correr R_102
-                Qi_R102 = self.Operation_Data.Q_P101.tolist()
-                temperatures_R102 = (self.Operation_Data.Temp_R102 + 273.15).tolist()
-                Csus_ini_R102 = self.Operation_Data.Csus_ini_R101.tolist()
-                y0_R102 = self.Operation_Data.Csus_ini_R102[0]
-                VR_R102 = self.VR2
-                Q_func_R102 = lambda t: np.interp(t, time, Qi_R102)
-                T_func_R102 = lambda t: np.interp(t, time, temperatures_R102)
-                Csus_ini_func_R102 = lambda t: np.interp(t, time, Csus_ini_R102)
-                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102, Csus_ini_func_R102)).flatten()
-                self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+                try:
+                    self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
+                except ZeroDivisionError:
+                    self.x_R101 = 0
             
-            elif self.OperationMode == 4:
-                #Correr R_101
-                time = self.Operation_Data.time.tolist()
-                Qi_R101 = (self.Operation_Data.Q_P104 + self.Operation_Data.Q_P102).tolist()
-                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
-                Csus_ini = (self.Operation_Data.Csus_ini + self.Operation_Data.Csus_ini_R102).tolist()
-                y0_R101 = self.Operation_Data.Csus_ini_R101[0]
-                VR_R101 = self.VR1
-                Q_func_R101 = lambda t: np.interp(t, time, Qi_R101)
-                T_func_R101 = lambda t: np.interp(t, time, temperatures_R101)
-                Csus_ini_func_R101 = lambda t: np.interp(t, time, Csus_ini)
-                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101, Csus_ini_func_R101)).flatten()
+            elif self.OperationMode == 3 :
+                # R_101 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
+                VR_R101 = self.VR1                                                                     #Reactor volume
+                T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
+                T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
+                Qin_R101_1 = self.Operation_Data.Q_P104.astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
+                Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
+                Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                
+                #R101 Solution
+                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101_1, Q_func_R101_1, Csus_in_func_R101_1, Csus_in_func_R101_1, 1)).flatten()
                 self.Csus_ini_R101 = self.Csus_ini_R101[-1]
-
-                #correr R_102
-                Qi_R102 = self.Operation_Data.Q_P101.tolist()
-                temperatures_R102 = (self.Operation_Data.Temp_R102 + 273.15).tolist()
-                Csus_ini_R102 = (self.Operation_Data.Csus_ini_R101).tolist()
-                y0_R102 = self.Operation_Data.Csus_ini_R102[0]
-                VR_R102 = self.VR2
-                Q_func_R102 = lambda t: np.interp(t, time, Qi_R102)
-                T_func_R102 = lambda t: np.interp(t, time, temperatures_R102)
-                Csus_ini_func_R102 = lambda t: np.interp(t, time, Csus_ini_R102)
-                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102, Csus_ini_func_R102)).flatten()
+                try:
+                    self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
+                except ZeroDivisionError:
+                    self.x_R101 = 0
+                
+                #R_102 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
+                VR_R102 = self.VR2                                                                     #Reactor volume
+                T_R102 = self.Operation_Data.Temp_R102.astype(float)                                   #Temperatures Vector
+                T_func_R102 = lambda t: np.interp(t, time, T_R102)                                     #Temperatures in time vector                
+                Qin_R102_1 = self.Operation_Data.Q_P101.astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
+                Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
+                Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
+                
+                #R102 Solution
+                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102_1, Q_func_R101_1, Csus_in_func_R102_1, Csus_in_func_R102_1, 1)).flatten()
                 self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+                try:
+                    self.x_R102 = (max(self.Operation_Data.Csus_ini_R102) - self.Operation_Data.Csus_ini_R102.iloc[-1])/max(self.Operation_Data.Csus_ini_R102)
+                except ZeroDivisionError:
+                    self.x_R102 = 0
+
+
             
-            elif self.OperationMode == 5:
-                #Correr R_101
-                time = self.Operation_Data.time.tolist()
-                Qi_R101 = self.Operation_Data.Q_P104.tolist()
-                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
-                Csus_ini = self.Operation_Data.Csus_ini.tolist()
-                y0_R101 = self.Operation_Data.Csus_ini_R101[0]
-                VR_R101 = self.VR1
-                Q_func_R101 = lambda t: np.interp(t, time, Qi_R101)
-                T_func_R101 = lambda t: np.interp(t, time, temperatures_R101)
-                Csus_ini_func_R101 = lambda t: np.interp(t, time, Csus_ini)
-                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101, Csus_ini_func_R101)).flatten()
-                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+            
+            
+           
 
-                #correr R_102
-                Qi_R102 = (self.Operation_Data.Q_P101 + self.Operation_Data.Q_P102).tolist()
-                temperatures_R102 = (self.Operation_Data.Temp_R102 + 273.15).tolist()
-                Csus_ini_R102 = (self.Operation_Data.Csus_ini_R101 + self.Operation_Data.Csus_ini_R102).tolist()
-                y0_R102 = self.Operation_Data.Csus_ini_R102[0]
-                VR_R102 = self.VR2
-                Q_func_R102 = lambda t: np.interp(t, time, Qi_R102)
-                T_func_R102 = lambda t: np.interp(t, time, temperatures_R102)
-                Csus_ini_func_R102 = lambda t: np.interp(t, time, Csus_ini_R102)
-                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102, Csus_ini_func_R102)).flatten()
-                self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+            
+            
