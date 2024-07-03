@@ -382,7 +382,7 @@ class BiogasPlantDT:
                 time = self.Operation_Data.time.tolist()
                 Qi = (self.Operation_Data.Q_P104 + self.Operation_Data.Q_P101).tolist()
                 temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
-                Csus_ini = self.Operation_Data.Csus_ini.tolist()
+                Csus_ini = (self.Operation_Data.Csus_ini + self.Operation_Data.Csus_ini_R101).tolist()
                 y0 = self.Operation_Data.Csus_ini_R101[0]
                 VR =self.VR1
                 Q_func = lambda t: np.interp(t, time, Qi)
@@ -419,3 +419,52 @@ class BiogasPlantDT:
             
             elif self.OperationMode == 4:
                 #Correr R_101
+                time = self.Operation_Data.time.tolist()
+                Qi_R101 = (self.Operation_Data.Q_P104 + self.Operation_Data.Q_P102).tolist()
+                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
+                Csus_ini = (self.Operation_Data.Csus_ini + self.Operation_Data.Csus_ini_R102).tolist()
+                y0_R101 = self.Operation_Data.Csus_ini_R101[0]
+                VR_R101 = self.VR1
+                Q_func_R101 = lambda t: np.interp(t, time, Qi_R101)
+                T_func_R101 = lambda t: np.interp(t, time, temperatures_R101)
+                Csus_ini_func_R101 = lambda t: np.interp(t, time, Csus_ini)
+                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101, Csus_ini_func_R101)).flatten()
+                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+
+                #correr R_102
+                Qi_R102 = self.Operation_Data.Q_P101.tolist()
+                temperatures_R102 = (self.Operation_Data.Temp_R102 + 273.15).tolist()
+                Csus_ini_R102 = (self.Operation_Data.Csus_ini_R101).tolist()
+                y0_R102 = self.Operation_Data.Csus_ini_R102[0]
+                VR_R102 = self.VR2
+                Q_func_R102 = lambda t: np.interp(t, time, Qi_R102)
+                T_func_R102 = lambda t: np.interp(t, time, temperatures_R102)
+                Csus_ini_func_R102 = lambda t: np.interp(t, time, Csus_ini_R102)
+                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102, Csus_ini_func_R102)).flatten()
+                self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+            
+            elif self.OperationMode == 5:
+                #Correr R_101
+                time = self.Operation_Data.time.tolist()
+                Qi_R101 = self.Operation_Data.Q_P104.tolist()
+                temperatures_R101 = (self.Operation_Data.Temp_R101 + 273.15).tolist()
+                Csus_ini = self.Operation_Data.Csus_ini.tolist()
+                y0_R101 = self.Operation_Data.Csus_ini_R101[0]
+                VR_R101 = self.VR1
+                Q_func_R101 = lambda t: np.interp(t, time, Qi_R101)
+                T_func_R101 = lambda t: np.interp(t, time, temperatures_R101)
+                Csus_ini_func_R101 = lambda t: np.interp(t, time, Csus_ini)
+                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101, Csus_ini_func_R101)).flatten()
+                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+
+                #correr R_102
+                Qi_R102 = (self.Operation_Data.Q_P101 + self.Operation_Data.Q_P102).tolist()
+                temperatures_R102 = (self.Operation_Data.Temp_R102 + 273.15).tolist()
+                Csus_ini_R102 = (self.Operation_Data.Csus_ini_R101 + self.Operation_Data.Csus_ini_R102).tolist()
+                y0_R102 = self.Operation_Data.Csus_ini_R102[0]
+                VR_R102 = self.VR2
+                Q_func_R102 = lambda t: np.interp(t, time, Qi_R102)
+                T_func_R102 = lambda t: np.interp(t, time, temperatures_R102)
+                Csus_ini_func_R102 = lambda t: np.interp(t, time, Csus_ini_R102)
+                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102, Csus_ini_func_R102)).flatten()
+                self.Csus_ini_R102 = self.Csus_ini_R102[-1]

@@ -34,7 +34,6 @@ class BiogasPlantDT:
         self.tp = tp
         #Initial values
         #Global time
-        #self.TotalTime = 0
         #Pumps
         self.TimeCounterPump_P104 = 0
         self.TimeCounterPump_P101 = 0
@@ -132,6 +131,7 @@ class BiogasPlantDT:
         if self.OperationMode ==1:
             columns = ["timestamp"
             , "Q_P104"
+            , "Csus_ini"
             , "Temp_R101"
             , "V_normal_V101"
             , "V_normal_CH4_V101"
@@ -160,6 +160,7 @@ class BiogasPlantDT:
         elif self.OperationMode == 2:
             columns = ["timestamp"
             , "Q_P104"
+            , "Csus_ini"
             , "Q_P101"
             , "Temp_R101"
             , "V_normal_V101"
@@ -189,6 +190,7 @@ class BiogasPlantDT:
         elif self.OperationMode == 3:
             columns = ["timestamp"
             , "Q_P104"
+            , "Csus_ini"
             , "Q_P101"
             , "Temp_R101" 
             , "Temp_R102"
@@ -239,6 +241,7 @@ class BiogasPlantDT:
         elif self.OperationMode == 4 or self.OperationMode == 5:
             columns = ["timestamp"
             , "Q_P104"
+            , "Csus_ini"
             , "Q_P101"
             , "Q_P102"
             , "Temp_R101" 
@@ -1097,6 +1100,7 @@ class BiogasPlantDT:
         if self.OperationMode == 1:
             new_row = pd.DataFrame({"timestamp": [self.timestamp],
                                     "Q_P104" : [self.Q_P104],
+                                    "Csus_ini" : [self.Csus_ini],
                                     "Temp_R101": [self.Temp_R101],
                                     "V_normal_V101": [self.V_normal_V101],
                                     "V_normal_CH4_V101": [self.V_normal_CH4_V101],
@@ -1126,6 +1130,7 @@ class BiogasPlantDT:
         elif self.OperationMode == 2:
             new_row = pd.DataFrame({"timestamp":[self.timestamp],
                                      "Q_P104":[self.Q_P104],
+                                     "Csus_ini" : [self.Csus_ini],
                                      "Q_P101":[self.Q_P101],
                                      "Temp_R101":[self.Temp_R101],
                                      "V_normal_V101":[self.V_normal_V101],
@@ -1156,6 +1161,7 @@ class BiogasPlantDT:
         elif self.OperationMode == 3:
             new_row = pd.DataFrame({"timestamp":[self.timestamp],
                                      "Q_P104":[self.Q_P104],
+                                     "Csus_ini" : [self.Csus_ini],
                                      "Q_P101":[self.Q_P101],
                                      "Temp_R101":[self.Temp_R101], 
                                      "Temp_R102":[self.Temp_R102],
@@ -1207,6 +1213,7 @@ class BiogasPlantDT:
         elif self.OperationMode == 4 or self.OperationMode == 5:
              new_row = pd.DataFrame({"timestamp":[self.timestamp],
                                      "Q_P104":[self.Q_P104],
+                                     "Csus_ini" : [self.Csus_ini],
                                      "Q_P101":[self.Q_P101],
                                      "Q_P102":[self.Q_P102],
                                      "Temp_R101":[self.Temp_R101], 
