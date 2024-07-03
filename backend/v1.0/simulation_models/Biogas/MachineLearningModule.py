@@ -141,7 +141,7 @@ class BiogasModelTrain:
                 if self.Model == "Arrhenius":self.Eaini_R101 = self.Ea_R101
 
             Csus_exp_train_R101 = self.train_set.Csus_ini_R101.tolist()
-            TE101_train = self.train_set.Temp_R101.tolist()
+            TE101_train = (self.train_set.Temp_R101 + 273.15).tolist()
             if self.OperationMode == 1: 
                 Q_in_R101 = self.train_set.Q_P104.tolist()
             
@@ -156,7 +156,7 @@ class BiogasModelTrain:
 
                 Q_in_R101 = self.train_set.Q_P104.tolist()
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist()
-                TE102_train = self.train_set.Temp_102.tolist()
+                TE102_train = (self.train_set.Temp_102 +273.15).tolist()
                 Q_in_R102 = self.train_set.Q_P101.tolist()
 
                 self.Optimization_R102 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R102[0], K = self.Kini_R102, Ea = self.Eaini_R102) 
@@ -171,7 +171,7 @@ class BiogasModelTrain:
                 
                 Q_in_R101 = self.train_set.Q_P104.tolist()
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist()
-                TE102_train = self.train_set.Temp_102.tolist()
+                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
                 Q_in_R102 = (self.train_set.Q_P101 + self.train_set.Q_P102).tolist()
 
                 self.Optimization_R102 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R102[0], K = self.Kini_R102, Ea = self.Eaini_R102) 
@@ -245,16 +245,7 @@ class BiogasModelTrain:
                                         "Ea_R101": [self.Ea_R101],
                                         "K_R102": [self.K_R102],
                                         "Ea_R102" : [self.Ea_R102]})
-                
-
-
-            
-
-                                    
-
-                                
-
-                
+                        
         self.train_data = pd.concat([self.train_data, new_row], ignore_index=True)
     
 
