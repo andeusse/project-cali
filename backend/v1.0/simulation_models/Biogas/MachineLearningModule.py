@@ -143,7 +143,7 @@ class BiogasModelTrain:
                 self.Kini_R101 = self.K_R101
                 if self.Model == "Arrhenius":self.Eaini_R101 = self.Ea_R101
             
-            #R_101 Conditions
+            #R_101 general Conditions
             Csus_exp_train_R101 = self.train_set.Csus_ini_R101.tolist()
             TE101_train = (self.train_set.Temp_R101 + 273.15).tolist()
             

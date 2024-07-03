@@ -6,7 +6,7 @@ import numpy as np
 from scipy.integrate import odeint
 
 
-class BiogasPlantDT:
+class BiogasPlantSimulation:
 
     def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, 
                  ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101=1000,
