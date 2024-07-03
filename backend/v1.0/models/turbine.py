@@ -48,7 +48,6 @@ class Turbine(Resource):
 
     batteryState = data['isBatteryConnected']
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
-    simulatedDirectCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 25.0
     simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
     if "simulatedSinkLoadState" in data:
       simulatedSinkLoadState = data["simulatedSinkLoadState"]
@@ -110,6 +109,31 @@ class Turbine(Resource):
     turbine["controllerEfficiency"] = twinHydro.n_controller
     turbine["inverterEfficiency"] = twinHydro.n_inverter
 
+    if "simulatedDirectCurrentVoltage" in data:
+      simulatedDirectCurrentVoltage = data["simulatedDirectCurrentVoltage"]
+    else:
+      P_CC = (P_h * twinHydro.n_controller / 100) - inputDirectCurrentPower
+      P_inv = (inputActivePower / abs(inputPowerFactor)) / (twinHydro.n_inverter / 100)
+      P_bat = P_CC - P_inv
+      if P_bat < 0.0:
+        batteryCurrent = abs(P_bat / 25.21)
+        if batteryCurrent <= 7.5:
+          initialVoltage = 25.92
+        elif batteryCurrent <= 15:
+          initialVoltage = 25.68
+        elif batteryCurrent <= 37.5:
+          initialVoltage = 25.13
+        elif batteryCurrent <= 82.5:
+          initialVoltage = 24.84
+        else:
+          initialVoltage = 24.48
+        simulatedDirectCurrentVoltage = initialVoltage
+      else:
+        if batteryStateOfCharge >= 50:
+          simulatedDirectCurrentVoltage = 24.6
+        else:
+          simulatedDirectCurrentVoltage = 24.0
+
     results = twinHydro.twinOutput(batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
                                      controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
@@ -138,5 +162,6 @@ class Turbine(Resource):
     turbine["directCurrentLoadPower"] = results[19]
     turbine["directCurrentLoadVoltage"] = results[20]
     turbine["directCurrentLoadCurrent"] = results[21]*1000
+    turbine['batteryState'] = batteryState
 
     return {"model": turbine}

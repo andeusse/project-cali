@@ -88,7 +88,6 @@ class Solar(Resource):
 
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + int(data["isBattery2"]) * data["battery2"]["stateOfCharge"]["value"]) / (1 + int(data["isBattery2"]))
-    directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
@@ -166,6 +165,8 @@ class Solar(Resource):
     solarWind["inverterEfficiency"] = twinPVWF.n_inverter
     solarWind["hybridEfficiency"] = twinPVWF.n_hybrid
 
+    directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 13.0 * (1 + (not isParallel))
+
     if data["inputOperationMode"] == 'Mode2' and hybridState:
       twinResults = twinPVWF.ongridTwinOutput(batteryState, gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
                                 batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
@@ -229,5 +230,7 @@ class Solar(Resource):
       solarWind['batteryCurrent'] = twinResults[19]
       solarWind['inverterOutputCurrent'] = twinResults[20]
       solarWind['inverterInputCurrent'] = twinResults[21]
+    
+    solarWind['batteryState'] = batteryState
 
     return {"model": solarWind}
