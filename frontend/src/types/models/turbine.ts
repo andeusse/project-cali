@@ -915,7 +915,7 @@ export const PELTON_TURBINE: InputType[] = [
   },
   {
     disabled: true,
-    value: 75,
+    value: 55,
     tooltip: 'Eficiencia de la turbina',
     unit: '%',
     variableString: 'η',
@@ -966,7 +966,7 @@ export const TURGO_TURBINE: InputType[] = [
   },
   {
     disabled: true,
-    value: 75,
+    value: 45,
     tooltip: 'Eficiencia de la turbina',
     unit: '%',
     variableString: 'η',
