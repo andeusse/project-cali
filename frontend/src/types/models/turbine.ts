@@ -56,6 +56,7 @@ export type TurbineOutput = {
   batteryCurrent: number;
   batteryPower: number;
   batteryTemperature?: number;
+  batteryState: number;
   directCurrentLoadPower: number;
   directCurrentLoadVoltage: number;
   directCurrentLoadCurrent: number;
@@ -87,6 +88,7 @@ export type TurbineOutputHistoric = CommonGraphType & {
   batteryCurrent: number[];
   batteryPower: number[];
   batteryTemperature?: number[];
+  batteryState: number[];
   directCurrentLoadPower: number[];
   directCurrentLoadVoltage: number[];
   directCurrentLoadCurrent: number[];
@@ -435,10 +437,20 @@ export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 2580,
+    y: 1780,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura batería',
     variable: 'batteryTemperature',
     x: 2580,
-    y: 1780,
+    y: 1860,
     diagramName: 'Temperatura',
     unit: '°C',
     fixed: 1,
@@ -701,10 +713,20 @@ export const TURGO_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 2580,
+    y: 1780,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura batería',
     variable: 'batteryTemperature',
     x: 2580,
-    y: 1780,
+    y: 1860,
     diagramName: 'Temperatura',
     unit: '°C',
     fixed: 1,

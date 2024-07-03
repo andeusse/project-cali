@@ -81,16 +81,12 @@ const SolarDiagram = (props: Props) => {
           <g>
             <image href={mode1CadmioMode2Diagram}></image>
             <image
-              href={
-                solarWind.directCurrentLoadPower.value !== 0
-                  ? cargaDCOn
-                  : cargaDCOff
-              }
+              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
               transform="translate(1730 1700) scale(0.8 0.8)"
             ></image>
             <image
               href={
-                solarWind.alternCurrentLoadPower.value !== 0 &&
+                data?.inverterActivePower !== 0 &&
                 (solarWind.offgridInverter.isConnected ||
                   solarWind.hybridInverter.isConnected)
                   ? cargaACOn
@@ -116,11 +112,7 @@ const SolarDiagram = (props: Props) => {
           <g>
             <image href={mode1Mode3Diagram}></image>
             <image
-              href={
-                solarWind.directCurrentLoadPower.value !== 0
-                  ? cargaDCOn
-                  : cargaDCOff
-              }
+              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
               transform="translate(1730 1700) scale(0.8 0.8)"
             ></image>
             <image
@@ -141,9 +133,7 @@ const SolarDiagram = (props: Props) => {
               <image href={mode2HybridDiagram}></image>
               <image
                 href={
-                  solarWind.alternCurrentLoadPower.value !== 0
-                    ? cargaACOn
-                    : cargaACOff
+                  data?.hybridInverterActivePower !== 0 ? cargaACOn : cargaACOff
                 }
                 transform="translate(2450 1100) scale(1 1)"
               ></image>
@@ -163,11 +153,7 @@ const SolarDiagram = (props: Props) => {
           <g>
             <image href={mode4Diagram}></image>
             <image
-              href={
-                solarWind.directCurrentLoadPower.value !== 0
-                  ? cargaDCOn
-                  : cargaDCOff
-              }
+              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
               transform="translate(1730 1700) scale(0.8 0.8)"
             ></image>
           </g>
@@ -177,11 +163,7 @@ const SolarDiagram = (props: Props) => {
           <g>
             <image href={mode5Diagram}></image>
             <image
-              href={
-                solarWind.directCurrentLoadPower.value !== 0
-                  ? cargaDCOn
-                  : cargaDCOff
-              }
+              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
               transform="translate(1730 1700) scale(0.8 0.8)"
             ></image>
             <image

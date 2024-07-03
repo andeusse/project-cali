@@ -96,12 +96,12 @@ const TurbineDiagram = (props: Props) => {
           ></image>
         )}
         <image
-          href={turbine.inputActivePower.value !== 0 ? cargaACOn : cargaACOff}
+          href={data?.inverterActivePower !== 0 ? cargaACOn : cargaACOff}
           transform="translate(3000 1540) scale(1 1)"
         ></image>
         {turbine.turbineType === TurbineType.Turgo && (
           <image
-            href={turbine.inputDirectCurrentPower ? cargaDCOn : cargaDCOff}
+            href={data?.directCurrentLoadPower ? cargaDCOn : cargaDCOff}
             transform="translate(1880 1950) scale(0.8 0.8)"
           ></image>
         )}

@@ -841,7 +841,7 @@ const Solar = () => {
                 ) && (
                   <>
                     <Grid item xs={12} md={12} xl={12}>
-                      <h3>Parámetros carga CD</h3>
+                      <h3>Parámetros carga CC</h3>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <ToggleCustomNumberField

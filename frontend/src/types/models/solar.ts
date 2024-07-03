@@ -305,12 +305,14 @@ export type SolarWindOutput = {
   batteryStateOfCharge: number;
   batteryTemperature: number;
   batteryVoltage: number;
+  batteryState: number;
   chargeCycle: number;
   controllerPower: number;
   controllerCurrent: number;
   directCurrentLoadVoltage: number;
   directCurrentVoltage: number;
   directCurrentLoadCurrent: number;
+  directCurrentLoadPower: number;
   externalGridVoltage: number;
   externalGridPower: number;
   externalGridState: number;
@@ -356,6 +358,7 @@ export type SolarWindOutputHistoric = CommonGraphType & {
   batteryStateOfCharge: number[];
   batteryTemperature: number[];
   batteryVoltage: number[];
+  batteryState: number[];
   chargeCycle: number[];
   controllerPower: number[];
   controllerCurrent: number[];
@@ -562,6 +565,16 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     y: 420,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 1650,
+    y: 500,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura baterías',
     variable: 'batteryTemperature',
     unit: '°C',
@@ -569,7 +582,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     fixed: 1,
     x: 1650,
-    y: 500,
+    y: 580,
     hasAdditionalCondition: 0,
   },
   {
@@ -850,6 +863,16 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     y: 420,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 1650,
+    y: 500,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura baterías',
     variable: 'batteryTemperature',
     unit: '°C',
@@ -857,7 +880,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     fixed: 1,
     x: 1650,
-    y: 500,
+    y: 580,
     hasAdditionalCondition: 0,
   },
   {
@@ -1068,6 +1091,16 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     y: 2060,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 3050,
+    y: 2140,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura baterías',
     variable: 'batteryTemperature',
     unit: '°C',
@@ -1075,7 +1108,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     fixed: 1,
     x: 3050,
-    y: 3140,
+    y: 2220,
     hasAdditionalCondition: 0,
   },
   {
@@ -1306,6 +1339,16 @@ export const MODE_4: DiagramVariableType[] = [
     y: 420,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 1650,
+    y: 500,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura baterías',
     variable: 'batteryTemperature',
     unit: '°C',
@@ -1313,7 +1356,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     fixed: 1,
     x: 1650,
-    y: 500,
+    y: 580,
     hasAdditionalCondition: 0,
   },
   {
@@ -1471,6 +1514,16 @@ export const MODE_5: DiagramVariableType[] = [
     y: 420,
   },
   {
+    name: 'Estado batería',
+    variable: 'batteryState',
+    x: 1650,
+    y: 500,
+    diagramName: 'Estado',
+    unit: '',
+    fixed: 0,
+    isShown: true,
+  },
+  {
     name: 'Temperatura baterías',
     variable: 'batteryTemperature',
     unit: '°C',
@@ -1478,7 +1531,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     fixed: 1,
     x: 1650,
-    y: 500,
+    y: 580,
     hasAdditionalCondition: 0,
   },
   {
