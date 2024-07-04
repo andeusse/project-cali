@@ -150,17 +150,17 @@ class BiogasModelTrain:
             if self.OperationMode == 1:
                 #R_101 Conditions
                 Csus_in_R101 = self.train_set.Csus_ini.tolist()
-                Q_in_R101 = self.train_set.Q_P104.tolist()
+                Q_in_R101 = (self.train_set.Q_P104/60).tolist()
             
             elif self.OperationMode == 2:
                 #R_101 Conditions
                 Csus_in_R101 = (self.train_set.Csus_ini + self.train_set.Csus_ini_R101).tolist()
-                Q_in_R101 = (self.train_set.Q_P104 + self.train_set.Q_P101).tolist()
+                Q_in_R101 = ((self.train_set.Q_P104 + self.train_set.Q_P101)/60).tolist()
 
             elif self.OperationMode == 3:
                 #R_101 Conditions
                 Csus_in_R101 = self.train_set.Csus_ini.tolist()
-                Q_in_R101 = (self.train_set.Q_P104).tolist()
+                Q_in_R101 = (self.train_set.Q_P104/60).tolist()
 
                 #R_102 conditions and solution
                 if len (self.train_data)>0:
@@ -169,13 +169,13 @@ class BiogasModelTrain:
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
                 TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
-                Q_in_R102 = self.train_set.Q_P101.tolist()
+                Q_in_R102 = (self.train_set.Q_P101/60).tolist()
                 self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
                 
             elif self.OperationMode == 4:
                 #R_101 Conditions
                 Csus_in_R101 = (self.train_set.Csus_ini + self.train_set.Csus_ini_R102).tolist()
-                Q_in_R101 = (self.train_set.Q_P104 + self.train_set.Q_P102).tolist
+                Q_in_R101 = ((self.train_set.Q_P104 + self.train_set.Q_P102)/60).tolist
 
                 #R_102 conditions and solution
                 if len (self.train_data)>0:
@@ -184,15 +184,15 @@ class BiogasModelTrain:
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
                 TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
-                Q_in_R102 = self.train_set.Q_P101.tolist()
+                Q_in_R102 = (self.train_set.Q_P101/60).tolist()
                 self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
                 self.K_R102 = float(self.Optimization_R102.x[0])
                 if self.Model == "Arrhenius": self.Ea_R102 = float(self.Optimization_R102.x[1])
 
             elif self.OperationMode == 5:
                 #R_101 Conditions
-                Csus_in_R101 = (self.train_set.Csus_ini + self.train_set.Csus_ini_R102).tolist()
-                Q_in_R101 = (self.train_set.Q_P104 + self.train_set.Q_P102).tolist
+                Csus_in_R101 = (self.train_set.Csus_ini).tolist()
+                Q_in_R101 = (self.train_set.Q_P104/60).tolist
 
                 #R_102 conditions and solution
                 if len (self.train_data)>0:
@@ -201,7 +201,7 @@ class BiogasModelTrain:
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
                 TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
-                Q_in_R102 = (self.train_set.Q_P101 + self.train_set.Q_P102).tolist()
+                Q_in_R102 = ((self.train_set.Q_P101 + self.train_set.Q_P102)/60).tolist()
                 Csus_in_R102 = (self.train_data.Csus_ini_R101 + self.train_data.Csus_ini_R102).tolist()
                 self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_in_R102, K = self.Kini_R102, Ea = self.Eaini_R102) 
 

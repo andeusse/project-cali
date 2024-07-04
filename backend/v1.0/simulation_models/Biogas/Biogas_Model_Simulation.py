@@ -185,8 +185,6 @@ class BiogasPlantSimulation:
         self.Csus_ini = (self.rho*self.SV)/self.MW_sustrato
         self.Csus_ini_ST = (self.rho*self.ST)/self.MW_sustrato
         self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini
-
-        self.GlobalTime = self.GlobalTime + self.tp
     
     def Pump104 (self, TRH=30, FT_P104=5, TTO_P104=10):    
         
@@ -210,7 +208,7 @@ class BiogasPlantSimulation:
             self.Q_P104 = (self.Q_time/self.TTO_P104)*60
         else:
             self.Q_P104= float(0)
-            self.Csus_ini = 0
+            #self.Csus_ini = 0
         
         self.TimeCounterPump_P104 = self.TimeCounterPump_P104 + self.tp
 
@@ -310,7 +308,7 @@ class BiogasPlantSimulation:
                                     "Csus_ini_R101" : [self.Csus_ini_R101],
                                     "Csus_ini_R102" : [self.Csus_ini_R102]})
 
-        elif self.OperationMode in [3,4]:
+        elif self.OperationMode in [3,4,5]:
             new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
                                     "Q_P101" : [self.Q_P101],
@@ -379,6 +377,7 @@ class BiogasPlantSimulation:
             self.U_R102 = B_R102  
             self.L_R102 = C_R102
     
+        # Model Arrhenius    
         if self.Model == "Arrhenius":
 
             if self.OperationMode in [1,2] :
@@ -388,25 +387,27 @@ class BiogasPlantSimulation:
                 VR_R101 = self.VR1                                                                     #Reactor volume
                 T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
-                Qin_R101_1 = self.Operation_Data.Q_P104.astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                    #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                
+                #R_101 Solution
                 self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101_1, Q_func_R101_1, Csus_in_func_R101_1, Csus_in_func_R101_1, 1)).flatten()
                 self.Csus_ini_R101 = self.Csus_ini_R101[-1]
                 try:
                     self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
                 except ZeroDivisionError:
                     self.x_R101 = 0
-            
-            elif self.OperationMode == 3 :
+                
+            elif self.OperationMode in [3,5] :
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
                 y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
                 VR_R101 = self.VR1                                                                     #Reactor volume
                 T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
-                Qin_R101_1 = self.Operation_Data.Q_P104.astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -420,12 +421,11 @@ class BiogasPlantSimulation:
                     self.x_R101 = 0
                 
                 #R_102 Conditions
-                time = self.Operation_Data.time.astype(float).tolist()
                 y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
                 VR_R102 = self.VR2                                                                     #Reactor volume
                 T_R102 = self.Operation_Data.Temp_R102.astype(float)                                   #Temperatures Vector
                 T_func_R102 = lambda t: np.interp(t, time, T_R102)                                     #Temperatures in time vector                
-                Qin_R102_1 = self.Operation_Data.Q_P101.astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
                 Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
                 Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
@@ -437,10 +437,148 @@ class BiogasPlantSimulation:
                     self.x_R102 = (max(self.Operation_Data.Csus_ini_R102) - self.Operation_Data.Csus_ini_R102.iloc[-1])/max(self.Operation_Data.Csus_ini_R102)
                 except ZeroDivisionError:
                     self.x_R102 = 0
+            
+            elif self.OperationMode == 4:
+                # R_101 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
+                VR_R101 = self.VR1                                                                     #Reactor volume
+                T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
+                T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
+                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
+                Qin_R101_2 = (self.Operation_Data.Q_P102/60).astype(float).tolist()
+                Q_func_R101_2 = lambda t: np.interp(t, time, Qin_R101_2)                               #flow in time vector
+                Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
+                Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                Csus_in_R101_2 = self.Operation_Data.Csus_ini_R102.tolist()
+                Csus_in_func_R101_2 = lambda t: np.interp(t, time, Csus_in_R101_2)                     #Concentration in time vector
 
+                #R101 Solution
+                self.Csus_ini_R101 = odeint(model_Arrehenius, y0_R101, time, args=(self.K_R101, self.Ea_R101, VR_R101, T_func_R101, Q_func_R101_1, Q_func_R101_2, Csus_in_func_R101_1, Csus_in_func_R101_2, 2)).flatten()
+                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+                try:
+                    self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
+                except ZeroDivisionError:
+                    self.x_R101 = 0
+
+                #R_102 Conditions
+                y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
+                VR_R102 = self.VR2                                                                     #Reactor volume
+                T_R102 = self.Operation_Data.Temp_R102.astype(float)                                   #Temperatures Vector
+                T_func_R102 = lambda t: np.interp(t, time, T_R102)                                     #Temperatures in time vector                
+                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
+                Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
+                Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
+                
+                #R102 Solution
+                self.Csus_ini_R102 = odeint(model_Arrehenius, y0_R102, time, args=(self.K_R102, self.Ea_R102, VR_R102, T_func_R102, Q_func_R102_1, Q_func_R101_1, Csus_in_func_R102_1, Csus_in_func_R102_1, 1)).flatten()
+                self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+                try:
+                    self.x_R102 = (max(self.Operation_Data.Csus_ini_R102) - self.Operation_Data.Csus_ini_R102.iloc[-1])/max(self.Operation_Data.Csus_ini_R102)
+                except ZeroDivisionError:
+                    self.x_R102 = 0
+        
+        # Model ADM1
+        elif self.Model == "ADM1":
+
+            if self.OperationMode in [1,2] :
+                # R_101 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
+                VR_R101 = self.VR1                                                                     #Reactor volume  
+                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                    #flow in 1 Vector            
+                Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
+                Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
+                Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                
+                #R_101 Solution
+                self.Csus_ini_R101 = odeint(model_ADM1, y0_R101, time, args=(self.K_R101, VR_R101, Q_func_R101_1, Q_func_R101_1, Csus_in_func_R101_1, Csus_in_func_R101_1, 1)).flatten()
+                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+                try:
+                    self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
+                except ZeroDivisionError:
+                    self.x_R101 = 0
+            
+            elif self.OperationMode in [3,5]:
+
+                # R_101 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
+                VR_R101 = self.VR1                                                                     #Reactor volume
+                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
+                Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
+                Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                
+                #R_101 Solution
+                self.Csus_ini_R101 = odeint(model_ADM1, y0_R101, time, args=(self.K_R101, VR_R101, Q_func_R101_1, Q_func_R101_1, Csus_in_func_R101_1, Csus_in_func_R101_1, 1)).flatten()
+                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+                try:
+                    self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
+                except ZeroDivisionError:
+                    self.x_R101 = 0
+                
+                #R_102 Conditions
+                y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
+                VR_R102 = self.VR2                                                                     #Reactor volume               
+                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
+                Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
+                Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
+                
+                #R102 Solution
+                self.Csus_ini_R102 = odeint(model_ADM1, y0_R102, time, args=(self.K_R102, VR_R102, Q_func_R102_1, Q_func_R102_1, Csus_in_func_R102_1, Csus_in_func_R102_1, 1)).flatten()
+                self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+                try:
+                    self.x_R102 = (max(self.Operation_Data.Csus_ini_R102) - self.Operation_Data.Csus_ini_R102.iloc[-1])/max(self.Operation_Data.Csus_ini_R102)
+                except ZeroDivisionError:
+                    self.x_R102 = 0
+            
+            elif self.OperationMode == 4:
+                # R_101 Conditions
+                time = self.Operation_Data.time.astype(float).tolist()
+                y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
+                VR_R101 = self.VR1                                                                     #Reactor volume       
+                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
+                Qin_R101_2 = (self.Operation_Data.Q_P102/60).astype(float).tolist()
+                Q_func_R101_2 = lambda t: np.interp(t, time, Qin_R101_2)                               #flow in time vector
+                Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
+                Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
+                Csus_in_R101_2 = self.Operation_Data.Csus_ini_R102.tolist()
+                Csus_in_func_R101_2 = lambda t: np.interp(t, time, Csus_in_R101_2)                     #Concentration in time vector
+
+                #R101 Solution
+                self.Csus_ini_R101 = odeint(model_ADM1, y0_R101, time, args=(self.K_R101, VR_R101, Q_func_R101_1, Q_func_R101_2, Csus_in_func_R101_1, Csus_in_func_R101_2, 2)).flatten()
+                self.Csus_ini_R101 = self.Csus_ini_R101[-1]
+                try:
+                    self.x_R101 = (max(self.Operation_Data.Csus_ini_R101) - self.Operation_Data.Csus_ini_R101.iloc[-1])/max(self.Operation_Data.Csus_ini_R101)
+                except ZeroDivisionError:
+                    self.x_R101 = 0
+
+                #R_102 Conditions
+                y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
+                VR_R102 = self.VR2                                                                     #Reactor volume                
+                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
+                Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
+                Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
+                Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
+                
+                #R102 Solution
+                self.Csus_ini_R102 = odeint(model_ADM1, y0_R102, time, args=(self.K_R102, VR_R102, Q_func_R102_1, Q_func_R101_1, Csus_in_func_R102_1, Csus_in_func_R102_1, 1)).flatten()
+                self.Csus_ini_R102 = self.Csus_ini_R102[-1]
+                try:
+                    self.x_R102 = (max(self.Operation_Data.Csus_ini_R102) - self.Operation_Data.Csus_ini_R102.iloc[-1])/max(self.Operation_Data.Csus_ini_R102)
+                except ZeroDivisionError:
+                    self.x_R102 = 0
+                
 
             
+
             
+        self.GlobalTime = self.GlobalTime + self.tp        
             
            
 
