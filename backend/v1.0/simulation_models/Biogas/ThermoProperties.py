@@ -59,7 +59,7 @@ class ThermoProperties:
         
         return EntalpiaMolar
     
-    def Hgases(self, xCH4, xCO2, xH2O, xO2, xN2, xH2S, xH2, P, Patm, T, xNH3=0,):
+    def Hgases(self, xCH4, xCO2, xH2O, xO2, xN2, xH2S, xH2, P, Patm, T, xNH3=0):
         self.xCH4 = xCH4
         self.xCO2 = xCO2
         self.xH2O = xH2O

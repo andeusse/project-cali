@@ -212,10 +212,14 @@ class Biogas(Resource):
       Biogas_Plant.Pump104(TRH=biogas_input["inputPump104HydraulicRetentionTime"], FT_P104=biogas_input["inputPump104StartsPerDay"], TTO_P104=biogas_input["inputPump104StartTime"])
       Biogas_Plant.Pump101(FT_P101=biogas_input["inputPump101StartsPerDay"], TTO_P101=biogas_input["inputPump101StartTime"], Q_P101=biogas_input["inputPump101Flow"])
       Biogas_Plant.Pump102(FT_P102=biogas_input["inputPump102StartsPerDay"], TTO_P102=biogas_input["inputPump102StartTime"], Q_P102=biogas_input["inputPump102Flow"])
+      Biogas_Plant.Mixing_R101(FT_mixin_R101=24, TTO_mixing_R101= 30, RPM_R101=20)
+      Biogas_Plant.Mixing_R102(FT_mixin_R102=5, TTO_mixing_R102=10, RPM_R102=50)
       Biogas_Plant.Data_simulation(Temperature_R101 = biogas_input["inputTemperature101"], Temperature_R102 = biogas_input["inputTemperature102"])
-      Biogas_Plant.ReactorSimulation(Model = "Arrhenius", A_R101=100, B_R101 = 1000000, C_R101=1, A_R102=100, B_R102=1000000, C_R102=1)
+      Biogas_Plant.ReactorSimulation(Model = "Arrhenius", A_R101=100, B_R101 = 1000000, C_R101=1, A_R102=100, B_R102=1000000, C_R102=1, pH_R101 = 6.5, pH_R102 = 7)
+
 
       print(Biogas_Plant.Operation_Data)
+      print(Biogas_Plant.mol_CH4_R101)
       # print(Biogas_Plant.x_R101)
       # try:
       #   print(Biogas_Plant.x_R102)
