@@ -290,7 +290,6 @@ class TwinPVWF:
         # Condiciones límite de batería
         if not batteryState or self.SOC <= 0.0:
             if self.P_bat < 0.0:
-                self.P_CC = 0.0
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.S_CA = 0.0
@@ -298,6 +297,7 @@ class TwinPVWF:
                 self.V_CA = 0.0
                 self.P_CD = 0.0
                 self.V_CDload = 0.0
+            self.P_CC = self.P_inv
             self.P_bat = 0.0
             self.I_bat = 0.0
             if self.SOC <= 0.0:
@@ -418,7 +418,6 @@ class TwinPVWF:
         # Condiciones límite de batería
         if not batteryState or self.SOC <= 0.0:
             if self.P_bat < 0.0:
-                self.P_CC = 0.0
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.S_CA = 0.0

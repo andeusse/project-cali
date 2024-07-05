@@ -22,7 +22,7 @@ class TwinHydro:
             self.V_t = 40.0
         # Turgo
         elif type == 2:
-            self.n_t = 44.0
+            self.n_t = 45.0
             self.H_min = 0.0
             self.H_max = 30.0
             self.Q_min = 8.0
@@ -130,9 +130,6 @@ class TwinHydro:
         elif self.P_bat <= 0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
         
-        # Estimación de SOC inicial a partir del voltaje
-        # SOC_0 = float(np.polynomial.polynomial.Polynomial([ ABCD[3] - (V_meas - self.delta_V * (T_bat - 25)) / 12, ABCD[2], ABCD[1], ABCD[0]]).roots()[0])
-        
         # Cálculo de nuevo SOC
         self.SOC = (SOC_0/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * self.n_bat / 100) / (self.corrected_cap_bat * 3600)) 
                     
@@ -142,7 +139,6 @@ class TwinHydro:
         # Condiciones límite de batería
         if not batteryState or self.SOC <= 0.0:
             if self.P_bat < 0.0:
-                self.P_CC = 0.0
                 self.P_inv = 0.0
                 self.P_sink = 0.0
                 self.P_CA = 0.0
@@ -151,6 +147,7 @@ class TwinHydro:
                 self.V_CA = 0.0
                 P_CD = 0.0
                 V_CDload = 0.0
+            self.P_CC = self.P_inv
             self.P_bat = 0.0
             self.I_bat = 0.0
             if self.SOC <= 0.0:
@@ -168,8 +165,7 @@ class TwinHydro:
             self.V_CD = V_float
         else: 
             self.V_CD = self.V_bat
-            
-       # Lógica de la disipación
+        
         # Lógica de la disipación
         if self.V_bat > self.V_sink_on: # Cambiar por condición de voltaje
             self.sinkState = True 
