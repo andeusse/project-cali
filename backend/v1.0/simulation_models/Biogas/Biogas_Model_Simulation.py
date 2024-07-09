@@ -81,6 +81,8 @@ class BiogasPlantSimulation:
         
         #initial for Arrhenius and ADM1
         self.mol_CH4_R101 = 0
+        self.mol_O2_R101 = 0
+        self.mol_H2_R101 = 0
         #initial for gompertz
         self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
             
@@ -124,6 +126,8 @@ class BiogasPlantSimulation:
         
         #initial for Arrhenius and ADM1
         self.mol_CH4_R102 = 0
+        self.mol_O2_R102 = 0
+        self.mol_H2_R102 = 0
         #initial for gompertz
         self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
         
@@ -140,6 +144,7 @@ class BiogasPlantSimulation:
                     , "pH_R101"
                     , "Csus_ini"
                     , "Csus_ini_R101"]
+            
         elif self.OperationMode ==2:
             columns = ["time"
                     , "Q_P104"
@@ -356,7 +361,8 @@ class BiogasPlantSimulation:
                                     "Temp_R101": [self.Temp_R101],
                                     "pH_R101": [pH_R101],
                                     "Csus_ini" : [self.Csus_ini],
-                                    "Csus_ini_R101" : [self.Csus_ini_R101]})
+                                    "Csus_ini_R101" : [self.Csus_ini_R101],
+                                    "mol_CH4_acum_R101":[self.mol_CH4_R101]})
         elif self.OperationMode == 2:
              new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
@@ -364,7 +370,8 @@ class BiogasPlantSimulation:
                                     "Temp_R101": [self.Temp_R101],
                                     "pH_R101":[pH_R101],
                                     "Csus_ini" : [self.Csus_ini],
-                                    "Csus_ini_R101" : [self.Csus_ini_R101]})
+                                    "Csus_ini_R101" : [self.Csus_ini_R101],
+                                    "mol_CH4_acum_R101":[self.mol_CH4_R101]})
         
         elif self.OperationMode == 3:
             new_row = pd.DataFrame({"time": [self.GlobalTime],
@@ -376,7 +383,9 @@ class BiogasPlantSimulation:
                                     "pH_R102":[pH_R102],
                                     "Csus_ini" : [self.Csus_ini],
                                     "Csus_ini_R101" : [self.Csus_ini_R101],
-                                    "Csus_ini_R102" : [self.Csus_ini_R102]})
+                                    "Csus_ini_R102" : [self.Csus_ini_R102],
+                                    "mol_CH4_acum_R101":[self.mol_CH4_R101],
+                                    "mol_CH4_acum_R102":[self.mol_CH4_R102]})
         
         elif self.OperationMode in [4,5]:
             new_row = pd.DataFrame({"time": [self.GlobalTime],
@@ -389,7 +398,9 @@ class BiogasPlantSimulation:
                                     "pH_R102":[pH_R102],
                                     "Csus_ini" : [self.Csus_ini],
                                     "Csus_ini_R101" : [self.Csus_ini_R101],
-                                    "Csus_ini_R102" : [self.Csus_ini_R102]})
+                                    "Csus_ini_R102" : [self.Csus_ini_R102],
+                                    "mol_CH4_acum_R101":[self.mol_CH4_R101],
+                                    "mol_CH4_acum_R102":[self.mol_CH4_R102]})
         
         self.Operation_Data = pd.concat([self.Operation_Data, new_row], ignore_index=True)
 
@@ -482,7 +493,7 @@ class BiogasPlantSimulation:
                 pH_func_R101 = lambda t: np.interp(t, time, pH_R101) 
                 T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
-                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                    #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/3600).astype(float).tolist()                    #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -495,7 +506,21 @@ class BiogasPlantSimulation:
                 except ZeroDivisionError:
                     self.x_R101 = 0
                 
-                self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)
+                self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)         #molSV/L
+                # Solidos volátiles en porcentaje
+                self.SV_ini_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L
+                self.SV_ini_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia
+                try:
+                    self.Organic_charge_R101 = self.SV_ini_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R101 = 0
+                #solidos totales
+                self.ST_ini_R101_p = ((self.Csus_ini_R101 + self.Csus_fixed)*self.MW_sustrato/self.rho)    
+                #sólidos totales en g/L
+                self.ST_ini_R101_gL = (self.Csus_ini_R101 + self.Csus_fixed)*self.MW_sustrato
+                
                 
             elif self.OperationMode in [3,5] :
                 # R_101 Conditions
@@ -506,7 +531,7 @@ class BiogasPlantSimulation:
                 pH_func_R101 = lambda t: np.interp(t, time, pH_R101) 
                 T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
-                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/3600).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -528,7 +553,7 @@ class BiogasPlantSimulation:
                 pH_func_R102 = lambda t: np.interp(t, time, pH_R102) 
                 T_R102 = self.Operation_Data.Temp_R102.astype(float)                                   #Temperatures Vector
                 T_func_R102 = lambda t: np.interp(t, time, T_R102)                                     #Temperatures in time vector                
-                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R102_1 = (self.Operation_Data.Q_P101/3600).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
                 Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
                 Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
@@ -561,9 +586,9 @@ class BiogasPlantSimulation:
                 pH_func_R101 = lambda t: np.interp(t, time, pH_R101) 
                 T_R101 = self.Operation_Data.Temp_R101.astype(float)                                   #Temperatures Vector
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                     #Temperatures in time vector                
-                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/3600).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
-                Qin_R101_2 = (self.Operation_Data.Q_P102/60).astype(float).tolist()
+                Qin_R101_2 = (self.Operation_Data.Q_P102/3600).astype(float).tolist()
                 Q_func_R101_2 = lambda t: np.interp(t, time, Qin_R101_2)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -587,7 +612,7 @@ class BiogasPlantSimulation:
                 pH_func_R102 = lambda t: np.interp(t, time, pH_R102)
                 T_R102 = self.Operation_Data.Temp_R102.astype(float)                                   #Temperatures Vector
                 T_func_R102 = lambda t: np.interp(t, time, T_R102)                                     #Temperatures in time vector                
-                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R102_1 = (self.Operation_Data.Q_P101/3600).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
                 Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
                 Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
@@ -613,7 +638,7 @@ class BiogasPlantSimulation:
             
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101*np.exp(-self.Ea_R101/(8.314*T_R101.iloc[-1]*pH_R101[-1]))) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
-            self.mol_CH4_R101 = self.mol_CH4_R101 + self.mol_CH4_stoichometric_R101
+            self.mol_CH4_R101 = float(self.mol_CH4_R101 + self.mol_CH4_stoichometric_R101)
             self.mol_CO2_R101 = self.mol_CH4_R101 * (self.s_CO2/self.s_CO2)
             self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
@@ -632,7 +657,7 @@ class BiogasPlantSimulation:
                 pH_func_R101 = lambda t: np.interp(t, time, pH_R101)
                 T_R101 = [Temperature_effect(p) for p in self.Operation_Data.Temp_R101.tolist()]       #Get Historic Temperature
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                      
-                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                    #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/3600).astype(float).tolist()                    #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -657,7 +682,7 @@ class BiogasPlantSimulation:
                 pH_func_R101 = lambda t: np.interp(t, time, pH_R101)
                 T_R101 = [Temperature_effect(p) for p in self.Operation_Data.Temp_R101.tolist()]       #Get Historic Temperature
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)                                      
-                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                    #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/3600).astype(float).tolist()                    #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -677,7 +702,7 @@ class BiogasPlantSimulation:
                 pH_func_R102 = lambda t: np.interp(t, time, pH_R102)
                 T_R102 = [Temperature_effect(p) for p in self.Operation_Data.Temp_R102.tolist()]       #Get Historic Temperature
                 T_func_R102 = lambda t: np.interp(t, time, T_R102)
-                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                    #flow in 1 Vector            
+                Qin_R102_1 = (self.Operation_Data.Q_P101/3600).astype(float).tolist()                    #flow in 1 Vector            
                 Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
                 Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
                 Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
@@ -710,9 +735,9 @@ class BiogasPlantSimulation:
                 pH_func_R101 = lambda t: np.interp(t, time, pH_R101)
                 T_R101 = [Temperature_effect(p) for p in self.Operation_Data.Temp_R101.tolist()]       #Get Historic Temperature
                 T_func_R101 = lambda t: np.interp(t, time, T_R101)
-                Qin_R101_1 = (self.Operation_Data.Q_P104/60).astype(float).tolist()                    #flow in 1 Vector            
+                Qin_R101_1 = (self.Operation_Data.Q_P104/3600).astype(float).tolist()                    #flow in 1 Vector            
                 Q_func_R101_1 = lambda t: np.interp(t, time, Qin_R101_1)                               #flow in time vector
-                Qin_R101_2 = (self.Operation_Data.Q_P102/60).astype(float).tolist()
+                Qin_R101_2 = (self.Operation_Data.Q_P102/3600).astype(float).tolist()
                 Q_func_R101_2 = lambda t: np.interp(t, time, Qin_R101_2)                               #flow in time vector
                 Csus_in_R101_1 = self.Operation_Data.Csus_ini.astype(float)                            #Inlet substrate concentration
                 Csus_in_func_R101_1 = lambda t: np.interp(t, time, Csus_in_R101_1)                     #Concentration in time vector
@@ -736,7 +761,7 @@ class BiogasPlantSimulation:
                 pH_func_R102 = lambda t: np.interp(t, time, pH_R102)
                 T_R102 = [Temperature_effect(p) for p in self.Operation_Data.Temp_R102.tolist()]       #Get Historic Temperature
                 T_func_R102 = lambda t: np.interp(t, time, T_R102)
-                Qin_R102_1 = (self.Operation_Data.Q_P101/60).astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R102_1 = (self.Operation_Data.Q_P101/3600).astype(float).tolist()                         #flow in 1 Vector            
                 Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
                 Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
                 Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
@@ -770,42 +795,137 @@ class BiogasPlantSimulation:
             self.mol_H2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.0001)
 
         elif self.Model == "Gompertz":
+
             time = self.Operation_Data.time.astype(float).tolist()
             pH_R101 = float(self.Operation_Data.pH_R101.iloc[-1])
+            T_R101 = float(self.Operation_Data.Temp_R101.iloc[-1])
 
-            # Solución de R101
-            self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
-            self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101)
+            if self.OperationMode in [1,2]:
+                # Solución de R101
+                self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
+                self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101) * Temperature_effect(T_R101)
 
-            # Estimación de biogás producido por componente en moles R101 (fase gaseosa)
-            self.mol_CH4_R101 = (self.y_CH4_R101*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
-            self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
-            self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
-            self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
-            self.mol_O2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.1) 
-            self.mol_H2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.0001)
+                # Estimación de biogás producido por componente en moles R101 (fase gaseosa)
+                self.mol_CH4_R101 = (self.y_CH4_R101*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
+                self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
+                self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
+                self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
+                self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.1) 
+                self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.0001)
 
-            #Estimación de gasto de reactivo límite
-            self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4)
-            self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini - self.mol_sus_stoichometric_R101)/(self.VR1 + (self.Q_P104*self.tp/3600))
-            self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
-            #print(self.Csus_ini_R101)
-        #     if self.OperationMode in [3, 4, 5]:
-        #         self.y_CH4_R102 = model_Gompertz(t=time, ym = self.ym_R102, U = self.U_R102, L = self.U_R102)
-        #         self.y_CH4_R102 = self.y_CH4_R102[-1] * pH_effect(pH_R102) * mixing_effect(self.RPM_R102)
+                #Estimación de gasto de reactivo límite
+                if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
+                    self.mol_sus_stoichometric_R101 = 0
+                else:
+                    self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]*(1/self.s_CH4) 
+                    if self.mol_sus_stoichometric_R101<0:
+                        self.mol_sus_stoichometric_R101 = 0   
+
+                self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini - self.mol_sus_stoichometric_R101)/(self.VR1 + self.Q_P104*(self.tp/3600))
+                self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
             
-        #         # Estimación de biogás producido por componente en moles R102 (fase gaseosa)
-        #         self.mol_CH4_R102 = (self.y_CH4_R102*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
-        #         self.mol_CO2_R102 = self.mol_CH4_R102*(self.s_CO2/self.s_CH4)
-        #         self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
-        #         self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-        #         self.mol_O2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-        #         self.mol_H2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.001)
+            if self.OperationMode in [3, 5]:
+                # Solución de R101
+                self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
+                self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101) * Temperature_effect(T_R101)
 
-        #         #Estimación de gasto de reactivo límite
-        #         self.mol_sus_stoichometric_R102 = self.mol_CH4_R102*(1/self.s_CH4)
-        #         self.Csus_ini_R102 = (self.mol_ini_R102 - (self.Q_P101*(self.tp/3600))*self.Csus_ini - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P104*self.tp/3600))
+                # Estimación de biogás producido por componente en moles R101 (fase gaseosa)
+                self.mol_CH4_R101 = (self.y_CH4_R101*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
+                self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
+                self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
+                self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
+                self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.1) 
+                self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.0001)
 
+                #Estimación de gasto de reactivo límite en R101
+                if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
+                    self.mol_sus_stoichometric_R101 = 0
+                else:
+                    self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]*(1/self.s_CH4) 
+                    if self.mol_sus_stoichometric_R101<0:
+                        self.mol_sus_stoichometric_R101 = 0   
+
+                self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini - self.mol_sus_stoichometric_R101)/(self.VR1 + self.Q_P104*(self.tp/3600))
+                self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
+                
+                #entrada de R102
+                pH_R102 = float(self.Operation_Data.pH_R102.iloc[-1])
+                T_R102 = float(self.Operation_Data.Temp_R102.iloc[-1])
+
+                #Solución de R102
+                self.y_CH4_R102 = model_Gompertz(t=time[-1], ym = self.ym_R102, U = self.U_R102, L = self.U_R102)
+                self.y_CH4_R102 = self.y_CH4_R102 * pH_effect(pH_R102) * mixing_effect(self.RPM_R102) * Temperature_effect(T_R102)
+            
+                # Estimación de biogás producido por componente en moles R102 (fase gaseosa)
+                self.mol_CH4_R102 = (self.y_CH4_R102*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
+                self.mol_CO2_R102 = self.mol_CH4_R102*(self.s_CO2/self.s_CH4)
+                self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
+                self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
+                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.001)
+
+                #Estimación de gasto de reactivo límite
+                if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
+                    self.mol_sus_stoichometric_R102  = 0
+                else:
+                    self.mol_sus_stoichometric_R102  = self.mol_CH4_R102 *(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]*(1/self.s_CH4) 
+                    if self.mol_sus_stoichometric_R102 < 0:
+                        self.mol_sus_stoichometric_R102  = 0 
+
+                self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P101*self.tp/3600))
+                self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+            
+            elif self.OperationMode == 4:
+                # Solución de R101
+                self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
+                self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101) * Temperature_effect(T_R101)
+
+                # Estimación de biogás producido por componente en moles R101 (fase gaseosa)
+                self.mol_CH4_R101 = (self.y_CH4_R101*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
+                self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
+                self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
+                self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
+                self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.1) 
+                self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.0001)
+
+                #Estimación de gasto de reactivo límite en R101
+                if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
+                    self.mol_sus_stoichometric_R101 = 0
+                else:
+                    self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]*(1/self.s_CH4) 
+                    if self.mol_sus_stoichometric_R101<0:
+                        self.mol_sus_stoichometric_R101 = 0   
+
+                self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini + (self.Q_P102*(self.tp/3600))*self.Operation_Data.Csus_ini_R102.iloc[-1] - self.mol_sus_stoichometric_R101)/(self.VR1 + self.Q_P101*(self.tp/3600))
+                self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
+
+                #entrada de R102
+                pH_R102 = float(self.Operation_Data.pH_R102.iloc[-1])
+                T_R102 = float(self.Operation_Data.Temp_R102.iloc[-1])
+
+                #Solución de R102
+                self.y_CH4_R102 = model_Gompertz(t=time[-1], ym = self.ym_R102, U = self.U_R102, L = self.U_R102)
+                self.y_CH4_R102 = self.y_CH4_R102 * pH_effect(pH_R102) * mixing_effect(self.RPM_R102) * Temperature_effect(T_R102)
+            
+                # Estimación de biogás producido por componente en moles R102 (fase gaseosa)
+                self.mol_CH4_R102 = (self.y_CH4_R102*self.SV*self.rho*self.VR1)/self.Vmolar_CH4
+                self.mol_CO2_R102 = self.mol_CH4_R102*(self.s_CO2/self.s_CH4)
+                self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
+                self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
+                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.001)
+
+                #Estimación de gasto de reactivo límite en R102
+                if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
+                    self.mol_sus_stoichometric_R102  = 0
+                else:
+                    self.mol_sus_stoichometric_R102  = self.mol_CH4_R102 *(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]*(1/self.s_CH4) 
+                    if self.mol_sus_stoichometric_R102 < 0:
+                        self.mol_sus_stoichometric_R102  = 0 
+
+                self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P101*self.tp/3600))
+                self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+            
         self.GlobalTime = self.GlobalTime + self.tp        
             
            
