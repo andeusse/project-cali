@@ -47,6 +47,7 @@ class TwinHydro:
         self.n_inverter = n_inverter # Eficiencia de inversor en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
         self.cap_bat = 150.0 # Capacidad de las baterias en Ah
+        self.CA_Current = 150.0 # Corriente de arranque en Amperios
         self.sigma_bat = 9.6e-7 # Coeficiente de descarga de baterias en %/s (a 20°C)
         self.n_bat = 98.0 # Eficiencia de carga y descarga de la bateria en %
         self.delta_V = -0.06 # Coeficiente de compensación de temperatura V/°C 
@@ -123,15 +124,22 @@ class TwinHydro:
             self.I_bat = 0.0
         # Corrección de capacidad por temperatura
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
+
+        chargeSOC_0 = 50.0
         
         # Cálculo de parámetros A, B, C y D    
         if self.P_bat > 0:
             ABCD = np.dot(self.chargeMatrix, [self.I_bat**2, self.I_bat, 1])
+            # self.I_bat = (2.2552*((SOC_0/100)**2) - 4.9462*(SOC_0/100) + 2.7122) * self.CA_Current
+            # if chargeSOC_0 >= 50.0:
+            #     self.V_bat = 12 * (1637.9*((SOC_0/100)**5) - 4933.5*((SOC_0/100)**4) + 5931.2*((SOC_0/100)**3) - 3555.9*((SOC_0/100)**2) + 1063.3*(SOC_0/100) - 124.86) + self.delta_V * (T_bat - 25)
+            # else:
+            #     self.V_bat = 12 * (0.3378*((SOC_0/100)**2) + 0.2408*(SOC_0/100) + 2.0058) + self.delta_V * (T_bat - 25)
         elif self.P_bat <= 0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
         
         # Cálculo de nuevo SOC
-        self.SOC = (SOC_0/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * self.n_bat / 100) / (self.corrected_cap_bat * 3600)) 
+        self.SOC = (SOC_0/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * self.n_bat / 100) / (self.corrected_cap_bat * 3600))
                     
         # Cálculo de voltaje de batería
         self.V_bat = 12 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
