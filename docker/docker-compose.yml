@@ -6,7 +6,7 @@ networks:
 
 services:
   influxdb:
-    image: influxdb
+    image: influxdb:2.7.6
     ports:
       - '8086:8086'
     hostname: influxdb
@@ -26,7 +26,9 @@ services:
       - laboratorio-default
 
   grafana:
-    image: grafana-custom-image/latest
+    build:
+      context: ./custom-grafana-image
+      dockerfile: Dockerfile
     restart: always
     ports:
       - '3000:3000'
