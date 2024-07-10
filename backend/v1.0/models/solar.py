@@ -164,6 +164,7 @@ class Solar(Resource):
     solarWind["controllerEfficiency"] = twinPVWF.n_controller
     solarWind["inverterEfficiency"] = twinPVWF.n_inverter
     solarWind["hybridEfficiency"] = twinPVWF.n_hybrid
+    chargeSOC_0 = 50.0
 
     if data["inputOperationMode"] == 'Mode2' and hybridState:
       solarWind['solarPanelPower'] = PV_Results[0]
@@ -174,7 +175,7 @@ class Solar(Resource):
 
       directCurrentVoltage  = data["simulatedDirectCurrentVoltage"] if "simulatedDirectCurrentVoltage" in data else 12.6 * (1 + (not isParallel))
       
-      twinResults = twinPVWF.ongridTwinOutput(batteryState, gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
+      twinResults = twinPVWF.ongridTwinOutput(chargeSOC_0, batteryState, gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
                                 batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
                                 hybridChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
@@ -230,7 +231,7 @@ class Solar(Resource):
           else:
             directCurrentVoltage = 24.0/(1 + isParallel)
 
-      twinResults = twinPVWF.offgridTwinOutput(batteryState, simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
+      twinResults = twinPVWF.offgridTwinOutput(chargeSOC_0, batteryState, simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
                                  batteryTemperature, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, 
                                  controllerChargeVoltageFloat, controllerChargingMinimunVoltage, PV_Voltage, WT_Voltage, 
                                  directCurrentLoadVoltage, inverterVoltage, delta_t*timeMultiplier)

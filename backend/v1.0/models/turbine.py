@@ -133,7 +133,9 @@ class Turbine(Resource):
         else:
           simulatedDirectCurrentVoltage = 24.0
 
-    results = twinHydro.twinOutput(batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
+    chargeSOC_0 = 50.0
+    
+    results = twinHydro.twinOutput(chargeSOC_0, batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
                                      controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
 

@@ -154,7 +154,8 @@ class TwinPVWF:
         self.n_hybrid = n_hybrid # Eficiencia de inversor hibrido en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
         self.sigma_bat = 9.6e-7 # Coeficiente de descarga de baterias en %/s (a 20°C)
-        self.n_bat = 98.0 # Eficiencia de carga y descarga de la bateria en %
+        self.n_batCharge = 80.0 # Eficiencia de carga y descarga de la bateria en %
+        self.n_batDischarge = 98.0 # Eficiencia de descarga de la bateria en %
         self.chargeMatrix = [[-0.00152, 0.05509, 0.15782], 
                              [0.00165, -0.05758, -0.39049], 
                              [-0.00024, 0.01018, 0.52391], 
@@ -168,15 +169,18 @@ class TwinPVWF:
             if batteries == 1:
                 self.cap_bat = 50.0 # Capacidad de las baterias en Ah
                 self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
-                self.chargeCurrent = 12.5 # Corriente de carga máxima
+                self.CA_Current = 50.0 # Corriente de arranque en Amperios
+                self.maxBatteryChargeCurrent = 12.5 # Corriente máxima de carga en amperios
             else:
                 self.cap_bat = 100.0 # Capacidad de las baterias en Ah
                 self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
-                self.chargeCurrent = 25.0 # Corriente de carga máxima
+                self.CA_Current = 100.0 # Corriente de arranque en Amperios
+                self.maxBatteryChargeCurrent = 25.0 # Corriente máxima de carga en amperios
         else:
             self.cap_bat = 100.0 # Capacidad de las baterias en Ah
             self.delta_V = -0.03 # Coeficiente de compensación de temperatura V/°C
-            self.chargeCurrent = 12.5 # Corriente de carga máxima
+            self.CA_Current = 50.0 # Corriente de arranque en Amperios
+            self.maxBatteryChargeCurrent = 12.5 # Corriente máxima de carga en amperios
 
     def optimal_f_PV(self, P_PV_meas):
         def optimal_PV_PowerOutput(f_PV, P_PV_meas):
@@ -205,7 +209,7 @@ class TwinPVWF:
         self.n_controller = n_controller.x[0]
         return n_controller.x[0]
     
-    def offgridTwinOutput(self, batteryState, inverterState, P_CA, PF, P_CD, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, V_PV, V_WT, V_CDload, V_CA, delta_t):
+    def offgridTwinOutput(self, chargeSOC_0, batteryState, inverterState, P_CA, PF, P_CD, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, V_PV, V_WT, V_CDload, V_CA, delta_t):
         
         self.inverterState = inverterState
         self.V_CD = V_CD
@@ -262,30 +266,33 @@ class TwinPVWF:
         
         # Corriente de la batería
         if (SOC > 0.0 or (SOC == 0.0 and self.P_bat >= 0.0)) and batteryState:
-            self.I_bat = self.P_bat / self.V_CD
+            self.I_bat = self.maxBatteryChargeCurrent if self.P_bat / self.V_CD > self.maxBatteryChargeCurrent else self.P_bat / self.V_CD
+            if self.P_bat > 0.0 and SOC > 76.0:
+                currentCurve = (2.2552*((SOC/100)**2) - 4.9462*(SOC/100) + 2.7122) * self.CA_Current
+                if self.I_bat > currentCurve:
+                    self.I_bat = currentCurve
+            self.P_bat = self.I_bat * self.V_CD
         elif self.P_bat < 0.0 or not batteryState:
             self.I_bat = 0.0
         
         # Corrección de capacidad por temperatura
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
-        
-        # Cálculo de parámetros A, B, C y D    
-        if self.P_bat > 0:
-            ABCD = np.dot(self.chargeMatrix, [self.I_bat**2, self.I_bat, 1])
+
+        # Cálculo de nuevo SOC
+        n_bat = self.n_batCharge if self.P_bat > 0.0 else self.n_batDischarge
+        self.SOC = (SOC/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * n_bat / 100) / (self.corrected_cap_bat * 3600)) 
+
+        # Cálculo de voltaje de batería
+        cellsNumber = 6 if self.parallel else 12
+        if self.P_bat > 0.0:
+            if chargeSOC_0 >= 50.0:
+                self.V_bat = cellsNumber * (1637.9*((self.SOC)**5) - 4933.5*((self.SOC)**4) + 5931.2*((self.SOC)**3) - 3555.9*((self.SOC)**2) + 1063.3*(self.SOC) - 124.86) + self.delta_V * (T_bat - 25)
+            else:
+                self.V_bat = cellsNumber * (0.3378*((self.SOC)**2) + 0.2408*(self.SOC) + 2.0058) + self.delta_V * (T_bat - 25)
+            if self.V_bat > cellsNumber * 2.385: self.V_bat = cellsNumber * 2.385
         elif self.P_bat <= 0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
-        
-        # Estimación de SOC inicial a partir del voltaje
-        # SOC = float(np.polynomial.polynomial.Polynomial([ ABCD[3] - (V_meas - self.delta_V * (T_bat - 25)) / 12, ABCD[2], ABCD[1], ABCD[0]]).roots()[0])
-        
-        # Cálculo de nuevo SOC
-        self.SOC = (SOC/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * self.n_bat / 100) / (self.corrected_cap_bat * 3600)) 
-        
-        # Cálculo de voltaje de batería
-        if self.parallel:
-            self.V_bat = 6 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
-        else:
-            self.V_bat = 12 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
+            self.V_bat = cellsNumber * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
         
         # Condiciones límite de batería
         if not batteryState or self.SOC <= 0.0:
@@ -302,8 +309,8 @@ class TwinPVWF:
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.0:
-            self.SOC = 1.0
+        elif self.SOC > 1.1:
+            self.SOC = 1.1
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
             self.P_CC = self.P_bat + self.P_inv
@@ -313,6 +320,8 @@ class TwinPVWF:
             self.V_CD = V_bulk
         elif self.P_bat > 0 and self.V_bat >= V_bulk:
             self.V_CD = V_float
+        elif self.P_bat > 0 and self.V_bat >= V_float:
+            self.V_CD = cellsNumber * 2.4
         else: 
             self.V_CD = self.V_bat
         
@@ -329,7 +338,7 @@ class TwinPVWF:
         return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_PV,2), round(self.V_WT,2), round(self.V_CDload,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), round(self.V_CA,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), round(self.P_CD,2), self.inverterState, round(self.I_PV,2), round(self.I_WT,2), round(self.I_CD,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2)
     
     
-    def ongridTwinOutput(self, batteryState, gridState, P_CA, PF, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, chargeCycle, V_PV, V_grid, V_CA, delta_t):
+    def ongridTwinOutput(self, chargeSOC_0, batteryState, gridState, P_CA, PF, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, chargeCycle, V_PV, V_grid, V_CA, delta_t):
         
         self.gridState = gridState
         self.P_CA = P_CA
@@ -360,17 +369,22 @@ class TwinPVWF:
         if self.gridState:
             if not batteryState:
                 self.P_bat = 0.0
+                self.I_bat = 0.0
             else:
-                self.P_bat = self.V_CD * self.chargeCurrent
                 chargeCycle = True
-                
-                if SOC >= 100.0:
+                self.I_bat = self.maxBatteryChargeCurrent
+                self.P_bat = self.I_bat * self.V_CD
+                if SOC > 76.0:
+                    currentCurve = (2.2552*((SOC/100)**2) - 4.9462*(SOC/100) + 2.7122) * self.CA_Current
+                    if self.I_bat > currentCurve:
+                        self.I_bat = currentCurve
+                        self.P_bat = self.I_bat * self.V_CD
+                if SOC >= 110.0:
                     self.P_bat = 0.0
+                    self.I_bat = 0.0
                     chargeCycle = False
 
             self.P_grid = self.P_inv + self.P_bat - (self.P_PV * self.n_hybrid / 100)
-            # Corriente de la batería
-            self.I_bat = self.P_bat / self.V_CD
         else:
             self.P_grid = 0.0
             self.P_bat = (self.P_PV * self.n_hybrid / 100) - self.P_inv # Potencia de la bateria, + carga, - descarga
@@ -393,27 +407,33 @@ class TwinPVWF:
                 self.V_CA = 0.0
             # Corriente de la batería
             if (SOC > 0.0 or (SOC == 0.0 and self.P_bat >= 0.0)) and batteryState:
-                self.I_bat = self.P_bat / self.V_CD
+                self.I_bat = self.maxBatteryChargeCurrent if self.P_bat / self.V_CD > self.maxBatteryChargeCurrent else self.P_bat / self.V_CD
+                if self.P_bat > 0.0 and SOC > 76.0:
+                    currentCurve = (2.2552*((SOC/100)**2) - 4.9462*(SOC/100) + 2.7122) * self.CA_Current
+                    if self.I_bat > currentCurve:
+                        self.I_bat = currentCurve
+                self.P_bat = self.I_bat * self.V_CD
             elif self.P_bat < 0.0 or not batteryState:
                 self.I_bat = 0.0
             
         # Corrección de capacidad por temperatura
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
-        
-        # Cálculo de parámetros A, B, C y D    
-        if self.P_bat > 0:
-            ABCD = np.dot(self.chargeMatrix, [self.I_bat**2, self.I_bat, 1])
+
+        # Cálculo de nuevo SOC
+        n_bat = self.n_batCharge if self.P_bat > 0.0 else self.n_batDischarge
+        self.SOC = (SOC/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * n_bat / 100) / (self.corrected_cap_bat * 3600)) 
+         
+        # Cálculo de voltaje de batería
+        cellsNumber = 12
+        if self.P_bat > 0.0:
+            if chargeSOC_0 >= 50.0:
+                self.V_bat = cellsNumber * (1637.9*((self.SOC)**5) - 4933.5*((self.SOC)**4) + 5931.2*((self.SOC)**3) - 3555.9*((self.SOC)**2) + 1063.3*(self.SOC) - 124.86) + self.delta_V * (T_bat - 25)
+            else:
+                self.V_bat = cellsNumber * (0.3378*((self.SOC)**2) + 0.2408*(self.SOC) + 2.0058) + self.delta_V * (T_bat - 25)
+            if self.V_bat > cellsNumber * 2.385: self.V_bat = cellsNumber * 2.385
         elif self.P_bat <= 0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
-        
-        # Estimación de SOC inicial a partir del voltaje
-        # SOC = float(np.polynomial.polynomial.Polynomial([ ABCD[3] - (V_meas - self.delta_V * (T_bat - 25)) / 12, ABCD[2], ABCD[1], ABCD[0]]).roots()[0])
-        
-        # Cálculo de nuevo SOC
-        self.SOC = (SOC/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * self.n_bat / 100) / (self.corrected_cap_bat * 3600)) 
-                    
-        # Cálculo de voltaje de batería
-        self.V_bat = 12 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
+            self.V_bat = cellsNumber * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
         
         # Condiciones límite de batería
         if not batteryState or self.SOC <= 0.0:
@@ -427,8 +447,8 @@ class TwinPVWF:
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.0:
-            self.SOC = 1.0
+        elif self.SOC > 1.1:
+            self.SOC = 1.1
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
         
@@ -437,6 +457,8 @@ class TwinPVWF:
             self.V_CD = V_bulk
         elif self.P_bat > 0 and self.V_bat >= V_bulk:
             self.V_CD = V_float
+        elif self.P_bat > 0 and self.V_bat >= V_float:
+            self.V_CD = cellsNumber * 2.4
         else: 
             self.V_CD = self.V_bat
 
