@@ -46,6 +46,17 @@ services:
     networks:
       - laboratorio-default
 
+  frontend:
+    image: projectcali-frontend:latest
+    restart: always
+    ports:
+      - '3001:3000'
+    depends_on:
+      - influxdb
+      - grafana
+    networks:
+      - laboratorio-default
+
 volumes:
   influxdb-storage-data:
   influxdb-storage-config:
