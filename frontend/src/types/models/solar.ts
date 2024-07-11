@@ -65,6 +65,7 @@ export type SolarWindParameters = CommonSystemParameter &
     simulatedDirectCurrentVoltage?: number;
     simulatedInverterState?: boolean;
     simulatedChargeCycle?: number;
+    simulatedChargeCycleInitialSOC?: number;
   };
 
 const MONOCRYSTALLINE_PANEL: SolarPanel = {
@@ -346,6 +347,7 @@ export type SolarWindOutput = {
   inputAlternCurrentLoadPower?: number;
   inputAlternCurrentLoadPowerFactor?: number;
   inputDirectCurrentLoadPower?: number;
+  chargeCycleInitialSOC?: number;
 };
 
 export type SolarWindOutputHistoric = CommonGraphType & {

@@ -92,6 +92,7 @@ const Turbine = () => {
         simulatedDirectCurrentVoltage: data.directCurrentVoltage,
         simulatedInverterState: data.inverterState,
         simulatedSinkLoadState: data.sinkLoadState,
+        simulatedChargeCycleInitialSOC: data.chargeCycleInitialSOC,
       }));
     } else {
       setSystem((o) => ({

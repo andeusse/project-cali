@@ -139,6 +139,7 @@ const Solar = () => {
         simulatedDirectCurrentVoltage: data.directCurrentVoltage,
         simulatedChargeCycle: data.chargeCycle,
         simulatedInverterState: data.inverterState,
+        simulatedChargeCycleInitialSOC: data.chargeCycleInitialSOC,
       }));
     } else {
       setSystem((o) => ({

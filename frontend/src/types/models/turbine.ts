@@ -42,6 +42,7 @@ export type TurbineParameters = CommonSystemParameter &
     simulatedDirectCurrentVoltage?: number;
     simulatedSinkLoadState?: boolean;
     simulatedInverterState?: boolean;
+    simulatedChargeCycleInitialSOC?: number;
   };
 
 export type TurbineOutput = {
@@ -74,6 +75,7 @@ export type TurbineOutput = {
   inputFlow?: number;
   inputActivePower?: number;
   inputPowerFactor?: number;
+  chargeCycleInitialSOC?: number;
 };
 
 export type TurbineOutputHistoric = CommonGraphType & {
