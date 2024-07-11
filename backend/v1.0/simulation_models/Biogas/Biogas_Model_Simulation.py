@@ -136,7 +136,8 @@ class BiogasPlantSimulation:
         self.Vmolar_CO2 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 1, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
         self.Vmolar_H2S = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 1, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
         self.Vmolar_NH3 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=1)[2]
-        
+        self.Vmolar_H2 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 1, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+
         if self.OperationMode ==1:
             columns = ["time"
                     , "Q_P104"
@@ -506,22 +507,11 @@ class BiogasPlantSimulation:
                 except ZeroDivisionError:
                     self.x_R101 = 0
                 
-                self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)         #molSV/L
-                # Solidos volátiles en porcentaje
-                self.SV_ini_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
-                #Sólidos volátiles en gSV/L
-                self.SV_ini_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
-                #Carga orgánica en gSV/L.dia
-                try:
-                    self.Organic_charge_R101 = self.SV_ini_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
-                except ZeroDivisionError:
-                    self.Organic_charge_R101 = 0
-                #solidos totales
-                self.ST_ini_R101_p = ((self.Csus_ini_R101 + self.Csus_fixed)*self.MW_sustrato/self.rho)    
-                #sólidos totales en g/L
-                self.ST_ini_R101_gL = (self.Csus_ini_R101 + self.Csus_fixed)*self.MW_sustrato
+                self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)         #molSV/L 
                 
-                
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - ((self.K_R101 * np.exp(-self.Ea_R101 / (8.314 * T_R101.iloc[-1] * pH_R101[-1]))) * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
+
             elif self.OperationMode in [3,5] :
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
@@ -546,6 +536,9 @@ class BiogasPlantSimulation:
                 
                 self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)
                 
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - ((self.K_R101 * np.exp(-self.Ea_R101 / (8.314 * T_R101.iloc[-1] * pH_R101[-1]))) * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
+
                 #R_102 Conditions
                 y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
                 VR_R102 = self.VR2                                                                     #Reactor volume
@@ -567,6 +560,19 @@ class BiogasPlantSimulation:
                     self.x_R102 = 0
                 
                 self.Csus_ini_R102 = self.Csus_ini_R102*mixing_effect(self.RPM_R102)
+
+                # Solidos volátiles en porcentaje R102
+                self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R102
+                self.SV_R102_gL = self.Csus_ini_R102 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R102
+                try:
+                    self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R102 = 0
+                
+                #Solidos totales R102
+                self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - ((self.K_R102 * np.exp(-self.Ea_R102 / (8.314 * T_R102.iloc[-1] * pH_R102[-1]))) * self.Csus_ini_R102 * (self.tp / 3600)))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
 
                 # Estimación de biogás producido por componente en moles R102
                 self.mol_CH4_stoichometric_R102 = (self.K_R102*np.exp(-self.Ea_R102/(8.314*T_R102.iloc[-1]*pH_R102[-1]))) * self.Csus_ini_R102 * self.s_CH4 * (self.tp / 3600)
@@ -605,6 +611,9 @@ class BiogasPlantSimulation:
                 
                 self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)
 
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) + (self.Q_P102 * self.ST_R102 * self.rho * (self.tp/3600)) - ((self.K_R101 * np.exp(-self.Ea_R101 / (8.314 * T_R101.iloc[-1] * pH_R101[-1]))) * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P101*(self.tp/3600)))/self.rho
+
                 #R_102 Conditions
                 y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
                 VR_R102 = self.VR2                                                                     #Reactor volume
@@ -627,6 +636,19 @@ class BiogasPlantSimulation:
                 
                 self.Csus_ini_R102 = self.Csus_ini_R102*mixing_effect(self.RPM_R102)
 
+                # Solidos volátiles en porcentaje R102
+                self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R102
+                self.SV_R102_gL = self.Csus_ini_R102 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R102
+                try:
+                    self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R102 = 0
+
+                #Solidos totales R102
+                self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - ((self.K_R102 * np.exp(-self.Ea_R102 / (8.314 * T_R102.iloc[-1] * pH_R102[-1]))) * self.Csus_ini_R102 * (self.tp / 3600)))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
+
                 # Estimación de biogás producido por componente en moles R102
                 self.mol_CH4_stoichometric_R102 = (self.K_R102*np.exp(-self.Ea_R102/(8.314*T_R102.iloc[-1]*pH_R102[-1]))) * self.Csus_ini_R102 * self.s_CH4 * (self.tp / 3600)
                 self.mol_CH4_R102 = self.mol_CH4_R102 + self.mol_CH4_stoichometric_R102
@@ -644,6 +666,16 @@ class BiogasPlantSimulation:
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
             self.mol_O2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.1) 
             self.mol_H2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.0001)
+
+            # Solidos volátiles en porcentaje R101
+            self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
+            #Sólidos volátiles en gSV/L R101
+            self.SV_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
+            #Carga orgánica en gSV/L.dia R101
+            try:
+                self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+            except ZeroDivisionError:
+                self.Organic_charge_R101 = 0
 
         # Model ADM1
         elif self.Model == "ADM1":
@@ -671,7 +703,10 @@ class BiogasPlantSimulation:
                     self.x_R101 = 0
                 
                 self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)
-            
+
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - (self.K_R101 * pH_R101[-1] * T_R101[-1] * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
+
             elif self.OperationMode in [3,5]:
 
                 # R_101 Conditions
@@ -695,6 +730,11 @@ class BiogasPlantSimulation:
                 except ZeroDivisionError:
                     self.x_R101 = 0
                 
+                self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)
+
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - (self.K_R101 * pH_R101[-1] * T_R101[-1] * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
+                
                 #R_102 Conditions
                 y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
                 VR_R102 = self.VR2                                                                     #Reactor volume               
@@ -716,8 +756,21 @@ class BiogasPlantSimulation:
                     self.x_R102 = 0
                 
                 self.Csus_ini_R102 = self.Csus_ini_R102*mixing_effect(self.RPM_R102)
+
+                # Solidos volátiles en porcentaje R102
+                self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R102
+                self.SV_R102_gL = self.Csus_ini_R102 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R102
+                try:
+                    self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R102 = 0
+
+                #Solidos totales R102
+                self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - ((self.K_R102 *  pH_R102[-1] * T_R102[-1]) * self.Csus_ini_R102 * (self.tp / 3600)))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
             
-               # Estimación de biogás producido por componente en moles R102 operación 3 y 5
+                # Estimación de biogás producido por componente en moles R102 operación 3 y 5
                 self.mol_CH4_stoichometric_R102 = (self.K_R102 * pH_R102[-1] * T_R102[-1]) * self.Csus_ini_R102 * self.s_CH4 * (self.tp / 3600)
                 self.mol_CH4_R102 = self.mol_CH4_R102 + self.mol_CH4_stoichometric_R102
                 self.mol_CO2_R102 = self.mol_CH4_R102 * (self.s_CO2/self.s_CO2)
@@ -754,6 +807,9 @@ class BiogasPlantSimulation:
                 
                 self.Csus_ini_R101 = self.Csus_ini_R101*mixing_effect(self.RPM_R101)
 
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) + (self.Q_P102 * self.ST_R102 * self.rho * (self.tp/3600)) - (self.K_R101 * pH_R101[-1] * T_R101[-1]  * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P101*(self.tp/3600)))/self.rho
+
                 #R_102 Conditions
                 y0_R102 = float(self.Operation_Data.Csus_ini_R102[0])                                  #intital condition
                 VR_R102 = self.VR2                                                                     #Reactor volume                
@@ -776,6 +832,19 @@ class BiogasPlantSimulation:
                 
                 self.Csus_ini_R102 = self.Csus_ini_R102*mixing_effect(self.RPM_R102)
 
+                # Solidos volátiles en porcentaje R102
+                self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R102
+                self.SV_R102_gL = self.Csus_ini_R102 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R102
+                try:
+                    self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R102 = 0
+
+                #Solidos totales R102
+                self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - ((self.K_R102 * np.exp(-self.Ea_R102 / (8.314 * T_R102.iloc[-1] * pH_R102[-1]))) * self.Csus_ini_R102 * (self.tp / 3600)))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
+
                 # Estimación de biogás producido por componente en moles R102 operación 4
                 self.mol_CH4_stoichometric_R102 = (self.K_R102 * pH_R102[-1] * T_R102[-1]) * self.Csus_ini_R102 * self.s_CH4 * (self.tp / 3600)
                 self.mol_CH4_R102 = self.mol_CH4_R102 + self.mol_CH4_stoichometric_R102
@@ -793,6 +862,16 @@ class BiogasPlantSimulation:
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
             self.mol_O2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.1) 
             self.mol_H2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.0001)
+
+            # Solidos volátiles en porcentaje R101
+            self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
+            #Sólidos volátiles en gSV/L R101
+            self.SV_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
+            #Carga orgánica en gSV/L.dia R101
+            try:
+                self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+            except ZeroDivisionError:
+                self.Organic_charge_R101 = 0
 
         elif self.Model == "Gompertz":
 
@@ -815,7 +894,7 @@ class BiogasPlantSimulation:
 
                 #Estimación de gasto de reactivo límite
                 if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
-                    self.mol_sus_stoichometric_R101 = 0
+                    self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4)
                 else:
                     self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]*(1/self.s_CH4) 
                     if self.mol_sus_stoichometric_R101<0:
@@ -823,6 +902,20 @@ class BiogasPlantSimulation:
 
                 self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini - self.mol_sus_stoichometric_R101)/(self.VR1 + self.Q_P104*(self.tp/3600))
                 self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
+
+                # Solidos volátiles en porcentaje R101
+                self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R101
+                self.SV_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R101
+
+                try:
+                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R101 = 0
+
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - (self.mol_sus_stoichometric_R101 ))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
             
             if self.OperationMode in [3, 5]:
                 # Solución de R101
@@ -839,15 +932,29 @@ class BiogasPlantSimulation:
 
                 #Estimación de gasto de reactivo límite en R101
                 if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
-                    self.mol_sus_stoichometric_R101 = 0
+                    self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4)
                 else:
-                    self.mol_sus_stoichometric_R101 = self.mol_CH4_R101*(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]*(1/self.s_CH4) 
+                    self.mol_sus_stoichometric_R101 = self.Operation_Data.mol_CH4_acum_R101.iloc[-2]*(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]*(1/self.s_CH4) 
                     if self.mol_sus_stoichometric_R101<0:
                         self.mol_sus_stoichometric_R101 = 0   
 
                 self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini - self.mol_sus_stoichometric_R101)/(self.VR1 + self.Q_P104*(self.tp/3600))
                 self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
+
+                # Solidos volátiles en porcentaje R101
+                self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R101
+                self.SV_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R101
                 
+                try:
+                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R101 = 0
+
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - (self.mol_sus_stoichometric_R101 ))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
+            
                 #entrada de R102
                 pH_R102 = float(self.Operation_Data.pH_R102.iloc[-1])
                 T_R102 = float(self.Operation_Data.Temp_R102.iloc[-1])
@@ -874,6 +981,20 @@ class BiogasPlantSimulation:
 
                 self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P101*self.tp/3600))
                 self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+
+                # Solidos volátiles en porcentaje R102
+                self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R102
+                self.SV_R102_gL = self.Csus_ini_R102 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R102
+                try:
+                    self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R102 = 0
+
+                #Solidos totales R102
+                self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - (self.mol_sus_stoichometric_R102))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
+            
             
             elif self.OperationMode == 4:
                 # Solución de R101
@@ -898,6 +1019,20 @@ class BiogasPlantSimulation:
 
                 self.Csus_ini_R101 = (self.mol_ini_R101 + (self.Q_P104*(self.tp/3600))*self.Csus_ini + (self.Q_P102*(self.tp/3600))*self.Operation_Data.Csus_ini_R102.iloc[-1] - self.mol_sus_stoichometric_R101)/(self.VR1 + self.Q_P101*(self.tp/3600))
                 self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
+
+                 # Solidos volátiles en porcentaje R101
+                self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R101
+                self.SV_R101_gL = self.Csus_ini_R101 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R101
+
+                try:
+                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R101 = 0
+
+                #Solidos totales R101
+                self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) + (self.Q_P102 * self.ST_R102 * self.rho * (self.tp/3600))- (self.mol_sus_stoichometric_R101))/(self.VR1+self.Q_P101*(self.tp/3600))/self.rho
 
                 #entrada de R102
                 pH_R102 = float(self.Operation_Data.pH_R102.iloc[-1])
@@ -925,8 +1060,38 @@ class BiogasPlantSimulation:
 
                 self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P101*self.tp/3600))
                 self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+
+                # Solidos volátiles en porcentaje R102
+                self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
+                #Sólidos volátiles en gSV/L R102
+                self.SV_R102_gL = self.Csus_ini_R102 * self.MW_sustrato                  #gSV/L
+                #Carga orgánica en gSV/L.dia R102
+                try:
+                    self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                except ZeroDivisionError:
+                    self.Organic_charge_R102 = 0
+
+                #Solidos totales R102
+                self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - (self.mol_sus_stoichometric_R102))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
             
-        self.GlobalTime = self.GlobalTime + self.tp        
+        self.GlobalTime = self.GlobalTime + self.tp  
+
+    def V101(self):
+        
+        #Acumulated volume
+        self.Vnormal_CH4_acum = self.Vmolar_CH4 * self.mol_CH4_R101
+        self.Vnormal_CO2_acum = self.Vmolar_CO2 * self.mol_CO2_R101
+        self.Vnormal_H2S_acum = self.Vmolar_H2S * self.mol_H2S_R101
+        self.Vnormal_NH3_acum = self.Vmolar_NH3 * self.mol_NH3_R101
+        self.Vnormal_H2_acum = self.Vmolar_H2 * self.mol_H2_R101
+
+        
+
+
+
+
+
+
             
            
 
