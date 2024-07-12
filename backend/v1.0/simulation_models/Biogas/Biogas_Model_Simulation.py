@@ -4,6 +4,7 @@ from simulation_models.Biogas import ThermoProperties as TP
 from  tools import DBManager
 import numpy as np
 from scipy.integrate import odeint
+import requests
 
 
 class BiogasPlantSimulation:
@@ -130,6 +131,15 @@ class BiogasPlantSimulation:
         self.mol_H2_R102 = 0
         #initial for gompertz
         self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+
+        #Initial for V101
+        self.Pacum_bio_V101 = 0
+
+        #Initial for V102
+        self.Pacum_bio_V102 = 0
+
+        #Initial for V107
+        self.Pacum_bio_V107 = 0
         
         #Propiedades del gas en condiciones estándas
         self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
@@ -144,7 +154,11 @@ class BiogasPlantSimulation:
                     , "Temp_R101"
                     , "pH_R101"
                     , "Csus_ini"
-                    , "Csus_ini_R101"]
+                    , "Csus_ini_R101"
+                    , "mol_CH4_acum_R101"
+                    , "Pacum_bio_V101"
+                    , "Pacum_bio_V102"
+                    , "Pacum_bio_V107"]
             
         elif self.OperationMode ==2:
             columns = ["time"
@@ -153,7 +167,8 @@ class BiogasPlantSimulation:
                     , "Temp_R101"
                     , "pH_R101"
                     , "Csus_ini"
-                    , "Csus_ini_R101"]
+                    , "Csus_ini_R101"
+                    , "mol_CH4_acum_R101"]
             
         elif self.OperationMode == 3:
             columns = ["time"
@@ -165,7 +180,9 @@ class BiogasPlantSimulation:
                     , "pH_R102"
                     , "Csus_ini"
                     , "Csus_ini_R101"
-                    , "Csus_ini_R102"]
+                    , "Csus_ini_R102"
+                    , "mol_CH4_acum_R101"
+                    , "mol_CH4_acum_R102"]
 
         elif self.OperationMode in [4,5]:
             columns = ["time"
@@ -178,7 +195,9 @@ class BiogasPlantSimulation:
                     , "pH_R102"
                     , "Csus_ini"
                     , "Csus_ini_R101"
-                    , "Csus_ini_R102"]
+                    , "Csus_ini_R102"
+                    , "mol_CH4_acum_R101"
+                    , "mol_CH4_acum_R102"]
             
         self.Operation_Data = pd.DataFrame(columns= columns)
 
@@ -363,7 +382,8 @@ class BiogasPlantSimulation:
                                     "pH_R101": [pH_R101],
                                     "Csus_ini" : [self.Csus_ini],
                                     "Csus_ini_R101" : [self.Csus_ini_R101],
-                                    "mol_CH4_acum_R101":[self.mol_CH4_R101]})
+                                    "mol_CH4_acum_R101":[self.mol_CH4_R101],
+                                    "Pacum_bio_V101":[self.Pacum_bio_V101]})
         elif self.OperationMode == 2:
              new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
@@ -975,12 +995,13 @@ class BiogasPlantSimulation:
                 if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
                     self.mol_sus_stoichometric_R102  = 0
                 else:
-                    self.mol_sus_stoichometric_R102  = self.mol_CH4_R102 *(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]*(1/self.s_CH4) 
+                    self.mol_sus_stoichometric_R102  = self.mol_CH4_R102 *(1/self.s_CH4) - self.Operation_Data.mol_CH4_acum_R102.iloc[-1]*(1/self.s_CH4) 
                     if self.mol_sus_stoichometric_R102 < 0:
                         self.mol_sus_stoichometric_R102  = 0 
 
-                self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P101*self.tp/3600))
-                self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+                self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR2 + (self.Q_P101*self.tp/3600))
+                self.mol_ini_R102 = self.Csus_ini_R102 * self.VR2
+                print(self.mol_ini_R102)
 
                 # Solidos volátiles en porcentaje R102
                 self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1058,8 +1079,8 @@ class BiogasPlantSimulation:
                     if self.mol_sus_stoichometric_R102 < 0:
                         self.mol_sus_stoichometric_R102  = 0 
 
-                self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR1 + (self.Q_P101*self.tp/3600))
-                self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+                self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR2 + (self.Q_P101*self.tp/3600))
+                self.mol_ini_R102 = self.Csus_ini_R102 * self.VR2
 
                 # Solidos volátiles en porcentaje R102
                 self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1084,6 +1105,42 @@ class BiogasPlantSimulation:
         self.Vnormal_H2S_acum = self.Vmolar_H2S * self.mol_H2S_R101
         self.Vnormal_NH3_acum = self.Vmolar_NH3 * self.mol_NH3_R101
         self.Vnormal_H2_acum = self.Vmolar_H2 * self.mol_H2_R101
+        self.Vnormal_bio_acum = self.Vnormal_CH4_acum + self.Vnormal_CO2_acum + self.Vnormal_H2S_acum + self.Vnormal_NH3_acum + self.Vnormal_H2_acum
+        self.mol_bio_acum_V101 = self.mol_CH4_R101 + self.mol_CO2_R101 + self.mol_H2S_R101 + self.mol_NH3_R101 + self.mol_H2_R101 
+
+        #Compounds concentration
+        self.x_CH4_V101 = self.mol_CH4_R101/self.mol_bio_acum_V101
+        self.x_CO2_V101 = self.mol_CO2_R101/self.mol_bio_acum_V101
+        self.x_H2S_V101 = self.mol_H2S_R101/self.mol_bio_acum_V101
+        self.x_NH3_V101 = self.mol_NH3_R101/self.mol_bio_acum_V101
+        self.x_H2_V101 = self.mol_H2_R101/self.mol_bio_acum_V101
+        
+        # Get temperature from API
+        lat = 3.40330   
+        lon = -76.54708  
+        api_key = "cd9cc586c0098f719bf013730d2d081e"
+        url =   f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+        response = requests.get(url)
+           
+        if response.status_code == 200:
+            Temperature = response.json['main']['temp']
+        else:
+            Temperature = np.random.normal(25, 5)
+            
+        #Acumulated biogas Pressure en V_101
+        self.Pacum_bio_V101 = (self.mol_bio_acum_V101 * 8.314 * Temperature + 273.15) / self.VG1
+
+        #Storage biogas
+        self.Pstorage_bio_V101 = self.Pstorage_bio_V101 + self.Operation_Data
+
+        
+
+
+
+        
+        
+        
+
 
         
 
