@@ -47,6 +47,7 @@ class Turbine(Resource):
 
     batteryState = data['isBatteryConnected']
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
+    chargeCycleInitialSOC = data['simulatedChargeCycleInitialSOC'] if 'simulatedChargeCycleInitialSOC' in data else data["battery"]["stateOfCharge"]["value"]
     simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
     if "simulatedSinkLoadState" in data:
       simulatedSinkLoadState = data["simulatedSinkLoadState"]
@@ -133,9 +134,7 @@ class Turbine(Resource):
         else:
           simulatedDirectCurrentVoltage = 24.0
 
-    chargeSOC_0 = 50.0
-    
-    results = twinHydro.twinOutput(chargeSOC_0, batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
+    results = twinHydro.twinOutput(chargeCycleInitialSOC, batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
                                      controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
 
@@ -164,5 +163,10 @@ class Turbine(Resource):
     turbine["directCurrentLoadVoltage"] = results[20]
     turbine["directCurrentLoadCurrent"] = results[21]*1000
     turbine['batteryState'] = batteryState
+
+    if turbine["batteryPower"] <= 0.0:
+      turbine["chargeCycleInitialSOC"] = turbine["batteryStateOfCharge"]
+    else:
+      turbine["chargeCycleInitialSOC"] = chargeCycleInitialSOC
 
     return {"model": turbine}
