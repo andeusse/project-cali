@@ -5,6 +5,7 @@ from models import Turbine, Solar, Biogas
 from scenarios import SmartHome,SmartCity,SmartFactory
 
 app = Flask(__name__)
+app.config["DEBUG"] = True
 api = Api(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -12,10 +13,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 class ApiRunning(Resource):
   def get(self):
     return {"data": "API is running"}, 200
-  
-  def post(self):
-    data = request.get_json()
-    return data
 
 api.add_resource(ApiRunning, "/")
 
@@ -32,4 +29,4 @@ api.add_resource(SmartFactory, "/scenarios/smartfactory")
 api.add_resource(SmartHome, "/scenarios/smarthome")
 
 if __name__ == "__main__":
-  app.run(debug=True)
+  app.run(host="0.0.0.0", port=5000)

@@ -59,6 +59,19 @@ services:
     networks:
       - laboratorio-default
 
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '5000:5000'
+    depends_on:
+      - influxdb
+      - grafana
+    networks:
+      - laboratorio-default
+
 volumes:
   influxdb-storage-data:
   influxdb-storage-config:
