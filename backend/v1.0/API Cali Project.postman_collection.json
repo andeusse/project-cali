@@ -1,0 +1,54 @@
+{
+	"info": {
+		"_postman_id": "9b5ff7b2-7fee-4a65-b5bf-0ede01ec219c",
+		"name": "API Cali Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11147150"
+	},
+	"item": [
+		{
+			"name": "ApiRunning",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url_local}}/",
+					"host": [
+						"{{url_local}}"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postTurbine",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"name\":\"Nombre\",\r\n   \"inputDirectCurrentPower\":false,\r\n   \"turbineType\":\"Turgo\",\r\n   \"controllerCustomize\":false,\r\n   \"controllerInitialState\":\"Apagada\",\r\n   \"controllerEfficiency\":{\r\n      \"disabled\":true,\r\n      \"value\":96,\r\n      \"tooltip\":\"Eficiencia del controlador de carga\",\r\n      \"unit\":\"%\",\r\n      \"variableName\":\"η\",\r\n      \"subIndex\":\"controller\"\r\n   },\r\n   \"controllerChargeVoltageBulk\":{\r\n      \"disabled\":true,\r\n      \"value\":27.2,\r\n      \"tooltip\":\"Voltaje de carga bulk\",\r\n      \"unit\":\"V\",\r\n      \"variableName\":\"V\",\r\n      \"subIndex\":\"bulk\",\r\n      \"min\":20,\r\n      \"max\":35\r\n   },\r\n   \"controllerChargeVoltageFloat\":{\r\n      \"disabled\":true,\r\n      \"value\":27.8,\r\n      \"tooltip\":\"Voltaje de carga flotante\",\r\n      \"unit\":\"V\",\r\n      \"variableName\":\"V\",\r\n      \"subIndex\":\"float\",\r\n      \"min\":20,\r\n      \"max\":35\r\n   },\r\n   \"controllerChargingMinimunVoltage\":{\r\n      \"disabled\":true,\r\n      \"value\":24,\r\n      \"tooltip\":\"Voltaje mínimo de inicio de carga\",\r\n      \"unit\":\"V\",\r\n      \"variableName\":\"V\",\r\n      \"subIndex\":\"bat_min\",\r\n      \"min\":24,\r\n      \"max\":35\r\n   },\r\n   \"controllerSinkOffVoltage\":{\r\n      \"disabled\":true,\r\n      \"value\":24.75,\r\n      \"tooltip\":\"Voltaje de apagado de carga disipadora\",\r\n      \"unit\":\"V\",\r\n      \"variableName\":\"V\",\r\n      \"subIndex\":\"sink_off\",\r\n      \"min\":24,\r\n      \"max\":35\r\n   },\r\n   \"controllerSinkOnVoltage\":{\r\n      \"disabled\":true,\r\n      \"value\":28,\r\n      \"tooltip\":\"Voltaje de encendido de carga disipadora\",\r\n      \"unit\":\"V\",\r\n      \"variableName\":\"V\",\r\n      \"subIndex\":\"sink_on\",\r\n      \"min\":24,\r\n      \"max\":35\r\n   },\r\n   \"batteryStateOfCharge\":{\r\n      \"disabled\":false,\r\n      \"value\":100,\r\n      \"tooltip\":\"Estado de carga inicial\",\r\n      \"unit\":\"%\",\r\n      \"variableName\":\"SOC\",\r\n      \"subIndex\":\"inicial\",\r\n      \"min\":0,\r\n      \"max\":100\r\n   },\r\n   \"batteryTemperatureCoefficient\":{\r\n      \"disabled\":true,\r\n      \"value\":0.6,\r\n      \"tooltip\":\"Coeficiente de temperatura\",\r\n      \"unit\":\"% / °C\",\r\n      \"variableName\":\"δ\",\r\n      \"subIndex\":\"C\"\r\n   },\r\n   \"batteryCapacity\":{\r\n      \"disabled\":true,\r\n      \"value\":150,\r\n      \"tooltip\":\"Capacidad\",\r\n      \"unit\":\"Ah\",\r\n      \"variableName\":\"Capacidad\",\r\n      \"subIndex\":\"bat\"\r\n   },\r\n   \"batterySelfDischargeCoefficient\":{\r\n      \"disabled\":true,\r\n      \"value\":2.5,\r\n      \"tooltip\":\"Coeficiente de autodescarga\",\r\n      \"unit\":\"% / dia\",\r\n      \"variableName\":\"σ\",\r\n      \"subIndex\":\"bat\"\r\n   },\r\n   \"batteryChargeDischargeEfficiency\":{\r\n      \"disabled\":true,\r\n      \"value\":98,\r\n      \"tooltip\":\"Eficiencia de carga y descarga\",\r\n      \"unit\":\"% / mes\",\r\n      \"variableName\":\"η\",\r\n      \"subIndex\":\"bat\"\r\n   },\r\n   \"batteryTemperatureCompensationCoefficient\":{\r\n      \"disabled\":true,\r\n      \"value\":-0.06,\r\n      \"tooltip\":\"Coeficiente de compensación de temperatura\",\r\n      \"unit\":\"V / °C\",\r\n      \"variableName\":\"δ\",\r\n      \"subIndex\":\"V\"\r\n   },\r\n   \"inverterEfficiency\":{\r\n      \"disabled\":true,\r\n      \"value\":90,\r\n      \"tooltip\":\"Eficiencia\",\r\n      \"unit\":\"%\",\r\n      \"variableName\":\"η\",\r\n      \"subIndex\":\"inverter\"\r\n   },\r\n   \"inverterNominalPower\":{\r\n      \"disabled\":true,\r\n      \"value\":90,\r\n      \"tooltip\":\"Potencia nominal\",\r\n      \"unit\":\"kW\",\r\n      \"variableName\":\"P\",\r\n      \"subIndex\":\"inverter\"\r\n   },\r\n   \"inputOfflineOperation\":false,\r\n   \"inputPressure\":{\r\n      \"disabled\":true,\r\n      \"value\":100,\r\n      \"tooltip\":\"Presión\",\r\n      \"unit\":\"kPa\",\r\n      \"variableName\":\"Presión\",\r\n      \"subIndex\":\"\",\r\n      \"min\":0,\r\n      \"max\":1000\r\n   },\r\n   \"inputFlow\":{\r\n      \"disabled\":true,\r\n      \"value\":5,\r\n      \"tooltip\":\"Flujo\",\r\n      \"unit\":\"l / s\",\r\n      \"variableName\":\"Flujo\",\r\n      \"subIndex\":\"\",\r\n      \"min\":0,\r\n      \"max\":10\r\n   },\r\n   \"inputActivePower\":{\r\n      \"disabled\":true,\r\n      \"value\":200,\r\n      \"tooltip\":\"Potencia activa\",\r\n      \"unit\":\"W\",\r\n      \"variableName\":\"Potencia activa\",\r\n      \"subIndex\":\"\",\r\n      \"min\":0,\r\n      \"max\":100000\r\n   },\r\n   \"inputPowerFactor\":{\r\n      \"disabled\":true,\r\n      \"value\":1,\r\n      \"tooltip\":\"Factor de potencia\",\r\n      \"unit\":\"\",\r\n      \"variableName\":\"Factor de potencia\",\r\n      \"subIndex\":\"\",\r\n      \"min\":-1,\r\n      \"max\":1\r\n   }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_local}}/models/turbine",
+					"host": [
+						"{{url_local}}"
+					],
+					"path": [
+						"models",
+						"turbine"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

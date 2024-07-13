@@ -1,0 +1,13 @@
+Flask==2.2.5
+Flask-RESTful==0.3.10
+Flask-Cors==4.0.0
+pandas==2.2.1
+influxdb_client==1.40.0
+scipy==1.13.0
+openpyxl==3.1.2
+xalglib==3.16
+pymodbus==3.2.2
+numpy==1.26.4
+importlib-metadata==7.0.1
+python-dotenv==1.0.1
+requests==2.31.0
