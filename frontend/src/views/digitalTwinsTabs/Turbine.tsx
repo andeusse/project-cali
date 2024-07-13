@@ -47,7 +47,7 @@ const Turbine = () => {
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop, setError] =
+  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', system);
 
   useEffect(() => {
@@ -537,13 +537,13 @@ const Turbine = () => {
             </Grid>
           </Grid>
         </Grid>
-        {graphs !== undefined && system.timeMultiplier && (
+        {charts !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
                 timeMultiplier={system.timeMultiplier}
                 handleChange={handleChange}
-                graphs={graphs}
+                charts={charts}
                 variables={
                   system.turbineType === TurbineType.Pelton
                     ? PELTON_TURBINE_DIAGRAM_VARIABLES

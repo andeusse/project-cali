@@ -1,6 +1,6 @@
 import Config from '../../config/config';
 import { CommonSystemParameter } from '../common';
-import { CommonGraphType } from '../graph';
+import { CommonChartType } from '../graph';
 import { InputType } from '../inputType';
 import {
   Battery,
@@ -78,7 +78,7 @@ export type TurbineOutput = {
   chargeCycleInitialSOC?: number;
 };
 
-export type TurbineOutputHistoric = CommonGraphType & {
+export type TurbineOutputHistoric = CommonChartType & {
   turbineCurrent: number[];
   turbinePower: number[];
   turbineVoltage: number[];

@@ -7,7 +7,7 @@ import {
   CADMIUM_TELLURIDE_PANEL as CTP,
   WIND_TURBINE,
 } from '../common';
-import { CommonGraphType } from '../graph';
+import { CommonChartType } from '../graph';
 import { InputType } from '../inputType';
 import {
   Battery,
@@ -350,7 +350,7 @@ export type SolarWindOutput = {
   chargeCycleInitialSOC?: number;
 };
 
-export type SolarWindOutputHistoric = CommonGraphType & {
+export type SolarWindOutputHistoric = CommonChartType & {
   monocrystallinePanelTemperature: number[];
   policrystallinePanelTemperature: number[];
   flexPanelTemperature: number[];

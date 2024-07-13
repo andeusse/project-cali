@@ -1,17 +1,20 @@
-import { CommonGraphType, GraphType } from '../types/graph';
+import { CommonChartType, ChartValue, ChartValues } from '../types/graph';
+import { randomColorGenerator } from './randomColorGenerator';
 
-export const data2Graph = <T extends CommonGraphType>(data: T): GraphType[] => {
-  const graphs: GraphType[] = [];
-
+export const data2Graph = <T extends CommonChartType>(data: T): ChartValues => {
+  const graphValues: ChartValues = {
+    xValues: data['time'],
+    variables: [],
+  };
   for (const key in data) {
     if (key !== 'time') {
-      const graph: GraphType = {
+      const graphValue: ChartValue = {
         variable: key,
-        xValues: data['time'],
         yValues: data[key] as number[],
+        color: randomColorGenerator(),
       };
-      graphs.push(graph);
+      graphValues.variables.push(graphValue);
     }
   }
-  return graphs;
+  return graphValues;
 };

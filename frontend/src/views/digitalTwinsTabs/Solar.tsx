@@ -54,7 +54,7 @@ const Solar = () => {
     useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop, setError] =
+  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', system);
 
   useEffect(() => {
@@ -221,7 +221,7 @@ const Solar = () => {
             <AccordionDetails>
               <img
                 style={{
-                  height: '500px',
+                  height: '400px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',
@@ -903,13 +903,13 @@ const Solar = () => {
           </Grid>
         </Grid>
 
-        {graphs !== undefined && system.timeMultiplier && (
+        {charts !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
                 timeMultiplier={system.timeMultiplier}
                 handleChange={handleChange}
-                graphs={graphs}
+                charts={charts}
                 variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}

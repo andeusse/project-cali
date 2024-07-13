@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { updateModel } from '../api/digitalTwinsModels';
 import moment from 'moment';
 import { errorResp, resp } from '../types/api';
-import { GraphType } from '../types/graph';
+import { ChartValues } from '../types/graph';
 import { data2Graph } from '../utils/data2Graph';
 import { CommonDigitalTwinsParameter } from '../types/models/common';
 
@@ -17,7 +17,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
 
   const [lastTime, setLastTime] = useState<moment.Moment | null>();
 
-  const [graphs, setGraphs] = useState<GraphType[]>();
+  const [charts, setCharts] = useState<ChartValues>();
 
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -54,7 +54,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
               }
               return oldState;
             });
-            setGraphs(data2Graph(historicData));
+            setCharts(data2Graph(historicData));
             return d;
           });
           setError('');
@@ -102,13 +102,13 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
     setIsPlaying(false);
     setData(undefined);
     setHistoricData({});
-    setGraphs(undefined);
+    setCharts(undefined);
     setError('');
   };
 
   return [
     data,
-    graphs,
+    charts,
     isPlaying,
     error,
     onPlay,

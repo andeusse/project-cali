@@ -20,20 +20,20 @@ import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
-import { GraphType } from '../../../types/graph';
+import { ChartType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import { array2CSV } from '../../../utils/array2CSV';
 import { DiagramVariableType } from '../../../types/models/common';
 
 type Props = {
-  graph: GraphType;
-  variable?: DiagramVariableType;
+  chart: ChartType;
+  variables: DiagramVariableType[];
   handleDeleteChart: (e: string) => void;
   isPlaying: boolean;
 };
 
 const TimeGraph = (props: Props) => {
-  const { graph, variable, handleDeleteChart, isPlaying } = props;
+  const { chart, variables, handleDeleteChart, isPlaying } = props;
 
   const chartRef = useRef<any>(undefined);
 
@@ -58,9 +58,15 @@ const TimeGraph = (props: Props) => {
       y: {
         title: {
           display: true,
-          text: `${variable?.name} (${variable?.unit})`,
+          text:
+            variables.length === 1
+              ? `${variables[0].name} (${variables[0].unit})`
+              : '',
         },
       },
+    },
+    interaction: {
+      mode: 'index',
     },
     plugins: {
       legend: {
@@ -69,37 +75,49 @@ const TimeGraph = (props: Props) => {
       },
       title: {
         display: true,
-        text: variable?.name.toUpperCase(),
+        text:
+          variables.length === 1
+            ? variables[0].name.toUpperCase()
+            : 'Gráfica de tiempo',
       },
-      zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x' as const,
-          modifierKey: 'ctrl' as const,
-        },
-        zoom: {
-          drag: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
-          mode: 'x' as const,
-        },
-      },
+      zoom: !isPlaying
+        ? {
+            pan: {
+              enabled: true,
+              mode: 'x' as const,
+              modifierKey: 'ctrl' as const,
+            },
+            zoom: {
+              drag: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'x' as const,
+            },
+          }
+        : {},
     },
   };
 
   const data = {
-    labels: isPlaying ? graph.xValues.slice(-20) : graph.xValues,
-    datasets: [
-      {
-        label: graph.variable,
-        data: isPlaying ? graph.yValues.slice(-20) : graph.yValues,
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      },
-    ],
+    labels: isPlaying
+      ? chart.chartValues.xValues.slice(-20)
+      : chart.chartValues.xValues,
+    datasets: chart.chartValues.variables.map((c) => {
+      const variable = variables.find((v) => v.variable === c.variable);
+      return {
+        label: variable
+          ? `${variable.name} ${
+              variable.unit !== '' ? `[${variable.unit}]` : ''
+            }`
+          : '',
+        data: isPlaying ? c.yValues.slice(-20) : c.yValues,
+        borderColor: c.color,
+        backgroundColor: c.color,
+      };
+    }),
   };
 
   const handleResetZoom = () => {
@@ -110,21 +128,24 @@ const TimeGraph = (props: Props) => {
     var blob = new Blob(
       [
         array2CSV(
-          [graph.xValues, graph.yValues],
-          ['Time', variable?.name ? variable?.name : '']
+          [
+            chart.chartValues.xValues,
+            ...chart.chartValues.variables.map((v) => v.yValues),
+          ],
+          ['Time', ...chart.chartValues.variables.map((v) => v.variable)]
         ),
       ],
       {
         type: 'text/csv;charset=utf-8',
       }
     );
-    saveAs(blob, `${graph.variable}-data.csv`);
+    saveAs(blob, `Informacion.csv`);
   };
 
   const handleSavePNG = () => {
-    const canvas: any = document.getElementById(`${graph.variable}-chart`);
+    const canvas: any = document.getElementById(`${chart.guid}-chart`);
     canvas.toBlob((blob: any) => {
-      saveAs(blob, `${graph.variable}.png`);
+      saveAs(blob, `GraficaDeTiempo.png`);
     });
   };
 
@@ -158,12 +179,12 @@ const TimeGraph = (props: Props) => {
           icon={<DeleteIcon fontSize="inherit" />}
           color="error"
           tooltip="Remove chart"
-          handleClick={() => handleDeleteChart(graph.variable)}
+          handleClick={() => handleDeleteChart(chart.guid)}
         ></CustomIconButton>
       </Grid>
       <Grid item xs={12} md={12} xl={12}>
         <Line
-          id={`${graph.variable}-chart`}
+          id={`${chart.guid}-chart`}
           ref={chartRef}
           options={options}
           data={data}

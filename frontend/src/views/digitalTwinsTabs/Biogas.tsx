@@ -57,7 +57,7 @@ const Biogas = () => {
 
   const [diagramVariables, setDiagramVariables] = useState(BIOGAS_MODE1);
 
-  const [data, graphs, isPlaying, error, onPlay, onPause, onStop, setError] =
+  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<BiogasParameters, BiogasOutput>('biogas', system);
 
   useEffect(() => {
@@ -957,13 +957,13 @@ const Biogas = () => {
             </Grid>
           </Grid>
         </Grid>
-        {graphs !== undefined && system.timeMultiplier && (
+        {charts !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
                 timeMultiplier={system.timeMultiplier}
                 handleChange={handleChange}
-                graphs={graphs}
+                charts={charts}
                 variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}

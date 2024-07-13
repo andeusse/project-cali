@@ -1,6 +1,6 @@
 import Config from '../../config/config';
 import { CommonSystemParameter } from '../common';
-import { CommonGraphType } from '../graph';
+import { CommonChartType } from '../graph';
 import { InputType } from '../inputType';
 import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
 
@@ -209,7 +209,7 @@ export type BiogasOutput = {
   Pump101Flow: number;
 };
 
-export type BiogasOutputHistoric = CommonGraphType & {};
+export type BiogasOutputHistoric = CommonChartType & {};
 
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
