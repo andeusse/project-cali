@@ -5,6 +5,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
 } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { SmartSystemOutput } from '../../../types/scenarios/common';
@@ -45,7 +46,7 @@ const ResultTab = (props: Props) => {
 
   const [labels, setLabels] = useState<string[]>([]);
 
-  const [selectedVariable, setSelectedVariable] = useState<string>('');
+  const [selectedVariables, setSelectedVariables] = useState<string[]>([]);
 
   const getSeriesFromData = useCallback(() => {
     const series: any[] = [];
@@ -121,13 +122,16 @@ const ResultTab = (props: Props) => {
     },
   };
 
-  const handleSelectedVariableChange = (e: any) => {
-    setSelectedVariable(e.target.value);
+  const handleSelectedVariableChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedVariables(typeof value === 'string' ? value.split(',') : value);
   };
 
   const handleAddGraph = () => {
-    currentGraphs.push(selectedVariable);
-    setSelectedVariable('');
+    selectedVariables.forEach((v) => setCurrentGraphs(selectedVariables));
+    setSelectedVariables([]);
   };
 
   const handleDeleteGraph = (e: string) => {
@@ -200,7 +204,9 @@ const ResultTab = (props: Props) => {
               <Select
                 labelId="variable-select-label"
                 label="Variable"
-                value={selectedVariable}
+                multiple
+                renderValue={(selected) => selected.join(', ')}
+                value={selectedVariables}
                 onChange={(e) => handleSelectedVariableChange(e)}
               >
                 {data.columns.map((v, index) => (
@@ -215,7 +221,7 @@ const ResultTab = (props: Props) => {
               variant="outlined"
               startIcon={<AddIcon />}
               onClick={handleAddGraph}
-              disabled={selectedVariable === ''}
+              disabled={selectedVariables.length === 0}
             >
               Add
             </Button>

@@ -78,7 +78,7 @@ const TimeGraphs = (props: Props) => {
     setSelectedVariables([]);
   };
 
-  const handleVariableSelected = (event: SelectChangeEvent<string[]>) => {
+  const handleVariableSelectedChange = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = event;
@@ -130,7 +130,7 @@ const TimeGraphs = (props: Props) => {
               label="Variable"
               multiple
               value={selectedVariables}
-              onChange={(e) => handleVariableSelected(e)}
+              onChange={(e) => handleVariableSelectedChange(e)}
               renderValue={(selected) => selected.join(', ')}
             >
               {variables
