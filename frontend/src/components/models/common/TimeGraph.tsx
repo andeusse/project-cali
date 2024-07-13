@@ -71,7 +71,7 @@ const TimeGraph = (props: Props) => {
     plugins: {
       legend: {
         position: 'top' as const,
-        onClick: (e: any) => {},
+        // onClick: (e: any) => {},
       },
       title: {
         display: true,
