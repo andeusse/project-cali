@@ -17,7 +17,7 @@ database_df = pd.read_excel('v1.0\mockDB\Registros_Modbus.xlsx', sheet_name = 'C
 testValues_dfs = pd.read_excel('v1.0\mockDB\Devices_test.xlsx', sheet_name = None)
 
 # 0:Eros    1:Daniel     2:Eusse     3:Checho
-database_index = 1
+database_index = 0
 influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][database_index]) + ':' +  str(database_df['Port'][database_index]) + '/', org = database_df['Organization'][database_index], bucket = database_df['Bucket'][database_index], token = str(database_df['Token'][database_index]))
 msg = influxDB.InfluxDBconnection()
 
@@ -26,7 +26,7 @@ count = 0
 while True:
     #database_df = pd.read_excel(r'.\Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
     #testValues_dfs = pd.read_excel(r'.\Devices_test.xlsx', sheet_name = None)
-    database_df = pd.read_excel('v1.0\mockDB\Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
+    # database_df = pd.read_excel('v1.0\mockDB\Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
     testValues_dfs = pd.read_excel('v1.0\mockDB\Devices_test.xlsx', sheet_name = None)
     
     for measurement in list(testValues_dfs.keys()):
