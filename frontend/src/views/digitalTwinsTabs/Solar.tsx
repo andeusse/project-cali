@@ -117,6 +117,10 @@ const Solar = () => {
             ? data.inputSolarRadiation2
             : o.solarRadiation2.value,
         },
+        windSpeed: {
+          ...o.windSpeed,
+          value: data.inputWindSpeed ? data.inputWindSpeed : o.windSpeed.value,
+        },
         alternCurrentLoadPower: {
           ...o.alternCurrentLoadPower,
           value: data.inputAlternCurrentLoadPower

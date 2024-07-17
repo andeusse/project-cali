@@ -19,6 +19,12 @@ export enum ControllerStateType {
   Apagada = 'Apagada',
 }
 
+export enum SinkLoadModeType {
+  Auto = 'Auto',
+  On = 'On',
+  Off = 'Off',
+}
+
 export type Controller = CommonController & {
   sinkLoadInitialState: ControllerStateType;
   sinkOffVoltage: InputType;
@@ -38,6 +44,7 @@ export type TurbineParameters = CommonSystemParameter &
     inputDirectCurrentPower: boolean;
     inputActivePower: InputType;
     inputPowerFactor: InputType;
+    sinkLoadMode: SinkLoadModeType;
     simulatedBatteryStateOfCharge?: number;
     simulatedDirectCurrentVoltage?: number;
     simulatedSinkLoadState?: boolean;
@@ -324,6 +331,7 @@ export const TURBINE: TurbineParameters = {
     max: 1,
     step: 0.1,
   },
+  sinkLoadMode: SinkLoadModeType.Auto,
   ...PELTON_TURBINE_CONST,
 };
 

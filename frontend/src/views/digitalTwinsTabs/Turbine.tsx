@@ -23,6 +23,7 @@ import {
   TurbineParameters,
   TurbineType,
   TURGO_TURBINE_DIAGRAM_VARIABLES,
+  SinkLoadModeType,
 } from '../../types/models/turbine';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import PlayerControls from '../../components/UI/PlayerControls';
@@ -524,6 +525,29 @@ const Turbine = () => {
                     trueString="Conectada"
                     falseString="Desconectada"
                   ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <h3>Conexión carga disipadora</h3>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="sink-load-mode-type">
+                      Modo carga disipadora
+                    </InputLabel>
+                    <Select
+                      labelId="sink-load-mode-type"
+                      label="Modo carga disipadora"
+                      value={system.sinkLoadMode}
+                      name="sinkLoadMode"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(SinkLoadModeType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {key}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
             </Grid>
