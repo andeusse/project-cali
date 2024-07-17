@@ -14,7 +14,6 @@ class ModbusModel:
 
     def ModbusReader(self, unitID, register, bytes, scale, sign):
         data = self.ModbusClient.read_holding_registers(register, bytes, slave = unitID)
-        print(data)
         temp = BinaryPayloadDecoder.fromRegisters(data.registers, byteorder=Endian.Big, wordorder=Endian.Big)
         if bytes == 2:
             if sign == 'Signed':
