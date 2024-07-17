@@ -80,10 +80,15 @@ class TwinHydro:
 
         return n_controller.x[0]
     
-    def twinOutput(self, chargeSOC_0, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA):
+    def twinOutput(self, chargeSOC_0, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkLoadMode, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA):
         
         self.inverterState = inverterState
-        self.sinkState = sinkState
+        if sinkLoadMode == 'On':
+            self.sinkState = True
+        elif sinkLoadMode == 'Off':
+            self.sinkState = False
+        elif sinkLoadMode == 'Auto':
+            self.sinkState = sinkState
         self.V_CD = V_CD
         self.P_CA = P_CA
         self.PF = PF
@@ -112,7 +117,7 @@ class TwinHydro:
         self.P_inv = self.S_CA / (self.n_inverter / 100) # Potencia a la entrada del inversor
         
         if self.sinkState: 
-            self.P_sink = self.V_CD**2 / 0.8
+            self.P_sink = self.V_CD**2 / 0.9
         else:
             self.P_sink = 0.0
                       
@@ -181,10 +186,11 @@ class TwinHydro:
             self.V_CD = self.V_bat
         
         # Lógica de la disipación
-        if self.V_bat > self.V_sink_on: # Cambiar por condición de voltaje
-            self.sinkState = True 
-        elif self.V_bat < self.V_sink_off:
-            self.sinkState = False
+        if sinkLoadMode == 'Auto':
+            if self.V_bat > self.V_sink_on: # Cambiar por condición de voltaje
+                self.sinkState = True 
+            elif self.V_bat < self.V_sink_off:
+                self.sinkState = False
         
         self.I_t = self.P_h / self.V_t
         self.I_CC = self.P_CC / self.V_CD
