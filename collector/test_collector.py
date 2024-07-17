@@ -7,10 +7,10 @@ import logging
 
 # %%
 
-database_df = pd.read_excel('./Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
-analyzers_df = pd.read_excel('./Registros_Modbus.xlsx', sheet_name = 'ConexionAnalizadores')
-loads_df = pd.read_excel('./Registros_Modbus.xlsx', sheet_name = 'Cargas')
-variables_df = pd.read_excel('./Registros_Modbus.xlsx', sheet_name = 'Variables')
+database_df = pd.read_excel('Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
+analyzers_df = pd.read_excel('Registros_Modbus.xlsx', sheet_name = 'ConexionAnalizadores')
+loads_df = pd.read_excel('Registros_Modbus.xlsx', sheet_name = 'Cargas')
+variables_df = pd.read_excel('Registros_Modbus.xlsx', sheet_name = 'Variables')
 logger = logging.getLogger('Collector')
 handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s')
@@ -42,9 +42,9 @@ while True:
           
                       for database_index in database_df.index:
                           
-                          influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][database_index]) + ':' +  str(database_df['Port'][database_index]) + '/', org = database_df['Organization'][database_index], bucket = database_df['Bucket'][database_index], token = str(database_df['Token'][database_index]))
+                          influxDB = DBManager.InfluxDBmodel(server = 'http://host.docker.internal:' +  str(database_df['Port'][database_index]) + '/', org = database_df['Organization'][database_index], bucket = database_df['Bucket'][database_index], token = str(database_df['Token'][database_index]))
                           msg = influxDB.InfluxDBconnection()
-                          influxDB.InfluxDBwriter( load = loads_df["Name"][load_index], variable =  variables_df["Name"][variable_index], value = value, timestamp = timestamp)
+                          (influxDB.InfluxDBwriter( measurement = analyzers_df["Name"][analyzer_index], device = loads_df["Name"][load_index], variable =  variables_df["Name"][variable_index], value = value, timestamp = timestamp))
         except:
           logger.error("No se pudo conectar al equipo modbus")
                       
