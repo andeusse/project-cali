@@ -147,6 +147,7 @@ class BiogasPlantSimulation:
         self.mol_H2S_V1011 = 0
         self.mol_O2_V101 = 0
         self.mol_H2_V101 = 0
+        self.mol_H2O_V101 = 0
 
         #Initial for V102
         self.Pacum_bio_V102 = 0
@@ -155,6 +156,7 @@ class BiogasPlantSimulation:
         self.mol_H2S_V102 = 0
         self.mol_O2_V102 = 0
         self.mol_H2_V102 = 0
+        self.mol_H2O_V102 = 0
 
         #Initial for biogas_treatment
         self.N0_1 = 0
@@ -186,6 +188,7 @@ class BiogasPlantSimulation:
                     , "mol_O2_acum_R101"
                     , "mol_NH3_acum_R101"
                     , "mol_H2_acum_R101"
+                    , "mol_H2O_acum_R101"
                     , "Pacum_bio_V101"
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
@@ -204,6 +207,7 @@ class BiogasPlantSimulation:
                     , "mol_O2_acum_R101"
                     , "mol_NH3_acum_R101"
                     , "mol_H2_acum_R101"
+                    , "mol_H2O_acum_R101"
                     , "Pacum_bio_V101"
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
@@ -225,12 +229,14 @@ class BiogasPlantSimulation:
                     , "mol_O2_acum_R101"
                     , "mol_NH3_acum_R101"
                     , "mol_H2_acum_R101"
+                    , "mol_H2O_acum_R101"
                     , "mol_CH4_acum_R102"
                     , "mol_CO2_acum_R102"
                     , "mol_H2S_acum_R102"
                     , "mol_O2_acum_R102"
                     , "mol_NH3_acum_R102"
                     , "mol_H2_acum_R102"
+                    , "mol_H2O_acum_R102"
                     , "Pacum_bio_V101"
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
@@ -253,12 +259,14 @@ class BiogasPlantSimulation:
                     , "mol_O2_acum_R101"
                     , "mol_NH3_acum_R101"
                     , "mol_H2_acum_R101"
+                    , "mol_H2O_acum_R101"
                     , "mol_CH4_acum_R102"
                     , "mol_CO2_acum_R102"
                     , "mol_H2S_acum_R102"
                     , "mol_O2_acum_R102"
                     , "mol_NH3_acum_R102"
                     , "mol_H2_acum_R102"
+                    , "mol_H2O_acum_R102"
                     , "Pacum_bio_V101"
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
@@ -452,6 +460,7 @@ class BiogasPlantSimulation:
                                     "mol_O2_acum_R101":[self.mol_O2_R101],
                                     "mol_NH3_acum_R101":[self.mol_NH3_R101],
                                     "mol_H2_acum_R101":[self.mol_H2_R101],
+                                    "mol_H2O_acum_R101":[self.mol_H2O_R101],
                                     "Pacum_bio_V101":[self.Pacum_bio_V101],
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
@@ -470,6 +479,7 @@ class BiogasPlantSimulation:
                                     "mol_O2_acum_R101":[self.mol_O2_R101],
                                     "mol_NH3_acum_R101":[self.mol_NH3_R101],
                                     "mol_H2_acum_R101":[self.mol_H2_R101],
+                                    "mol_H2O_acum_R101":[self.mol_H2O_R101],
                                     "Pacum_bio_V101":[self.Pacum_bio_V101],
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
@@ -491,12 +501,14 @@ class BiogasPlantSimulation:
                                     "mol_O2_acum_R101":[self.mol_O2_R101],
                                     "mol_NH3_acum_R101":[self.mol_NH3_R101],
                                     "mol_H2_acum_R101":[self.mol_H2_R101],
+                                    "mol_H2O_acum_R101":[self.mol_H2O_R101],
                                     "mol_CH4_acum_R102":[self.mol_CH4_R102],
                                     "mol_CO2_acum_R102":[self.mol_CO2_R102],
                                     "mol_H2S_acum_R102":[self.mol_H2S_R102],
                                     "mol_O2_acum_R102":[self.mol_O2_R102],
                                     "mol_NH3_acum_R102":[self.mol_NH3_R102],
                                     "mol_H2_acum_R102":[self.mol_H2_R102],
+                                    "mol_H2O_acum_R102":[self.mol_H2O_R102],
                                     "Pacum_bio_V101":[self.Pacum_bio_V101],
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
@@ -519,12 +531,14 @@ class BiogasPlantSimulation:
                                     "mol_O2_acum_R101":[self.mol_O2_R101],
                                     "mol_NH3_acum_R101":[self.mol_NH3_R101],
                                     "mol_H2_acum_R101":[self.mol_H2_R101],
+                                    "mol_H2O_acum_R101":[self.mol_H2O_R101],
                                     "mol_CH4_acum_R102":[self.mol_CH4_R102],
                                     "mol_CO2_acum_R102":[self.mol_CO2_R102],
                                     "mol_H2S_acum_R102":[self.mol_H2S_R102],
                                     "mol_O2_acum_R102":[self.mol_O2_R102],
                                     "mol_NH3_acum_R102":[self.mol_NH3_R102],
                                     "mol_H2_acum_R102":[self.mol_H2_R102],
+                                    "mol_H2O_acum_R102":[self.mol_H2O_R102],
                                     "Pacum_bio_V101":[self.Pacum_bio_V101],
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
@@ -672,7 +686,7 @@ class BiogasPlantSimulation:
                 pH_func_R102 = lambda t: np.interp(t, time, pH_R102) 
                 T_R102 = self.Operation_Data.Temp_R102.astype(float)                                   #Temperatures Vector
                 T_func_R102 = lambda t: np.interp(t, time, T_R102)                                     #Temperatures in time vector                
-                Qin_R102_1 = (self.Operation_Data.Q_P101/3600).astype(float).tolist()                         #flow in 1 Vector            
+                Qin_R102_1 = (self.Operation_Data.Q_P101/3600).astype(float).tolist()                  #flow in 1 Vector            
                 Q_func_R102_1 = lambda t: np.interp(t, time, Qin_R102_1)                               #flow in time vector
                 Csus_in_R102_1 = self.Operation_Data.Csus_ini_R101.astype(float)                       #Inlet substrate concentration
                 Csus_in_func_R102_1 = lambda t: np.interp(t, time, Csus_in_R102_1)                     #Concentration in time vector
@@ -706,9 +720,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R102 = self.mol_CH4_R102 * (self.s_CO2/self.s_CO2)
                 self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-                self.mol_H2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.0001)
-                self.mol_H20_R102 = self.mol_CH4_R102*np.random.normal(0.7, 0.1)
+                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.0001)
+                self.mol_H2O_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.normal(0.7, 0.1)
             
             elif self.OperationMode == 4:
                 # R_101 Conditions
@@ -782,19 +796,19 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R102 = self.mol_CH4_R102 * (self.s_CO2/self.s_CO2)
                 self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-                self.mol_H2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.0001)
-                self.mol_H20_R102 = self.mol_CH4_R102*np.random.normal(0.7, 0.1)
-            
+                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.0001)
+                self.mol_H2O_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.normal(0.7, 0.1)
+
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101*np.exp(-self.Ea_R101/(8.314*T_R101.iloc[-1]*pH_R101[-1]))) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
             self.mol_CH4_R101 = float(self.mol_CH4_R101 + self.mol_CH4_stoichometric_R101)
             self.mol_CO2_R101 = self.mol_CH4_R101 * (self.s_CO2/self.s_CO2)
             self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
-            self.mol_O2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.1) 
-            self.mol_H2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.0001)
-            self.mol_H20_R101 = self.mol_CH4_R101*np.random.normal(0.7, 0.1)
+            self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.1) 
+            self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.0001)
+            self.mol_H2O_R101 = self.mol_H2O_R101 + self.mol_CH4_stoichometric_R101*np.random.normal(0.7, 0.1)
 
             # Solidos volátiles en porcentaje R101
             self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -905,9 +919,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R102 = self.mol_CH4_R102 * (self.s_CO2/self.s_CO2)
                 self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-                self.mol_H2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.0001)
-                self.mol_H20_R102 = self.mol_CH4_R102*np.random.normal(0.7, 0.1)
+                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.0001)
+                self.mol_H2O_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.normal(0.7, 0.1)
 
             elif self.OperationMode == 4:
                 # R_101 Conditions
@@ -981,9 +995,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R102 = self.mol_CH4_R102 * (self.s_CO2/self.s_CO2)
                 self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-                self.mol_H2_R102 = self.mol_CH4_R102*np.random.uniform (0, 0.0001)
-                self.mol_H20_R102 = self.mol_CH4_R102*np.random.normal(0.7, 0.1)
+                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.0001)
+                self.mol_H2O_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.normal(0.7, 0.1)
 
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101 * pH_R101[-1] * T_R101[-1]) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
@@ -991,9 +1005,9 @@ class BiogasPlantSimulation:
             self.mol_CO2_R101 = self.mol_CH4_R101 * (self.s_CO2/self.s_CO2)
             self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
-            self.mol_O2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.1) 
-            self.mol_H2_R101 = self.mol_CH4_R101*np.random.uniform (0, 0.0001)
-            self.mol_H20_R101 = self.mol_CH4_R101*np.random.normal(0.7, 0.1)
+            self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.1) 
+            self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.0001)
+            self.mol_H2O_R101 = self.mol_H2O_R101 + self.mol_CH4_stoichometric_R101*np.random.normal(0.7, 0.1)
 
             # Solidos volátiles en porcentaje R101
             self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1021,9 +1035,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
                 self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.1) 
-                self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.0001)
-                self.mol_H20_R101 = self.mol_H2O_R101 + self.mol_CH4_R101*np.random.normal(0.7, 0.1)
+                self.mol_O2_R101 = self.mol_O2_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.uniform (0, 0.1) 
+                self.mol_H2_R101 = self.mol_H2_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.uniform (0, 0.0001)
+                self.mol_H2O_R101 = self.mol_H2O_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.normal(0.7, 0.1)
 
 
                 #Estimación de gasto de reactivo límite
@@ -1061,9 +1075,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
                 self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.1) 
-                self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.0001)
-                self.mol_H20_R101 = self.mol_H2O_R101 + self.mol_CH4_R101*np.random.normal(0.7, 0.1)
+                self.mol_O2_R101 = self.mol_O2_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.uniform (0, 0.1) 
+                self.mol_H2_R101 = self.mol_H2_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.uniform (0, 0.0001)
+                self.mol_H2O_R101 = self.mol_H2O_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.normal(0.7, 0.1)
 
                 #Estimación de gasto de reactivo límite en R101
                 if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
@@ -1103,9 +1117,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R102 = self.mol_CH4_R102*(self.s_CO2/self.s_CH4)
                 self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-                self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.001)
-                self.mol_H20_R102 = self.mol_H2O_R102 + self.mol_CH4_R102*np.random.normal(0.7, 0.1)
+                self.mol_O2_R102 = self.mol_O2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.001)
+                self.mol_H20_R102 = self.mol_H2O_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.normal(0.7, 0.1)
 
                 #Estimación de gasto de reactivo límite
                 if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
@@ -1143,9 +1157,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R101 = self.mol_CH4_R101*(self.s_CO2/self.s_CH4)
                 self.mol_H2S_R101 = self.mol_CH4_R101*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.1) 
-                self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_R101*np.random.uniform (0, 0.0001)
-                self.mol_H20_R101 = self.mol_H2O_R101 + self.mol_CH4_R101*np.random.normal(0.7, 0.1)
+                self.mol_O2_R101 = self.mol_O2_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.uniform (0, 0.1) 
+                self.mol_H2_R101 = self.mol_H2_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.uniform (0, 0.0001)
+                self.mol_H2O_R101 = self.mol_H2O_R101 + (self.mol_CH4_R101 - self.Operation_Data.mol_CH4_acum_R101.iloc[-1]) * np.random.normal(0.7, 0.1)
 
                 #Estimación de gasto de reactivo límite en R101
                 if len (self.Operation_Data.mol_CH4_acum_R101) < 2:
@@ -1185,9 +1199,9 @@ class BiogasPlantSimulation:
                 self.mol_CO2_R102 = self.mol_CH4_R102*(self.s_CO2/self.s_CH4)
                 self.mol_H2S_R102 = self.mol_CH4_R102*(self.s_H2S/self.s_CH4)
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
-                self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.1) 
-                self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_R102*np.random.uniform (0, 0.001)
-                self.mol_H20_R102 = self.mol_H2O_R102 + self.mol_CH4_R102*np.random.normal(0.7, 0.1)
+                self.mol_O2_R102 = self.mol_O2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.1) 
+                self.mol_H2_R102 = self.mol_H2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.001)
+                self.mol_H20_R102 = self.mol_H2O_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.normal(0.7, 0.1)
 
                 #Estimación de gasto de reactivo límite en R102
                 if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
@@ -1223,11 +1237,11 @@ class BiogasPlantSimulation:
         self.Vnormal_O2_acum_V101 = self.Vmolar_O2 * self.mol_O2_R101
         self.Vnormal_NH3_acum_V101 = self.Vmolar_NH3 * self.mol_NH3_R101
         self.Vnormal_H2_acum_V101 = self.Vmolar_H2 * self.mol_H2_R101
-        self.Vnormal_H2O_acum_V101 = self.Vmolar_H2O * self.mol_H20_R101
+        self.Vnormal_H2O_acum_V101 = self.Vmolar_H2O * self.mol_H2O_R101
         
         #Volumen de biogás acumulado
         self.Vnormal_bio_acum_V101 = self.Vnormal_CH4_acum_V101 + self.Vnormal_CO2_acum_V101 + self.Vnormal_H2S_acum_V101 + self.Vnormal_O2_acum_V101 + self.Vnormal_NH3_acum_V101 + self.Vnormal_H2_acum_V101 + self.Vnormal_H2O_acum_V101
-        self.mol_bio_acum_V101 = self.mol_CH4_R101 + self.mol_CO2_R101 + self.mol_H2S_R101 + self.mol_NH3_R101 + self.mol_H2_R101 
+        self.mol_bio_acum_V101 = self.mol_CH4_R101 + self.mol_CO2_R101 + self.mol_H2S_R101 + self.mol_NH3_R101 + self.mol_H2_R101 + self.mol_H2O_R101
 
         # Get temperature from API
         lat = 3.40330   
@@ -1243,7 +1257,7 @@ class BiogasPlantSimulation:
             
         #Acumulated biogas Pressure in V_101
         self.Pacum_bio_V101 = (((self.mol_bio_acum_V101 * 8.314 * (self.Temperature + 273.15)) / (self.VG1/1000))/6894.76)  #presion en psi
-        print(float(self.mol_bio_acum_V101))
+
         #storage biogas in V_101
         if self.Pstorage_bio_V101 <= 50 and len(self.Operation_Data.index)>1:
             
@@ -1255,6 +1269,7 @@ class BiogasPlantSimulation:
             self.mol_O2_V101 = self.mol_O2_V101 + (self.Operation_Data.mol_O2_acum_R101.iloc[-1] - self.Operation_Data.mol_O2_acum_R101.iloc[-2])     
             self.mol_NH3_V101 = self.mol_NH3_V101 + (self.Operation_Data.mol_NH3_acum_R101.iloc[-1] - self.Operation_Data.mol_NH3_acum_R101.iloc[-2])
             self.mol_H2_V101 = self.mol_O2_V101 + (self.Operation_Data.mol_H2_acum_R101.iloc[-1] - self.Operation_Data.mol_H2_acum_R101.iloc[-2])  
+            self.mol_H2O_V101 = self.mol_H2O_V101 + (self.Operation_Data.mol_H2O_acum_R101.iloc[-1] - self.Operation_Data.mol_H2O_acum_R101.iloc[-2] )
 
             self.Vnormal_CH4_V101 = self.mol_CH4_V101 * self.Vmolar_CH4
             self.Vnormal_CO2_V101 = self.mol_CO2_V101 * self.Vmolar_CO2
@@ -1262,7 +1277,8 @@ class BiogasPlantSimulation:
             self.Vnormal_O2_V101 = self.mol_O2_V101 * self.Vmolar_O2
             self.Vnormal_NH3_V101 = self.mol_NH3_V101 * self.Vmolar_NH3
             self.Vnormal_H2_V101 = self.mol_H2_V101 * self.Vmolar_H2
-            self.Vnormal_bio_V101 = self.Vnormal_CH4_V101 + self.Vnormal_CO2_V101 + self.Vnormal_H2S_V101 + self.Vnormal_O2_V101 + self.Vnormal_NH3_V101 + self.Vnormal_H2_V101
+            self.Vnormal_H2O_V101 = self.mol_H2O_V101 * self.Vmolar_H2O
+            self.Vnormal_bio_V101 = self.Vnormal_CH4_V101 + self.Vnormal_CO2_V101 + self.Vnormal_H2S_V101 + self.Vnormal_O2_V101 + self.Vnormal_NH3_V101 + self.Vnormal_H2_V101 + self.Vnormal_H2O_V101
             
             try:
                 self.x_CH4_V101 = self.Vnormal_CH4_V101/self.Vnormal_bio_V101
@@ -1278,10 +1294,6 @@ class BiogasPlantSimulation:
                 self.x_O2_V101 = 0
                 self.x_NH3_V101 = 0   
                 self.x_H2_V101 = 0
-            
-            print("sucess", self.Vnormal_CH4_acum_V101)
-            print("sucess", self.Vnormal_CH4_V101)
-            print("storage Pressure", self.Pstorage_bio_V101)
 
             self.PtransfertoV102 = 0 
             self.mol_CH4transfertoV102 = 0
