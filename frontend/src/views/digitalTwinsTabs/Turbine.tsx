@@ -529,7 +529,7 @@ const Turbine = () => {
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Conexión carga disipadora</h3>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
+                <Grid item xs={12} md={12} xl={7}>
                   <FormControl fullWidth>
                     <InputLabel id="sink-load-mode-type">
                       Modo carga disipadora
