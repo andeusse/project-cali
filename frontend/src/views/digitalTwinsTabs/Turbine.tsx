@@ -42,6 +42,7 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import { getValueByKey } from '../../utils/getValueByKey';
+import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
 
 const Turbine = () => {
   const [system, setSystem] = useState<TurbineParameters>({ ...TURBINE });
@@ -499,20 +500,24 @@ const Turbine = () => {
                   <h3>Parámetros turbina</h3>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <ToggleCustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.inputPressure}
                     name="inputPressure"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
-                  ></ToggleCustomNumberField>
+                    variableName="Presión"
+                    arrayDisabled={!system.inputOfflineOperation}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <ToggleCustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.inputFlow}
                     name="inputFlow"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
-                  ></ToggleCustomNumberField>
+                    variableName="Flujo"
+                    arrayDisabled={!system.inputOfflineOperation}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 {system.turbineType === TurbineType.Turgo && (
                   <>
@@ -534,20 +539,24 @@ const Turbine = () => {
                   <h3>Parámetros carga CA</h3>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <ToggleCustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.inputActivePower}
                     name="inputActivePower"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
-                  ></ToggleCustomNumberField>
+                    variableName="Potencia activa"
+                    arrayDisabled={!system.inputOfflineOperation}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <ToggleCustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.inputPowerFactor}
                     name="inputPowerFactor"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
-                  ></ToggleCustomNumberField>
+                    variableName="Factor de potencia"
+                    arrayDisabled={!system.inputOfflineOperation}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Conexión baterías</h3>

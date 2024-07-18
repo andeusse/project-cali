@@ -5,7 +5,7 @@ import { setTurbine } from './models/setTurbine';
 import { setBiogas } from './models/setBiogas';
 import { setSolar } from './models/setSolar';
 import { setFormObjectValue } from './setFormObjectValue';
-import { InputType } from '../types/inputType';
+import { InputArrayType, InputType } from '../types/inputType';
 import { setScenario } from './scenarios/setScenario';
 import { SmartSystemParameters } from '../types/scenarios/common';
 
@@ -81,8 +81,14 @@ export const setFormState = <T extends formType>(
     }
   } else if (type === 'checkbox' && name === 'variableCustomize') {
     if (variableName) {
-      (newState[variableName as keyof T] as InputType).disabled =
-        !e.target.checked;
+      (
+        newState[variableName as keyof T] as InputType | InputArrayType
+      ).disabled = !e.target.checked;
+    }
+  } else if (type === 'checkbox' && name === 'variableArrayCustomize') {
+    if (variableName) {
+      (newState[variableName as keyof T] as InputArrayType).arrayDisabled =
+        e.target.checked;
     }
   } else if (typeof oldState[name as keyof T] === 'object') {
     newState = {

@@ -9,7 +9,7 @@ import {
   StepUnitType,
 } from '../common';
 import { CommonChartType } from '../graph';
-import { InputType } from '../inputType';
+import { InputArrayType, InputType } from '../inputType';
 import {
   Battery,
   CommonController,
@@ -53,11 +53,16 @@ export type SolarWindParameters = CommonSystemParameter &
     controller: IsConnected & CommonController;
     offgridInverter: Inverter;
     hybridInverter: InverterHybrid;
-    solarRadiation1: InputType;
-    solarRadiation2: InputType;
-    temperature: InputType;
-    windSpeed: InputType;
-    windDensity: InputType;
+    solarRadiation1: InputArrayType;
+    solarRadiation2: InputArrayType;
+    temperature: InputArrayType;
+    windSpeed: InputArrayType;
+    windDensity: InputArrayType;
+    solarRadiation1Array: number[];
+    solarRadiation2Array: number[];
+    temperatureArray: number[];
+    windSpeedArray: number[];
+    windDensityArray: number[];
     alternCurrentLoadPower: InputType;
     alternCurrentLoadPowerFactor: InputType;
     directCurrentLoadPower: InputType;
@@ -454,6 +459,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 100,
+    arrayDisabled: false,
   },
   solarRadiation2: {
     disabled: false,
@@ -464,6 +470,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 100,
+    arrayDisabled: false,
   },
   temperature: {
     disabled: false,
@@ -473,6 +480,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     variableString: 'Temperatura ambiente',
     min: -20,
     max: 60,
+    arrayDisabled: false,
   },
   windSpeed: {
     disabled: false,
@@ -482,6 +490,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     variableString: 'Velocidad del viento',
     min: 0,
     max: 100,
+    arrayDisabled: false,
   },
   windDensity: {
     disabled: false,
@@ -492,6 +501,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0.8,
     max: 1.5,
     step: 0.01,
+    arrayDisabled: false,
   },
   alternCurrentLoadPower: {
     disabled: false,
@@ -524,6 +534,11 @@ export const SOLAR_WIND: SolarWindParameters = {
     step: 10,
   },
   externalGridState: false,
+  solarRadiation1Array: [],
+  solarRadiation2Array: [],
+  temperatureArray: [],
+  windSpeedArray: [],
+  windDensityArray: [],
 };
 
 export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [

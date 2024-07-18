@@ -40,9 +40,13 @@ export const setTurbine = (
       ? Config.QUERY_TIME_OFFLINE
       : Config.QUERY_TIME_ONLINE;
     newState.inputPressure.disabled = !newState.inputOfflineOperation;
+    newState.inputPressure.arrayDisabled = false;
     newState.inputFlow.disabled = !newState.inputOfflineOperation;
+    newState.inputFlow.arrayDisabled = false;
     newState.inputActivePower.disabled = !newState.inputOfflineOperation;
+    newState.inputActivePower.arrayDisabled = false;
     newState.inputPowerFactor.disabled = !newState.inputOfflineOperation;
+    newState.inputPowerFactor.arrayDisabled = false;
 
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {

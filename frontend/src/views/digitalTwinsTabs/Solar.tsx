@@ -45,6 +45,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
+import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
 
 const Solar = () => {
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
@@ -796,33 +797,40 @@ const Solar = () => {
                     system.policrystallinePanel.isConnected) &&
                     system.inputOperationMode !== OperationModeType.Mode4 && (
                       <Grid item xs={12} md={12} xl={12}>
-                        <ToggleCustomNumberField
+                        <ToggleArrayCustomNumberField
                           variable={system.solarRadiation1}
                           name="solarRadiation1"
                           handleChange={handleChange}
                           disabled={system.inputOfflineOperation}
-                        ></ToggleCustomNumberField>
+                          variableName="Radiación solar 1"
+                          arrayDisabled={!system.inputOfflineOperation}
+                        ></ToggleArrayCustomNumberField>
                       </Grid>
                     )}
                   {(system.flexPanel.isConnected ||
                     system.cadmiumTelluridePanel.isConnected) &&
                     system.inputOperationMode !== OperationModeType.Mode4 && (
                       <Grid item xs={12} md={12} xl={12}>
-                        <ToggleCustomNumberField
+                        <ToggleArrayCustomNumberField
                           variable={system.solarRadiation2}
                           name="solarRadiation2"
                           handleChange={handleChange}
                           disabled={system.inputOfflineOperation}
-                        ></ToggleCustomNumberField>
+                          variableName="Radiación solar 1"
+                          arrayDisabled={!system.inputOfflineOperation}
+                        ></ToggleArrayCustomNumberField>
                       </Grid>
                     )}
                   {system.inputOperationMode !== OperationModeType.Mode4 && (
-                    <Grid item xs={7} md={7} xl={7}>
-                      <CustomNumberField
+                    <Grid item xs={12} md={12} xl={12}>
+                      <ToggleArrayCustomNumberField
                         variable={system.temperature}
                         name="temperature"
                         handleChange={handleChange}
-                      ></CustomNumberField>
+                        variableName="Temperatura"
+                        arrayDisabled={!system.inputOfflineOperation}
+                        showToggle={false}
+                      ></ToggleArrayCustomNumberField>
                     </Grid>
                   )}
                 </>
@@ -830,19 +838,24 @@ const Solar = () => {
                   system.inputOperationMode === OperationModeType.Mode5) && (
                   <>
                     <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
+                      <ToggleArrayCustomNumberField
                         variable={system.windSpeed}
                         name="windSpeed"
                         handleChange={handleChange}
                         disabled={system.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
+                        variableName="Velocidad del viento"
+                        arrayDisabled={!system.inputOfflineOperation}
+                      ></ToggleArrayCustomNumberField>
                     </Grid>
-                    <Grid item xs={7} md={7} xl={7}>
-                      <CustomNumberField
+                    <Grid item xs={12} md={12} xl={12}>
+                      <ToggleArrayCustomNumberField
                         variable={system.windDensity}
                         name="windDensity"
                         handleChange={handleChange}
-                      ></CustomNumberField>
+                        variableName="Densidad del viento"
+                        arrayDisabled={!system.inputOfflineOperation}
+                        showToggle={false}
+                      ></ToggleArrayCustomNumberField>
                     </Grid>
                   </>
                 )}

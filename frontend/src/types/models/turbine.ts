@@ -1,7 +1,7 @@
 import Config from '../../config/config';
 import { CommonSystemParameter, StepUnitType } from '../common';
 import { CommonChartType } from '../graph';
-import { InputType } from '../inputType';
+import { InputArrayType, InputType } from '../inputType';
 import {
   Battery,
   CommonController,
@@ -39,11 +39,15 @@ export type TurbineParameters = CommonSystemParameter &
     battery: Battery;
     inverterEfficiency: InputType;
     inverterNominalPower: InputType;
-    inputPressure: InputType;
-    inputFlow: InputType;
+    inputPressure: InputArrayType;
+    inputFlow: InputArrayType;
+    inputActivePower: InputArrayType;
+    inputPowerFactor: InputArrayType;
+    inputPressureArray: number[];
+    inputFlowArray: number[];
+    inputActivePowerArray: number[];
+    inputPowerFactorArray: number[];
     inputDirectCurrentPower: boolean;
-    inputActivePower: InputType;
-    inputPowerFactor: InputType;
     sinkLoadMode: SinkLoadModeType;
     simulatedBatteryStateOfCharge?: number;
     simulatedDirectCurrentVoltage?: number;
@@ -243,6 +247,7 @@ export const PELTON_TURBINE_CONST: TurbineConsts = {
     variableString: 'Presión',
     min: 0,
     max: 30,
+    arrayDisabled: false,
   },
   inputFlow: {
     disabled: false,
@@ -252,6 +257,7 @@ export const PELTON_TURBINE_CONST: TurbineConsts = {
     variableString: 'Flujo',
     min: 0,
     max: 15,
+    arrayDisabled: false,
   },
 };
 
@@ -264,6 +270,7 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
     variableString: 'Presión',
     min: 0,
     max: 30,
+    arrayDisabled: false,
   },
   inputFlow: {
     disabled: false,
@@ -273,6 +280,7 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
     variableString: 'Flujo',
     min: 0,
     max: 20,
+    arrayDisabled: false,
   },
 };
 
@@ -340,6 +348,7 @@ export const TURBINE: TurbineParameters = {
     min: 0,
     max: 100000,
     step: 10,
+    arrayDisabled: false,
   },
   inputPowerFactor: {
     disabled: false,
@@ -350,9 +359,14 @@ export const TURBINE: TurbineParameters = {
     min: -1,
     max: 1,
     step: 0.1,
+    arrayDisabled: false,
   },
   sinkLoadMode: SinkLoadModeType.Auto,
   ...PELTON_TURBINE_CONST,
+  inputActivePowerArray: [],
+  inputFlowArray: [],
+  inputPressureArray: [],
+  inputPowerFactorArray: [],
 };
 
 export const PELTON_TURBINE_DIAGRAM_VARIABLES: DiagramVariableType[] = [
@@ -1043,6 +1057,6 @@ export const TURGO_TURBINE: InputType[] = [
 ];
 
 type TurbineConsts = {
-  inputPressure: InputType;
-  inputFlow: InputType;
+  inputPressure: InputArrayType;
+  inputFlow: InputArrayType;
 };

@@ -9,3 +9,7 @@ export type InputType = {
   max?: number;
   step?: number;
 };
+
+export type InputArrayType = InputType & {
+  arrayDisabled: boolean;
+};
