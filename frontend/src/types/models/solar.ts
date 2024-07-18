@@ -6,6 +6,7 @@ import {
   FLEX_PANEL as FP,
   CADMIUM_TELLURIDE_PANEL as CTP,
   WIND_TURBINE,
+  StepUnitType,
 } from '../common';
 import { CommonChartType } from '../graph';
 import { InputType } from '../inputType';
@@ -399,6 +400,26 @@ export type SolarWindOutputHistoric = CommonChartType & {
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
+  steps: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Número de pasos a simular',
+    unit: '',
+    variableString: 'Número de pasos',
+    min: 1,
+    max: 10000,
+  },
+  stepTime: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Tiempo por paso',
+    unit: '',
+    variableString: 'Tiempo por paso',
+    min: 0.1,
+    max: 100,
+    step: 0.1,
+  },
+  stepUnit: StepUnitType.Second,
   isBatteryConnected: true,
   queryTime: Config.QUERY_TIME_OFFLINE,
   disableParameters: false,

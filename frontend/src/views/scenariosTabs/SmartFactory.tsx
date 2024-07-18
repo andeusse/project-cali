@@ -30,8 +30,6 @@ import illustration from '../../assets/illustrations/smartFactory.png';
 import {
   ScenariosModesType,
   ScenariosModesText,
-  ScenariosStepUnitType,
-  ScenariosStepUnitText,
   SmartSystemType,
 } from '../../types/scenarios/common';
 import SolarTab from '../../components/scenarios/system/SolarTab';
@@ -61,6 +59,7 @@ import { setIsLoading } from '../../redux/slices/isLoadingSlice';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
+import { StepUnitText, StepUnitType } from '../../types/common';
 
 const tabs = ['solar', 'biogas', 'load', 'result'];
 
@@ -339,9 +338,9 @@ const SmartFactory = () => {
                       }
                       onChange={(e: any) => handleChange(e)}
                     >
-                      {Object.keys(ScenariosStepUnitType).map((key) => (
+                      {Object.keys(StepUnitType).map((key) => (
                         <MenuItem key={key} value={key}>
-                          {getValueByKey(ScenariosStepUnitText, key)}
+                          {getValueByKey(StepUnitText, key)}
                         </MenuItem>
                       ))}
                     </Select>
@@ -350,14 +349,21 @@ const SmartFactory = () => {
                 {system.operationMode === ScenariosModesType.Manual && (
                   <Grid item xs={12} md={12} xl={12}>
                     <Typography variant="subtitle1">
-                      Modo manual: Las potencias de los generadores, sistemas de almacenamiento y cargas de la red se determinan por los parámetros y condiciones operativas que configure el usuario.
+                      Modo manual: Las potencias de los generadores, sistemas de
+                      almacenamiento y cargas de la red se determinan por los
+                      parámetros y condiciones operativas que configure el
+                      usuario.
                     </Typography>
                   </Grid>
                 )}
                 {system.operationMode === ScenariosModesType.Automatic && (
                   <Grid item xs={12} md={12} xl={12}>
                     <Typography variant="subtitle1">
-                      Modo automático: La herramienta realiza el cálculo óptimo de generación y consumo de potencia de los recursos, basado en la solución óptima de un problema de balance de energía sujeto a restricciones, considerando el orden de prioridad de los generadores.
+                      Modo automático: La herramienta realiza el cálculo óptimo
+                      de generación y consumo de potencia de los recursos,
+                      basado en la solución óptima de un problema de balance de
+                      energía sujeto a restricciones, considerando el orden de
+                      prioridad de los generadores.
                     </Typography>
                   </Grid>
                 )}

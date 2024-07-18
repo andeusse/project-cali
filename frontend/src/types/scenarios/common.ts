@@ -8,6 +8,7 @@ import {
   LABORATORY_WIND_TURBINE,
   EXAMPLE_BIOGAS,
   CUSTOM_BIOGAS,
+  StepUnitType,
 } from '../common';
 import { InputType } from '../inputType';
 import { v4 as uuidv4 } from 'uuid';
@@ -52,20 +53,6 @@ export enum ScenariosModesType {
 export enum ScenariosModesText {
   Manual = 'Manual',
   Automatic = 'Automático',
-}
-
-export enum ScenariosStepUnitType {
-  Second = 'Second',
-  Minute = 'Minute',
-  Hour = 'Hour',
-  Day = 'Day',
-}
-
-export enum ScenariosStepUnitText {
-  Second = 'Segundo(s)',
-  Minute = 'Minutos(s)',
-  Hour = 'Hora(s)',
-  Day = 'Día(s)',
 }
 
 export enum ScenariosCommonInputInformationType {
@@ -299,7 +286,7 @@ export type SmartSystemParameters = CommonSystemParameter & {
   operationMode: ScenariosModesType;
   steps: InputType;
   stepTime: InputType;
-  stepUnit: ScenariosStepUnitType;
+  stepUnit: StepUnitType;
   solarSystemNumber: InputType;
   biogasSystemNumber: InputType;
   loadSystemNumber: InputType;
@@ -634,7 +621,7 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
     max: 100,
     step: 0.1,
   },
-  stepUnit: ScenariosStepUnitType.Hour,
+  stepUnit: StepUnitType.Hour,
   solarSystemNumber: {
     disabled: false,
     value: 1,

@@ -1,5 +1,5 @@
 import Config from '../../config/config';
-import { CommonSystemParameter } from '../common';
+import { CommonSystemParameter, StepUnitType } from '../common';
 import { CommonChartType } from '../graph';
 import { InputType } from '../inputType';
 import {
@@ -278,6 +278,26 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
 
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
+  steps: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Número de pasos a simular',
+    unit: '',
+    variableString: 'Número de pasos',
+    min: 1,
+    max: 10000,
+  },
+  stepTime: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Tiempo por paso',
+    unit: '',
+    variableString: 'Tiempo por paso',
+    min: 0.1,
+    max: 100,
+    step: 0.1,
+  },
+  stepUnit: StepUnitType.Second,
   isBatteryConnected: true,
   queryTime: Config.QUERY_TIME_OFFLINE,
   disableParameters: false,

@@ -10,6 +10,20 @@ export type CommonSystemParameter = {
   name: string;
 };
 
+export enum StepUnitType {
+  Second = 'Second',
+  Minute = 'Minute',
+  Hour = 'Hour',
+  Day = 'Day',
+}
+
+export enum StepUnitText {
+  Second = 'Segundo(s)',
+  Minute = 'Minutos(s)',
+  Hour = 'Hora(s)',
+  Day = 'Día(s)',
+}
+
 export type SolarPanel = {
   deratingFactor: InputType;
   efficiency: InputType;

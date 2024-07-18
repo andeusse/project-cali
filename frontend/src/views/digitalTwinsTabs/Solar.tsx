@@ -44,6 +44,7 @@ import SolarDiagram from '../../components/models/diagram/SolarDiagram';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
+import { StepUnitText, StepUnitType } from '../../types/common';
 
 const Solar = () => {
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
@@ -280,7 +281,52 @@ const Solar = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={4}>
+                <Grid item xs={12} md={6} xl={3}>
+                  <FormControl fullWidth>
+                    <TextField
+                      label="Nombre"
+                      value={system.name}
+                      name="name"
+                      autoComplete="off"
+                      onChange={handleChange}
+                      disabled={system.disableParameters}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
+                  <CustomNumberField
+                    variable={system.steps}
+                    name="steps"
+                    handleChange={handleChange}
+                    isInteger={true}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
+                  <CustomNumberField
+                    variable={system.stepTime}
+                    name="stepTime"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
+                  <FormControl fullWidth>
+                    <InputLabel id="step-unit-type">Unidad</InputLabel>
+                    <Select
+                      labelId="step-unit-type"
+                      label="Unidad"
+                      value={system.stepUnit}
+                      name="stepUnit"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(StepUnitType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(StepUnitText, key)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={6} xl={12}>
                   <FormControl fullWidth>
                     <InputLabel>Modo de operación</InputLabel>
                     <Select
@@ -296,18 +342,6 @@ const Solar = () => {
                         </MenuItem>
                       ))}
                     </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6} xl={8}>
-                  <FormControl fullWidth>
-                    <TextField
-                      label="Nombre"
-                      value={system.name}
-                      name="name"
-                      autoComplete="off"
-                      onChange={handleChange}
-                      disabled={system.disableParameters}
-                    />
                   </FormControl>
                 </Grid>
                 {system.inputOperationMode !== OperationModeType.Mode4 && (

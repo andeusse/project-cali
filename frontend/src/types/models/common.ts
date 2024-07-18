@@ -3,6 +3,7 @@ import {
   SolarPanel as CommonSolarPanel,
   WindTurbine as CommonWindTurbine,
   Battery as CommonBattery,
+  StepUnitType,
 } from '../common';
 
 export type DiagramVariableType = {
@@ -23,6 +24,9 @@ export type CommonDigitalTwinsParameter = {
   timeMultiplier: InputType;
   queryTime: number;
   disableParameters: boolean;
+  steps: InputType;
+  stepTime: InputType;
+  stepUnit: StepUnitType;
 };
 
 export type IsConnected = {

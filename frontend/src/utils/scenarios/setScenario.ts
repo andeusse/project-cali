@@ -1,3 +1,4 @@
+import { StepUnitType } from '../../types/common';
 import { InputType } from '../../types/inputType';
 import {
   COMMON_BATTERY_SYSTEM,
@@ -11,7 +12,6 @@ import {
   ScenariosLoadInputInformationType,
   ScenariosModesType,
   ScenariosSolarWindInputInformationType,
-  ScenariosStepUnitType,
   SmartScenarioType,
   SmartSystemParameters,
 } from '../../types/scenarios/common';
@@ -41,7 +41,7 @@ export const setScenario = (
         value: 1,
         disabled: true,
       };
-      newState.stepUnit = ScenariosStepUnitType.Hour;
+      newState.stepUnit = StepUnitType.Hour;
     } else {
       newState.steps = {
         ...newState.steps,
