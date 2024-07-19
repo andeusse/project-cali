@@ -507,6 +507,7 @@ const Turbine = () => {
                     disabled={system.inputOfflineOperation}
                     variableName="Presión"
                     arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -517,6 +518,7 @@ const Turbine = () => {
                     disabled={system.inputOfflineOperation}
                     variableName="Flujo"
                     arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
                 </Grid>
                 {system.turbineType === TurbineType.Turgo && (
@@ -546,6 +548,7 @@ const Turbine = () => {
                     disabled={system.inputOfflineOperation}
                     variableName="Potencia activa"
                     arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -556,6 +559,7 @@ const Turbine = () => {
                     disabled={system.inputOfflineOperation}
                     variableName="Factor de potencia"
                     arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>

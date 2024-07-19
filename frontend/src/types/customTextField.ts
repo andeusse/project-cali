@@ -19,4 +19,5 @@ export type ToggleArrayCustomTextFieldType = ToggleCustomTextFieldType & {
   variableName: string;
   arrayDisabled: boolean;
   showToggle?: boolean;
+  steps: number;
 };

@@ -804,6 +804,7 @@ const Solar = () => {
                           disabled={system.inputOfflineOperation}
                           variableName="Radiación solar 1"
                           arrayDisabled={!system.inputOfflineOperation}
+                          steps={system.steps.value}
                         ></ToggleArrayCustomNumberField>
                       </Grid>
                     )}
@@ -818,6 +819,7 @@ const Solar = () => {
                           disabled={system.inputOfflineOperation}
                           variableName="Radiación solar 1"
                           arrayDisabled={!system.inputOfflineOperation}
+                          steps={system.steps.value}
                         ></ToggleArrayCustomNumberField>
                       </Grid>
                     )}
@@ -829,6 +831,7 @@ const Solar = () => {
                         handleChange={handleChange}
                         variableName="Temperatura"
                         arrayDisabled={!system.inputOfflineOperation}
+                        steps={system.steps.value}
                         showToggle={false}
                       ></ToggleArrayCustomNumberField>
                     </Grid>
@@ -845,6 +848,7 @@ const Solar = () => {
                         disabled={system.inputOfflineOperation}
                         variableName="Velocidad del viento"
                         arrayDisabled={!system.inputOfflineOperation}
+                        steps={system.steps.value}
                       ></ToggleArrayCustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -855,6 +859,7 @@ const Solar = () => {
                         variableName="Densidad del viento"
                         arrayDisabled={!system.inputOfflineOperation}
                         showToggle={false}
+                        steps={system.steps.value}
                       ></ToggleArrayCustomNumberField>
                     </Grid>
                   </>
@@ -870,20 +875,26 @@ const Solar = () => {
                       <h3>Parámetros carga CA</h3>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
+                      <ToggleArrayCustomNumberField
                         variable={system.alternCurrentLoadPower}
                         name="alternCurrentLoadPower"
                         handleChange={handleChange}
                         disabled={system.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
+                        variableName="Potencia"
+                        arrayDisabled={!system.inputOfflineOperation}
+                        steps={system.steps.value}
+                      ></ToggleArrayCustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
+                      <ToggleArrayCustomNumberField
                         variable={system.alternCurrentLoadPowerFactor}
                         name="alternCurrentLoadPowerFactor"
                         handleChange={handleChange}
                         disabled={system.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
+                        variableName="Factor de potencia"
+                        arrayDisabled={!system.inputOfflineOperation}
+                        steps={system.steps.value}
+                      ></ToggleArrayCustomNumberField>
                     </Grid>
                   </>
                 )}
@@ -896,12 +907,15 @@ const Solar = () => {
                       <h3>Parámetros carga CC</h3>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
+                      <ToggleArrayCustomNumberField
                         variable={system.directCurrentLoadPower}
                         name="directCurrentLoadPower"
                         handleChange={handleChange}
                         disabled={system.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
+                        variableName="Potencia"
+                        arrayDisabled={!system.inputOfflineOperation}
+                        steps={system.steps.value}
+                      ></ToggleArrayCustomNumberField>
                     </Grid>
                   </>
                 )}

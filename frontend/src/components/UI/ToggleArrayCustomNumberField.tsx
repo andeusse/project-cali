@@ -15,6 +15,7 @@ const ToggleArrayCustomNumberField = (
     variableName,
     arrayDisabled,
     showToggle = true,
+    steps,
   } = props;
 
   const { disabled: _, arrayDisabled: _0, ...otherProps } = props;
@@ -48,7 +49,7 @@ const ToggleArrayCustomNumberField = (
           )}
         </>
       )}
-      {'arrayDisabled' in variable && (
+      {'arrayDisabled' in variable && steps !== 1 && (
         <>
           <Grid item xs={12} md={7} xl={7} sx={{ alignContent: 'center' }}>
             {`Perfil de ${variableName.toLowerCase()}:`}

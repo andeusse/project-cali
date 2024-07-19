@@ -58,14 +58,17 @@ export type SolarWindParameters = CommonSystemParameter &
     temperature: InputArrayType;
     windSpeed: InputArrayType;
     windDensity: InputArrayType;
+    alternCurrentLoadPower: InputArrayType;
+    alternCurrentLoadPowerFactor: InputArrayType;
+    directCurrentLoadPower: InputArrayType;
     solarRadiation1Array: number[];
     solarRadiation2Array: number[];
     temperatureArray: number[];
     windSpeedArray: number[];
     windDensityArray: number[];
-    alternCurrentLoadPower: InputType;
-    alternCurrentLoadPowerFactor: InputType;
-    directCurrentLoadPower: InputType;
+    alternCurrentLoadPowerArray: number[];
+    alternCurrentLoadPowerFactorArray: number[];
+    directCurrentLoadPowerArray: number[];
     externalGridState: boolean;
     simulatedBatteryStateOfCharge?: number;
     simulatedDirectCurrentVoltage?: number;
@@ -512,6 +515,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 10,
+    arrayDisabled: false,
   },
   alternCurrentLoadPowerFactor: {
     disabled: false,
@@ -522,6 +526,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: -1,
     max: 1,
     step: 0.1,
+    arrayDisabled: false,
   },
   directCurrentLoadPower: {
     disabled: false,
@@ -532,6 +537,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 10,
+    arrayDisabled: false,
   },
   externalGridState: false,
   solarRadiation1Array: [],
@@ -539,6 +545,9 @@ export const SOLAR_WIND: SolarWindParameters = {
   temperatureArray: [],
   windSpeedArray: [],
   windDensityArray: [],
+  alternCurrentLoadPowerArray: [],
+  alternCurrentLoadPowerFactorArray: [],
+  directCurrentLoadPowerArray: [],
 };
 
 export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
