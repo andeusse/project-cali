@@ -26,9 +26,7 @@ services:
       - laboratorio-default
 
   grafana:
-    build:
-      context: ./custom-grafana-image
-      dockerfile: Dockerfile
+    image: grafana_base
     restart: always
     ports:
       - '3000:3000'
@@ -39,38 +37,38 @@ services:
     depends_on:
       - influxdb
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      - GF_INSTALL_PLUGINS=grafana-clock-panel
+      # - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      # - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      # - GF_INSTALL_PLUGINS=grafana-clock-panel
       - GF_SECURITY_ALLOW_EMBEDDING=true
     networks:
       - laboratorio-default
 
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - '3001:3000'
-    depends_on:
-      - influxdb
-      - grafana
-    networks:
-      - laboratorio-default
+  # frontend:
+  #   build:
+  #     context: ../frontend
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - '3001:3000'
+  #   depends_on:
+  #     - influxdb
+  #     - grafana
+  #   networks:
+  #     - laboratorio-default
 
-  backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - '5000:5000'
-    depends_on:
-      - influxdb
-      - grafana
-    networks:
-      - laboratorio-default
+  # backend:
+  #   build:
+  #     context: ../backend
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - '5000:5000'
+  #   depends_on:
+  #     - influxdb
+  #     - grafana
+  #   networks:
+  #     - laboratorio-default
 
   collector:
     build:
