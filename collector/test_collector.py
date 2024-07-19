@@ -44,7 +44,7 @@ while True:
                           
                           influxDB = DBManager.InfluxDBmodel(server = 'http://host.docker.internal:' +  str(database_df['Port'][database_index]) + '/', org = database_df['Organization'][database_index], bucket = database_df['Bucket'][database_index], token = str(database_df['Token'][database_index]))
                           msg = influxDB.InfluxDBconnection()
-                          (influxDB.InfluxDBwriter( measurement = analyzers_df["Name"][analyzer_index], device = loads_df["Name"][load_index], variable =  variables_df["Name"][variable_index], value = value, timestamp = timestamp))
+                          (influxDB.InfluxDBwriter( measurement = analyzers_df["Name"][analyzer_index], device = loads_df["Name"][load_index], variable =  variables_df["field"][variable_index], value = value, timestamp = timestamp))
         except:
           logger.error("No se pudo conectar al equipo modbus")
                       
