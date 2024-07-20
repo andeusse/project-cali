@@ -247,7 +247,7 @@ export const PELTON_TURBINE_CONST: TurbineConsts = {
     variableString: 'Presión',
     min: 0,
     max: 30,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   inputFlow: {
     disabled: false,
@@ -257,7 +257,7 @@ export const PELTON_TURBINE_CONST: TurbineConsts = {
     variableString: 'Flujo',
     min: 0,
     max: 15,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
 };
 
@@ -270,7 +270,7 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
     variableString: 'Presión',
     min: 0,
     max: 30,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   inputFlow: {
     disabled: false,
@@ -280,7 +280,7 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
     variableString: 'Flujo',
     min: 0,
     max: 20,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
 };
 
@@ -348,7 +348,7 @@ export const TURBINE: TurbineParameters = {
     min: 0,
     max: 100000,
     step: 10,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   inputPowerFactor: {
     disabled: false,
@@ -359,7 +359,7 @@ export const TURBINE: TurbineParameters = {
     min: -1,
     max: 1,
     step: 0.1,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   sinkLoadMode: SinkLoadModeType.Auto,
   ...PELTON_TURBINE_CONST,

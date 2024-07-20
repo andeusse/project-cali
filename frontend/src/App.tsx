@@ -6,6 +6,7 @@ import IsLoading from './components/IsLoading';
 import { useEffect } from 'react';
 import string2Theme from './utils/string2Theme';
 import Router from './router/Router';
+import './styles/table.scss';
 
 function App() {
   const userTheme = useAppSelector((state) => state.theme.value);

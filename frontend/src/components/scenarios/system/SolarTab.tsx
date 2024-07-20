@@ -27,7 +27,6 @@ import {
   DefaultCellTypes,
   CellChange,
 } from '@silevis/reactgrid';
-import './table.scss';
 import TypicalCurves from '../../TypicalCurves';
 import Config from '../../../config/config';
 

@@ -1,3 +1,4 @@
+import { CellChange } from '@silevis/reactgrid';
 import Config from '../../config/config';
 import {
   PELTON_TURBINE_CONST,
@@ -6,6 +7,7 @@ import {
   TurbineType,
 } from '../../types/models/turbine';
 import { getKeyByValue } from '../getKeyByValue';
+import { CellChange2Array } from '../cellChange2Array';
 
 export const setTurbine = (
   e: any,
@@ -40,18 +42,71 @@ export const setTurbine = (
       ? Config.QUERY_TIME_OFFLINE
       : Config.QUERY_TIME_ONLINE;
     newState.inputPressure.disabled = !newState.inputOfflineOperation;
-    newState.inputPressure.arrayDisabled = false;
+    newState.inputPressure.arrayEnabled = false;
     newState.inputFlow.disabled = !newState.inputOfflineOperation;
-    newState.inputFlow.arrayDisabled = false;
+    newState.inputFlow.arrayEnabled = false;
     newState.inputActivePower.disabled = !newState.inputOfflineOperation;
-    newState.inputActivePower.arrayDisabled = false;
+    newState.inputActivePower.arrayEnabled = false;
     newState.inputPowerFactor.disabled = !newState.inputOfflineOperation;
-    newState.inputPowerFactor.arrayDisabled = false;
+    newState.inputPowerFactor.arrayEnabled = false;
 
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
     }
   }
+  if (e.target.name === 'steps') {
+    const value: number = parseInt(e.target.value);
+    newState.steps.value = value;
+    newState.inputPressureArray = Array(value ? value : 1).fill(22);
+    newState.inputFlowArray = Array(value ? value : 1).fill(6);
+    newState.inputActivePowerArray = Array(value ? value : 1).fill(200);
+    newState.inputPowerFactorArray = Array(value ? value : 1).fill(1);
+    if (value === 1) {
+      newState.inputPressure.arrayEnabled = false;
+      newState.inputFlow.arrayEnabled = false;
+      newState.inputActivePower.arrayEnabled = false;
+      newState.inputPowerFactor.arrayEnabled = false;
+    }
+  }
+  return newState;
+};
+
+export const setTurbineTable = (
+  e: CellChange[],
+  oldState: TurbineParameters
+) => {
+  const newState = { ...oldState };
+  let oldArray: number[][] = [];
+  oldArray.push(newState.inputPressureArray);
+  oldArray.push(newState.inputFlowArray);
+  oldArray.push(newState.inputActivePowerArray);
+  oldArray.push(newState.inputPowerFactorArray);
+
+  const newArrays = CellChange2Array(e, oldArray);
+  if (newState.inputPressure.arrayEnabled)
+    newState.inputPressureArray = newArrays[0].map((v) => {
+      v = v < 30 ? v : 30;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.inputFlow.arrayEnabled)
+    newState.inputFlowArray = newArrays[1].map((v) => {
+      v = v < 15 ? v : 15;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.inputActivePower.arrayEnabled)
+    newState.inputActivePowerArray = newArrays[2].map((v) => {
+      v = v < 100000 ? v : 100000;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.inputPowerFactor.arrayEnabled)
+    newState.inputPowerFactorArray = newArrays[3].map((v) => {
+      v = v < 1 ? v : 1;
+      v = v > -1 ? v : -1;
+      return v;
+    });
   return newState;
 };

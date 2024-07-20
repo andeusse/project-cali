@@ -11,7 +11,7 @@ import {
   Typography,
   Button,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   SOLAR_WIND,
@@ -31,7 +31,6 @@ import Config from '../../config/config';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
-import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import { getValueByKey } from '../../utils/getValueByKey';
 import SolarPanel from '../../components/models/SolarPanel';
@@ -46,8 +45,20 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
+import { useAppSelector } from '../../redux/reduxHooks';
+import { ThemeType } from '../../types/theme';
+import {
+  CellChange,
+  Column,
+  DefaultCellTypes,
+  ReactGrid,
+  Row,
+} from '@silevis/reactgrid';
+import { setSolarTable } from '../../utils/models/setSolar';
 
 const Solar = () => {
+  const userTheme = useAppSelector((state) => state.theme.value);
+
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isSingleDiagramExpanded, setIsSingleDiagramExpanded] = useState(true);
@@ -58,6 +69,198 @@ const Solar = () => {
 
   const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', system);
+
+  const getColumns = useCallback((): Column[] => {
+    if (system.steps.value > 1) {
+      let arr: Column[] = [
+        { columnId: `variables`, width: 200 },
+        ...Array(system.steps.value)
+          .fill(0)
+          .map((_, i) => ({
+            columnId: `${i}`,
+            width: 100,
+          })),
+      ];
+      return arr;
+    }
+    return [];
+  }, [system.steps.value]);
+
+  const getRows = useCallback((): Row[] => {
+    if (system.steps.value > 1) {
+      let arr: Row[] = [];
+      arr.push({
+        rowId: 'header',
+        cells: [
+          { type: 'header', text: '', nonEditable: true },
+          ...Array(system.steps.value)
+            .fill(0)
+            .map((_, i) => {
+              const col: DefaultCellTypes = {
+                type: 'header',
+                text: `P ${i + 1}`,
+                nonEditable: true,
+              };
+              return col;
+            }),
+        ],
+      });
+
+      if (system.solarRadiation1.arrayEnabled)
+        arr.push({
+          rowId: '0',
+          cells: [
+            { type: 'header', text: 'Presión [mH2O]', nonEditable: true },
+            ...system.solarRadiation1Array.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.solarRadiation2.arrayEnabled)
+        arr.push({
+          rowId: '1',
+          cells: [
+            { type: 'header', text: 'Flujo [L / s]', nonEditable: true },
+            ...system.solarRadiation2Array.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.temperature.arrayEnabled)
+        arr.push({
+          rowId: '2',
+          cells: [
+            { type: 'header', text: 'Potencia [W]', nonEditable: true },
+            ...system.temperatureArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.windSpeed.arrayEnabled)
+        arr.push({
+          rowId: '3',
+          cells: [
+            { type: 'header', text: 'Factor de potencia', nonEditable: true },
+            ...system.windSpeedArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+      if (system.windDensity.arrayEnabled)
+        arr.push({
+          rowId: '4',
+          cells: [
+            { type: 'header', text: 'Presión [mH2O]', nonEditable: true },
+            ...system.windDensityArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.alternCurrentLoadPower.arrayEnabled)
+        arr.push({
+          rowId: '5',
+          cells: [
+            { type: 'header', text: 'Flujo [L / s]', nonEditable: true },
+            ...system.alternCurrentLoadPowerArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.alternCurrentLoadPowerFactor.arrayEnabled)
+        arr.push({
+          rowId: '6',
+          cells: [
+            { type: 'header', text: 'Potencia [W]', nonEditable: true },
+            ...system.alternCurrentLoadPowerFactorArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.directCurrentLoadPower.arrayEnabled)
+        arr.push({
+          rowId: '7',
+          cells: [
+            { type: 'header', text: 'Factor de potencia', nonEditable: true },
+            ...system.directCurrentLoadPowerArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      return arr;
+    }
+    return [];
+  }, [
+    system.alternCurrentLoadPower.arrayEnabled,
+    system.alternCurrentLoadPowerArray,
+    system.alternCurrentLoadPowerFactor.arrayEnabled,
+    system.alternCurrentLoadPowerFactorArray,
+    system.directCurrentLoadPower.arrayEnabled,
+    system.directCurrentLoadPowerArray,
+    system.solarRadiation1.arrayEnabled,
+    system.solarRadiation1Array,
+    system.solarRadiation2,
+    system.steps.value,
+    system.temperature.arrayEnabled,
+    system.temperatureArray,
+    system.windDensity.arrayEnabled,
+    system.windDensityArray,
+    system.windSpeed.arrayEnabled,
+    system.windSpeedArray,
+  ]);
+
+  const [rows, setRows] = useState<Row[]>(getRows());
+
+  const [columns, setColumns] = useState<Column[]>(getColumns());
+
+  useEffect(() => {
+    if (system.steps.value > 1) {
+      setRows(getRows());
+      setColumns(getColumns());
+    }
+  }, [getColumns, getRows, system]);
+
+  const handleCellsChange = (e: CellChange[]) => {
+    setSystem(setSolarTable(e, system));
+  };
 
   useEffect(() => {
     setSystem((o) => {
@@ -957,13 +1160,50 @@ const Solar = () => {
               </Grid>
             </Grid>
             <Grid item xs={12} md={9.5} xl={9.5}>
-              {playerControl}
-              <SolarDiagram
-                solarWind={system}
-                data={data}
-                isPlaying={isPlaying}
-                diagramVariables={diagramVariables}
-              ></SolarDiagram>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={12} xl={12}>
+                  {playerControl}
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <SolarDiagram
+                    solarWind={system}
+                    data={data}
+                    isPlaying={isPlaying}
+                    diagramVariables={diagramVariables}
+                  ></SolarDiagram>
+                </Grid>
+                {(system.solarRadiation1.arrayEnabled ||
+                  system.solarRadiation2.arrayEnabled ||
+                  system.temperature.arrayEnabled ||
+                  system.windSpeed.arrayEnabled ||
+                  system.windDensity.arrayEnabled ||
+                  system.alternCurrentLoadPower.arrayEnabled ||
+                  system.alternCurrentLoadPowerFactor.arrayEnabled ||
+                  system.directCurrentLoadPower.arrayEnabled) &&
+                  system.steps.value > 1 && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <div
+                        id={
+                          userTheme === ThemeType.Dark
+                            ? 'reactgrid-dark-mode'
+                            : 'reactgrid-light-mode'
+                        }
+                        style={{
+                          maxWidth: '100%',
+                          overflow: 'auto',
+                        }}
+                      >
+                        <ReactGrid
+                          rows={rows}
+                          columns={columns}
+                          onCellsChanged={(e: CellChange[]) => {
+                            handleCellsChange(e);
+                          }}
+                        />
+                      </div>
+                    </Grid>
+                  )}
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

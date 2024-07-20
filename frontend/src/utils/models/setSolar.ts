@@ -5,6 +5,8 @@ import {
 import { setFormObjectValue } from '../setFormObjectValue';
 import { getKeyByValue } from '../getKeyByValue';
 import Config from '../../config/config';
+import { CellChange } from '@silevis/reactgrid';
+import { CellChange2Array } from '../cellChange2Array';
 
 export const setSolar = (
   e: any,
@@ -40,14 +42,14 @@ export const setSolar = (
       !newState.inputOfflineOperation;
     newState.directCurrentLoadPower.disabled = !newState.inputOfflineOperation;
 
-    newState.solarRadiation1.arrayDisabled = false;
-    newState.solarRadiation2.arrayDisabled = false;
-    newState.temperature.arrayDisabled = false;
-    newState.windSpeed.arrayDisabled = false;
-    newState.windDensity.arrayDisabled = false;
-    newState.alternCurrentLoadPower.arrayDisabled = false;
-    newState.alternCurrentLoadPowerFactor.arrayDisabled = false;
-    newState.directCurrentLoadPower.arrayDisabled = false;
+    newState.solarRadiation1.arrayEnabled = false;
+    newState.solarRadiation2.arrayEnabled = false;
+    newState.temperature.arrayEnabled = false;
+    newState.windSpeed.arrayEnabled = false;
+    newState.windDensity.arrayEnabled = false;
+    newState.alternCurrentLoadPower.arrayEnabled = false;
+    newState.alternCurrentLoadPowerFactor.arrayEnabled = false;
+    newState.directCurrentLoadPower.arrayEnabled = false;
 
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
@@ -289,5 +291,105 @@ export const setSolar = (
       }
     }
   }
+  if (e.target.name === 'steps') {
+    const value: number = parseInt(e.target.value);
+    newState.steps.value = value;
+    newState.solarRadiation1Array = Array(value ? value : 1).fill(800);
+    newState.solarRadiation2Array = Array(value ? value : 1).fill(800);
+    newState.temperatureArray = Array(value ? value : 1).fill(25);
+    newState.windSpeedArray = Array(value ? value : 1).fill(10);
+    newState.windDensityArray = Array(value ? value : 1).fill(1.12);
+    newState.alternCurrentLoadPowerArray = Array(value ? value : 1).fill(200);
+    newState.alternCurrentLoadPowerFactorArray = Array(value ? value : 1).fill(
+      1
+    );
+    newState.directCurrentLoadPowerArray = Array(value ? value : 1).fill(200);
+    if (value === 1) {
+      newState.solarRadiation1.arrayEnabled = false;
+      newState.solarRadiation2.arrayEnabled = false;
+      newState.temperature.arrayEnabled = false;
+      newState.windSpeed.arrayEnabled = false;
+      newState.windDensity.arrayEnabled = false;
+      newState.alternCurrentLoadPower.arrayEnabled = false;
+      newState.alternCurrentLoadPowerFactor.arrayEnabled = false;
+      newState.directCurrentLoadPower.arrayEnabled = false;
+    }
+  }
+  return newState;
+};
+
+// : [],
+// : [],
+// : [],
+// : [],
+// : [],
+// : [],
+// : [],
+// : [],
+
+export const setSolarTable = (
+  e: CellChange[],
+  oldState: SolarWindParameters
+) => {
+  const newState = { ...oldState };
+  let oldArray: number[][] = [];
+  oldArray.push(newState.solarRadiation1Array);
+  oldArray.push(newState.solarRadiation2Array);
+  oldArray.push(newState.temperatureArray);
+  oldArray.push(newState.windSpeedArray);
+  oldArray.push(newState.windDensityArray);
+  oldArray.push(newState.alternCurrentLoadPowerArray);
+  oldArray.push(newState.alternCurrentLoadPowerFactorArray);
+  oldArray.push(newState.directCurrentLoadPowerArray);
+
+  const newArrays = CellChange2Array(e, oldArray);
+  if (newState.solarRadiation1.arrayEnabled)
+    newState.solarRadiation1Array = newArrays[0].map((v) => {
+      v = v < 2000 ? v : 2000;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.solarRadiation2.arrayEnabled)
+    newState.solarRadiation2Array = newArrays[1].map((v) => {
+      v = v < 2000 ? v : 2000;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.temperature.arrayEnabled)
+    newState.temperatureArray = newArrays[2].map((v) => {
+      v = v < 60 ? v : 60;
+      v = v > -20 ? v : -20;
+      return v;
+    });
+  if (newState.windSpeed.arrayEnabled)
+    newState.windSpeedArray = newArrays[3].map((v) => {
+      v = v < 100 ? v : 100;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.windDensity.arrayEnabled)
+    newState.windDensityArray = newArrays[4].map((v) => {
+      v = v < 1.5 ? v : 1.5;
+      v = v > 0.8 ? v : 0.8;
+      return v;
+    });
+  if (newState.alternCurrentLoadPower.arrayEnabled)
+    newState.alternCurrentLoadPowerArray = newArrays[5].map((v) => {
+      v = v < 2000 ? v : 2000;
+      v = v > 0 ? v : 0;
+      return v;
+    });
+  if (newState.alternCurrentLoadPowerFactor.arrayEnabled)
+    newState.alternCurrentLoadPowerFactorArray = newArrays[6].map((v) => {
+      v = v < 1 ? v : 1;
+      v = v > -1 ? v : -1;
+      return v;
+    });
+  if (newState.directCurrentLoadPower.arrayEnabled)
+    newState.directCurrentLoadPowerArray = newArrays[7].map((v) => {
+      v = v < 2000 ? v : 2000;
+      v = v > 0 ? v : 0;
+      return v;
+    });
   return newState;
 };

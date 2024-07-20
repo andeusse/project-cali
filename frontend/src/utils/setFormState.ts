@@ -30,9 +30,22 @@ export const setFormState = <T extends formType>(
     if (
       name === 'turbineType' ||
       name === 'controller.customize' ||
-      name === 'inputOfflineOperation'
+      name === 'inputOfflineOperation' ||
+      name === 'steps'
     ) {
       return setTurbine(e, oldState);
+    }
+  }
+  if ('monocrystallinePanel' in oldState) {
+    if (
+      e.target.name === 'controller.customize' ||
+      e.target.name === 'hybridInverter.customize' ||
+      e.target.name === 'inputOfflineOperation' ||
+      e.target.name === 'inputOperationMode' ||
+      (splitName.length !== 1 && splitName[1] === 'isConnected') ||
+      name === 'steps'
+    ) {
+      return setSolar(e, oldState);
     }
   }
   if ('anaerobicReactorVolume1' in oldState) {
@@ -48,17 +61,6 @@ export const setFormState = <T extends formType>(
       name === 'initialAnalysisConditions102.enabled'
     ) {
       return setBiogas(e, oldState);
-    }
-  }
-  if ('monocrystallinePanel' in oldState) {
-    if (
-      e.target.name === 'controller.customize' ||
-      e.target.name === 'hybridInverter.customize' ||
-      e.target.name === 'inputOfflineOperation' ||
-      e.target.name === 'inputOperationMode' ||
-      (splitName.length !== 1 && splitName[1] === 'isConnected')
-    ) {
-      return setSolar(e, oldState);
     }
   }
   if ('operationMode' in oldState) {
@@ -87,7 +89,7 @@ export const setFormState = <T extends formType>(
     }
   } else if (type === 'checkbox' && name === 'variableArrayCustomize') {
     if (variableName) {
-      (newState[variableName as keyof T] as InputArrayType).arrayDisabled =
+      (newState[variableName as keyof T] as InputArrayType).arrayEnabled =
         e.target.checked;
     }
   } else if (typeof oldState[name as keyof T] === 'object') {

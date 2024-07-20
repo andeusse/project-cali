@@ -12,7 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ControllerStateType,
   PELTON_TURBINE,
@@ -30,7 +30,6 @@ import PlayerControls from '../../components/UI/PlayerControls';
 import { setFormState } from '../../utils/setFormState';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import CustomNumberField from '../../components/UI/CustomNumberField';
-import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
@@ -43,8 +42,20 @@ import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import { getValueByKey } from '../../utils/getValueByKey';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
+import { useAppSelector } from '../../redux/reduxHooks';
+import { ThemeType } from '../../types/theme';
+import {
+  CellChange,
+  Column,
+  DefaultCellTypes,
+  ReactGrid,
+  Row,
+} from '@silevis/reactgrid';
+import { setTurbineTable } from '../../utils/models/setTurbine';
 
 const Turbine = () => {
+  const userTheme = useAppSelector((state) => state.theme.value);
+
   const [system, setSystem] = useState<TurbineParameters>({ ...TURBINE });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isSingleDiagramExpanded, setIsSingleDiagramExpanded] = useState(true);
@@ -53,6 +64,131 @@ const Turbine = () => {
 
   const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<TurbineParameters, TurbineOutput>('turbine', system);
+
+  const getColumns = useCallback((): Column[] => {
+    if (system.steps.value > 1) {
+      let arr: Column[] = [
+        { columnId: `variables`, width: 200 },
+        ...Array(system.steps.value)
+          .fill(0)
+          .map((_, i) => ({
+            columnId: `${i}`,
+            width: 100,
+          })),
+      ];
+      return arr;
+    }
+    return [];
+  }, [system.steps.value]);
+
+  const getRows = useCallback((): Row[] => {
+    if (system.steps.value > 1) {
+      let arr: Row[] = [];
+      arr.push({
+        rowId: 'header',
+        cells: [
+          { type: 'header', text: '', nonEditable: true },
+          ...Array(system.steps.value)
+            .fill(0)
+            .map((_, i) => {
+              const col: DefaultCellTypes = {
+                type: 'header',
+                text: `P ${i + 1}`,
+                nonEditable: true,
+              };
+              return col;
+            }),
+        ],
+      });
+
+      if (system.inputPressure.arrayEnabled)
+        arr.push({
+          rowId: '0',
+          cells: [
+            { type: 'header', text: 'Presión [mH2O]', nonEditable: true },
+            ...system.inputPressureArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.inputFlow.arrayEnabled)
+        arr.push({
+          rowId: '1',
+          cells: [
+            { type: 'header', text: 'Flujo [L / s]', nonEditable: true },
+            ...system.inputFlowArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.inputActivePower.arrayEnabled)
+        arr.push({
+          rowId: '2',
+          cells: [
+            { type: 'header', text: 'Potencia [W]', nonEditable: true },
+            ...system.inputActivePowerArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.inputPowerFactor.arrayEnabled)
+        arr.push({
+          rowId: '3',
+          cells: [
+            { type: 'header', text: 'Factor de potencia', nonEditable: true },
+            ...system.inputPowerFactorArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+      return arr;
+    }
+    return [];
+  }, [
+    system.inputActivePower.arrayEnabled,
+    system.inputActivePowerArray,
+    system.inputFlow.arrayEnabled,
+    system.inputFlowArray,
+    system.inputPowerFactor.arrayEnabled,
+    system.inputPowerFactorArray,
+    system.inputPressure.arrayEnabled,
+    system.inputPressureArray,
+    system.steps.value,
+  ]);
+
+  const [rows, setRows] = useState<Row[]>(getRows());
+
+  const [columns, setColumns] = useState<Column[]>(getColumns());
+
+  useEffect(() => {
+    if (system.steps.value > 1) {
+      setRows(getRows());
+      setColumns(getColumns());
+    }
+  }, [getColumns, getRows, system]);
+
+  const handleCellsChange = (e: CellChange[]) => {
+    setSystem(setTurbineTable(e, system));
+  };
 
   useEffect(() => {
     setSystem((o) => {
@@ -600,12 +736,45 @@ const Turbine = () => {
               </Grid>
             </Grid>
             <Grid item xs={12} md={9.5} xl={9.5}>
-              {playerControl}
-              <TurbineDiagram
-                turbine={system}
-                data={data}
-                isPlaying={isPlaying}
-              ></TurbineDiagram>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={12} xl={12}>
+                  {playerControl}
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <TurbineDiagram
+                    turbine={system}
+                    data={data}
+                    isPlaying={isPlaying}
+                  ></TurbineDiagram>
+                </Grid>
+                {(system.inputPressure.arrayEnabled ||
+                  system.inputFlow.arrayEnabled ||
+                  system.inputActivePower.arrayEnabled ||
+                  system.inputPowerFactor.arrayEnabled) &&
+                  system.steps.value > 1 && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <div
+                        id={
+                          userTheme === ThemeType.Dark
+                            ? 'reactgrid-dark-mode'
+                            : 'reactgrid-light-mode'
+                        }
+                        style={{
+                          maxWidth: '100%',
+                          overflow: 'auto',
+                        }}
+                      >
+                        <ReactGrid
+                          rows={rows}
+                          columns={columns}
+                          onCellsChanged={(e: CellChange[]) => {
+                            handleCellsChange(e);
+                          }}
+                        />
+                      </div>
+                    </Grid>
+                  )}
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

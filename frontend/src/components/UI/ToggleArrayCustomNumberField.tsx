@@ -22,7 +22,7 @@ const ToggleArrayCustomNumberField = (
 
   return (
     <Grid container spacing={2}>
-      {'arrayDisabled' in variable && !variable.arrayDisabled && (
+      {'arrayEnabled' in variable && !variable.arrayEnabled && (
         <>
           <Grid item xs={12} md={7} xl={7}>
             <CustomNumberField {...otherProps}></CustomNumberField>
@@ -49,7 +49,7 @@ const ToggleArrayCustomNumberField = (
           )}
         </>
       )}
-      {'arrayDisabled' in variable && steps !== 1 && (
+      {'arrayEnabled' in variable && steps !== 1 && (
         <>
           <Grid item xs={12} md={7} xl={7} sx={{ alignContent: 'center' }}>
             {`Perfil de ${variableName.toLowerCase()}:`}
@@ -58,7 +58,7 @@ const ToggleArrayCustomNumberField = (
             <FormControlLabel
               control={
                 <Switch
-                  checked={variable.arrayDisabled}
+                  checked={variable.arrayEnabled}
                   name="variableArrayCustomize"
                   disabled={arrayDisabled}
                   onChange={(e) => {
@@ -69,7 +69,7 @@ const ToggleArrayCustomNumberField = (
                   color="default"
                 />
               }
-              label={variable.arrayDisabled ? 'On' : 'Off'}
+              label={variable.arrayEnabled ? 'On' : 'Off'}
             />
           </Grid>
         </>

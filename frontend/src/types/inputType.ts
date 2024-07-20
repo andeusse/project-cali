@@ -11,5 +11,5 @@ export type InputType = {
 };
 
 export type InputArrayType = InputType & {
-  arrayDisabled: boolean;
+  arrayEnabled: boolean;
 };

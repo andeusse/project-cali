@@ -9,7 +9,7 @@ import {
   StepUnitType,
 } from '../common';
 import { CommonChartType } from '../graph';
-import { InputArrayType, InputType } from '../inputType';
+import { InputArrayType } from '../inputType';
 import {
   Battery,
   CommonController,
@@ -462,7 +462,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 100,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   solarRadiation2: {
     disabled: false,
@@ -473,7 +473,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 100,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   temperature: {
     disabled: false,
@@ -483,7 +483,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     variableString: 'Temperatura ambiente',
     min: -20,
     max: 60,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   windSpeed: {
     disabled: false,
@@ -493,7 +493,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     variableString: 'Velocidad del viento',
     min: 0,
     max: 100,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   windDensity: {
     disabled: false,
@@ -504,7 +504,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0.8,
     max: 1.5,
     step: 0.01,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   alternCurrentLoadPower: {
     disabled: false,
@@ -515,7 +515,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 10,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   alternCurrentLoadPowerFactor: {
     disabled: false,
@@ -526,7 +526,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: -1,
     max: 1,
     step: 0.1,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   directCurrentLoadPower: {
     disabled: false,
@@ -537,7 +537,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0,
     max: 2000,
     step: 10,
-    arrayDisabled: false,
+    arrayEnabled: false,
   },
   externalGridState: false,
   solarRadiation1Array: [],
