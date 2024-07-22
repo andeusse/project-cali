@@ -218,8 +218,9 @@ class Biogas(Resource):
       Biogas_Plant.ReactorSimulation(Model = "Arrhenius", A_R101=100, B_R101 = 10000, C_R101 = -46656, A_R102=100, B_R102=1000000, C_R102=-46656)
       Biogas_Plant.V101()
       Biogas_Plant.V102()
+      Biogas_Plant.biogas_treatment(D1 = 1E-10, D2 = 1E-10, D3 = 1E-10)
 
-      print(Biogas_Plant.Operation_Data)
+      print(Biogas_Plant.Operation_Data.iloc[:, :18])
          
       
       
