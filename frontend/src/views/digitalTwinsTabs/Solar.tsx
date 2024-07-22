@@ -73,7 +73,7 @@ const Solar = () => {
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
       let arr: Column[] = [
-        { columnId: `variables`, width: 200 },
+        { columnId: `variables`, width: 250 },
         ...Array(system.steps.value)
           .fill(0)
           .map((_, i) => ({
@@ -110,7 +110,11 @@ const Solar = () => {
         arr.push({
           rowId: '0',
           cells: [
-            { type: 'header', text: 'Presión [mH2O]', nonEditable: true },
+            {
+              type: 'header',
+              text: 'Radiación solar 1 [W / m²]',
+              nonEditable: true,
+            },
             ...system.solarRadiation1Array.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -125,7 +129,11 @@ const Solar = () => {
         arr.push({
           rowId: '1',
           cells: [
-            { type: 'header', text: 'Flujo [L / s]', nonEditable: true },
+            {
+              type: 'header',
+              text: 'Radiación solar 2 [W / m²]',
+              nonEditable: true,
+            },
             ...system.solarRadiation2Array.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -140,7 +148,7 @@ const Solar = () => {
         arr.push({
           rowId: '2',
           cells: [
-            { type: 'header', text: 'Potencia [W]', nonEditable: true },
+            { type: 'header', text: 'Temperatura [°C]', nonEditable: true },
             ...system.temperatureArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -155,7 +163,11 @@ const Solar = () => {
         arr.push({
           rowId: '3',
           cells: [
-            { type: 'header', text: 'Factor de potencia', nonEditable: true },
+            {
+              type: 'header',
+              text: 'Velocidad del viento [m / s]',
+              nonEditable: true,
+            },
             ...system.windSpeedArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -169,7 +181,11 @@ const Solar = () => {
         arr.push({
           rowId: '4',
           cells: [
-            { type: 'header', text: 'Presión [mH2O]', nonEditable: true },
+            {
+              type: 'header',
+              text: 'Densidad del viento [kg / m³]',
+              nonEditable: true,
+            },
             ...system.windDensityArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -184,7 +200,7 @@ const Solar = () => {
         arr.push({
           rowId: '5',
           cells: [
-            { type: 'header', text: 'Flujo [L / s]', nonEditable: true },
+            { type: 'header', text: 'Potencia CA [W]', nonEditable: true },
             ...system.alternCurrentLoadPowerArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -199,7 +215,7 @@ const Solar = () => {
         arr.push({
           rowId: '6',
           cells: [
-            { type: 'header', text: 'Potencia [W]', nonEditable: true },
+            { type: 'header', text: 'Factor de potencia', nonEditable: true },
             ...system.alternCurrentLoadPowerFactorArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -214,7 +230,7 @@ const Solar = () => {
         arr.push({
           rowId: '7',
           cells: [
-            { type: 'header', text: 'Factor de potencia', nonEditable: true },
+            { type: 'header', text: 'Potencia CC [W]', nonEditable: true },
             ...system.directCurrentLoadPowerArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
@@ -237,7 +253,8 @@ const Solar = () => {
     system.directCurrentLoadPowerArray,
     system.solarRadiation1.arrayEnabled,
     system.solarRadiation1Array,
-    system.solarRadiation2,
+    system.solarRadiation2.arrayEnabled,
+    system.solarRadiation2Array,
     system.steps.value,
     system.temperature.arrayEnabled,
     system.temperatureArray,

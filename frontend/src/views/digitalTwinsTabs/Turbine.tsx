@@ -68,7 +68,7 @@ const Turbine = () => {
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
       let arr: Column[] = [
-        { columnId: `variables`, width: 200 },
+        { columnId: `variables`, width: 250 },
         ...Array(system.steps.value)
           .fill(0)
           .map((_, i) => ({
@@ -105,7 +105,7 @@ const Turbine = () => {
         arr.push({
           rowId: '0',
           cells: [
-            { type: 'header', text: 'Presión [mH2O]', nonEditable: true },
+            { type: 'header', text: 'Presión [mH₂O]', nonEditable: true },
             ...system.inputPressureArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',
