@@ -30,33 +30,12 @@ type Props = {
   diagramVariables: DiagramVariableType[];
 };
 
+const VIEWBOX_WIDTH = 9300;
+const VIEWBOX_HEIGHT = 5500;
+
 const BiogasDiagram = (props: Props) => {
   const { biogas, data, isPlaying, diagramVariables } = props;
   const theme = useTheme();
-
-  const [viewBoxWidth, setViewBoxWidth] = useState(8164);
-  const [viewBoxHeight, setViewBoxHeight] = useState(6803);
-
-  useEffect(() => {
-    if (
-      biogas.inputOperationMode === OperationModeType.Modo1 ||
-      biogas.inputOperationMode === OperationModeType.Modo2
-    ) {
-      setViewBoxWidth(8164);
-      setViewBoxHeight(6803);
-    }
-    if (biogas.inputOperationMode === OperationModeType.Modo3) {
-      setViewBoxWidth(9638);
-      setViewBoxHeight(6803);
-    }
-    if (
-      biogas.inputOperationMode === OperationModeType.Modo4 ||
-      biogas.inputOperationMode === OperationModeType.Modo5
-    ) {
-      setViewBoxWidth(10772);
-      setViewBoxHeight(7370);
-    }
-  }, [biogas.inputOperationMode]);
 
   return (
     <div
@@ -67,7 +46,7 @@ const BiogasDiagram = (props: Props) => {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
       >
         {biogas.inputOperationMode === OperationModeType.Modo1 && (
           <image href={!isPlaying ? mode1 : mode1On}></image>
@@ -84,7 +63,7 @@ const BiogasDiagram = (props: Props) => {
         {biogas.inputOperationMode === OperationModeType.Modo5 && (
           <image href={!isPlaying ? mode5 : mode5On}></image>
         )}
-        <g transform={`translate(1000,300)`}>
+        <g transform={`translate(1000,125)`}>
           <text
             style={{
               alignmentBaseline: 'central',
@@ -96,7 +75,7 @@ const BiogasDiagram = (props: Props) => {
             C
           </text>
         </g>
-        <g transform={`translate(1400,300)`}>
+        <g transform={`translate(1400,125)`}>
           <text
             style={{
               alignmentBaseline: 'central',
@@ -108,7 +87,7 @@ const BiogasDiagram = (props: Props) => {
             H
           </text>
         </g>
-        <g transform={`translate(1800,300)`}>
+        <g transform={`translate(1800,125)`}>
           <text
             style={{
               alignmentBaseline: 'central',
@@ -120,7 +99,7 @@ const BiogasDiagram = (props: Props) => {
             O
           </text>
         </g>
-        <g transform={`translate(2200,300)`}>
+        <g transform={`translate(2200,125)`}>
           <text
             style={{
               alignmentBaseline: 'central',
@@ -132,7 +111,7 @@ const BiogasDiagram = (props: Props) => {
             N
           </text>
         </g>
-        <g transform={`translate(2600,300)`}>
+        <g transform={`translate(2600,125)`}>
           <text
             style={{
               alignmentBaseline: 'central',

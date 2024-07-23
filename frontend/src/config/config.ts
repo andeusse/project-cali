@@ -6,8 +6,10 @@ export default class Config {
   public static QUERY_TIME_OFFLINE: number = 1000;
   public static QUERY_TIME_ONLINE: number = 3000;
 
-  public static QUERY_TIME_OFFLINE_BIOGAS: number = 30000;
-  public static QUERY_TIME_ONLINE_BIOGAS: number = 30000;
+  public static QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS: number = 3000;
+  public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 30000;
+  public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 3000;
+  public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 30000;
 
   public static TYPICAL_ARRAY_X_AXIS: string[] = Array(24)
     .fill(0)

@@ -205,7 +205,7 @@ const Biogas = () => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} md={6} xl={3}>
+                <Grid item xs={12} md={6} xl={2.5}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
                       <h3>Operación planta</h3>
@@ -255,7 +255,7 @@ const Biogas = () => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={6} xl={4}>
+                <Grid item xs={12} md={6} xl={3.5}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
                       <h3>Parámetros gemelo</h3>
@@ -300,55 +300,9 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Parámetro cinético</h3>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.inputKineticParameterInitialValue}
-                        name="inputKineticParameterInitialValue"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Ley de velocidad</h3>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <FormControl fullWidth>
-                        <InputLabel>Orden</InputLabel>
-                        <Select
-                          label="Orden"
-                          value={system.inputSpeedLawOrder}
-                          name="inputSpeedLawOrder"
-                          onChange={(e: any) => handleChange(e)}
-                          disabled={system.inputDigitalTwin}
-                        >
-                          {Object.values(SpeedLawOrderType).map((key) => (
-                            <MenuItem key={key} value={key}>
-                              {key}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.inputSpeedLawExponentialFactor}
-                        name="inputSpeedLawExponentialFactor"
-                        handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.inputSpeedLawStartEnergy}
-                        name="inputSpeedLawStartEnergy"
-                        handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} xl={5}>
+                <Grid item xs={12} md={12} xl={3}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
                       <h3>Operación planta</h3>
@@ -386,116 +340,55 @@ const Biogas = () => {
                         falseString="Online"
                       ></CustomToggle>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                      <h3>Condiciones del sustrato</h3>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Parámetro cinético</h3>
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={6}
-                      xl={6}
-                      sx={{ alignContent: 'center' }}
-                    >
-                      <CustomToggle
-                        name="inputSubstrateConditions"
-                        value={system.inputSubstrateConditions}
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputKineticParameterInitialValue}
+                        name="inputKineticParameterInitialValue"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
-                      ></CustomToggle>
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <Grid container spacing={2}>
-                        <Grid
-                          item
-                          xs={12}
-                          md={12}
-                          xl={12}
-                          sx={{ height: '72px' }}
-                        >
-                          <h4>Análisis elemental</h4>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.inputElementalAnalysisCarbonContent
-                            }
-                            name="inputElementalAnalysisCarbonContent"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.inputElementalAnalysisHydrogenContent
-                            }
-                            name="inputElementalAnalysisHydrogenContent"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.inputElementalAnalysisOxygenContent
-                            }
-                            name="inputElementalAnalysisOxygenContent"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.inputElementalAnalysisNitrogenContent
-                            }
-                            name="inputElementalAnalysisNitrogenContent"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.inputElementalAnalysisSulfurContent
-                            }
-                            name="inputElementalAnalysisSulfurContent"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                      </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={12} xl={3}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Ley de velocidad</h3>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <Grid container spacing={2}>
-                        <Grid
-                          item
-                          xs={12}
-                          md={12}
-                          xl={12}
-                          sx={{ height: '72px' }}
+                    <Grid item xs={12} md={12} xl={12}>
+                      <FormControl fullWidth>
+                        <InputLabel>Orden</InputLabel>
+                        <Select
+                          label="Orden"
+                          value={system.inputSpeedLawOrder}
+                          name="inputSpeedLawOrder"
+                          onChange={(e: any) => handleChange(e)}
+                          disabled={system.inputDigitalTwin}
                         >
-                          <h4>Análisis próximo</h4>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={system.inputProximateAnalysisTotalSolids}
-                            name="inputProximateAnalysisTotalSolids"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.inputProximateAnalysisVolatileSolids
-                            }
-                            name="inputProximateAnalysisVolatileSolids"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={system.inputProximateAnalysisDensity}
-                            name="inputProximateAnalysisDensity"
-                            handleChange={handleChange}
-                          ></CustomNumberField>
-                        </Grid>
-                      </Grid>
+                          {Object.values(SpeedLawOrderType).map((key) => (
+                            <MenuItem key={key} value={key}>
+                              {key}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputSpeedLawExponentialFactor}
+                        name="inputSpeedLawExponentialFactor"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputSpeedLawStartEnergy}
+                        name="inputSpeedLawStartEnergy"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -703,44 +596,100 @@ const Biogas = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
-
-        <Grid
-          item
-          xs={12}
-          md={12}
-          xl={12}
-          sx={{ paddingTop: '0px', textAlign: 'center' }}
-        >
-          <Button
-            variant="contained"
-            color="info"
-            onClick={handleSaveSystem}
-            startIcon={<FileDownloadIcon />}
-            sx={{ width: '120px', margin: '5px' }}
-          >
-            Guardar
-          </Button>
-          <Button
-            component="label"
-            variant="contained"
-            color="info"
-            startIcon={<FileUploadIcon />}
-            sx={{ width: '120px', margin: '5px' }}
-          >
-            Cargar
-            <input
-              type="file"
-              accept=".json"
-              hidden
-              onChange={handleUploadSystem}
-              multiple={false}
-            />
-          </Button>
-        </Grid>
-
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={2.5} xl={2.5}>
+            <Grid item xs={12} md={6} xl={6}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                  <h3>Condiciones del sustrato</h3>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  xl={6}
+                  sx={{ alignContent: 'center' }}
+                >
+                  <CustomToggle
+                    name="inputSubstrateConditions"
+                    value={system.inputSubstrateConditions}
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={6} xl={6}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h4>Análisis elemental</h4>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputElementalAnalysisCarbonContent}
+                        name="inputElementalAnalysisCarbonContent"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputElementalAnalysisHydrogenContent}
+                        name="inputElementalAnalysisHydrogenContent"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputElementalAnalysisOxygenContent}
+                        name="inputElementalAnalysisOxygenContent"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputElementalAnalysisNitrogenContent}
+                        name="inputElementalAnalysisNitrogenContent"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputElementalAnalysisSulfurContent}
+                        name="inputElementalAnalysisSulfurContent"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={6} xl={6}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h4>Análisis próximo</h4>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputProximateAnalysisTotalSolids}
+                        name="inputProximateAnalysisTotalSolids"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputProximateAnalysisVolatileSolids}
+                        name="inputProximateAnalysisVolatileSolids"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputProximateAnalysisDensity}
+                        name="inputProximateAnalysisDensity"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} md={3} xl={3}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6} xl={6}>
                   <h3>Bomba P-104</h3>
@@ -875,91 +824,127 @@ const Biogas = () => {
                 </Grid>
               )}
             </Grid>
-            <Grid item xs={12} md={9.5} xl={9.5}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={3}>
-                  <FormControl fullWidth>
-                    <InputLabel>Biogás</InputLabel>
-                    <Select
-                      label="Biogás"
-                      value={system.diagramBiogas}
-                      name="diagramBiogas"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(DiagramBiogasType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {getValueByKey(DiagramBiogasText, key)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <FormControl fullWidth>
-                    <InputLabel>Unidades</InputLabel>
-                    <Select
-                      label="Unidades"
-                      value={system.diagramBiogasUnit}
-                      name="diagramBiogasUnit"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(DiagramBiogasUnitType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {getValueByKey(DiagramBiogasUnitText, key)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <FormControl fullWidth>
-                    <InputLabel>Componentes</InputLabel>
-                    <Select
-                      label="Componentes"
-                      value={system.diagramCompound}
-                      name="diagramCompound"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(DiagramCompoundType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {getValueByKey(DiagramCompoundText, key)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={6} xl={3}>
-                  <FormControl fullWidth>
-                    <InputLabel>Humedad</InputLabel>
-                    <Select
-                      label="Humedad"
-                      value={system.diagramHumidity}
-                      name="diagramHumidity"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(DiagramHumidityType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {getValueByKey(DiagramHumidityText, key)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  {playerControl}
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <BiogasDiagram
-                    biogas={system}
-                    data={data}
-                    isPlaying={isPlaying}
-                    diagramVariables={diagramVariables}
-                  ></BiogasDiagram>
-                </Grid>
-              </Grid>
+          </Grid>
+        </Grid>
+
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSaveSystem}
+            startIcon={<FileDownloadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Guardar
+          </Button>
+          <Button
+            component="label"
+            variant="contained"
+            color="info"
+            startIcon={<FileUploadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Cargar
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleUploadSystem}
+              multiple={false}
+            />
+          </Button>
+        </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          {playerControl}
+        </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6} xl={3}>
+              <FormControl fullWidth>
+                <InputLabel>Biogás</InputLabel>
+                <Select
+                  label="Biogás"
+                  value={system.diagramBiogas}
+                  name="diagramBiogas"
+                  onChange={(e: any) => handleChange(e)}
+                >
+                  {Object.keys(DiagramBiogasType).map((key) => (
+                    <MenuItem key={key} value={key}>
+                      {getValueByKey(DiagramBiogasText, key)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6} xl={3}>
+              <FormControl fullWidth>
+                <InputLabel>Unidades</InputLabel>
+                <Select
+                  label="Unidades"
+                  value={system.diagramBiogasUnit}
+                  name="diagramBiogasUnit"
+                  onChange={(e: any) => handleChange(e)}
+                >
+                  {Object.keys(DiagramBiogasUnitType).map((key) => (
+                    <MenuItem key={key} value={key}>
+                      {getValueByKey(DiagramBiogasUnitText, key)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6} xl={3}>
+              <FormControl fullWidth>
+                <InputLabel>Componentes</InputLabel>
+                <Select
+                  label="Componentes"
+                  value={system.diagramCompound}
+                  name="diagramCompound"
+                  onChange={(e: any) => handleChange(e)}
+                >
+                  {Object.keys(DiagramCompoundType).map((key) => (
+                    <MenuItem key={key} value={key}>
+                      {getValueByKey(DiagramCompoundText, key)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6} xl={3}>
+              <FormControl fullWidth>
+                <InputLabel>Humedad</InputLabel>
+                <Select
+                  label="Humedad"
+                  value={system.diagramHumidity}
+                  name="diagramHumidity"
+                  onChange={(e: any) => handleChange(e)}
+                >
+                  {Object.keys(DiagramHumidityType).map((key) => (
+                    <MenuItem key={key} value={key}>
+                      {getValueByKey(DiagramHumidityText, key)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
         </Grid>
+
+        <Grid item xs={12} md={12} xl={12}>
+          <BiogasDiagram
+            biogas={system}
+            data={data}
+            isPlaying={isPlaying}
+            diagramVariables={diagramVariables}
+          ></BiogasDiagram>
+        </Grid>
+
         {charts !== undefined && system.timeMultiplier && (
           <>
             <Grid item xs={12} md={12} xl={12}>
