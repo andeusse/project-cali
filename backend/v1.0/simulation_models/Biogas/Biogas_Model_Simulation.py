@@ -5,6 +5,10 @@ from  tools import DBManager
 import numpy as np
 from scipy.integrate import odeint
 import requests
+from fractions import Fraction
+from math import gcd
+from functools import reduce
+
 
 
 class BiogasPlantSimulation:
@@ -63,18 +67,32 @@ class BiogasPlantSimulation:
 
             self.mol_min_R101 = min(self.molC_R101, self.molH_R101, self.molO_R101, self.molN_R101, self.molS_R101)
 
-            self.n_R101 = self.molC_R101/self.mol_min_R101
-            self.a_R101 = self.molH_R101/self.mol_min_R101
-            self.b_R101 = self.molO_R101/self.mol_min_R101
-            self.c_R101 = self.molN_R101/self.mol_min_R101
-            self.d_R101 = self.molS_R101/self.mol_min_R101
+            n_R101 = self.molC_R101/self.mol_min_R101
+            a_R101 = self.molH_R101/self.mol_min_R101
+            b_R101 = self.molO_R101/self.mol_min_R101
+            c_R101 = self.molN_R101/self.mol_min_R101
+            d_R101 = self.molS_R101/self.mol_min_R101
+
+            def lcm(a,b):
+                return a * b // gcd(a, b)
+
+            numbers_R101 = [n_R101, a_R101, b_R101, c_R101, d_R101]
+            denominators_R101 = [Fraction(num).limit_denominator(10).denominator for num in numbers_R101]
+            common_denominator_R101 = reduce(lcm, denominators_R101)
+            subindex_R101 = [int(num * common_denominator_R101) for num in numbers_R101]
+
+            self.n_R101 = subindex_R101[0]
+            self.a_R101 = subindex_R101[1]
+            self.b_R101 = subindex_R101[2]
+            self.c_R101 = subindex_R101[3]
+            self.d_R101 = subindex_R101[4]
             
             self.s_H2O_R101 = self.n_R101-(self.a_R101/4)-(self.b_R101/2)+(3/4)*self.c_R101+(self.d_R101/2)
             self.s_CH4_R101 = (self.n_R101/2)+(self.a_R101/8)-(self.b_R101/4)-(3/8)*self.c_R101-(self.d_R101/4)
             self.s_CO2_R101 = (self.n_R101/2)-(self.a_R101/8)+(self.b_R101/4)+(3/8)*self.c_R101-(self.d_R101/4)
             self.s_NH3_R101 = self.c_R101
             self.s_H2S_R101 = self.d_R101
-            
+
             self.MW_sustrato_R101 = self.n_R101*12.01+self.a_R101*1.01+self.b_R101*16+self.c_R101*14+self.d_R101*32
             self.Csus_ini_R101 = (self.rho_R101*self.SV_R101)/self.MW_sustrato_R101
             self.Csus_ini_ST_R101 = (self.rho_R101*self.ST_R101)/self.MW_sustrato_R101
@@ -112,11 +130,22 @@ class BiogasPlantSimulation:
 
             self.mol_min_R102 = min(self.molC_R102, self.molH_R102, self.molO_R102, self.molN_R102, self.molS_R102)
 
-            self.n_R102 = self.molC_R102/self.mol_min_R102
-            self.a_R102 = self.molH_R102/self.mol_min_R102
-            self.b_R102 = self.molO_R102/self.mol_min_R102
-            self.c_R102 = self.molN_R102/self.mol_min_R102
-            self.d_R102 = self.molS_R102/self.mol_min_R102
+            n_R102 = self.molC_R102/self.mol_min_R102
+            a_R102 = self.molH_R102/self.mol_min_R102
+            b_R102 = self.molO_R102/self.mol_min_R102
+            c_R102 = self.molN_R102/self.mol_min_R102
+            d_R102 = self.molS_R102/self.mol_min_R102
+
+            numbers_R102 = [n_R102, a_R102, b_R102, c_R102, d_R102]
+            denominators_R102 = [Fraction(num).limit_denominator(10).denominator for num in numbers_R102]
+            common_denominator_R102 = reduce(lcm, denominators_R102)
+            subindex_R102 = [int(num * common_denominator_R102) for num in numbers_R102]
+
+            self.n_R102 = subindex_R102[0]
+            self.a_R102 = subindex_R102[1]
+            self.b_R102 = subindex_R102[2]
+            self.c_R102 = subindex_R102[3]
+            self.d_R102 = subindex_R102[4]
             
             self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
             self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
@@ -293,11 +322,25 @@ class BiogasPlantSimulation:
 
         self.mol_min = min(self.molC, self.molH, self.molO, self.molN, self.molS)
 
-        self.n = self.molC/self.mol_min
-        self.a = self.molH/self.mol_min
-        self.b = self.molO/self.mol_min
-        self.c = self.molN/self.mol_min
-        self.d = self.molS/self.mol_min
+        n = self.molC/self.mol_min
+        a = self.molH/self.mol_min
+        b = self.molO/self.mol_min
+        c = self.molN/self.mol_min
+        d = self.molS/self.mol_min
+
+        def lcm(a,b):
+                return a * b // gcd(a, b)
+        
+        numbers = [n, a, b, c, d]
+        denominators = [Fraction(num).limit_denominator(10).denominator for num in numbers]
+        common_denominator = reduce(lcm, denominators)
+        subindex = [int(num * common_denominator) for num in numbers]
+
+        self.n = subindex[0]
+        self.a = subindex[1]
+        self.b = subindex[2]
+        self.c = subindex[3]
+        self.d = subindex[4]
         
         self.s_H2O = self.n-(self.a/4)-(self.b/2)+(3/4)*self.c+(self.d/2)
         self.s_CH4 = (self.n/2)+(self.a/8)-(self.b/4)-(3/8)*self.c-(self.d/4)
