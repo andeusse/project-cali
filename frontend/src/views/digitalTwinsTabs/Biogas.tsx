@@ -360,6 +360,7 @@ const Biogas = () => {
                           label="Modo de operación"
                           value={system.inputOperationMode}
                           name="inputOperationMode"
+                          disabled={isPlaying}
                           onChange={(e: any) => handleChange(e)}
                         >
                           {Object.values(OperationModeType).map((key) => (
@@ -814,7 +815,8 @@ const Biogas = () => {
                   </Grid>
                 </Grid>
               )}
-              {system.inputOperationMode === OperationModeType.Modo4 && (
+              {(system.inputOperationMode === OperationModeType.Modo4 ||
+                system.inputOperationMode === OperationModeType.Modo5) && (
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} xl={6}>
                     <h3>Bomba P-102</h3>
@@ -860,7 +862,8 @@ const Biogas = () => {
                 ></ToggleCustomNumberField>
               </Grid>
               {(system.inputOperationMode === OperationModeType.Modo3 ||
-                system.inputOperationMode === OperationModeType.Modo4) && (
+                system.inputOperationMode === OperationModeType.Modo4 ||
+                system.inputOperationMode === OperationModeType.Modo5) && (
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Temperatura R-102</h3>
                   <ToggleCustomNumberField
