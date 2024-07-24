@@ -65,13 +65,11 @@ class BiogasPlantSimulation:
             self.molN_R101 = self.Cn_R101*(1/14)
             self.molS_R101 = self.Cs_R101*(1/32)
 
-            self.mol_min_R101 = min(self.molC_R101, self.molH_R101, self.molO_R101, self.molN_R101, self.molS_R101)
-
-            n_R101 = self.molC_R101/self.mol_min_R101
-            a_R101 = self.molH_R101/self.mol_min_R101
-            b_R101 = self.molO_R101/self.mol_min_R101
-            c_R101 = self.molN_R101/self.mol_min_R101
-            d_R101 = self.molS_R101/self.mol_min_R101
+            n_R101 = self.molC_R101
+            a_R101 = self.molH_R101
+            b_R101 = self.molO_R101
+            c_R101 = self.molN_R101
+            d_R101 = self.molS_R101
 
             def lcm(a,b):
                 return a * b // gcd(a, b)
@@ -128,13 +126,11 @@ class BiogasPlantSimulation:
             self.molN_R102 = self.Cn_R102*(1/14)
             self.molS_R102 = self.Cs_R102*(1/32)
 
-            self.mol_min_R102 = min(self.molC_R102, self.molH_R102, self.molO_R102, self.molN_R102, self.molS_R102)
-
-            n_R102 = self.molC_R102/self.mol_min_R102
-            a_R102 = self.molH_R102/self.mol_min_R102
-            b_R102 = self.molO_R102/self.mol_min_R102
-            c_R102 = self.molN_R102/self.mol_min_R102
-            d_R102 = self.molS_R102/self.mol_min_R102
+            n_R102 = self.molC_R102
+            a_R102 = self.molH_R102
+            b_R102 = self.molO_R102
+            c_R102 = self.molN_R102
+            d_R102 = self.molS_R102
 
             numbers_R102 = [n_R102, a_R102, b_R102, c_R102, d_R102]
             denominators_R102 = [Fraction(num).limit_denominator(10).denominator for num in numbers_R102]
@@ -320,13 +316,11 @@ class BiogasPlantSimulation:
         self.molN = self.Cn*(1/14)
         self.molS = self.Cs*(1/32)
 
-        self.mol_min = min(self.molC, self.molH, self.molO, self.molN, self.molS)
-
-        n = self.molC/self.mol_min
-        a = self.molH/self.mol_min
-        b = self.molO/self.mol_min
-        c = self.molN/self.mol_min
-        d = self.molS/self.mol_min
+        n = self.molC
+        a = self.molH
+        b = self.molO
+        c = self.molN
+        d = self.molS
 
         def lcm(a,b):
                 return a * b // gcd(a, b)
