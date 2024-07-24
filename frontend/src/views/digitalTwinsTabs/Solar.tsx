@@ -37,8 +37,10 @@ import SolarPanel from '../../components/models/SolarPanel';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
-import singleDiagramOffgrid from '../../assets/singleDiagram/singleDiagramSolarOffgrid.png';
-import singleDiagramHybrid from '../../assets/singleDiagram/singleDiagramSolarHybrid.png';
+import singleDiagramOffgridLight from '../../assets/singleDiagram/singleDiagramSolarOffgridLight.png';
+import singleDiagramOffgridDark from '../../assets/singleDiagram/singleDiagramSolarOffgridDark.png';
+import singleDiagramHybridLight from '../../assets/singleDiagram/singleDiagramSolarHybridLight.png';
+import singleDiagramHybridDark from '../../assets/singleDiagram/singleDiagramSolarHybridDark.png';
 import solarIllustration from '../../assets/illustrations/solar.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
@@ -490,7 +492,11 @@ const Solar = () => {
                       marginLeft: 'auto',
                       marginRight: 'auto',
                     }}
-                    src={singleDiagramOffgrid}
+                    src={
+                      userTheme === ThemeType.Light
+                        ? singleDiagramOffgridLight
+                        : singleDiagramOffgridDark
+                    }
                     alt="singleDiagramOffgrid"
                   ></img>
                 </Grid>
@@ -510,7 +516,11 @@ const Solar = () => {
                       marginLeft: 'auto',
                       marginRight: 'auto',
                     }}
-                    src={singleDiagramHybrid}
+                    src={
+                      userTheme === ThemeType.Light
+                        ? singleDiagramHybridLight
+                        : singleDiagramHybridDark
+                    }
                     alt="singleDiagramHybrid"
                   ></img>
                 </Grid>

@@ -33,7 +33,8 @@ import CustomNumberField from '../../components/UI/CustomNumberField';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
-import singleDiagram from '../../assets/singleDiagram/singleDiagramTurbine.png';
+import singleDiagramLight from '../../assets/singleDiagram/singleDiagramTurbineLight.png';
+import singleDiagramDark from '../../assets/singleDiagram/singleDiagramTurbineDark.png';
 import turbineIllustration from '../../assets/illustrations/turbine.png';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
 import ErrorDialog from '../../components/UI/ErrorDialog';
@@ -349,7 +350,11 @@ const Turbine = () => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 }}
-                src={singleDiagram}
+                src={
+                  userTheme === ThemeType.Light
+                    ? singleDiagramLight
+                    : singleDiagramDark
+                }
                 alt="singleDiagram"
               ></img>
             </AccordionDetails>
