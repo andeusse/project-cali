@@ -33,6 +33,7 @@ import CustomNumberField from '../../components/UI/CustomNumberField';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import singleDiagram from '../../assets/singleDiagram/singleDiagramTurbine.png';
 import turbineIllustration from '../../assets/illustrations/turbine.png';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
 import ErrorDialog from '../../components/UI/ErrorDialog';
@@ -341,16 +342,16 @@ const Turbine = () => {
               <Typography variant="h4">Unifilar</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {/* <img
+              <img
                 style={{
                   height: '500px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 }}
-                src={turbineIllustration}
-                alt="turbineIllustration"
-              ></img> */}
+                src={singleDiagram}
+                alt="singleDiagram"
+              ></img>
             </AccordionDetails>
           </Accordion>
         </Grid>

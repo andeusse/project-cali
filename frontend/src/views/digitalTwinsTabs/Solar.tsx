@@ -37,6 +37,8 @@ import SolarPanel from '../../components/models/SolarPanel';
 import Battery from '../../components/models/Battery';
 import CustomToggle from '../../components/UI/CustomToggle';
 
+import singleDiagramOffgrid from '../../assets/singleDiagram/singleDiagramSolarOffgrid.png';
+import singleDiagramHybrid from '../../assets/singleDiagram/singleDiagramSolarHybrid.png';
 import solarIllustration from '../../assets/illustrations/solar.png';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
@@ -474,16 +476,45 @@ const Solar = () => {
               <Typography variant="h4">Unifilar</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              {/* <img
-                style={{
-                  height: '500px',
-                  display: 'block',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}
-                src={turbineIllustration}
-                alt="turbineIllustration"
-              ></img> */}
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={12} xl={12}>
+                  <Typography variant="h5" sx={{ marginBottom: '20px' }}>
+                    Sistema Offgrid
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <img
+                    style={{
+                      height: '500px',
+                      display: 'block',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                    }}
+                    src={singleDiagramOffgrid}
+                    alt="singleDiagramOffgrid"
+                  ></img>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <Typography
+                    variant="h5"
+                    sx={{ marginBottom: '20px', marginTop: '20px' }}
+                  >
+                    Sistema Híbrido
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <img
+                    style={{
+                      height: '500px',
+                      display: 'block',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                    }}
+                    src={singleDiagramHybrid}
+                    alt="singleDiagramHybrid"
+                  ></img>
+                </Grid>
+              </Grid>
             </AccordionDetails>
           </Accordion>
         </Grid>
