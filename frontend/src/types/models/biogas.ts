@@ -12,9 +12,10 @@ export enum OperationModeType {
   Modo5 = 'Modo5',
 }
 
-export enum SpeedLawOrderType {
-  Orden1 = 'Orden1',
-  Orden2 = 'Orden2',
+export enum OperationModelType {
+  Arrhenius = 'Arrhenius',
+  ADM1 = 'ADM1',
+  Gompertz = 'Gompertz',
 }
 
 export enum DiagramBiogasType {
@@ -73,50 +74,75 @@ export type BiogasInitialAnalysisConditions = {
 
 export type BiogasParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
-    restartFlag: boolean;
     anaerobicReactorVolume1: InputType;
     anaerobicReactorVolume2: InputType;
+    inputOperationMode: OperationModeType;
     biogasTankVolume1: InputType;
     biogasTankVolume2: InputType;
     biogasTankVolume3: InputType;
-    inputOperationMode: OperationModeType;
+    digitalTwinState: boolean;
+    digitalTwinStepTime: InputType;
+    digitalTwinForecastTime: InputType;
+    operationModelType: OperationModelType;
+    exponentialFactorR101: InputType;
+    activationEnergyR101: InputType;
+    lambdaR101: InputType;
+    exponentialFactorR102: InputType;
+    activationEnergyR102: InputType;
+    lambdaR102: InputType;
+    difussionCoefficientTower1: InputType;
+    adsorbentWeightTower1: InputType;
+    lengthTower1: InputType;
+    difussionCoefficientTower2: InputType;
+    adsorbentWeightTower2: InputType;
+    lengthTower2: InputType;
+    difussionCoefficientTower3: InputType;
+    adsorbentWeightTower3: InputType;
+    lengthTower3: InputType;
+    initialAnalysisConditionsR101: BiogasInitialAnalysisConditions;
+    initialAnalysisConditionsR102: BiogasInitialAnalysisConditions;
     inputSubstrateConditions: boolean;
+    inputProximateAnalysisTotalSolids: InputType;
+    inputProximateAnalysisVolatileSolids: InputType;
+    inputProximateAnalysisDensity: InputType;
     inputElementalAnalysisCarbonContent: InputType;
     inputElementalAnalysisHydrogenContent: InputType;
     inputElementalAnalysisOxygenContent: InputType;
     inputElementalAnalysisNitrogenContent: InputType;
     inputElementalAnalysisSulfurContent: InputType;
-    inputProximateAnalysisTotalSolids: InputType;
-    inputProximateAnalysisVolatileSolids: InputType;
-    inputProximateAnalysisDensity: InputType;
-    inputDigitalTwin: boolean;
-    inputDigitalTwinStepTime: InputType;
-    inputDigitalTwinTrainingTime: InputType;
-    inputDigitalTwinForecastTime: InputType;
-    inputKineticParameterInitialValue: InputType;
-    inputSpeedLawOrder: SpeedLawOrderType;
-    inputSpeedLawExponentialFactor: InputType;
-    inputSpeedLawStartEnergy: InputType;
+    inputMixTK100: boolean;
+    inputSpeedMixTK100: InputType;
+    inputStartsPerDayMixTK100: InputType;
+    inputStartTimeMixTK100: InputType;
     inputPump104: boolean;
     inputPump104HydraulicRetentionTime: InputType;
     inputPump104StartTime: InputType;
     inputPump104StartsPerDay: InputType;
-    inputPump102: boolean;
-    inputPump102Flow: InputType;
-    inputPump102StartTime: InputType;
-    inputPump102StartsPerDay: InputType;
     inputPump101: boolean;
     inputPump101Flow: InputType;
     inputPump101StartTime: InputType;
     inputPump101StartsPerDay: InputType;
-    inputTemperature101: InputType;
-    inputTemperature102: InputType;
-    initialAnalysisConditions101: BiogasInitialAnalysisConditions;
-    initialAnalysisConditions102: BiogasInitialAnalysisConditions;
+    inputPump102: boolean;
+    inputPump102Flow: InputType;
+    inputPump102StartTime: InputType;
+    inputPump102StartsPerDay: InputType;
+    inputMixR101: boolean;
+    inputSpeedMixR101: InputType;
+    inputStartsPerDayMixR101: InputType;
+    inputStartTimeMixR101: InputType;
+    inputPHR101: InputType;
+    inputTemperatureR101: InputType;
+    inputMixR102: boolean;
+    inputSpeedMixR102: InputType;
+    inputStartsPerDayMixR102: InputType;
+    inputStartTimeMixR102: InputType;
+    inputPHR102: InputType;
+    inputTemperatureR102: InputType;
     diagramBiogas: DiagramBiogasType;
     diagramBiogasUnit: DiagramBiogasUnitType;
     diagramCompound: DiagramCompoundType;
     diagramHumidity: DiagramHumidityType;
+    restartFlag: boolean;
   };
 
 export type BiogasOutput = {
@@ -234,11 +260,6 @@ export const BIOGAS: BiogasParameters = {
   },
   stepUnit: StepUnitType.Hour,
   queryTime: Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS,
-  restartFlag: false,
-  diagramBiogas: DiagramBiogasType.Accumulated,
-  diagramBiogasUnit: DiagramBiogasUnitType.NormalVolume,
-  diagramCompound: DiagramCompoundType.Concentration,
-  diagramHumidity: DiagramHumidityType.Relative,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,
@@ -270,6 +291,7 @@ export const BIOGAS: BiogasParameters = {
     min: 10,
     max: 100000,
   },
+  inputOperationMode: OperationModeType.Modo1,
   biogasTankVolume1: {
     disabled: false,
     value: 15,
@@ -300,89 +322,8 @@ export const BIOGAS: BiogasParameters = {
     min: 5,
     max: 50000,
   },
-  inputOfflineOperation: true,
-  inputOperationMode: OperationModeType.Modo1,
-  inputSubstrateConditions: true,
-  inputElementalAnalysisCarbonContent: {
-    disabled: false,
-    value: 40.48,
-    tooltip: 'Concentración de carbono atómico en el sustrato',
-    unit: '%',
-    variableString: 'Contenido de carbono',
-    min: 0,
-    max: 100,
-    step: 0.01,
-  },
-  inputElementalAnalysisHydrogenContent: {
-    disabled: false,
-    value: 5.29,
-    tooltip: 'Concentración de hidrógeno atómico en el sustrato',
-    unit: '%',
-    variableString: 'Contenido de hidrógeno',
-    min: 0,
-    max: 100,
-    step: 0.01,
-  },
-  inputElementalAnalysisOxygenContent: {
-    disabled: false,
-    value: 29.66,
-    tooltip: 'Concentración de oxígeno atómico en el sustrato',
-    unit: '%',
-    variableString: 'Contenido de oxígeno',
-    min: 0,
-    max: 100,
-    step: 0.01,
-  },
-  inputElementalAnalysisNitrogenContent: {
-    disabled: false,
-    value: 1.37,
-    tooltip: 'Concentración de nitrógeno atómico en el sustrato',
-    unit: '%',
-    variableString: 'Contenido de nitrógeno',
-    min: 0,
-    max: 100,
-    step: 0.01,
-  },
-  inputElementalAnalysisSulfurContent: {
-    disabled: false,
-    value: 0.211,
-    tooltip: 'Concentración de azúfre atómico en el sustrato',
-    unit: '%',
-    variableString: 'Contenido de azufre',
-    min: 0,
-    max: 100,
-    step: 0.01,
-  },
-  inputProximateAnalysisTotalSolids: {
-    disabled: false,
-    value: 10,
-    tooltip: 'Sólidos totales del sustrato',
-    unit: '%',
-    variableString: 'Sólidos totales',
-    min: 0,
-    max: 30,
-  },
-  inputProximateAnalysisVolatileSolids: {
-    disabled: false,
-    value: 1,
-    tooltip: 'Sólidos volátiles del sustrato',
-    unit: '%',
-    variableString: 'Sólidos volátiles',
-    min: 0,
-    max: 10,
-  },
-  inputProximateAnalysisDensity: {
-    disabled: false,
-    value: 1000,
-    tooltip: 'Densidad del sustrato',
-    unit: 'g / L',
-    variableString: 'Densidad',
-    min: 200,
-    max: 2000,
-    step: 10,
-  },
-  inputDigitalTwin: false,
-  inputDigitalTwinStepTime: {
+  digitalTwinState: false,
+  digitalTwinStepTime: {
     disabled: false,
     value: 30,
     tooltip: 'Paso de tiempo del gemelo digital',
@@ -391,17 +332,7 @@ export const BIOGAS: BiogasParameters = {
     min: 1,
     max: 60,
   },
-  inputDigitalTwinTrainingTime: {
-    disabled: true,
-    value: 0.1,
-    tooltip: 'Tiempo de entrenamiento del gemelo digital',
-    unit: 'h',
-    variableString: 'Tiempo entrenamiento',
-    min: 0.1,
-    max: 24,
-    step: 0.1,
-  },
-  inputDigitalTwinForecastTime: {
+  digitalTwinForecastTime: {
     disabled: false,
     value: 1,
     tooltip: 'Tiempo de predicción del gemelo digital',
@@ -411,135 +342,128 @@ export const BIOGAS: BiogasParameters = {
     max: 72,
     step: 0.1,
   },
-  inputKineticParameterInitialValue: {
-    disabled: true,
-    value: 1,
-    tooltip: 'Valor inicial del parámetro cinético del gemelo digital',
-    unit: '',
-    variableString: 'Valor inicial',
-    min: 0.01,
-    max: 100,
-  },
-  inputSpeedLawOrder: SpeedLawOrderType.Orden1,
-  inputSpeedLawExponentialFactor: {
+  operationModelType: OperationModelType.Arrhenius,
+  exponentialFactorR101: {
     disabled: false,
-    value: 1,
-    tooltip: 'Factor pre exponencial de la ley de velocidad del gemelo digital',
-    unit: '',
-    variableString: 'Factor pre-exponencial',
+    value: 100,
+    tooltip: 'Factor preexponencial para R101',
+    unit: 'L / s',
+    variableString: 'Factor pre-exponencia R101',
   },
-  inputSpeedLawStartEnergy: {
+  activationEnergyR101: {
     disabled: false,
-    value: 1,
-    tooltip: 'Energía de activación de la ley de velocidad del gemelo digital',
+    value: 1000000,
+    tooltip: 'Energía de activación R101',
     unit: 'J / mol',
-    variableString: 'Energía de activación',
+    variableString: 'Energía activación R101',
   },
-  inputPump104: true,
-  inputPump104HydraulicRetentionTime: {
+  lambdaR101: {
     disabled: false,
-    value: 30,
-    tooltip: 'Tiempo de retención hidráulico de la bomba',
-    unit: 'días',
-    variableString: 'TRH',
-    min: 10,
-    max: 100,
-  },
-  inputPump104StartTime: {
-    disabled: false,
-    value: 10,
-    tooltip: 'Tiempo de encendido de la bomba',
-    unit: 'min',
-    variableString: 'Tiempo de encendido',
-    min: 1,
-    max: 60,
-  },
-  inputPump104StartsPerDay: {
-    disabled: false,
-    value: 5,
-    tooltip: 'Encendidos por día de la bomba',
+    value: -44928,
+    tooltip: 'Lambda para R101',
     unit: '',
-    variableString: 'Encendido / día',
-    min: 0,
-    max: 20,
+    variableString: 'Lambda R101',
   },
-  inputPump102: true,
-  inputPump102Flow: {
+  exponentialFactorR102: {
     disabled: false,
-    value: 0,
-    tooltip: 'Caudal de la bomba',
-    unit: 'L/h',
-    variableString: 'Caudal',
-    min: 0,
-    max: 4.2,
-    step: 0.01,
+    value: 100,
+    tooltip: 'Factor preexponencial para R101',
+    unit: 'L / s',
+    variableString: 'Factor pre-exponencia R101',
   },
-  inputPump102StartTime: {
+  activationEnergyR102: {
     disabled: false,
-    value: 0,
-    tooltip: 'Tiempo de encendido de la bomba',
-    unit: 'min',
-    variableString: 'Tiempo de encendido',
-    min: 0,
-    max: 1440,
+    value: 1000000,
+    tooltip: 'Energía de activación R101',
+    unit: 'J / mol',
+    variableString: 'Energía activación R101',
   },
-  inputPump102StartsPerDay: {
+  lambdaR102: {
     disabled: false,
-    value: 0,
-    tooltip: 'Encendidos por día de la bomba',
+    value: -44928,
+    tooltip: 'Lambda para R101',
     unit: '',
-    variableString: 'Encendido / día',
-    min: 0,
-    max: 100,
+    variableString: 'Lambda R101',
   },
-  inputPump101: true,
-  inputPump101Flow: {
+  difussionCoefficientTower1: {
     disabled: false,
-    value: 0,
-    tooltip: 'Caudal de la bomba',
-    unit: 'L/h',
-    variableString: 'Caudal',
-    min: 0,
-    max: 4.2,
-    step: 0.01,
-  },
-  inputPump101StartTime: {
-    disabled: false,
-    value: 0,
-    tooltip: 'Tiempo de encendido de la bomba',
-    unit: 'min',
-    variableString: 'Tiempo de encendido',
-    min: 0,
-    max: 1440,
-  },
-  inputPump101StartsPerDay: {
-    disabled: false,
-    value: 0,
-    tooltip: 'Encendidos por día de la bomba',
+    value: 1e-10,
+    tooltip: 'Coeficiente de difusión torre 1',
     unit: '',
-    variableString: 'Encendido / día',
+    variableString: 'Coeficiente difusión torre 1',
+  },
+  adsorbentWeightTower1: {
+    disabled: false,
+    value: 5000,
+    tooltip: 'Peso de absorción torre 1',
+    unit: 'g',
+    variableString: 'Peso absorción torre 1',
     min: 0,
-    max: 100,
+    max: 50000,
   },
-  inputTemperature101: {
+  lengthTower1: {
     disabled: false,
-    value: 35,
-    tooltip: 'Temperatura reactor 101',
-    unit: '°C',
-    variableString: 'Temperatura R-101',
-    min: 15,
-    max: 60,
+    value: 0.2,
+    tooltip: 'Longitud torre 1',
+    unit: 'm',
+    variableString: 'Longitud torre 1',
+    min: 0.1,
+    max: 5,
+    step: 0.1,
   },
-  inputTemperature102: {
+  difussionCoefficientTower2: {
     disabled: false,
-    value: 35,
-    tooltip: 'Temperatura reactor 102',
-    unit: '°C',
-    variableString: 'Temperatura R-102',
-    min: 1,
-    max: 10,
+    value: 1e-10,
+    tooltip: 'Coeficiente de difusión torre 1',
+    unit: '',
+    variableString: 'Coeficiente difusión torre 1',
   },
-  initialAnalysisConditions101: {
+  adsorbentWeightTower2: {
+    disabled: false,
+    value: 5000,
+    tooltip: 'Peso de absorción torre 1',
+    unit: 'g',
+    variableString: 'Peso absorción torre 1',
+    min: 0,
+    max: 50000,
+  },
+  lengthTower2: {
+    disabled: false,
+    value: 0.2,
+    tooltip: 'Longitud torre 1',
+    unit: 'm',
+    variableString: 'Longitud torre 1',
+    min: 0.1,
+    max: 5,
+    step: 0.1,
+  },
+  difussionCoefficientTower3: {
+    disabled: false,
+    value: 1e-10,
+    tooltip: 'Coeficiente de difusión torre 1',
+    unit: '',
+    variableString: 'Coeficiente difusión torre 1',
+  },
+  adsorbentWeightTower3: {
+    disabled: false,
+    value: 5000,
+    tooltip: 'Peso de absorción torre 1',
+    unit: 'g',
+    variableString: 'Peso absorción torre 1',
+    min: 0,
+    max: 50000,
+  },
+  lengthTower3: {
+    disabled: false,
+    value: 0.2,
+    tooltip: 'Longitud torre 1',
+    unit: 'm',
+    variableString: 'Longitud torre 1',
+    min: 0.1,
+    max: 5,
+    step: 0.1,
+  },
+  initialAnalysisConditionsR101: {
     enabled: true,
     totalSubstrateSolids: {
       disabled: false,
@@ -625,7 +549,7 @@ export const BIOGAS: BiogasParameters = {
       step: 0.01,
     },
   },
-  initialAnalysisConditions102: {
+  initialAnalysisConditionsR102: {
     enabled: true,
     totalSubstrateSolids: {
       disabled: false,
@@ -711,6 +635,297 @@ export const BIOGAS: BiogasParameters = {
       step: 0.01,
     },
   },
+  inputOfflineOperation: true,
+  inputSubstrateConditions: true,
+  inputProximateAnalysisTotalSolids: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Sólidos totales del sustrato',
+    unit: '%',
+    variableString: 'Sólidos totales',
+    min: 0,
+    max: 30,
+  },
+  inputProximateAnalysisVolatileSolids: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Sólidos volátiles del sustrato',
+    unit: '%',
+    variableString: 'Sólidos volátiles',
+    min: 0,
+    max: 10,
+  },
+  inputProximateAnalysisDensity: {
+    disabled: false,
+    value: 1000,
+    tooltip: 'Densidad del sustrato',
+    unit: 'g / L',
+    variableString: 'Densidad',
+    min: 200,
+    max: 2000,
+    step: 10,
+  },
+  inputElementalAnalysisCarbonContent: {
+    disabled: false,
+    value: 40.48,
+    tooltip: 'Concentración de carbono atómico en el sustrato',
+    unit: '%',
+    variableString: 'Contenido de carbono',
+    min: 0,
+    max: 100,
+    step: 0.01,
+  },
+  inputElementalAnalysisHydrogenContent: {
+    disabled: false,
+    value: 5.29,
+    tooltip: 'Concentración de hidrógeno atómico en el sustrato',
+    unit: '%',
+    variableString: 'Contenido de hidrógeno',
+    min: 0,
+    max: 100,
+    step: 0.01,
+  },
+  inputElementalAnalysisOxygenContent: {
+    disabled: false,
+    value: 29.66,
+    tooltip: 'Concentración de oxígeno atómico en el sustrato',
+    unit: '%',
+    variableString: 'Contenido de oxígeno',
+    min: 0,
+    max: 100,
+    step: 0.01,
+  },
+  inputElementalAnalysisNitrogenContent: {
+    disabled: false,
+    value: 1.37,
+    tooltip: 'Concentración de nitrógeno atómico en el sustrato',
+    unit: '%',
+    variableString: 'Contenido de nitrógeno',
+    min: 0,
+    max: 100,
+    step: 0.01,
+  },
+  inputElementalAnalysisSulfurContent: {
+    disabled: false,
+    value: 0.211,
+    tooltip: 'Concentración de azúfre atómico en el sustrato',
+    unit: '%',
+    variableString: 'Contenido de azufre',
+    min: 0,
+    max: 100,
+    step: 0.01,
+  },
+  inputMixTK100: true,
+  inputSpeedMixTK100: {
+    disabled: false,
+    value: 100,
+    tooltip: 'Velocidad de agitación TK100',
+    unit: 'RPM',
+    variableString: 'Velocidad mezclado TK100',
+    min: 0,
+    max: 500,
+  },
+  inputStartsPerDayMixTK100: {
+    disabled: false,
+    value: 20,
+    tooltip: 'Inicio por día TK100',
+    unit: '',
+    variableString: 'Inicio por día TK100',
+    min: 0,
+    max: 24,
+  },
+  inputStartTimeMixTK100: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Tiempo de encendido TK100',
+    unit: 'min',
+    variableString: 'Tiempo encendido TK100',
+    min: 0,
+    max: 60,
+  },
+  inputPump104: true,
+  inputPump104HydraulicRetentionTime: {
+    disabled: false,
+    value: 30,
+    tooltip: 'Tiempo de retención hidráulico de la bomba',
+    unit: 'días',
+    variableString: 'TRH',
+    min: 10,
+    max: 100,
+  },
+  inputPump104StartTime: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Tiempo de encendido de la bomba',
+    unit: 'min',
+    variableString: 'Tiempo de encendido',
+    min: 1,
+    max: 60,
+  },
+  inputPump104StartsPerDay: {
+    disabled: false,
+    value: 5,
+    tooltip: 'Encendidos por día de la bomba',
+    unit: '',
+    variableString: 'Encendido / día',
+    min: 0,
+    max: 20,
+  },
+  inputPump101: true,
+  inputPump101Flow: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Caudal de la bomba',
+    unit: 'L/h',
+    variableString: 'Caudal',
+    min: 0,
+    max: 4.2,
+    step: 0.01,
+  },
+  inputPump101StartTime: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Tiempo de encendido de la bomba',
+    unit: 'min',
+    variableString: 'Tiempo de encendido',
+    min: 0,
+    max: 1440,
+  },
+  inputPump101StartsPerDay: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Encendidos por día de la bomba',
+    unit: '',
+    variableString: 'Encendido / día',
+    min: 0,
+    max: 100,
+  },
+  inputPump102: true,
+  inputPump102Flow: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Caudal de la bomba',
+    unit: 'L/h',
+    variableString: 'Caudal',
+    min: 0,
+    max: 4.2,
+    step: 0.01,
+  },
+  inputPump102StartTime: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Tiempo de encendido de la bomba',
+    unit: 'min',
+    variableString: 'Tiempo de encendido',
+    min: 0,
+    max: 1440,
+  },
+  inputPump102StartsPerDay: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Encendidos por día de la bomba',
+    unit: '',
+    variableString: 'Encendido / día',
+    min: 0,
+    max: 100,
+  },
+  inputMixR101: true,
+  inputSpeedMixR101: {
+    disabled: false,
+    value: 100,
+    tooltip: 'Velocidad de agitación R101',
+    unit: 'RPM',
+    variableString: 'Velocidad mezclado R101',
+    min: 0,
+    max: 500,
+  },
+  inputStartsPerDayMixR101: {
+    disabled: false,
+    value: 20,
+    tooltip: 'Inicio por día R101',
+    unit: '',
+    variableString: 'Inicio por día R101',
+    min: 0,
+    max: 24,
+  },
+  inputStartTimeMixR101: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Tiempo de encendido R101',
+    unit: 'min',
+    variableString: 'Tiempo encendido R101',
+    min: 0,
+    max: 60,
+  },
+  inputPHR101: {
+    disabled: false,
+    value: 7,
+    tooltip: 'Acidez R101',
+    unit: '',
+    variableString: 'Acidez R101',
+    min: 0,
+    max: 14,
+  },
+  inputTemperatureR101: {
+    disabled: false,
+    value: 35,
+    tooltip: 'Temperatura reactor 101',
+    unit: '°C',
+    variableString: 'Temperatura R-101',
+    min: 15,
+    max: 60,
+  },
+  inputMixR102: true,
+  inputSpeedMixR102: {
+    disabled: false,
+    value: 100,
+    tooltip: 'Velocidad de agitación R102',
+    unit: 'RPM',
+    variableString: 'Velocidad mezclado R102',
+    min: 0,
+    max: 500,
+  },
+  inputStartsPerDayMixR102: {
+    disabled: false,
+    value: 20,
+    tooltip: 'Inicio por día R102',
+    unit: '',
+    variableString: 'Inicio por día R102',
+    min: 0,
+    max: 24,
+  },
+  inputStartTimeMixR102: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Tiempo de encendido R102',
+    unit: 'min',
+    variableString: 'Tiempo encendido R102',
+    min: 0,
+    max: 60,
+  },
+  inputPHR102: {
+    disabled: false,
+    value: 7,
+    tooltip: 'Acidez R101',
+    unit: '',
+    variableString: 'Acidez R101',
+    min: 0,
+    max: 14,
+  },
+  inputTemperatureR102: {
+    disabled: false,
+    value: 35,
+    tooltip: 'Temperatura reactor 102',
+    unit: '°C',
+    variableString: 'Temperatura R-102',
+    min: 1,
+    max: 10,
+  },
+  diagramBiogas: DiagramBiogasType.Accumulated,
+  diagramBiogasUnit: DiagramBiogasUnitType.NormalVolume,
+  diagramCompound: DiagramCompoundType.Concentration,
+  diagramHumidity: DiagramHumidityType.Relative,
+  restartFlag: false,
 };
 
 export const BIOGAS_MODE1: DiagramVariableType[] = [

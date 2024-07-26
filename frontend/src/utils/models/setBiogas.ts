@@ -11,16 +11,16 @@ export const setBiogas = (
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
 
-    if (newState.inputOfflineOperation && !newState.inputDigitalTwin)
+    if (newState.inputOfflineOperation && !newState.digitalTwinState)
       newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
 
-    if (newState.inputOfflineOperation && newState.inputDigitalTwin)
+    if (newState.inputOfflineOperation && newState.digitalTwinState)
       newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
 
-    if (!newState.inputOfflineOperation && !newState.inputDigitalTwin)
+    if (!newState.inputOfflineOperation && !newState.digitalTwinState)
       newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
 
-    if (!newState.inputOfflineOperation && newState.inputDigitalTwin)
+    if (!newState.inputOfflineOperation && newState.digitalTwinState)
       newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
 
     newState.queryTime = newState.inputOfflineOperation
@@ -40,15 +40,7 @@ export const setBiogas = (
   }
 
   if (e.target.name === 'inputDigitalTwin') {
-    newState.inputDigitalTwin = !newState.inputDigitalTwin;
-
-    newState.inputDigitalTwinTrainingTime.disabled = !newState.inputDigitalTwin;
-    newState.inputKineticParameterInitialValue.disabled =
-      !newState.inputDigitalTwin;
-
-    newState.inputSpeedLawExponentialFactor.disabled =
-      newState.inputDigitalTwin;
-    newState.inputSpeedLawStartEnergy.disabled = newState.inputDigitalTwin;
+    newState.digitalTwinState = !newState.digitalTwinState;
   }
 
   if (e.target.name === 'inputSubstrateConditions') {
@@ -101,85 +93,85 @@ export const setBiogas = (
   }
 
   if (e.target.name === 'initialAnalysisConditions101.enabled') {
-    newState.initialAnalysisConditions101.enabled = e.target.checked;
-    newState.initialAnalysisConditions101.totalSubstrateSolids = {
-      ...newState.initialAnalysisConditions101.totalSubstrateSolids,
+    newState.initialAnalysisConditionsR101.enabled = e.target.checked;
+    newState.initialAnalysisConditionsR101.totalSubstrateSolids = {
+      ...newState.initialAnalysisConditionsR101.totalSubstrateSolids,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions101.volatileSubstrateSolids = {
-      ...newState.initialAnalysisConditions101.volatileSubstrateSolids,
+    newState.initialAnalysisConditionsR101.volatileSubstrateSolids = {
+      ...newState.initialAnalysisConditionsR101.volatileSubstrateSolids,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions101.substrateDensity = {
-      ...newState.initialAnalysisConditions101.substrateDensity,
+    newState.initialAnalysisConditionsR101.substrateDensity = {
+      ...newState.initialAnalysisConditionsR101.substrateDensity,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions101.atomicCarbonSubstrateConcetration = {
-      ...newState.initialAnalysisConditions101
+    newState.initialAnalysisConditionsR101.atomicCarbonSubstrateConcetration = {
+      ...newState.initialAnalysisConditionsR101
         .atomicCarbonSubstrateConcetration,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions101.atomicHydrogenSubstrateConcetration =
+    newState.initialAnalysisConditionsR101.atomicHydrogenSubstrateConcetration =
       {
-        ...newState.initialAnalysisConditions101
+        ...newState.initialAnalysisConditionsR101
           .atomicHydrogenSubstrateConcetration,
         disabled: !e.target.checked,
       };
-    newState.initialAnalysisConditions101.atomicOxygenSubstrateConcetration = {
-      ...newState.initialAnalysisConditions101
+    newState.initialAnalysisConditionsR101.atomicOxygenSubstrateConcetration = {
+      ...newState.initialAnalysisConditionsR101
         .atomicOxygenSubstrateConcetration,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions101.atomicNitrogenSubstrateConcetration =
+    newState.initialAnalysisConditionsR101.atomicNitrogenSubstrateConcetration =
       {
-        ...newState.initialAnalysisConditions101
+        ...newState.initialAnalysisConditionsR101
           .atomicNitrogenSubstrateConcetration,
         disabled: !e.target.checked,
       };
-    newState.initialAnalysisConditions101.atomicSulfurSubstrateConcetration = {
-      ...newState.initialAnalysisConditions101
+    newState.initialAnalysisConditionsR101.atomicSulfurSubstrateConcetration = {
+      ...newState.initialAnalysisConditionsR101
         .atomicSulfurSubstrateConcetration,
       disabled: !e.target.checked,
     };
   }
   if (e.target.name === 'initialAnalysisConditions102.enabled') {
-    newState.initialAnalysisConditions102.enabled = e.target.checked;
-    newState.initialAnalysisConditions102.totalSubstrateSolids = {
-      ...newState.initialAnalysisConditions102.totalSubstrateSolids,
+    newState.initialAnalysisConditionsR102.enabled = e.target.checked;
+    newState.initialAnalysisConditionsR102.totalSubstrateSolids = {
+      ...newState.initialAnalysisConditionsR102.totalSubstrateSolids,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions102.volatileSubstrateSolids = {
-      ...newState.initialAnalysisConditions102.volatileSubstrateSolids,
+    newState.initialAnalysisConditionsR102.volatileSubstrateSolids = {
+      ...newState.initialAnalysisConditionsR102.volatileSubstrateSolids,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions102.substrateDensity = {
-      ...newState.initialAnalysisConditions102.substrateDensity,
+    newState.initialAnalysisConditionsR102.substrateDensity = {
+      ...newState.initialAnalysisConditionsR102.substrateDensity,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions102.atomicCarbonSubstrateConcetration = {
-      ...newState.initialAnalysisConditions102
+    newState.initialAnalysisConditionsR102.atomicCarbonSubstrateConcetration = {
+      ...newState.initialAnalysisConditionsR102
         .atomicCarbonSubstrateConcetration,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions102.atomicHydrogenSubstrateConcetration =
+    newState.initialAnalysisConditionsR102.atomicHydrogenSubstrateConcetration =
       {
-        ...newState.initialAnalysisConditions102
+        ...newState.initialAnalysisConditionsR102
           .atomicHydrogenSubstrateConcetration,
         disabled: !e.target.checked,
       };
-    newState.initialAnalysisConditions102.atomicOxygenSubstrateConcetration = {
-      ...newState.initialAnalysisConditions102
+    newState.initialAnalysisConditionsR102.atomicOxygenSubstrateConcetration = {
+      ...newState.initialAnalysisConditionsR102
         .atomicOxygenSubstrateConcetration,
       disabled: !e.target.checked,
     };
-    newState.initialAnalysisConditions102.atomicNitrogenSubstrateConcetration =
+    newState.initialAnalysisConditionsR102.atomicNitrogenSubstrateConcetration =
       {
-        ...newState.initialAnalysisConditions102
+        ...newState.initialAnalysisConditionsR102
           .atomicNitrogenSubstrateConcetration,
         disabled: !e.target.checked,
       };
-    newState.initialAnalysisConditions102.atomicSulfurSubstrateConcetration = {
-      ...newState.initialAnalysisConditions102
+    newState.initialAnalysisConditionsR102.atomicSulfurSubstrateConcetration = {
+      ...newState.initialAnalysisConditionsR102
         .atomicSulfurSubstrateConcetration,
       disabled: !e.target.checked,
     };
