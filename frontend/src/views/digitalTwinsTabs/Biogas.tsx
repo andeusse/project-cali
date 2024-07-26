@@ -31,6 +31,7 @@ import {
   DiagramBiogasUnitText,
   DiagramBiogasUnitType,
   OperationModeType,
+  OperationModelType,
 } from '../../types/models/biogas';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import { setFormState } from '../../utils/setFormState';
@@ -206,10 +207,10 @@ const Biogas = () => {
                 </Grid>
                 <Grid item xs={12} md={6} xl={2.5}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                    <Grid item xs={12} md={6} xl={12} sx={{ height: '72px' }}>
                       <h3>Operación planta</h3>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
+                    <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.anaerobicReactorVolume1}
                         name="anaerobicReactorVolume1"
@@ -217,13 +218,31 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
+                    <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.anaerobicReactorVolume2}
                         name="anaerobicReactorVolume2"
                         handleChange={handleChange}
                         disabled={system.disableParameters}
                       ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={12}>
+                      <FormControl fullWidth>
+                        <InputLabel>Modo de operación</InputLabel>
+                        <Select
+                          label="Modo de operación"
+                          value={system.inputOperationMode}
+                          name="inputOperationMode"
+                          disabled={isPlaying}
+                          onChange={(e: any) => handleChange(e)}
+                        >
+                          {Object.values(OperationModeType).map((key) => (
+                            <MenuItem key={key} value={key}>
+                              {key}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
                       <h3>Tanques de biogás</h3>
@@ -254,10 +273,10 @@ const Biogas = () => {
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={6} xl={3.5}>
+                <Grid item xs={12} md={6} xl={2.5}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                      <h3>Parámetros gemelo</h3>
+                      <h3>Gemelo</h3>
                     </Grid>
                     <Grid
                       item
@@ -275,7 +294,7 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomToggle>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
+                    <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.digitalTwinStepTime}
                         name="inputDigitalTwinStepTime"
@@ -283,7 +302,7 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
+                    <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.digitalTwinForecastTime}
                         name="inputDigitalTwinForecastTime"
@@ -291,24 +310,20 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} md={12} xl={3}>
-                  <Grid container spacing={2}>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Operación planta</h3>
+                      <h3>Parámetro cinético</h3>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <FormControl fullWidth>
-                        <InputLabel>Modo de operación</InputLabel>
+                        <InputLabel>Modelo cinético</InputLabel>
                         <Select
-                          label="Modo de operación"
-                          value={system.inputOperationMode}
-                          name="inputOperationMode"
+                          label="Modelo cinético"
+                          value={system.operationModelType}
+                          name="operationModelType"
                           disabled={isPlaying}
                           onChange={(e: any) => handleChange(e)}
                         >
-                          {Object.values(OperationModeType).map((key) => (
+                          {Object.values(OperationModelType).map((key) => (
                             <MenuItem key={key} value={key}>
                               {key}
                             </MenuItem>
@@ -316,223 +331,358 @@ const Biogas = () => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={6}
-                      xl={6}
-                      sx={{ alignContent: 'center' }}
-                    >
-                      <CustomToggle
-                        name="inputOfflineOperation"
-                        value={system.inputOfflineOperation}
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Reactor 1 R101</h3>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.exponentialFactorR101}
+                        name="exponentialFactorR101"
                         handleChange={handleChange}
-                        trueString="Offline"
-                        falseString="Online"
-                      ></CustomToggle>
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.activationEnergyR101}
+                        name="activationEnergyR101"
+                        handleChange={handleChange}
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.lambdaR101}
+                        name="lambdaR101"
+                        handleChange={handleChange}
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Parámetro cinético</h3>
+                      <h3>Reactor 2 R102</h3>
                     </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} md={12} xl={6}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                      <h3>Condiciones iniciales R101</h3>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={6}
-                      xl={6}
-                      sx={{ alignContent: 'center' }}
-                    >
-                      <CustomToggle
-                        name="initialAnalysisConditions101.enabled"
-                        value={system.initialAnalysisConditionsR101.enabled}
-                        handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
-                      ></CustomToggle>
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .totalSubstrateSolids
-                        }
-                        name="initialAnalysisConditions101.totalSubstrateSolids"
+                        variable={system.exponentialFactorR102}
+                        name="exponentialFactorR102"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .volatileSubstrateSolids
-                        }
-                        name="initialAnalysisConditions101.volatileSubstrateSolids"
+                        variable={system.activationEnergyR102}
+                        name="activationEnergyR102"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101.substrateDensity
-                        }
-                        name="initialAnalysisConditions101.substrateDensity"
+                        variable={system.lambdaR102}
+                        name="lambdaR102"
                         handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .atomicCarbonSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions101.atomicCarbonSubstrateConcetration"
-                        handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .atomicHydrogenSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions101.atomicHydrogenSubstrateConcetration"
-                        handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .atomicOxygenSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions101.atomicOxygenSubstrateConcetration"
-                        handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .atomicNitrogenSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions101.atomicNitrogenSubstrateConcetration"
-                        handleChange={handleChange}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR101
-                            .atomicSulfurSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions101.atomicSulfurSubstrateConcetration"
-                        handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
                   </Grid>
                 </Grid>
-                <Grid item xs={12} md={12} xl={6}>
+                <Grid item xs={12} md={6} xl={2.5}>
                   <Grid container spacing={2}>
-                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                      <h3>Condiciones iniciales R102</h3>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Sistema de tratamiento de biogás</h3>
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={6}
-                      xl={6}
-                      sx={{ alignContent: 'center' }}
-                    >
-                      <CustomToggle
-                        name="initialAnalysisConditions102.enabled"
-                        value={system.initialAnalysisConditionsR102.enabled}
-                        handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
-                      ></CustomToggle>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Torre 1</h3>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .totalSubstrateSolids
-                        }
-                        name="initialAnalysisConditions102.totalSubstrateSolids"
+                        variable={system.difussionCoefficientTower1}
+                        name="difussionCoefficientTower1"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .volatileSubstrateSolids
-                        }
-                        name="initialAnalysisConditions102.volatileSubstrateSolids"
+                        variable={system.adsorbentWeightTower1}
+                        name="adsorbentWeightTower1"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102.substrateDensity
-                        }
-                        name="initialAnalysisConditions102.substrateDensity"
+                        variable={system.lengthTower1}
+                        name="lengthTower1"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Torre 2</h3>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .atomicCarbonSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions102.atomicCarbonSubstrateConcetration"
+                        variable={system.difussionCoefficientTower2}
+                        name="difussionCoefficientTower2"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .atomicHydrogenSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions102.atomicHydrogenSubstrateConcetration"
+                        variable={system.adsorbentWeightTower2}
+                        name="adsorbentWeightTower2"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .atomicOxygenSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions102.atomicOxygenSubstrateConcetration"
+                        variable={system.lengthTower2}
+                        name="lengthTower2"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Torre 3</h3>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .atomicNitrogenSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions102.atomicNitrogenSubstrateConcetration"
+                        variable={system.difussionCoefficientTower3}
+                        name="difussionCoefficientTower3"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
+                    <Grid item xs={12} md={12} xl={12}>
                       <CustomNumberField
-                        variable={
-                          system.initialAnalysisConditionsR102
-                            .atomicSulfurSubstrateConcetration
-                        }
-                        name="initialAnalysisConditions102.atomicSulfurSubstrateConcetration"
+                        variable={system.adsorbentWeightTower3}
+                        name="adsorbentWeightTower3"
                         handleChange={handleChange}
+                        disabled={system.disableParameters}
                       ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.lengthTower3}
+                        name="lengthTower3"
+                        handleChange={handleChange}
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={6} xl={4.5}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
+                      <h3>Condiciones iniciales</h3>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6}>
+                      <Grid container spacing={2}>
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          xl={12}
+                          sx={{ height: '72px' }}
+                        >
+                          <h3>Reactor 1 R101</h3>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .totalSubstrateSolids
+                            }
+                            name="initialAnalysisConditions101.totalSubstrateSolids"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .volatileSubstrateSolids
+                            }
+                            name="initialAnalysisConditions101.volatileSubstrateSolids"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .substrateDensity
+                            }
+                            name="initialAnalysisConditions101.substrateDensity"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          xl={12}
+                          sx={{ height: '72px' }}
+                        >
+                          <h3>Análisis elemental</h3>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .atomicCarbonSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions101.atomicCarbonSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .atomicHydrogenSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions101.atomicHydrogenSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .atomicOxygenSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions101.atomicOxygenSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .atomicNitrogenSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions101.atomicNitrogenSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR101
+                                .atomicSulfurSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions101.atomicSulfurSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6}>
+                      <Grid container spacing={2}>
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          xl={12}
+                          sx={{ height: '72px' }}
+                        >
+                          <h3>Reactor 2 R102</h3>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .totalSubstrateSolids
+                            }
+                            name="initialAnalysisConditions102.totalSubstrateSolids"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .volatileSubstrateSolids
+                            }
+                            name="initialAnalysisConditions102.volatileSubstrateSolids"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .substrateDensity
+                            }
+                            name="initialAnalysisConditions102.substrateDensity"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          xl={12}
+                          sx={{ height: '72px' }}
+                        >
+                          <h3>Análisis elemental</h3>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .atomicCarbonSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions102.atomicCarbonSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .atomicHydrogenSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions102.atomicHydrogenSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .atomicOxygenSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions102.atomicOxygenSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .atomicNitrogenSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions102.atomicNitrogenSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={12} md={12} xl={12}>
+                          <CustomNumberField
+                            variable={
+                              system.initialAnalysisConditionsR102
+                                .atomicSulfurSubstrateConcetration
+                            }
+                            name="initialAnalysisConditions102.atomicSulfurSubstrateConcetration"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -540,10 +690,33 @@ const Biogas = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
+
+        <Grid item xs={12} md={6} xl={6}>
+          <h3>Variables de operación</h3>
+        </Grid>
+
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6} xl={6}>
+            <Grid item xs={12} md={6} xl={4.5}>
               <Grid container spacing={2}>
+                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                  <h3>Variables de entrada</h3>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  xl={6}
+                  sx={{ alignContent: 'center' }}
+                >
+                  <CustomToggle
+                    name="inputOfflineOperation"
+                    value={system.inputOfflineOperation}
+                    handleChange={handleChange}
+                    trueString="Offline"
+                    falseString="Online"
+                  ></CustomToggle>
+                </Grid>
                 <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
                   <h3>Condiciones del sustrato</h3>
                 </Grid>
@@ -633,9 +806,47 @@ const Biogas = () => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={12} md={3} xl={3}>
+            <Grid item xs={12} md={6} xl={2.5}>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={6}>
+                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                  <h3>Premezcla</h3>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  xl={6}
+                  sx={{ alignContent: 'center' }}
+                >
+                  <CustomToggle
+                    name="inputMixTK100"
+                    value={system.inputMixTK100}
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputSpeedMixTK100}
+                    name="inputSpeedMixTK100"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputStartsPerDayMixTK100}
+                    name="inputStartsPerDayMixTK100"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputStartTimeMixTK100}
+                    name="inputStartTimeMixTK100"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
                   <h3>Bomba P-104</h3>
                 </Grid>
                 <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
@@ -655,122 +866,200 @@ const Biogas = () => {
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <CustomNumberField
-                    variable={system.inputPump104StartTime}
-                    name="inputPump104StartTime"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
                     variable={system.inputPump104StartsPerDay}
                     name="inputPump104StartsPerDay"
                     handleChange={handleChange}
                   ></CustomNumberField>
                 </Grid>
-              </Grid>
-              {system.inputOperationMode !== OperationModeType.Modo1 && (
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6} xl={6}>
-                    <h3>Bomba P-101</h3>
-                  </Grid>
-                  <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
-                    <CustomToggle
-                      name="inputPump101"
-                      value={system.inputPump101}
-                      handleChange={handleChange}
-                      disabled={
-                        system.inputOfflineOperation ||
-                        system.inputOperationMode === OperationModeType.Modo3 ||
-                        system.inputOperationMode === OperationModeType.Modo4
-                      }
-                    ></CustomToggle>
-                  </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={system.inputPump101Flow}
-                      name="inputPump101Flow"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={system.inputPump101StartTime}
-                      name="inputPump101StartTime"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={system.inputPump101StartsPerDay}
-                      name="inputPump101StartsPerDay"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                </Grid>
-              )}
-              {(system.inputOperationMode === OperationModeType.Modo4 ||
-                system.inputOperationMode === OperationModeType.Modo5) && (
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6} xl={6}>
-                    <h3>Bomba P-102</h3>
-                  </Grid>
-                  <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
-                    <CustomToggle
-                      name="inputPump102"
-                      value={system.inputPump102}
-                      handleChange={handleChange}
-                      disabled={system.inputOfflineOperation}
-                    ></CustomToggle>
-                  </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={system.inputPump102Flow}
-                      name="inputPump102Flow"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={system.inputPump102StartTime}
-                      name="inputPump102StartTime"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
-                    <CustomNumberField
-                      variable={system.inputPump102StartsPerDay}
-                      name="inputPump102StartsPerDay"
-                      handleChange={handleChange}
-                    ></CustomNumberField>
-                  </Grid>
-                </Grid>
-              )}
-              <Grid item xs={12} md={12} xl={12}>
-                <h3>Temperatura R-101</h3>
-                <ToggleCustomNumberField
-                  variable={system.inputTemperatureR101}
-                  name="inputTemperature101"
-                  handleChange={handleChange}
-                  disabled={system.inputOfflineOperation}
-                ></ToggleCustomNumberField>
-              </Grid>
-              {(system.inputOperationMode === OperationModeType.Modo3 ||
-                system.inputOperationMode === OperationModeType.Modo4 ||
-                system.inputOperationMode === OperationModeType.Modo5) && (
                 <Grid item xs={12} md={12} xl={12}>
-                  <h3>Temperatura R-102</h3>
+                  <CustomNumberField
+                    variable={system.inputPump104StartTime}
+                    name="inputPump104StartTime"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} md={6} xl={2.5}>
+              <Grid container spacing={2}>
+                {system.inputOperationMode !== OperationModeType.Modo1 && (
+                  <>
+                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                      <h3>Bomba P-101</h3>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                      <CustomToggle
+                        name="inputPump101"
+                        value={system.inputPump101}
+                        handleChange={handleChange}
+                        disabled={system.inputOfflineOperation}
+                      ></CustomToggle>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputPump101Flow}
+                        name="inputPump101Flow"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputPump101StartsPerDay}
+                        name="inputPump101StartsPerDay"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputPump101StartTime}
+                        name="inputPump101StartTime"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                  </>
+                )}
+                {(system.inputOperationMode === OperationModeType.Modo4 ||
+                  system.inputOperationMode === OperationModeType.Modo5) && (
+                  <>
+                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                      <h3>Bomba P-104</h3>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                      <CustomToggle
+                        name="inputPump102"
+                        value={system.inputPump102}
+                        handleChange={handleChange}
+                        disabled={system.inputOfflineOperation}
+                      ></CustomToggle>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputPump102Flow}
+                        name="inputPump102Flow"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputPump102StartsPerDay}
+                        name="inputPump102StartsPerDay"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputPump102StartTime}
+                        name="inputPump102StartTime"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            </Grid>
+            <Grid item xs={12} md={6} xl={2.5}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                  <h3>Agitación R101</h3>
+                </Grid>
+                <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                  <CustomToggle
+                    name="inputMixR101"
+                    value={system.inputMixR101}
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputSpeedMixR101}
+                    name="inputSpeedMixR101"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputStartsPerDayMixR101}
+                    name="inputStartsPerDayMixR101"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputStartTimeMixR101}
+                    name="inputStartTimeMixR101"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
                   <ToggleCustomNumberField
-                    variable={system.inputTemperatureR102}
-                    name="inputTemperature102"
+                    variable={system.inputPHR101}
+                    name="inputPHR101"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
                   ></ToggleCustomNumberField>
                 </Grid>
-              )}
+                <Grid item xs={12} md={12} xl={12}>
+                  <ToggleCustomNumberField
+                    variable={system.inputTemperatureR101}
+                    name="inputTemperatureR101"
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></ToggleCustomNumberField>
+                </Grid>
+
+                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                  <h3>Agitación R102</h3>
+                </Grid>
+                <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                  <CustomToggle
+                    name="inputMixR102"
+                    value={system.inputMixR102}
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputSpeedMixR102}
+                    name="inputSpeedMixR102"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputStartsPerDayMixR102}
+                    name="inputStartsPerDayMixR102"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <CustomNumberField
+                    variable={system.inputStartTimeMixR102}
+                    name="inputStartTimeMixR102"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <ToggleCustomNumberField
+                    variable={system.inputPHR102}
+                    name="inputPHR102"
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></ToggleCustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <ToggleCustomNumberField
+                    variable={system.inputTemperatureR102}
+                    name="inputTemperatureR102"
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                  ></ToggleCustomNumberField>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-
         <Grid
           item
           xs={12}
