@@ -233,7 +233,7 @@ const Biogas = () => {
                           label="Modo de operación"
                           value={system.inputOperationMode}
                           name="inputOperationMode"
-                          disabled={isPlaying}
+                          disabled={system.disableParameters}
                           onChange={(e: any) => handleChange(e)}
                         >
                           {Object.values(OperationModeType).map((key) => (
@@ -286,7 +286,7 @@ const Biogas = () => {
                       sx={{ alignContent: 'center' }}
                     >
                       <CustomToggle
-                        name="inputDigitalTwin"
+                        name="digitalTwinState"
                         value={system.digitalTwinState}
                         handleChange={handleChange}
                         trueString="Gemelo on"
@@ -297,7 +297,7 @@ const Biogas = () => {
                     <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.digitalTwinStepTime}
-                        name="inputDigitalTwinStepTime"
+                        name="digitalTwinStepTime"
                         handleChange={handleChange}
                         disabled={system.disableParameters}
                       ></CustomNumberField>
@@ -305,7 +305,7 @@ const Biogas = () => {
                     <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.digitalTwinForecastTime}
-                        name="inputDigitalTwinForecastTime"
+                        name="digitalTwinForecastTime"
                         handleChange={handleChange}
                         disabled={system.disableParameters}
                       ></CustomNumberField>
@@ -320,7 +320,7 @@ const Biogas = () => {
                           label="Modelo cinético"
                           value={system.operationModelType}
                           name="operationModelType"
-                          disabled={isPlaying}
+                          disabled={system.disableParameters}
                           onChange={(e: any) => handleChange(e)}
                         >
                           {Object.values(OperationModelType).map((key) => (
@@ -499,6 +499,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.totalSubstrateSolids"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -509,6 +510,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.volatileSubstrateSolids"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -519,6 +521,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.substrateDensity"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid
@@ -538,6 +541,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.atomicCarbonSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -548,6 +552,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.atomicHydrogenSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -558,6 +563,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.atomicOxygenSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -568,6 +574,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.atomicNitrogenSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -578,6 +585,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions101.atomicSulfurSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                       </Grid>
@@ -601,6 +609,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.totalSubstrateSolids"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -611,6 +620,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.volatileSubstrateSolids"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -621,6 +631,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.substrateDensity"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid
@@ -640,6 +651,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.atomicCarbonSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -650,6 +662,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.atomicHydrogenSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -660,6 +673,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.atomicOxygenSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -670,6 +684,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.atomicNitrogenSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                         <Grid item xs={12} md={12} xl={12}>
@@ -680,6 +695,7 @@ const Biogas = () => {
                             }
                             name="initialAnalysisConditions102.atomicSulfurSubstrateConcetration"
                             handleChange={handleChange}
+                            disabled={system.disableParameters}
                           ></CustomNumberField>
                         </Grid>
                       </Grid>
@@ -715,6 +731,7 @@ const Biogas = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                    disabled={!system.digitalTwinState}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
@@ -882,7 +899,7 @@ const Biogas = () => {
             </Grid>
             <Grid item xs={12} md={6} xl={2.5}>
               <Grid container spacing={2}>
-                {system.inputOperationMode !== OperationModeType.Modo1 && (
+                {system.inputOperationMode === OperationModeType.Modo2 && (
                   <>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
                       <h3>Bomba P-101</h3>
@@ -922,7 +939,7 @@ const Biogas = () => {
                   system.inputOperationMode === OperationModeType.Modo5) && (
                   <>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                      <h3>Bomba P-104</h3>
+                      <h3>Bomba P-102</h3>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
                       <CustomToggle
@@ -1008,54 +1025,60 @@ const Biogas = () => {
                   ></ToggleCustomNumberField>
                 </Grid>
 
-                <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
-                  <h3>Agitación R102</h3>
-                </Grid>
-                <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
-                  <CustomToggle
-                    name="inputMixR102"
-                    value={system.inputMixR102}
-                    handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
-                  ></CustomToggle>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={system.inputSpeedMixR102}
-                    name="inputSpeedMixR102"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={system.inputStartsPerDayMixR102}
-                    name="inputStartsPerDayMixR102"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
-                    variable={system.inputStartTimeMixR102}
-                    name="inputStartTimeMixR102"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <ToggleCustomNumberField
-                    variable={system.inputPHR102}
-                    name="inputPHR102"
-                    handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
-                  ></ToggleCustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <ToggleCustomNumberField
-                    variable={system.inputTemperatureR102}
-                    name="inputTemperatureR102"
-                    handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
-                  ></ToggleCustomNumberField>
-                </Grid>
+                {(system.inputOperationMode === OperationModeType.Modo3 ||
+                  system.inputOperationMode === OperationModeType.Modo4 ||
+                  system.inputOperationMode === OperationModeType.Modo5) && (
+                  <>
+                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                      <h3>Agitación R102</h3>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                      <CustomToggle
+                        name="inputMixR102"
+                        value={system.inputMixR102}
+                        handleChange={handleChange}
+                        disabled={system.inputOfflineOperation}
+                      ></CustomToggle>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputSpeedMixR102}
+                        name="inputSpeedMixR102"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputStartsPerDayMixR102}
+                        name="inputStartsPerDayMixR102"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inputStartTimeMixR102}
+                        name="inputStartTimeMixR102"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <ToggleCustomNumberField
+                        variable={system.inputPHR102}
+                        name="inputPHR102"
+                        handleChange={handleChange}
+                        disabled={system.inputOfflineOperation}
+                      ></ToggleCustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <ToggleCustomNumberField
+                        variable={system.inputTemperatureR102}
+                        name="inputTemperatureR102"
+                        handleChange={handleChange}
+                        disabled={system.inputOfflineOperation}
+                      ></ToggleCustomNumberField>
+                    </Grid>
+                  </>
+                )}
               </Grid>
             </Grid>
           </Grid>

@@ -903,9 +903,9 @@ export const BIOGAS: BiogasParameters = {
   inputPHR102: {
     disabled: false,
     value: 7,
-    tooltip: 'Acidez R101',
+    tooltip: 'Acidez R102',
     unit: '',
-    variableString: 'Acidez R101',
+    variableString: 'Acidez R102',
     min: 0,
     max: 14,
   },

@@ -51,12 +51,16 @@ export const setFormState = <T extends formType>(
   if ('anaerobicReactorVolume1' in oldState) {
     if (
       name === 'inputOfflineOperation' ||
-      name === 'inputDigitalTwin' ||
+      name === 'digitalTwinState' ||
       name === 'inputSubstrateConditions' ||
       name === 'inputPump104' ||
       name === 'inputPump102' ||
       name === 'inputPump101' ||
-      name === 'inputOperationMode'
+      name === 'inputMixTK100' ||
+      name === 'inputMixR101' ||
+      name === 'inputMixR102' ||
+      name === 'inputOperationMode' ||
+      name === 'operationModelType'
     ) {
       return setBiogas(e, oldState);
     }
