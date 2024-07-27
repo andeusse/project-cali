@@ -497,7 +497,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .totalSubstrateSolids
                             }
-                            name="initialAnalysisConditions101.totalSubstrateSolids"
+                            name="initialAnalysisConditionsR101.totalSubstrateSolids"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -508,7 +508,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .volatileSubstrateSolids
                             }
-                            name="initialAnalysisConditions101.volatileSubstrateSolids"
+                            name="initialAnalysisConditionsR101.volatileSubstrateSolids"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -519,7 +519,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .substrateDensity
                             }
-                            name="initialAnalysisConditions101.substrateDensity"
+                            name="initialAnalysisConditionsR101.substrateDensity"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -539,7 +539,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .atomicCarbonSubstrateConcetration
                             }
-                            name="initialAnalysisConditions101.atomicCarbonSubstrateConcetration"
+                            name="initialAnalysisConditionsR101.atomicCarbonSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -550,7 +550,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .atomicHydrogenSubstrateConcetration
                             }
-                            name="initialAnalysisConditions101.atomicHydrogenSubstrateConcetration"
+                            name="initialAnalysisConditionsR101.atomicHydrogenSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -561,7 +561,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .atomicOxygenSubstrateConcetration
                             }
-                            name="initialAnalysisConditions101.atomicOxygenSubstrateConcetration"
+                            name="initialAnalysisConditionsR101.atomicOxygenSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -572,7 +572,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .atomicNitrogenSubstrateConcetration
                             }
-                            name="initialAnalysisConditions101.atomicNitrogenSubstrateConcetration"
+                            name="initialAnalysisConditionsR101.atomicNitrogenSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -583,7 +583,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR101
                                 .atomicSulfurSubstrateConcetration
                             }
-                            name="initialAnalysisConditions101.atomicSulfurSubstrateConcetration"
+                            name="initialAnalysisConditionsR101.atomicSulfurSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -607,7 +607,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .totalSubstrateSolids
                             }
-                            name="initialAnalysisConditions102.totalSubstrateSolids"
+                            name="initialAnalysisConditionsR102.totalSubstrateSolids"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -618,7 +618,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .volatileSubstrateSolids
                             }
-                            name="initialAnalysisConditions102.volatileSubstrateSolids"
+                            name="initialAnalysisConditionsR102.volatileSubstrateSolids"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -629,7 +629,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .substrateDensity
                             }
-                            name="initialAnalysisConditions102.substrateDensity"
+                            name="initialAnalysisConditionsR102.substrateDensity"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -649,7 +649,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .atomicCarbonSubstrateConcetration
                             }
-                            name="initialAnalysisConditions102.atomicCarbonSubstrateConcetration"
+                            name="initialAnalysisConditionsR102.atomicCarbonSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -660,7 +660,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .atomicHydrogenSubstrateConcetration
                             }
-                            name="initialAnalysisConditions102.atomicHydrogenSubstrateConcetration"
+                            name="initialAnalysisConditionsR102.atomicHydrogenSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -671,7 +671,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .atomicOxygenSubstrateConcetration
                             }
-                            name="initialAnalysisConditions102.atomicOxygenSubstrateConcetration"
+                            name="initialAnalysisConditionsR102.atomicOxygenSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -682,7 +682,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .atomicNitrogenSubstrateConcetration
                             }
-                            name="initialAnalysisConditions102.atomicNitrogenSubstrateConcetration"
+                            name="initialAnalysisConditionsR102.atomicNitrogenSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
@@ -693,7 +693,7 @@ const Biogas = () => {
                               system.initialAnalysisConditionsR102
                                 .atomicSulfurSubstrateConcetration
                             }
-                            name="initialAnalysisConditions102.atomicSulfurSubstrateConcetration"
+                            name="initialAnalysisConditionsR102.atomicSulfurSubstrateConcetration"
                             handleChange={handleChange}
                             disabled={system.disableParameters}
                           ></CustomNumberField>
