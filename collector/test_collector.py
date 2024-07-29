@@ -33,9 +33,10 @@ while True:
               if loads_df["Analyzer"][load_index] == analyzers_df['Name'][analyzer_index]:
               
                   for variable_index in variables_df.index:
-              
+                      if load_index != 0 and variable_index == 141:
+                          break
                       value = ModbusModel.ModbusReader(loads_df["Unit ID"][load_index], variables_df["Address Dec"][variable_index], variables_df["Word"][variable_index], variables_df["Scale"][variable_index], variables_df["Format"][variable_index])
-                      # print(value)
+                      
                       # print(type(value))
                       # print(variables_df["Address Dec"][variable_index])
                       timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
