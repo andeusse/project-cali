@@ -77,7 +77,6 @@ services:
     restart: always
     depends_on:
       - influxdb
-      - grafana
     networks:
       - laboratorio-default
 
