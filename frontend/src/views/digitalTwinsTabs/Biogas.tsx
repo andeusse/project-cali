@@ -590,116 +590,121 @@ const Biogas = () => {
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={6}>
-                      <Grid container spacing={2}>
-                        <Grid
-                          item
-                          xs={12}
-                          md={12}
-                          xl={12}
-                          sx={{ height: '72px' }}
-                        >
-                          <h3>Reactor 2 R102</h3>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .totalSubstrateSolids
-                            }
-                            name="initialAnalysisConditionsR102.totalSubstrateSolids"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .volatileSubstrateSolids
-                            }
-                            name="initialAnalysisConditionsR102.volatileSubstrateSolids"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .substrateDensity
-                            }
-                            name="initialAnalysisConditionsR102.substrateDensity"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid
-                          item
-                          xs={12}
-                          md={12}
-                          xl={12}
-                          sx={{ height: '72px' }}
-                        >
-                          <h3>Análisis elemental</h3>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .atomicCarbonSubstrateConcetration
-                            }
-                            name="initialAnalysisConditionsR102.atomicCarbonSubstrateConcetration"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .atomicHydrogenSubstrateConcetration
-                            }
-                            name="initialAnalysisConditionsR102.atomicHydrogenSubstrateConcetration"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .atomicOxygenSubstrateConcetration
-                            }
-                            name="initialAnalysisConditionsR102.atomicOxygenSubstrateConcetration"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .atomicNitrogenSubstrateConcetration
-                            }
-                            name="initialAnalysisConditionsR102.atomicNitrogenSubstrateConcetration"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
-                        </Grid>
-                        <Grid item xs={12} md={12} xl={12}>
-                          <CustomNumberField
-                            variable={
-                              system.initialAnalysisConditionsR102
-                                .atomicSulfurSubstrateConcetration
-                            }
-                            name="initialAnalysisConditionsR102.atomicSulfurSubstrateConcetration"
-                            handleChange={handleChange}
-                            disabled={system.disableParameters}
-                          ></CustomNumberField>
+                    {(system.inputOperationMode === OperationModeType.Modo3 ||
+                      system.inputOperationMode === OperationModeType.Modo4 ||
+                      system.inputOperationMode ===
+                        OperationModeType.Modo5) && (
+                      <Grid item xs={12} md={6} xl={6}>
+                        <Grid container spacing={2}>
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            xl={12}
+                            sx={{ height: '72px' }}
+                          >
+                            <h3>Reactor 2 R102</h3>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .totalSubstrateSolids
+                              }
+                              name="initialAnalysisConditionsR102.totalSubstrateSolids"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .volatileSubstrateSolids
+                              }
+                              name="initialAnalysisConditionsR102.volatileSubstrateSolids"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .substrateDensity
+                              }
+                              name="initialAnalysisConditionsR102.substrateDensity"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            xl={12}
+                            sx={{ height: '72px' }}
+                          >
+                            <h3>Análisis elemental</h3>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .atomicCarbonSubstrateConcetration
+                              }
+                              name="initialAnalysisConditionsR102.atomicCarbonSubstrateConcetration"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .atomicHydrogenSubstrateConcetration
+                              }
+                              name="initialAnalysisConditionsR102.atomicHydrogenSubstrateConcetration"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .atomicOxygenSubstrateConcetration
+                              }
+                              name="initialAnalysisConditionsR102.atomicOxygenSubstrateConcetration"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .atomicNitrogenSubstrateConcetration
+                              }
+                              name="initialAnalysisConditionsR102.atomicNitrogenSubstrateConcetration"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={
+                                system.initialAnalysisConditionsR102
+                                  .atomicSulfurSubstrateConcetration
+                              }
+                              name="initialAnalysisConditionsR102.atomicSulfurSubstrateConcetration"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
                         </Grid>
                       </Grid>
-                    </Grid>
+                    )}
                   </Grid>
                 </Grid>
               </Grid>
