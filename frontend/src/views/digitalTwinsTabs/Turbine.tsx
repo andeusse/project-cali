@@ -375,7 +375,7 @@ const Turbine = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={12} xl={3}>
+                <Grid item xs={12} md={12} xl={12}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
@@ -387,7 +387,7 @@ const Turbine = () => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} md={3} xl={3}>
+                {/* <Grid item xs={12} md={3} xl={3}>
                   <CustomNumberField
                     variable={system.steps}
                     name="steps"
@@ -419,7 +419,7 @@ const Turbine = () => {
                       ))}
                     </Select>
                   </FormControl>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} md={6} xl={3.5}>
                   <h3>Turbina</h3>
                   <Grid container spacing={2}>

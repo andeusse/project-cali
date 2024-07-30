@@ -543,7 +543,7 @@ const Solar = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={3}>
+                <Grid item xs={12} md={6} xl={12}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
@@ -555,7 +555,7 @@ const Solar = () => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} md={3} xl={3}>
+                {/* <Grid item xs={12} md={3} xl={3}>
                   <CustomNumberField
                     variable={system.steps}
                     name="steps"
@@ -587,7 +587,7 @@ const Solar = () => {
                       ))}
                     </Select>
                   </FormControl>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} md={6} xl={12}>
                   <FormControl fullWidth>
                     <InputLabel>Modo de operación</InputLabel>

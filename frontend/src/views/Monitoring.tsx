@@ -10,6 +10,9 @@ type Props = {};
 
 const ElectricalTabs = () => {
   const electricalTabs = [
+    'Web server DMG9000',
+    'Unifilar',
+    'Eventos transitorios',
     'Totalizador',
     'Sistema PBM',
     'Analizador Biogás',
@@ -29,7 +32,7 @@ const ElectricalTabs = () => {
     'Mesón Sala Biogás',
     'Tunel de viento - control',
     'Modulo fotovoltaico eolico',
-    'Modulo control turbinas',
+    'Modulo control turbinas',
   ];
 
   const [selectedTab, setSelectedTab] = useState<string>(electricalTabs[0]);

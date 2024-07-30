@@ -145,6 +145,11 @@ export type BiogasParameters = CommonSystemParameter &
   };
 
 export type BiogasOutput = {
+  n: number;
+  a: number;
+  b: number;
+  c: number;
+  d: number;
   K_R101: number;
   Ea_R101: number;
   Temp_R101: number;
@@ -159,11 +164,6 @@ export type BiogasOutput = {
   VolatileSolidsInletR101: number;
   TotalSolidsInletR101: number;
   Mwsus: number;
-  n: number;
-  a: number;
-  b: number;
-  c: number;
-  d: number;
   Pump104Flow: number;
   StorageBiogasVolumeV101: number;
   AcumBiogasVolumenV101: number;
