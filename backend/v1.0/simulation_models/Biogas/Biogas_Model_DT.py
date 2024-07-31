@@ -21,7 +21,7 @@ class BiogasPlantDT:
 
     def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, 
                  ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101=1000,
-                 ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102=1000, OperationMode=1):
+                 ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102=1000, OperationModo="Modo1"):
 
         #Interface Inputs
         self.VR1 = VR1
@@ -41,6 +41,10 @@ class BiogasPlantDT:
         self.TimeCounterPump_P104 = 0
         self.TimeCounterPump_P101 = 0
         self.TimeCounterPump_P102 = 0
+        #mixers
+        self.TimeCounterMixer_TK100 = 0
+        self.TimeCounterMixer_R101 = 0
+        self.TimeCounterMixer_R102 = 0
         #Biogas V_101
         self.Pacum_V101 = 0
         self.P_ini_V101 = 0
@@ -151,8 +155,8 @@ class BiogasPlantDT:
         
         
         #Create DataFrames to storage Data
-        self.OperationMode = OperationMode
-        if self.OperationMode ==1:
+        self.OperationModo = OperationModo
+        if self.OperationModo == "Modo1":
             columns = ["timestamp"
             , "Q_P104"
             , "Csus_ini"
@@ -181,7 +185,7 @@ class BiogasPlantDT:
             , "ST_R101"
             , "yt_R101"]
             
-        elif self.OperationMode == 2:
+        elif self.OperationModo == "Modo2":
             columns = ["timestamp"
             , "Q_P104"
             , "Csus_ini"
@@ -211,7 +215,7 @@ class BiogasPlantDT:
             , "ST_R101"
             , "yt_R101"]
 
-        elif self.OperationMode == 3:
+        elif self.OperationModo == "Modo3":
             columns = ["timestamp"
             , "Q_P104"
             , "Csus_ini"
@@ -262,7 +266,7 @@ class BiogasPlantDT:
             , "yt_R101"
             , "yt_R102"]
         
-        elif self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
             columns = ["timestamp"
             , "Q_P104"
             , "Csus_ini"
@@ -328,7 +332,7 @@ class BiogasPlantDT:
         data_biogas.set_index("_field", inplace = True)
 
         #Get substrate conditions from plant interface
-        self.substrateNumber = data_biogas["_value"]["MNS"]
+        self.substrateNumber = round(data_biogas["_value"]["MNS"],0)
         self.WaterPorportion = data_biogas["_value"]["MPH"]
 
         if self.substrateNumber == 1.0:
@@ -450,14 +454,14 @@ class BiogasPlantDT:
         self.SE_108 = data_biogas["_value"]["SE108"]
         self.LT_101 = data_biogas["_value"]["LT101"]
 
-        if self.OperationMode == 2:
+        if self.OperationModo == "Modo2":
             #get values for P101
             self.FT_P101 = data_biogas["_value"]["MFTP101"]
             self.TTO_P101 = data_biogas["_value"]["MTTOP101"]
             self.Qset_P101 = data_biogas["_value"]["MQP101"]
             self.SE101 = data_biogas["_value"]["SE101"]
         
-        elif self.OperationMode == 3:
+        elif self.OperationModo == "Modo3":
             self.SE101 = data_biogas["_value"]["SE101"]
             #Get Values for R102
             self.TE_102A = data_biogas["_value"]["TE102A"]
@@ -466,7 +470,7 @@ class BiogasPlantDT:
             self.SE_109 = data_biogas["_value"]["SE109"]
             self.LT_102 = data_biogas["_value"]["LT102"]
         
-        elif self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
             self.SE101 = data_biogas["_value"]["SE101"]
             self.FT_P102 = data_biogas["_value"]["MFTP102"]
             self.TTO_P102 = data_biogas["_value"]["MTTOP102"]
@@ -614,10 +618,10 @@ class BiogasPlantDT:
             except ZeroDivisionError:
                 self.TurnOnDailyStep_P104=0
             
-            if self.OperationMode == 1 or self.OperationMode == 2:
+            if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
                 self.Q_daily = self.VR1/self.TRH
             
-            elif self.OperationMode == 3 or self.OperationMode == 4 or self.OperationMode == 5:
+            elif self.OperationModo == "Modo3" or self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
                 self.Q_daily = (self.VR1 + self.VR2)/self.TRH
             
             self.Q_time = self.Q_daily/self.FT_P104
@@ -650,10 +654,10 @@ class BiogasPlantDT:
     
         if self.manual_P101 == True:
 
-            if self.OperationMode == 1:
+            if self.OperationModo == "Modo1":
                 pass
 
-            elif self.OperationMode == 2:
+            elif self.OperationModo == "Modo2":
                 self.FT_P101= FT_P101
                 self.TTO_P101 = TTO_P101
 
@@ -673,10 +677,10 @@ class BiogasPlantDT:
                 if self.TimeCounterPump_P101>=self.TurnOnDailyStep_P101*3600:
                     self.TimeCounterPump_P101 = 0
 
-            elif self.OperationMode == 3 or self.OperationMode == 5:
+            elif self.OperationModo == "Modo3" or self.OperationModo == "Modo5":
                 self.Q_P101 = self.Q_P104
 
-            elif self.OperationMode == 4:
+            elif self.OperationModo == "Modo4":
                 
                 try:
                     self.Q_P102 = self.Q_P102
@@ -687,13 +691,16 @@ class BiogasPlantDT:
                 
         else:
 
-            if self.OperationMode == 1:
+            if self.OperationModo == "Modo1":
                 pass
-            else:
+            elif self.OperationModo == "Modo2":
                 self.Q_P101 = self.SE101
                 self.FT_P101 = self.FT_P101
                 self.TTO_P101 = self.TTO_P101
                 self.Qset_P101 = self.Qset_P101
+            elif self.OperationModo == "Modo3":
+                self.Q_P101 = self.SE101
+
 
     
     def Pump102 (self, manual_P102=False, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
@@ -702,10 +709,10 @@ class BiogasPlantDT:
 
         if self.manual_P102 == True:
 
-            if self.OperationMode == 1 or self.OperationMode == 2 or self.OperationMode == 3:
+            if self.OperationModo == "Modo1" or self.OperationModo == "Modo2" or self.OperationModo == "Modo3":
                 pass
 
-            elif self.OperationMode == 4 or self.OperationMode == 5:
+            elif self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
                 self.FT_P102= FT_P102
                 self.TTO_P102 = TTO_P102
 
@@ -726,7 +733,7 @@ class BiogasPlantDT:
 
         else:
 
-            if self.OperationMode == 1 or self.OperationMode == 2 or self.OperationMode == 3:
+            if self.OperationModo == "Modo1" or self.OperationModo == "Modo2" or self.OperationModo == "Modo3":
                 pass
 
             else:
@@ -739,7 +746,7 @@ class BiogasPlantDT:
         
         self.manual_temp_R101 = manual_temp_R101
 
-        if self.manual_temp_R101 == True:
+        if self.manual_temp_R101 == False:
             self.Temp_R101 = float(Temp_R101)
 
         else:
@@ -754,12 +761,12 @@ class BiogasPlantDT:
     def Temperature_R102 (self, manual_temp_R102 = 1, Temp_R102=35):
         self.manual_temp_R102 = manual_temp_R102
 
-        if self.OperationMode == 1 or self.OperationMode == 2:
+        if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
             pass
 
         else:
 
-            if self.manual_temp_R102 == True:
+            if self.manual_temp_R102 == False:
                 self.Temp_R102 = float(Temp_R102)
 
             else:
@@ -769,7 +776,78 @@ class BiogasPlantDT:
                 T1 = self.TE_102Av
                 T2 = self.TE_102Bv
                 self.Temp_R102 = (T1 + T2)/2
+    
+    def Mixing_TK100 (self, manual_mixing = False, FT_mixing_TK100=5, TTO_mixing_TK100 = 10, RPM_TK100 = 50):
         
+        if manual_mixing == True:
+            self.FT_mixing_TK100 = FT_mixing_TK100
+            self.TTO_mixing_TK100 = TTO_mixing_TK100
+            try:
+                self.TurnOnDailyStep_Mixing_TK100 = 24/self.FT_mixing_TK100
+            except ZeroDivisionError:
+                self.TurnOnDailyStep_Mixing_TK100 = 0
+            
+            if self.TimeCounterMixer_TK100<self.TTO_mixing_TK100:
+                self.RPM_TK100 = RPM_TK100
+            else:
+                self.RPM_TK100 = RPM_TK100
+            
+            self.TimeCounterMixer_TK100 = self.TimeCounterMixer_TK100 + self.tp
+
+            if self.TimeCounterMixer_TK100>=self.TurnOnDailyStep_Mixing_TK100:
+                self.TimeCounterMixer_TK100 = 0
+        
+        else:
+            pass
+    
+    def Mixing_R101 (self, manual_mixing = False, FT_mixing_R101=5, TTO_mixing_R101 = 10, RPM_R101 = 50):
+        
+        if manual_mixing == True:
+            self.FT_mixing_R101 = FT_mixing_R101
+            self.TTO_mixing_R101 = TTO_mixing_R101
+            try:
+                self.TurnOnDailyStep_Mixing_R101 = 24/self.FT_mixing_R101
+            except ZeroDivisionError:
+                self.TurnOnDailyStep_Mixing_R101 = 0
+            
+            if self.TimeCounterMixer_R101<self.TTO_mixing_R101:
+                self.RPM_R101 = RPM_R101
+            else:
+                self.RPM_R101 = RPM_R101
+            
+            self.TimeCounterMixer_R101 = self.TimeCounterMixer_R101 + self.tp
+
+            if self.TimeCounterMixer_R101>=self.TurnOnDailyStep_Mixing_R101:
+                self.TimeCounterMixer_R101 = 0
+        
+        else:
+            pass
+    
+    def Mixing_R102 (self, manual_mixing = False, FT_mixing_R102=5, TTO_mixing_R102 = 10, RPM_R102 = 50):
+        
+        if manual_mixing == True:
+            if self.OperationModo in ["Modo1", "Modo2"]:
+                pass
+            else:
+                self.FT_mixing_R102 = FT_mixing_R102
+                self.TTO_mixing_R102 = TTO_mixing_R102
+                try:
+                    self.TurnOnDailyStep_Mixing_R102 = 24/self.FT_mixing_R102
+                except ZeroDivisionError:
+                    self.TurnOnDailyStep_Mixing_R102 = 0
+                
+                if self.TimeCounterMixer_R102<self.TTO_mixing_R102:
+                    self.RPM_R102 = RPM_R102
+                else:
+                    self.RPM_R102 = RPM_R102
+                
+                self.TimeCounterMixer_R102 = self.TimeCounterMixer_R102 + self.tp
+
+                if self.TimeCounterMixer_R102>=self.TurnOnDailyStep_Mixing_R102:
+                    self.TimeCounterMixer_R102 = 0
+        else:
+            pass
+
     def V_101_DT (self):               
         self.RH_V101 = self.AT103B
 
@@ -989,14 +1067,14 @@ class BiogasPlantDT:
             self.TotalSolids_int_ini_R101 = self.ST_R101*self.rho_R101*self.VR1
             self.TotalSolids_in_R101 = self.Q_P104*self.ST*self.rho*(self.tp/3600)
             
-            if self.OperationMode == 1:
+            if self.OperationModo == "Modo1":
                 
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600)))
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P104*(self.tp/3600))))/self.rho
                 self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600))))/self.rho
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
             
-            elif self.OperationMode == 2:
+            elif self.OperationModo == "Modo2":
 
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600))
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
@@ -1004,14 +1082,14 @@ class BiogasPlantDT:
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
                 self.organic_charge_R101_out_1 = self.SV_R101*self.rho*self.Q_P101*24
 
-            elif self.OperationMode == 3 or self.OperationMode == 5:
+            elif self.OperationModo == "Modo3" or self.OperationModo == "Modo5":
 
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P101*(self.tp/3600)))
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P101*(self.tp/3600))))/self.rho
                 self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P101*(self.tp/3600))))/self.rho
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
 
-            elif self.OperationMode == 4:
+            elif self.OperationModo == "Modo4":
                 self.mol_sus_in_R101_2 = self.Q_P102*self.Csus_ini_R102
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600))
 
@@ -1032,14 +1110,14 @@ class BiogasPlantDT:
             self.X_R101 = (self.Csus_ini - self.Csus_ini_R101)/self.Csus_ini
             self.y_gompertz_R101 = (self.V_normal_CH4_acum_V101/self.SV_R101_gL)*self.VR1
 
-            if self.OperationMode == 1 or self.OperationMode == 2:
+            if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
                 
-            elif self.OperationMode == 3 or self.OperationMode == 4 or self.OperationMode == 5:
+            elif self.OperationModo == "Modo3" or self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
                 self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
 
     def R102_DT (self):
-        if self.OperationMode == 1 or self.OperationMode ==2:
+        if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
             pass
 
         else:
@@ -1077,23 +1155,23 @@ class BiogasPlantDT:
                 self.TotalSolids_int_ini_R102 = self.ST_R102*self.rho_R102*self.VR2
                 self.TotalSolids_in_R102 = self.Q_P101*self.ST_R101*(self.tp/3600)
 
-                if self.OperationMode == 1 or self.OperationMode == 2:
+                if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
                     pass
 
-                elif self.OperationMode == 3:
+                elif self.OperationModo == "Modo3":
                     self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600)))
                     self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho   
                     self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
 
-                elif self.OperationMode == 4:
+                elif self.OperationModo == "Modo4":
                     self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600)))
                     self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600))))/self.rho
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600))))/self.rho 
                     self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
                     self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
 
-                elif self.OperationMode == 5:
+                elif self.OperationModo == "Modo5":
                     self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600)))
                     self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
@@ -1111,13 +1189,13 @@ class BiogasPlantDT:
                 self.X_R102= 0
                 self.y_gompertz_R102 = (self.V_normal_CH4_acum_V102/self.SV_R102_gL)*self.VR2
 
-                if self.OperationMode == 1 or self.OperationMode == 2:
+                if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
                     pass
                     
-                elif self.OperationMode == 3:
+                elif self.OperationModo == "Modo3":
                     self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
                 
-                elif self.OperationMode == 4 or self.OperationMode == 5:
+                elif self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
                     self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
                     self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
     
@@ -1133,7 +1211,7 @@ class BiogasPlantDT:
     
     def StorageData (self):
         self.timestamp = datetime.now()
-        if self.OperationMode == 1:
+        if self.OperationModo == "Modo1":
             new_row = pd.DataFrame({"timestamp": [self.timestamp],
                                     "Q_P104" : [self.Q_P104],
                                     "Csus_ini" : [self.Csus_ini],
@@ -1163,7 +1241,7 @@ class BiogasPlantDT:
                                     "yt_R101":[self.y_gompertz_R101]
                                     })
             
-        elif self.OperationMode == 2:
+        elif self.OperationModo == "Modo2":
             new_row = pd.DataFrame({"timestamp":[self.timestamp],
                                      "Q_P104":[self.Q_P104],
                                      "Csus_ini" : [self.Csus_ini],
@@ -1194,7 +1272,7 @@ class BiogasPlantDT:
                                      "yt_R101":[self.y_gompertz_R101]
                                     })
             
-        elif self.OperationMode == 3:
+        elif self.OperationModo == "Modo3":
             new_row = pd.DataFrame({"timestamp":[self.timestamp],
                                      "Q_P104":[self.Q_P104],
                                      "Csus_ini" : [self.Csus_ini],
@@ -1246,7 +1324,7 @@ class BiogasPlantDT:
                                      "yt_R102":[self.y_gompertz_R102]
                                     })
             
-        elif self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
              new_row = pd.DataFrame({"timestamp":[self.timestamp],
                                      "Q_P104":[self.Q_P104],
                                      "Csus_ini" : [self.Csus_ini],

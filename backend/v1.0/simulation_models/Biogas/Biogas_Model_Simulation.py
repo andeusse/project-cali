@@ -15,7 +15,7 @@ class BiogasPlantSimulation:
 
     def __init__(self, VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=30, 
                  ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101=1000,
-                 ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102=1000, OperationMode=1):
+                 ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102=1000, OperationMode="Modo1"):
 
         #Interface Inputs
         self.VR1 = VR1
@@ -200,7 +200,7 @@ class BiogasPlantSimulation:
         self.Vmolar_H2 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 1, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
         self.Vmolar_H2O = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 1, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
 
-        if self.OperationMode ==1:
+        if self.OperationMode == "Modo1":
             columns = ["time"
                     , "Q_P104"
                     , "Temp_R101"
@@ -218,7 +218,7 @@ class BiogasPlantSimulation:
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
             
-        elif self.OperationMode ==2:
+        elif self.OperationMode == "Modo2":
             columns = ["time"
                     , "Q_P104"
                     , "Q_P101"
@@ -237,7 +237,7 @@ class BiogasPlantSimulation:
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
             
-        elif self.OperationMode == 3:
+        elif self.OperationMode == "Modo3":
             columns = ["time"
                     , "Q_P104"
                     , "Q_P101"
@@ -266,7 +266,7 @@ class BiogasPlantSimulation:
                     , "Pacum_bio_V102"
                     , "Pacum_bio_V107"]
 
-        elif self.OperationMode in [4,5]:
+        elif self.OperationMode in ["Modo4", "Modo5"]:
             columns = ["time"
                     , "Q_P104"
                     , "Q_P101"
@@ -357,10 +357,10 @@ class BiogasPlantSimulation:
         except ZeroDivisionError:
             self.TurnOnDailyStep_P104=0
         
-        if self.OperationMode == 1 or self.OperationMode == 2:
+        if self.OperationMode == "Modo1" or self.OperationMode == "Modo2":
             self.Q_daily = self.VR1/self.TRH
         
-        elif self.OperationMode == 3 or self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationMode == "Modo3" or self.OperationMode == "Modo4" or self.OperationMode == "Modo5":
             self.Q_daily = (self.VR1 + self.VR2)/self.TRH
         
         self.Q_time = self.Q_daily/self.FT_P104
@@ -383,10 +383,10 @@ class BiogasPlantSimulation:
         
     def Pump101 (self, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
         
-        if self.OperationMode == 1:
+        if self.OperationMode == "Modo1":
             pass
 
-        elif self.OperationMode == 2:
+        elif self.OperationMode == "Modo2":
             self.FT_P101= FT_P101
             self.TTO_P101 = TTO_P101
 
@@ -406,10 +406,10 @@ class BiogasPlantSimulation:
             if self.TimeCounterPump_P101>=self.TurnOnDailyStep_P101*3600:
                 self.TimeCounterPump_P101 = 0
 
-        elif self.OperationMode == 3 or self.OperationMode == 5:
+        elif self.OperationMode == "Modo3" or self.OperationMode == "Modo5":
             self.Q_P101 = self.Q_P104
 
-        elif self.OperationMode == 4:
+        elif self.OperationMode == "Modo4":
             
             try:
                 self.Q_P102 = self.Q_P102
@@ -420,10 +420,10 @@ class BiogasPlantSimulation:
     
     def Pump102 (self, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
         
-        if self.OperationMode == 1 or self.OperationMode == 2 or self.OperationMode == 3:
+        if self.OperationMode == "Modo1" or self.OperationMode == "Modo2" or self.OperationMode == "Modo3":
             pass
 
-        elif self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationMode == "Modo4" or self.OperationMode == "Modo5":
             self.FT_P102= FT_P102
             self.TTO_P102 = TTO_P102
 
@@ -461,7 +461,7 @@ class BiogasPlantSimulation:
             self.TimeCounterMixer_R101 = 0
     
     def Mixing_R102 (self, FT_mixin_R102=5, TTO_mixing_R102 = 10, RPM_R102 = 50):
-        if self.OperationMode in [1,2]:
+        if self.OperationMode in ["Modo1", "Modo2"]:
             pass
         else:
             self.FT_mixing_R102 = FT_mixin_R102
@@ -484,7 +484,7 @@ class BiogasPlantSimulation:
     def Data_simulation(self, Temperature_R101=35, Temperature_R102=35, pH_R101 = 7, pH_R102 = 7):
         self.Temp_R101=Temperature_R101
         self.Temp_R102=Temperature_R102
-        if self.OperationMode == 1:
+        if self.OperationMode == "Modo1":
             new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
                                     "Temp_R101": [self.Temp_R101],
@@ -502,7 +502,7 @@ class BiogasPlantSimulation:
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
         
-        elif self.OperationMode == 2:
+        elif self.OperationMode == "Modo2":
              new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
                                     "Q_P101" : [self.Q_P101],
@@ -521,7 +521,7 @@ class BiogasPlantSimulation:
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
         
-        elif self.OperationMode == 3:
+        elif self.OperationMode == "Modo3":
             new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
                                     "Q_P101" : [self.Q_P101],
@@ -550,7 +550,7 @@ class BiogasPlantSimulation:
                                     "Pacum_bio_V102":[self.Pacum_bio_V102],
                                     "Pacum_bio_V107":[self.Pacum_bio_V107]})
         
-        elif self.OperationMode in [4,5]:
+        elif self.OperationMode in ["Modo4", "Modo5"]:
             new_row = pd.DataFrame({"time": [self.GlobalTime],
                                     "Q_P104" : [self.Q_P104],
                                     "Q_P101" : [self.Q_P101],
@@ -662,7 +662,7 @@ class BiogasPlantSimulation:
         # Model Arrhenius    
         if self.Model == "Arrhenius":
 
-            if self.OperationMode in [1,2] :
+            if self.OperationMode in ["Modo1", "Modo2"] :
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
                 y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
@@ -689,7 +689,7 @@ class BiogasPlantSimulation:
                 #Solidos totales R101
                 self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - ((self.K_R101 * np.exp(-self.Ea_R101 / (8.314 * T_R101.iloc[-1] * pH_R101[-1]))) * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
 
-            elif self.OperationMode in [3,5] :
+            elif self.OperationMode in ["Modo3", "Modo5"] :
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
                 y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
@@ -761,7 +761,7 @@ class BiogasPlantSimulation:
                 self.mol_H2_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.0001)
                 self.mol_H2O_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.normal(0.7, 0.1)
             
-            elif self.OperationMode == 4:
+            elif self.OperationMode == "Modo4":
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
                 y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
@@ -860,7 +860,7 @@ class BiogasPlantSimulation:
         # Model ADM1
         elif self.Model == "ADM1":
 
-            if self.OperationMode in [1,2] :
+            if self.OperationMode in ["Modo1", "Modo2"] :
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
                 y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
@@ -887,7 +887,7 @@ class BiogasPlantSimulation:
                 #Solidos totales R101
                 self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - (self.K_R101 * pH_R101[-1] * T_R101[-1] * self.Csus_ini_R101 * (self.tp / 3600)))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
 
-            elif self.OperationMode in [3,5]:
+            elif self.OperationMode in ["Modo3", "Modo5"]:
 
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
@@ -960,7 +960,7 @@ class BiogasPlantSimulation:
                 self.mol_H2_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.0001)
                 self.mol_H2O_R102 = self.mol_H2O_R102 + self.mol_CH4_stoichometric_R102*np.random.normal(0.7, 0.1)
 
-            elif self.OperationMode == 4:
+            elif self.OperationMode == "Modo4":
                 # R_101 Conditions
                 time = self.Operation_Data.time.astype(float).tolist()
                 y0_R101 = float(self.Operation_Data.Csus_ini_R101[0])                                  #intital condition
@@ -1062,7 +1062,7 @@ class BiogasPlantSimulation:
             pH_R101 = float(self.Operation_Data.pH_R101.iloc[-1])
             T_R101 = float(self.Operation_Data.Temp_R101.iloc[-1])
 
-            if self.OperationMode in [1,2]:
+            if self.OperationMode in ["Modo1", "Modo2"]:
                 # Solución de R101
                 self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
                 self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101) * Temperature_effect(T_R101)
@@ -1102,7 +1102,7 @@ class BiogasPlantSimulation:
                 #Solidos totales R101
                 self.ST_R101 = ((self.ST_R101 * self.rho * self.VR1) + (self.Q_P104 * self.ST * self.rho * (self.tp/3600)) - (self.mol_sus_stoichometric_R101 ))/(self.VR1+(self.Q_P104*(self.tp/3600)))/self.rho
             
-            if self.OperationMode in [3, 5]:
+            if self.OperationMode in ["Modo3", "Modo5"]:
                 # Solución de R101
                 self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
                 self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101) * Temperature_effect(T_R101)
@@ -1184,7 +1184,7 @@ class BiogasPlantSimulation:
                 self.ST_R102 = ((self.ST_R102 * self.rho * self.VR2) + (self.Q_P101 * self.ST_R101 * self.rho * (self.tp/3600)) - (self.mol_sus_stoichometric_R102))/(self.VR2+(self.Q_P101*(self.tp/3600)))/self.rho
             
             
-            elif self.OperationMode == 4:
+            elif self.OperationMode == "Modo4":
                 # Solución de R101
                 self.y_CH4_R101 = model_Gompertz(t=time[-1], ym = self.ym_R101, U = self.U_R101, L = self.L_R101)
                 self.y_CH4_R101 = self.y_CH4_R101 * pH_effect(pH_R101) * mixing_effect(self.RPM_R101) * Temperature_effect(T_R101)
@@ -1393,7 +1393,7 @@ class BiogasPlantSimulation:
    
             self.Pstorage_bio_V102 = self.Pstorage_bio_V102 + (self.Operation_Data.Pacum_bio_V102.iloc[-1] - self.Operation_Data.Pacum_bio_V102.iloc[-2])
             
-            if self.OperationMode in [3,4,5]:
+            if self.OperationMode in ["Modo3", "Modo4", "Modo5"]:
                 self.mol_CH4_V102 = self.mol_CH4_V102 + self.mol_CH4transfertoV102 + (self.Operation_Data.mol_CH4_acum_R102.iloc[-1] - self.Operation_Data.mol_CH4_acum_R102.iloc[-2])  
                 self.mol_CO2_V102 = self.mol_CO2_V102 + self.mol_CO2transfertoV102 + (self.Operation_Data.mol_CO2_acum_R102.iloc[-1] - self.Operation_Data.mol_CO2_acum_R102.iloc[-2]) 
                 self.mol_H2S_V102 = self.mol_H2S_V102 + self.mol_H2StransfertoV102 + (self.Operation_Data.mol_H2S_acum_R102.iloc[-1] - self.Operation_Data.mol_H2S_acum_R102.iloc[-2])   
