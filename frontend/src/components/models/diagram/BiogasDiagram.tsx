@@ -21,6 +21,7 @@ import mode4On from '../../../assets/biogas/Mode4On.gif';
 import mode5 from '../../../assets/biogas/Mode5.png';
 import mode5On from '../../../assets/biogas/Mode5On.gif';
 import DiagramVariables from '../common/DiagramVariables';
+import DiagramGrid from './DiagramGrid';
 
 type Props = {
   biogas: BiogasParameters;
@@ -29,8 +30,8 @@ type Props = {
   diagramVariables: DiagramVariableType[];
 };
 
-const VIEWBOX_WIDTH = 9300;
-const VIEWBOX_HEIGHT = 5500;
+const VIEWBOX_WIDTH = 9600;
+const VIEWBOX_HEIGHT = 7200;
 
 const BiogasDiagram = (props: Props) => {
   const { biogas, data, isPlaying, diagramVariables } = props;
