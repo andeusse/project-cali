@@ -145,96 +145,242 @@ export type BiogasParameters = CommonSystemParameter &
   };
 
 export type BiogasOutput = {
-  K_R101: number;
-  Ea_R101: number;
-  Temp_R101: number;
-  pH_R101: number;
-  organic_charge_R101_in: number;
-  organic_charge_R101_out: number;
-  Csus_exp_train_R101: number;
-  x_R101: number;
-  STsus_R101: number;
-  Svsus_R101: number;
-  FlowExit_R101: number;
-  VolatileSolidsInletR101: number;
-  TotalSolidsInletR101: number;
-  Mwsus: number;
   n: number;
   a: number;
   b: number;
   c: number;
   d: number;
+  Mix_Velocity_TK100: number;
+  C_sv: number;
+  SV: number;
+  C_st: number;
+  ST: number;
   Pump104Flow: number;
-  StorageBiogasVolumeV101: number;
+  Mix_Velocity_R101: number;
+  C_sv_R101: number;
+  SV_R101: number;
+  C_st_R101: number;
+  ST_R101: number;
+  Organic_Charge_R101: number;
+  pH_R101: number;
+  Temp_R101: number;
+  x_R101: number;
+  K_R101: number;
+  Ea_R101: number;
+  Lambda_R101: number;
   AcumBiogasVolumenV101: number;
-  StorageBiogasPressureV101: number;
+  StorageBiogasVolumeV101: number;
   AcumBiogasPressureV101: number;
+  StorageBiogasPressureV101: number;
   StorageCH4_V101Volume: number;
-  StorageCO2_V101Volume: number;
-  StorageH2S_V101Volume: number;
-  StorageO2_V101Volume: number;
-  StorageH2_V101Volume: number;
   StorageCH4_V101Concentration: number;
-  StorageCO2_V101Concentration: number;
-  StorageH2S_V101Concentration: number;
-  StorageO2_V101Concentration: number;
-  StorageH2_V101Concentration: number;
   StorageCH4_V101moles: number;
+  StorageCO2_V101Volume: number;
+  StorageCO2_V101Concentration: number;
   StorageCO2_V101moles: number;
+  StorageH2S_V101Volume: number;
+  StorageH2S_V101Concentration: number;
   StorageH2S_V101moles: number;
+  StorageO2_V101Volume: number;
+  StorageO2_V101Concentration: number;
   StorageO2_V101moles: number;
+  StorageH2_V101Volume: number;
+  StorageH2_V101Concentration: number;
   StorageH2_V101moles: number;
+  StorageNH3_V101Volume: number;
+  StorageNH3_V101Concentration: number;
+  StorageNH3_V101moles: number;
   moles_humidity_V101: number;
   Relative_humidity_V101: number;
   StorageEnergy_V101: number;
-  StorageBiogasVolumeV102: number;
   AcumBiogasVolumenV102: number;
-  StorageBiogasPressureV102: number;
+  StorageBiogasVolumeV102: number;
   AcumBiogasPressureV102: number;
+  StorageBiogasPressureV102: number;
   StorageCH4_V102Volume: number;
-  StorageCO2_V102Volume: number;
-  StorageH2S_V102Volume: number;
-  StorageO2_V102Volume: number;
-  StorageH2_V102Volume: number;
   StorageCH4_V102Concentration: number;
-  StorageCO2_V102Concentration: number;
-  StorageH2S_V102Concentration: number;
-  StorageO2_V102Concentration: number;
-  StorageH2_V102Concentration: number;
   StorageCH4_V102moles: number;
+  StorageCO2_V102Volume: number;
+  StorageCO2_V102Concentration: number;
   StorageCO2_V102moles: number;
+  StorageH2S_V102Volume: number;
+  StorageH2S_V102Concentration: number;
   StorageH2S_V102moles: number;
+  StorageO2_V102Volume: number;
+  StorageO2_V102Concentration: number;
   StorageO2_V102moles: number;
+  StorageH2_V102Volume: number;
+  StorageH2_V102Concentration: number;
   StorageH2_V102moles: number;
+  StorageNH3_V102Volume: number;
+  StorageNH3_V102Concentration: number;
+  StorageNH3_V102moles: number;
   moles_humidity_V102: number;
   Relative_humidity_V102: number;
   StorageEnergy_V102: number;
-  StorageBiogasVolumeV107: number;
+  ads_NH3_bt: number;
+  ads_H2S_bt: number;
+  ads_H2O_bt: number;
+  x_bt: number;
   AcumBiogasVolumenV107: number;
-  StorageBiogasPressureV107: number;
+  StorageBiogasVolumeV107: number;
   AcumBiogasPressureV107: number;
+  StorageBiogasPressureV107: number;
   StorageCH4_V107Volume: number;
-  StorageCO2_V107Volume: number;
-  StorageH2S_V107Volume: number;
-  StorageO2_V107Volume: number;
-  StorageH2_V107Volume: number;
   StorageCH4_V107Concentration: number;
-  StorageCO2_V107Concentration: number;
-  StorageH2S_V107Concentration: number;
-  StorageO2_V107Concentration: number;
-  StorageH2_V107Concentration: number;
   StorageCH4_V107moles: number;
+  StorageCO2_V107Volume: number;
+  StorageCO2_V107Concentration: number;
   StorageCO2_V107moles: number;
+  StorageH2S_V107Volume: number;
+  StorageH2S_V107Concentration: number;
   StorageH2S_V107moles: number;
+  StorageO2_V107Volume: number;
+  StorageO2_V107Concentration: number;
   StorageO2_V107moles: number;
+  StorageH2_V107Volume: number;
+  StorageH2_V107Concentration: number;
   StorageH2_V107moles: number;
+  StorageNH3_V107Volume: number;
+  StorageNH3_V107Concentration: number;
+  StorageNH3_V107moles: number;
   moles_humidity_V107: number;
   Relative_humidity_V107: number;
   StorageEnergy_V107: number;
   Pump101Flow: number;
+  Mix_Velocity_R102: number;
+  pH_R102: number;
+  Temp_R102: number;
+  K_R102: number;
+  Ea_R102: number;
+  Lambda_R102: number;
+  C_sv_R102: number;
+  SV_R102: number;
+  C_st_R102: number;
+  ST_R102: number;
+  Organic_Charge_R102: number;
+  x_R102: number;
+  Pump102Flow: number;
 };
 
-export type BiogasOutputHistoric = CommonChartType & {};
+export type BiogasOutputHistoric = CommonChartType & {
+  n: number[];
+  a: number[];
+  b: number[];
+  c: number[];
+  d: number[];
+  Mix_Velocity_TK100: number[];
+  C_sv: number[];
+  SV: number[];
+  C_st: number[];
+  ST: number[];
+  Pump104Flow: number[];
+  Mix_Velocity_R101: number[];
+  C_sv_R101: number[];
+  SV_R101: number[];
+  C_st_R101: number[];
+  ST_R101: number[];
+  Organic_Charge_R101: number[];
+  pH_R101: number[];
+  Temp_R101: number[];
+  x_R101: number[];
+  K_R101: number[];
+  Ea_R101: number[];
+  Lambda_R101: number[];
+  AcumBiogasVolumenV101: number[];
+  StorageBiogasVolumeV101: number[];
+  AcumBiogasPressureV101: number[];
+  StorageBiogasPressureV101: number[];
+  StorageCH4_V101Volume: number[];
+  StorageCH4_V101Concentration: number[];
+  StorageCH4_V101moles: number[];
+  StorageCO2_V101Volume: number[];
+  StorageCO2_V101Concentration: number[];
+  StorageCO2_V101moles: number[];
+  StorageH2S_V101Volume: number[];
+  StorageH2S_V101Concentration: number[];
+  StorageH2S_V101moles: number[];
+  StorageO2_V101Volume: number[];
+  StorageO2_V101Concentration: number[];
+  StorageO2_V101moles: number[];
+  StorageH2_V101Volume: number[];
+  StorageH2_V101Concentration: number[];
+  StorageH2_V101moles: number[];
+  StorageNH3_V101Volume: number[];
+  StorageNH3_V101Concentration: number[];
+  StorageNH3_V101moles: number[];
+  moles_humidity_V101: number[];
+  Relative_humidity_V101: number[];
+  StorageEnergy_V101: number[];
+  AcumBiogasVolumenV102: number[];
+  StorageBiogasVolumeV102: number[];
+  AcumBiogasPressureV102: number[];
+  StorageBiogasPressureV102: number[];
+  StorageCH4_V102Volume: number[];
+  StorageCH4_V102Concentration: number[];
+  StorageCH4_V102moles: number[];
+  StorageCO2_V102Volume: number[];
+  StorageCO2_V102Concentration: number[];
+  StorageCO2_V102moles: number[];
+  StorageH2S_V102Volume: number[];
+  StorageH2S_V102Concentration: number[];
+  StorageH2S_V102moles: number[];
+  StorageO2_V102Volume: number[];
+  StorageO2_V102Concentration: number[];
+  StorageO2_V102moles: number[];
+  StorageH2_V102Volume: number[];
+  StorageH2_V102Concentration: number[];
+  StorageH2_V102moles: number[];
+  StorageNH3_V102Volume: number[];
+  StorageNH3_V102Concentration: number[];
+  StorageNH3_V102moles: number[];
+  moles_humidity_V102: number[];
+  Relative_humidity_V102: number[];
+  StorageEnergy_V102: number[];
+  ads_NH3_bt: number[];
+  ads_H2S_bt: number[];
+  ads_H2O_bt: number[];
+  x_bt: number[];
+  AcumBiogasVolumenV107: number[];
+  StorageBiogasVolumeV107: number[];
+  AcumBiogasPressureV107: number[];
+  StorageBiogasPressureV107: number[];
+  StorageCH4_V107Volume: number[];
+  StorageCH4_V107Concentration: number[];
+  StorageCH4_V107moles: number[];
+  StorageCO2_V107Volume: number[];
+  StorageCO2_V107Concentration: number[];
+  StorageCO2_V107moles: number[];
+  StorageH2S_V107Volume: number[];
+  StorageH2S_V107Concentration: number[];
+  StorageH2S_V107moles: number[];
+  StorageO2_V107Volume: number[];
+  StorageO2_V107Concentration: number[];
+  StorageO2_V107moles: number[];
+  StorageH2_V107Volume: number[];
+  StorageH2_V107Concentration: number[];
+  StorageH2_V107moles: number[];
+  StorageNH3_V107Volume: number[];
+  StorageNH3_V107Concentration: number[];
+  StorageNH3_V107moles: number[];
+  moles_humidity_V107: number[];
+  Relative_humidity_V107: number[];
+  StorageEnergy_V107: number[];
+  Pump101Flow: number[];
+  Mix_Velocity_R102: number[];
+  pH_R102: number[];
+  Temp_R102: number[];
+  K_R102: number[];
+  Ea_R102: number[];
+  Lambda_R102: number[];
+  C_sv_R102: number[];
+  SV_R102: number[];
+  C_st_R102: number[];
+  ST_R102: number[];
+  Organic_Charge_R102: number[];
+  x_R102: number[];
+  Pump102Flow: number[];
+};
 
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
@@ -927,272 +1073,301 @@ export const BIOGAS: BiogasParameters = {
 
 export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
-    name: 'Parámetro cinético 1 (factor preexpoenencial)',
-    variable: 'K_R101',
-    unit: '1 / s',
+    name: 'Subindice de carbono formula empírica',
+    variable: 'n',
+    unit: '',
     isShown: true,
-    diagramName: 'K_R101',
+    diagramName: '',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Subindice de hidrógeno formula empírica',
+    variable: 'a',
+    unit: '',
+    isShown: true,
+    diagramName: '',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Subindice de oxígeno formula empírica',
+    variable: 'b',
+    unit: '',
+    isShown: true,
+    diagramName: '',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Subindice de nitrógeno formula empírica',
+    variable: 'c',
+    unit: '',
+    isShown: true,
+    diagramName: '',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Subindice de azufre formula empírica',
+    variable: 'd',
+    unit: '',
+    isShown: true,
+    diagramName: '',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Velocidad de agitación tanque premezcla',
+    variable: 'Mix_Velocity_TK100',
+    unit: 'RPM',
+    isShown: true,
+    diagramName: 'RPM',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de sólidos volátiles en gSV/L',
+    variable: 'C_sv',
+    unit: 'gSV/L',
+    isShown: true,
+    diagramName: 'Csv',
     fixed: 4,
-    x: 3200,
-    y: 3500,
+    x: 0,
+    y: 0,
     scientificNotation: true,
   },
   {
-    name: 'Parámetro cinético 2 (energía de activación)',
-    variable: 'Ea_R101',
-    unit: 'J / mol',
-    isShown: true,
-    diagramName: 'Ea_R101',
-    fixed: 4,
-    x: 3200,
-    y: 3650,
-    scientificNotation: true,
-  },
-  {
-    name: 'Conversión del reactivo limite',
-    variable: 'x_R101',
+    name: 'Concentración de sólidos volátiles en %',
+    variable: 'SV',
     unit: '%',
     isShown: true,
-    diagramName: 'x_R101',
+    diagramName: 'SV',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de sólidos totales en gST/L',
+    variable: 'C_st',
+    unit: 'gST/L',
+    isShown: true,
+    diagramName: 'Cst',
     fixed: 4,
-    x: 3200,
-    y: 3800,
-    scientificNotation: false,
-  },
-  {
-    name: 'Salida sustrato R101',
-    variable: 'FlowExit_R101',
-    unit: 'L / h',
-    isShown: true,
-    diagramName: 'Flujo',
-    fixed: 2,
-    x: 100,
-    y: 4500,
-    scientificNotation: false,
-  },
-  {
-    name: 'Sólidos totales a la salida de R101',
-    variable: 'STsus_R101',
-    unit: '%',
-    isShown: true,
-    diagramName: 'ST_R101',
-    fixed: 2,
-    x: 100,
-    y: 4650,
-    scientificNotation: false,
-  },
-  {
-    name: 'Sólidos volátiles a la salida de R101',
-    variable: 'Svsus_R101',
-    unit: '%',
-    isShown: true,
-    diagramName: 'SV_R101',
-    fixed: 2,
-    x: 100,
-    y: 4800,
-    scientificNotation: false,
-  },
-  {
-    name: 'Carga Orgánica de Salida R101 [g_SV/L-día]',
-    variable: 'organic_charge_R101_out',
-    unit: 'gSV/L-día',
-    isShown: true,
-    diagramName: 'CO_out',
-    fixed: 2,
-    x: 100,
-    y: 4950,
-    scientificNotation: false,
-  },
-  {
-    name: 'Concentración sustrato a la salida de R101',
-    variable: 'Csus_exp_train_R101',
-    unit: 'mol / L',
-    isShown: true,
-    diagramName: 'C_SV',
-    fixed: 4,
-    x: 100,
-    y: 5100,
+    x: 0,
+    y: 0,
     scientificNotation: true,
   },
   {
-    name: 'Temperatura interna R101',
-    variable: 'Temp_R101',
-    unit: '°c',
+    name: 'Concentración de sólidos totales en %',
+    variable: 'ST',
+    unit: '%',
     isShown: true,
-    diagramName: 'T',
+    diagramName: 'ST',
     fixed: 2,
-    x: 100,
-    y: 5250,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Caudal',
+    variable: 'Pump104Flow',
+    unit: 'L/h',
+    isShown: true,
+    diagramName: 'Caudal',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Velocidad de agitación reactor R101',
+    variable: 'Mix_Velocity_R101',
+    unit: 'RPM',
+    isShown: true,
+    diagramName: 'RPM',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de sólidos volátiles en gSV/L',
+    variable: 'C_sv_R101',
+    unit: 'gSV/L',
+    isShown: true,
+    diagramName: 'Csv',
+    fixed: 4,
+    x: 0,
+    y: 0,
     scientificNotation: true,
   },
   {
-    name: 'pH R101',
+    name: 'Concentración de sólidos volátiles en %',
+    variable: 'SV_R101',
+    unit: '%',
+    isShown: true,
+    diagramName: 'SV',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de sólidos totales en gST/L',
+    variable: 'C_st_R101',
+    unit: 'gST/L',
+    isShown: true,
+    diagramName: 'Cst',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Concentración de sólidos totales en %',
+    variable: 'ST_R101',
+    unit: '%',
+    isShown: true,
+    diagramName: 'ST',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Carga Orgánica en el reactor R101',
+    variable: 'Organic_Charge_R101',
+    unit: 'gSV/L-dia',
+    isShown: true,
+    diagramName: 'OC',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'pH',
     variable: 'pH_R101',
     unit: '',
     isShown: true,
     diagramName: 'pH',
     fixed: 2,
-    x: 100,
-    y: 5400,
+    x: 0,
+    y: 0,
     scientificNotation: false,
   },
   {
-    name: 'Peso molecular del sustrato',
-    variable: 'Mwsus',
-    unit: 'g / mol',
+    name: 'Temperatura R101',
+    variable: 'Temp_R101',
+    unit: '°c',
     isShown: true,
-    diagramName: 'Mwsus',
+    diagramName: 'Temperatura',
     fixed: 2,
-    x: 100,
-    y: 3400,
+    x: 0,
+    y: 0,
     scientificNotation: false,
   },
   {
-    name: 'Concentración de sólidos volatiles a la entrada de R101',
-    variable: 'VolatileSolidsInletR101',
-    unit: 'g / L',
+    name: 'Conversión del reactivo límite',
+    variable: 'x_R101',
+    unit: '%',
     isShown: true,
-    diagramName: 'C_SV',
+    diagramName: 'x',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    variable: 'K_R101',
+    unit: 'Ver columna de lógica',
+    isShown: true,
+    diagramName: 'Ver columna de lógica',
     fixed: 4,
-    x: 100,
-    y: 3550,
+    x: 0,
+    y: 0,
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos totales a la entrada de R101',
-    variable: 'TotalSolidsInletR101',
-    unit: 'g / L',
+    name: 'Parámetro cinético energía de activación',
+    variable: 'Ea_R101',
+    unit: 'Ver columna de lógica',
     isShown: true,
-    diagramName: 'C_ST',
+    diagramName: 'Ver columna de lógica',
     fixed: 4,
-    x: 100,
-    y: 3700,
+    x: 0,
+    y: 0,
     scientificNotation: true,
   },
   {
-    name: 'Carga Orgánica de Entrada R101 [g_SV/L-día]',
-    variable: 'organic_charge_R101_in',
-    unit: 'gSV/L-día',
+    name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás',
+    variable: 'Lambda_R101',
+    unit: 'Ver columna de lógica',
     isShown: true,
-    diagramName: 'CO_in',
-    fixed: 2,
-    x: 100,
-    y: 3850,
-    scientificNotation: false,
+    diagramName: 'Ver columna de lógica',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
   },
   {
-    name: 'Subíndice de carbono en la ecuación empírica del sustrato',
-    variable: 'n',
-    unit: '',
-    isShown: true,
-    diagramName: '',
-    fixed: 1,
-    x: 1200,
-    y: 225,
-    scientificNotation: false,
-  },
-  {
-    name: 'Subíndice de hidrógeno en la ecuación empírica del sustrato',
-    variable: 'a',
-    unit: '',
-    isShown: true,
-    diagramName: '',
-    fixed: 1,
-    x: 1600,
-    y: 225,
-    scientificNotation: false,
-  },
-  {
-    name: 'Subíndice de oxígeno en la ecuación empírica del sustrato',
-    variable: 'b',
-    unit: '',
-    isShown: true,
-    diagramName: '',
-    fixed: 1,
-    x: 2000,
-    y: 225,
-    scientificNotation: false,
-  },
-  {
-    name: 'Subíndice de nitrógeno en la ecuación empírica del sustrato',
-    variable: 'c',
-    unit: '',
-    isShown: true,
-    diagramName: '',
-    fixed: 1,
-    x: 2400,
-    y: 225,
-    scientificNotation: false,
-  },
-  {
-    name: 'Subíndice de azufre en la ecuación empírica del sustrato',
-    variable: 'd',
-    unit: '',
-    isShown: true,
-    diagramName: '',
-    fixed: 1,
-    x: 2800,
-    y: 225,
-    scientificNotation: false,
-  },
-  {
-    name: 'Flujo volumétrico de la bomba P104',
-    variable: 'Pump104Flow',
-    unit: 'L / h',
-    isShown: true,
-    diagramName: 'Flujo',
-    fixed: 2,
-    x: 600,
-    y: 3100,
-    scientificNotation: false,
-  },
-  {
-    name: 'Biogas Almacenado en volumen normal en el tanque V101',
-    variable: 'StorageBiogasVolumeV101',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'Volumen',
-    fixed: 2,
-    x: 1200,
-    y: 800,
-    scientificNotation: false,
-    hasAdditionalCondition: 0,
-  },
-  {
-    name: 'Biogas Producido en volumen normal por el R101 - V101',
+    name: 'Volumen normal de biogas acumulado',
     variable: 'AcumBiogasVolumenV101',
     unit: 'NL',
     isShown: true,
-    diagramName: 'Volumen',
+    diagramName: 'Vol',
     fixed: 2,
-    x: 1200,
-    y: 800,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 2,
   },
   {
-    name: 'Presión de biogas en el tanque V101',
-    variable: 'StorageBiogasPressureV101',
-    unit: 'psi',
+    name: 'Volumen normal de biogas almacenado',
+    variable: 'StorageBiogasVolumeV101',
+    unit: 'NL',
     isShown: true,
-    diagramName: 'Presión',
+    diagramName: 'Vol',
     fixed: 2,
-    x: 1200,
-    y: 800,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 1,
   },
   {
-    name: 'Presión de biogás acumulada en V101',
+    name: 'Presión de biogás acumulado',
     variable: 'AcumBiogasPressureV101',
     unit: 'psi',
     isShown: true,
-    diagramName: 'Presión',
+    diagramName: 'pres',
     fixed: 2,
-    x: 1200,
-    y: 800,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 3,
+  },
+  {
+    name: 'Presión de biogás almacenado',
+    variable: 'StorageBiogasPressureV101',
+    unit: 'psi',
+    isShown: true,
+    diagramName: 'pres',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1200,59 +1375,10 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'NL',
     isShown: true,
     diagramName: 'CH4',
-    fixed: 4,
-    x: 1200,
-    y: 950,
+    fixed: 2,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Dióxido de carbono almacenado en volumen normal en tanque V101',
-    variable: 'StorageCO2_V101Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'CO2',
-    fixed: 4,
-    x: 1200,
-    y: 1100,
-    scientificNotation: false,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Sulfuro de hidrógeno almacenado en volumen normal en tanque V101',
-    variable: 'StorageH2S_V101Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'H2S',
-    fixed: 4,
-    x: 1200,
-    y: 1250,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Oxígeno almacenado en volumen normal en tanque V101',
-    variable: 'StorageO2_V101Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'O2',
-    fixed: 4,
-    x: 1200,
-    y: 1400,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Hidrógeno almacenado en volumen normal en tanque V101',
-    variable: 'StorageH2_V101Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'H2',
-    fixed: 4,
-    x: 1200,
-    y: 1550,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1261,130 +1387,196 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'CH4',
     fixed: 2,
-    x: 1200,
-    y: 950,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 4,
   },
   {
-    name: 'Concentración de dióxido de carbono almacenada en el tanque V101',
-    variable: 'StorageCO2_V101Concentration',
-    unit: '%',
-    isShown: true,
-    diagramName: 'CO2',
-    fixed: 2,
-    x: 1200,
-    y: 1100,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de sulfuro de hidrógeno almacenada en el tanque V101',
-    variable: 'StorageH2S_V101Concentration',
-    unit: 'ppm',
-    isShown: true,
-    diagramName: 'H2S',
-    fixed: 2,
-    x: 1200,
-    y: 1250,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de oxígeno almacenado en el tanque V-101',
-    variable: 'StorageO2_V101Concentration',
-    unit: '%',
-    isShown: true,
-    diagramName: 'O2',
-    fixed: 2,
-    x: 1200,
-    y: 1400,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de hidrógeno almacenado en el tanque V-101',
-    variable: 'StorageH2_V101Concentration',
-    unit: 'ppm',
-    isShown: true,
-    diagramName: 'H2',
-    fixed: 2,
-    x: 1200,
-    y: 1550,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Moles de metano almacenada en tanque V101',
+    name: 'moles de metano almacenada en tanque V101',
     variable: 'StorageCH4_V101moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'CH4',
     fixed: 4,
-    x: 1200,
-    y: 950,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de dióxido de carbono almacenada en tanque V101',
+    name: 'Metano almacenado en volumen normal en tanque V101',
+    variable: 'StorageCO2_V101Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'CO2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V101',
+    variable: 'StorageCO2_V101Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'CO2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V101',
     variable: 'StorageCO2_V101moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'CO2',
     fixed: 4,
-    x: 1200,
-    y: 1100,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de sulfuro de hidrógeno almacenada en tanque V101',
+    name: 'Metano almacenado en volumen normal en tanque V101',
+    variable: 'StorageH2S_V101Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V101',
+    variable: 'StorageH2S_V101Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V101',
     variable: 'StorageH2S_V101moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2S',
     fixed: 4,
-    x: 1200,
-    y: 1250,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de oxígeno almacenada en tanque V101',
+    name: 'Metano almacenado en volumen normal en tanque V101',
+    variable: 'StorageO2_V101Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'O2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V101',
+    variable: 'StorageO2_V101Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'O2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V101',
     variable: 'StorageO2_V101moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'O2',
     fixed: 4,
-    x: 1200,
-    y: 1400,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de Hidrógeno almacenada en tanque V101',
+    name: 'Metano almacenado en volumen normal en tanque V101',
+    variable: 'StorageH2_V101Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'H2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V101',
+    variable: 'StorageH2_V101Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'H2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V101',
     variable: 'StorageH2_V101moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2',
     fixed: 4,
-    x: 1200,
-    y: 1550,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de agua en V101',
+    name: 'Metano almacenado en volumen normal en tanque V101',
+    variable: 'StorageNH3_V101Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V101',
+    variable: 'StorageNH3_V101Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V101',
+    variable: 'StorageNH3_V101moles',
+    unit: 'mol',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'moles de agua en V101',
     variable: 'moles_humidity_V101',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2O',
     fixed: 4,
-    x: 1200,
-    y: 1700,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 8,
   },
   {
     name: 'Humedad Relativa del biogás en V101',
@@ -1393,10 +1585,9 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'H2O',
     fixed: 2,
-    x: 1200,
-    y: 1700,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 7,
   },
   {
     name: 'Energía total almacenada_V101',
@@ -1404,58 +1595,54 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'Wh',
     isShown: true,
     diagramName: 'Energía',
-    fixed: 4,
-    x: 1200,
-    y: 1850,
-    scientificNotation: true,
-  },
-  {
-    name: 'Biogas Almacenado en volumen normal en el tanque V102',
-    variable: 'StorageBiogasVolumeV102',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'Volumen',
     fixed: 2,
-    x: 8200,
-    y: 600,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 0,
   },
   {
-    name: 'Biogas Producido en volumen normal por el R101 - V102',
+    name: 'Volumen normal de biogas acumulado',
     variable: 'AcumBiogasVolumenV102',
     unit: 'NL',
     isShown: true,
-    diagramName: 'Volumen',
+    diagramName: 'Vol',
     fixed: 2,
-    x: 8200,
-    y: 600,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 2,
   },
   {
-    name: 'Presión de biogas en el tanque V102',
-    variable: 'StorageBiogasPressureV102',
-    unit: 'psi',
+    name: 'Volumen normal de biogas almacenado',
+    variable: 'StorageBiogasVolumeV102',
+    unit: 'NL',
     isShown: true,
-    diagramName: 'Presión',
+    diagramName: 'Vol',
     fixed: 2,
-    x: 8200,
-    y: 600,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 1,
   },
   {
-    name: 'Presión de biogás acumulada en V102',
+    name: 'Presión de biogás acumulado',
     variable: 'AcumBiogasPressureV102',
     unit: 'psi',
     isShown: true,
-    diagramName: 'Presión',
+    diagramName: 'pres',
     fixed: 2,
-    x: 8200,
-    y: 600,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 3,
+  },
+  {
+    name: 'Presión de biogás almacenado',
+    variable: 'StorageBiogasPressureV102',
+    unit: 'psi',
+    isShown: true,
+    diagramName: 'pres',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1463,59 +1650,10 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'NL',
     isShown: true,
     diagramName: 'CH4',
-    fixed: 4,
-    x: 8200,
-    y: 750,
+    fixed: 2,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Dióxido de carbono almacenado en volumen normal en tanque V102',
-    variable: 'StorageCO2_V102Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'CO2',
-    fixed: 4,
-    x: 8200,
-    y: 900,
-    scientificNotation: false,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Sulfuro de hidrógeno almacenado en volumen normal en tanque V102',
-    variable: 'StorageH2S_V102Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'H2S',
-    fixed: 4,
-    x: 8200,
-    y: 1050,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Oxígeno almacenado en volumen normal en tanque V102',
-    variable: 'StorageO2_V102Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'O2',
-    fixed: 4,
-    x: 8200,
-    y: 1200,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Hidrógeno almacenado en volumen normal en tanque V102',
-    variable: 'StorageH2_V102Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'H2',
-    fixed: 4,
-    x: 8200,
-    y: 1350,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1524,130 +1662,196 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'CH4',
     fixed: 2,
-    x: 8200,
-    y: 750,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 4,
   },
   {
-    name: 'Concentración de dióxido de carbono almacenada en el tanque V102',
-    variable: 'StorageCO2_V102Concentration',
-    unit: '%',
-    isShown: true,
-    diagramName: 'CO2',
-    fixed: 2,
-    x: 8200,
-    y: 900,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de sulfuro de hidrógeno almacenada en el tanque V102',
-    variable: 'StorageH2S_V102Concentration',
-    unit: 'ppm',
-    isShown: true,
-    diagramName: 'H2S',
-    fixed: 2,
-    x: 8200,
-    y: 1050,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de oxígeno almacenado en el tanque V-102',
-    variable: 'StorageO2_V102Concentration',
-    unit: '%',
-    isShown: true,
-    diagramName: 'O2',
-    fixed: 2,
-    x: 8200,
-    y: 1200,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de hidrógeno almacenado en el tanque V-102',
-    variable: 'StorageH2_V102Concentration',
-    unit: 'ppm',
-    isShown: true,
-    diagramName: 'H2',
-    fixed: 2,
-    x: 8200,
-    y: 1350,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Moles de metano almacenada en tanque V102',
+    name: 'moles de metano almacenada en tanque V102',
     variable: 'StorageCH4_V102moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'CH4',
     fixed: 4,
-    x: 8200,
-    y: 750,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de dióxido de carbono almacenada en tanque V102',
+    name: 'Metano almacenado en volumen normal en tanque V102',
+    variable: 'StorageCO2_V102Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'CO2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V102',
+    variable: 'StorageCO2_V102Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'CO2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V102',
     variable: 'StorageCO2_V102moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'CO2',
     fixed: 4,
-    x: 8200,
-    y: 900,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de sulfuro de hidrógeno almacenada en tanque V102',
+    name: 'Metano almacenado en volumen normal en tanque V102',
+    variable: 'StorageH2S_V102Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V102',
+    variable: 'StorageH2S_V102Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V102',
     variable: 'StorageH2S_V102moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2S',
     fixed: 4,
-    x: 8200,
-    y: 1050,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de oxígeno almacenada en tanque V102',
+    name: 'Metano almacenado en volumen normal en tanque V102',
+    variable: 'StorageO2_V102Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'O2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V102',
+    variable: 'StorageO2_V102Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'O2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V102',
     variable: 'StorageO2_V102moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'O2',
     fixed: 4,
-    x: 8200,
-    y: 1200,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de Hidrógeno almacenada en tanque V102',
+    name: 'Metano almacenado en volumen normal en tanque V102',
+    variable: 'StorageH2_V102Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'H2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V102',
+    variable: 'StorageH2_V102Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'H2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V102',
     variable: 'StorageH2_V102moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2',
     fixed: 4,
-    x: 8200,
-    y: 1350,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de agua en V102',
+    name: 'Metano almacenado en volumen normal en tanque V102',
+    variable: 'StorageNH3_V102Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V102',
+    variable: 'StorageNH3_V102Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V102',
+    variable: 'StorageNH3_V102moles',
+    unit: 'mol',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'moles de agua en V102',
     variable: 'moles_humidity_V102',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2O',
     fixed: 4,
-    x: 8200,
-    y: 1500,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 8,
   },
   {
     name: 'Humedad Relativa del biogás en V102',
@@ -1656,69 +1860,108 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'H2O',
     fixed: 2,
-    x: 8200,
-    y: 1500,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 7,
   },
   {
-    name: 'Energía total almacenada V102',
+    name: 'Energía total almacenada_V102',
     variable: 'StorageEnergy_V102',
     unit: 'Wh',
     isShown: true,
     diagramName: 'Energía',
-    fixed: 4,
-    x: 8200,
-    y: 1650,
-    scientificNotation: true,
-  },
-  {
-    name: 'Biogas Almacenado en volumen normal en el tanque V107',
-    variable: 'StorageBiogasVolumeV107',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'Volumen',
     fixed: 2,
-    x: 8200,
-    y: 4200,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 0,
   },
   {
-    name: 'Biogas Producido en volumen normal por el R101 - V107',
+    name: 'moles de amoniaco adsorbidas',
+    variable: 'ads_NH3_bt',
+    unit: 'mol',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de sulfuro de hidrógeno adsorbidas',
+    variable: 'ads_H2S_bt',
+    unit: 'mol',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moldes de agua adsorbidas',
+    variable: 'ads_H2O_bt',
+    unit: 'mol',
+    isShown: true,
+    diagramName: 'H2O',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Eficiencia de adsorción',
+    variable: 'x_bt',
+    unit: '%',
+    isShown: true,
+    diagramName: 'x',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Volumen normal de biogas acumulado',
     variable: 'AcumBiogasVolumenV107',
     unit: 'NL',
     isShown: true,
-    diagramName: 'Volumen',
+    diagramName: 'Vol',
     fixed: 2,
-    x: 8200,
-    y: 4200,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 2,
   },
   {
-    name: 'Presión de biogas en el tanque V107',
-    variable: 'StorageBiogasPressureV107',
-    unit: 'psi',
+    name: 'Volumen normal de biogas almacenado',
+    variable: 'StorageBiogasVolumeV107',
+    unit: 'NL',
     isShown: true,
-    diagramName: 'Presión',
+    diagramName: 'Vol',
     fixed: 2,
-    x: 8200,
-    y: 4200,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 1,
   },
   {
-    name: 'Presión de biogás acumulada en V107',
+    name: 'Presión de biogás acumulado',
     variable: 'AcumBiogasPressureV107',
     unit: 'psi',
     isShown: true,
-    diagramName: 'Presión',
+    diagramName: 'pres',
     fixed: 2,
-    x: 8200,
-    y: 4200,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 3,
+  },
+  {
+    name: 'Presión de biogás almacenado',
+    variable: 'StorageBiogasPressureV107',
+    unit: 'psi',
+    isShown: true,
+    diagramName: 'pres',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -1726,59 +1969,10 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'NL',
     isShown: true,
     diagramName: 'CH4',
-    fixed: 4,
-    x: 8200,
-    y: 4350,
+    fixed: 2,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Dióxido de carbono almacenado en volumen normal en tanque V107',
-    variable: 'StorageCO2_V107Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'CO2',
-    fixed: 4,
-    x: 8200,
-    y: 4500,
-    scientificNotation: false,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Sulfuro de hidrógeno almacenado en volumen normal en tanque V107',
-    variable: 'StorageH2S_V107Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'H2S',
-    fixed: 4,
-    x: 8200,
-    y: 4650,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Oxígeno almacenado en volumen normal en tanque V107',
-    variable: 'StorageO2_V107Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'O2',
-    fixed: 4,
-    x: 8200,
-    y: 4800,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
-  },
-  {
-    name: 'Hidrógeno almacenado en volumen normal en tanque V107',
-    variable: 'StorageH2_V107Volume',
-    unit: 'NL',
-    isShown: true,
-    diagramName: 'H2',
-    fixed: 4,
-    x: 8200,
-    y: 4950,
-    scientificNotation: true,
-    hasAdditionalCondition: 6,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -1787,130 +1981,196 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'CH4',
     fixed: 2,
-    x: 8200,
-    y: 4350,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 4,
   },
   {
-    name: 'Concentración de dióxido de carbono almacenada en el tanque V107',
-    variable: 'StorageCO2_V107Concentration',
-    unit: '%',
-    isShown: true,
-    diagramName: 'CO2',
-    fixed: 2,
-    x: 8200,
-    y: 4500,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de sulfuro de hidrógeno almacenada en el tanque V107',
-    variable: 'StorageH2S_V107Concentration',
-    unit: 'ppm',
-    isShown: true,
-    diagramName: 'H2S',
-    fixed: 2,
-    x: 8200,
-    y: 4650,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de oxígeno almacenado en el tanque V-101',
-    variable: 'StorageO2_V107Concentration',
-    unit: '%',
-    isShown: true,
-    diagramName: 'O2',
-    fixed: 2,
-    x: 8200,
-    y: 4800,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Concentración de hidrógeno almacenado en el tanque V-101',
-    variable: 'StorageH2_V107Concentration',
-    unit: 'ppm',
-    isShown: true,
-    diagramName: 'H2',
-    fixed: 2,
-    x: 8200,
-    y: 4950,
-    scientificNotation: false,
-    hasAdditionalCondition: 4,
-  },
-  {
-    name: 'Moles de metano almacenada en tanque V107',
+    name: 'moles de metano almacenada en tanque V107',
     variable: 'StorageCH4_V107moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'CH4',
     fixed: 4,
-    x: 8200,
-    y: 4350,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de dióxido de carbono almacenada en tanque V107',
+    name: 'Metano almacenado en volumen normal en tanque V107',
+    variable: 'StorageCO2_V107Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'CO2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V107',
+    variable: 'StorageCO2_V107Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'CO2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V107',
     variable: 'StorageCO2_V107moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'CO2',
     fixed: 4,
-    x: 8200,
-    y: 4500,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de sulfuro de hidrógeno almacenada en tanque V107',
+    name: 'Metano almacenado en volumen normal en tanque V107',
+    variable: 'StorageH2S_V107Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V107',
+    variable: 'StorageH2S_V107Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'H2S',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V107',
     variable: 'StorageH2S_V107moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2S',
     fixed: 4,
-    x: 8200,
-    y: 4650,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de oxígeno almacenada en tanque V107',
+    name: 'Metano almacenado en volumen normal en tanque V107',
+    variable: 'StorageO2_V107Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'O2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V107',
+    variable: 'StorageO2_V107Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'O2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V107',
     variable: 'StorageO2_V107moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'O2',
     fixed: 4,
-    x: 8200,
-    y: 4800,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de Hidrógeno almacenada en tanque V107',
+    name: 'Metano almacenado en volumen normal en tanque V107',
+    variable: 'StorageH2_V107Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'H2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V107',
+    variable: 'StorageH2_V107Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'H2',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V107',
     variable: 'StorageH2_V107moles',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2',
     fixed: 4,
-    x: 8200,
-    y: 4950,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 5,
   },
   {
-    name: 'Moles de agua en V107',
+    name: 'Metano almacenado en volumen normal en tanque V107',
+    variable: 'StorageNH3_V107Volume',
+    unit: 'NL',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de metano almacenada en el tanque V107',
+    variable: 'StorageNH3_V107Concentration',
+    unit: '%',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'moles de metano almacenada en tanque V107',
+    variable: 'StorageNH3_V107moles',
+    unit: 'mol',
+    isShown: true,
+    diagramName: 'NH3',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'moles de agua en V107',
     variable: 'moles_humidity_V107',
     unit: 'mol',
     isShown: true,
     diagramName: 'H2O',
     fixed: 4,
-    x: 8200,
-    y: 5100,
+    x: 0,
+    y: 0,
     scientificNotation: true,
-    hasAdditionalCondition: 8,
   },
   {
     name: 'Humedad Relativa del biogás en V107',
@@ -1919,10 +2179,9 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'H2O',
     fixed: 2,
-    x: 8200,
-    y: 5100,
+    x: 0,
+    y: 0,
     scientificNotation: false,
-    hasAdditionalCondition: 7,
   },
   {
     name: 'Energía total almacenada_V107',
@@ -1930,17 +2189,175 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'Wh',
     isShown: true,
     diagramName: 'Energía',
-    fixed: 4,
-    x: 8200,
-    y: 5250,
-    scientificNotation: true,
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
   },
 ];
 
-export const BIOGAS_MODE2: DiagramVariableType[] = [];
+export const BIOGAS_MODE2: DiagramVariableType[] = [
+  ...BIOGAS_MODE1,
+  {
+    name: 'Flujo volumétrico de la bomba P101',
+    variable: 'Pump101Flow',
+    unit: 'L/h',
+    isShown: true,
+    diagramName: 'Caudal',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+];
 
-export const BIOGAS_MODE3: DiagramVariableType[] = [];
+export const BIOGAS_MODE3: DiagramVariableType[] = [
+  ...BIOGAS_MODE2,
+  {
+    name: 'Velocidad de agitación reactor R102',
+    variable: 'Mix_Velocity_R102',
+    unit: 'RPM',
+    isShown: true,
+    diagramName: 'RPM',
+    fixed: 0,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'pH',
+    variable: 'pH_R102',
+    unit: '',
+    isShown: true,
+    diagramName: 'pH',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Temperatura R102',
+    variable: 'Temp_R102',
+    unit: '°c',
+    isShown: true,
+    diagramName: 'Temperatura',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    variable: 'K_R102',
+    unit: 'Ver columna de lógica',
+    isShown: true,
+    diagramName: 'Ver columna de lógica',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Parámetro cinético energía de activación',
+    variable: 'Ea_R102',
+    unit: 'Ver columna de lógica',
+    isShown: true,
+    diagramName: 'Ver columna de lógica',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás',
+    variable: 'Lambda_R102',
+    unit: 'Ver columna de lógica',
+    isShown: true,
+    diagramName: 'Ver columna de lógica',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Concentración de sólidos volátiles en gSV/L',
+    variable: 'C_sv_R102',
+    unit: 'gSV/L',
+    isShown: true,
+    diagramName: 'Csv',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Concentración de sólidos volátiles en %',
+    variable: 'SV_R102',
+    unit: '%',
+    isShown: true,
+    diagramName: 'SV',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Concentración de sólidos totales en gST/L',
+    variable: 'C_st_R102',
+    unit: 'gST/L',
+    isShown: true,
+    diagramName: 'Cst',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Concentración de sólidos totales en %',
+    variable: 'ST_R102',
+    unit: '%',
+    isShown: true,
+    diagramName: 'ST',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+  {
+    name: 'Carga Orgánica en el reactor R102',
+    variable: 'Organic_Charge_R102',
+    unit: 'gSV/L-dia',
+    isShown: true,
+    diagramName: 'OC',
+    fixed: 4,
+    x: 0,
+    y: 0,
+    scientificNotation: true,
+  },
+  {
+    name: 'Conversión del reactivo límite',
+    variable: 'x_R102',
+    unit: '%',
+    isShown: true,
+    diagramName: 'x',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+];
 
-export const BIOGAS_MODE4: DiagramVariableType[] = [];
-
-export const BIOGAS_MODE5: DiagramVariableType[] = [];
+export const BIOGAS_MODE4_5: DiagramVariableType[] = [
+  ...BIOGAS_MODE3,
+  {
+    name: 'Flujo volumétrico de la bomba P102',
+    variable: 'Pump102Flow',
+    unit: 'L/h',
+    isShown: true,
+    diagramName: 'Caudal',
+    fixed: 2,
+    x: 0,
+    y: 0,
+    scientificNotation: false,
+  },
+];
