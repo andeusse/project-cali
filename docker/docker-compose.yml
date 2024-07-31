@@ -26,7 +26,7 @@ services:
       - laboratorio-default
 
   grafana:
-    image: grafana_base
+    image: grafanabase
     restart: always
     ports:
       - '3000:3000'
@@ -37,9 +37,6 @@ services:
     depends_on:
       - influxdb
     environment:
-      # - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-      # - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-      # - GF_INSTALL_PLUGINS=grafana-clock-panel
       - GF_SECURITY_ALLOW_EMBEDDING=true
     networks:
       - laboratorio-default
@@ -50,7 +47,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - '3001:3000'
+      - '3001:3001'
     depends_on:
       - influxdb
       - grafana
