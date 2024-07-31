@@ -18,8 +18,7 @@ import {
   BIOGAS_MODE1,
   BIOGAS_MODE2,
   BIOGAS_MODE3,
-  BIOGAS_MODE4,
-  BIOGAS_MODE5,
+  BIOGAS_MODE4_5,
   BiogasOutput,
   BiogasParameters,
   DiagramBiogasText,
@@ -70,11 +69,11 @@ const Biogas = () => {
     if (system.inputOperationMode === OperationModeType.Modo3) {
       setDiagramVariables(BIOGAS_MODE3);
     }
-    if (system.inputOperationMode === OperationModeType.Modo4) {
-      setDiagramVariables(BIOGAS_MODE4);
-    }
-    if (system.inputOperationMode === OperationModeType.Modo5) {
-      setDiagramVariables(BIOGAS_MODE5);
+    if (
+      system.inputOperationMode === OperationModeType.Modo4 ||
+      system.inputOperationMode === OperationModeType.Modo5
+    ) {
+      setDiagramVariables(BIOGAS_MODE4_5);
     }
   }, [system.inputOperationMode]);
 
