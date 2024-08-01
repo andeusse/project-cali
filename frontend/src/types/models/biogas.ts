@@ -1295,35 +1295,62 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
     variable: 'K_R101',
-    unit: 'Ver columna de lógica',
+    unit: 'L / s',
     isShown: true,
-    diagramName: 'Ver columna de lógica',
+    diagramName: 'K',
     fixed: 4,
     x: 1200,
     y: 6200,
     scientificNotation: true,
+    hasAdditionalCondition: 0,
+  },
+  {
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    variable: 'K_R101',
+    unit: 'L / gSV',
+    isShown: true,
+    diagramName: 'ym',
+    fixed: 4,
+    x: 1200,
+    y: 6200,
+    scientificNotation: true,
+    hasAdditionalCondition: 1,
   },
   {
     name: 'Parámetro cinético energía de activación',
     variable: 'Ea_R101',
-    unit: 'Ver columna de lógica',
+    unit: 'J / mol',
     isShown: true,
-    diagramName: 'Ver columna de lógica',
+    diagramName: 'Ea',
     fixed: 4,
     x: 1200,
     y: 6350,
     scientificNotation: true,
+    hasAdditionalCondition: 2,
+  },
+  {
+    name: 'Parámetro cinético energía de activación',
+    variable: 'Ea_R101',
+    unit: 'L / gSV-s',
+    isShown: true,
+    diagramName: 'U',
+    fixed: 4,
+    x: 1200,
+    y: 6350,
+    scientificNotation: true,
+    hasAdditionalCondition: 3,
   },
   {
     name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás',
     variable: 'Lambda_R101',
-    unit: 'Ver columna de lógica',
+    unit: 's',
     isShown: true,
-    diagramName: 'Ver columna de lógica',
+    diagramName: 'λ',
     fixed: 4,
     x: 1200,
     y: 6500,
     scientificNotation: true,
+    hasAdditionalCondition: 3,
   },
   {
     name: 'Volumen normal de biogas acumulado',
@@ -1335,6 +1362,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 5,
   },
   {
     name: 'Volumen normal de biogas almacenado',
@@ -1346,6 +1374,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 6,
   },
   {
     name: 'Presión de biogás acumulado',
@@ -1357,6 +1386,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 7,
   },
   {
     name: 'Presión de biogás almacenado',
@@ -1368,6 +1398,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 8,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1379,6 +1410,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 950,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1390,6 +1422,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 950,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V101',
@@ -1401,6 +1434,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 950,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1412,6 +1446,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1100,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1423,6 +1458,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1100,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V101',
@@ -1434,6 +1470,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1100,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1445,6 +1482,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1250,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1456,6 +1494,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1250,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V101',
@@ -1467,6 +1506,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1250,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1478,6 +1518,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1400,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1489,6 +1530,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1400,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V101',
@@ -1500,6 +1542,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1400,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1511,6 +1554,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1550,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1522,6 +1566,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1550,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V101',
@@ -1533,6 +1578,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1550,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V101',
@@ -1544,6 +1590,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1700,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V101',
@@ -1555,6 +1602,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1700,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V101',
@@ -1566,6 +1614,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1700,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'moles de agua en V101',
@@ -1577,6 +1626,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1850,
     scientificNotation: true,
+    hasAdditionalCondition: 12,
   },
   {
     name: 'Humedad Relativa del biogás en V101',
@@ -1588,6 +1638,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 3000,
     y: 1850,
     scientificNotation: false,
+    hasAdditionalCondition: 13,
   },
   {
     name: 'Energía total almacenada_V101',
@@ -1610,6 +1661,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 5,
   },
   {
     name: 'Volumen normal de biogas almacenado',
@@ -1621,6 +1673,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 6,
   },
   {
     name: 'Presión de biogás acumulado',
@@ -1632,6 +1685,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 7,
   },
   {
     name: 'Presión de biogás almacenado',
@@ -1643,6 +1697,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 800,
     scientificNotation: false,
+    hasAdditionalCondition: 8,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1654,6 +1709,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 950,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1665,6 +1721,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 950,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V102',
@@ -1676,6 +1733,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 950,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1687,6 +1745,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1100,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1698,6 +1757,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1100,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V102',
@@ -1709,6 +1769,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1100,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1720,6 +1781,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1250,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1731,6 +1793,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1250,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V102',
@@ -1742,6 +1805,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1250,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1753,6 +1817,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1400,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1764,6 +1829,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1400,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V102',
@@ -1775,6 +1841,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1400,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1786,6 +1853,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1550,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1797,6 +1865,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1550,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V102',
@@ -1808,6 +1877,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1550,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V102',
@@ -1819,6 +1889,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1700,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V102',
@@ -1830,6 +1901,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1700,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V102',
@@ -1841,6 +1913,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1700,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'moles de agua en V102',
@@ -1852,6 +1925,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1850,
     scientificNotation: true,
+    hasAdditionalCondition: 12,
   },
   {
     name: 'Humedad Relativa del biogás en V102',
@@ -1863,6 +1937,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 5400,
     y: 1850,
     scientificNotation: false,
+    hasAdditionalCondition: 13,
   },
   {
     name: 'Energía total almacenada_V102',
@@ -1929,6 +2004,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2500,
     scientificNotation: false,
+    hasAdditionalCondition: 5,
   },
   {
     name: 'Volumen normal de biogas almacenado',
@@ -1940,6 +2016,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2500,
     scientificNotation: false,
+    hasAdditionalCondition: 6,
   },
   {
     name: 'Presión de biogás acumulado',
@@ -1951,6 +2028,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2500,
     scientificNotation: false,
+    hasAdditionalCondition: 7,
   },
   {
     name: 'Presión de biogás almacenado',
@@ -1962,6 +2040,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2500,
     scientificNotation: false,
+    hasAdditionalCondition: 8,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -1973,6 +2052,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2650,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -1984,6 +2064,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2650,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V107',
@@ -1995,6 +2076,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2650,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -2006,6 +2088,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2800,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -2017,6 +2100,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2800,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V107',
@@ -2028,6 +2112,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2800,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -2039,6 +2124,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2950,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -2050,6 +2136,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2950,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V107',
@@ -2061,6 +2148,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 2950,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -2072,6 +2160,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3100,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -2083,6 +2172,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3100,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V107',
@@ -2094,6 +2184,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3100,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -2105,6 +2196,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3250,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -2116,6 +2208,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3250,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V107',
@@ -2127,6 +2220,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3250,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'Metano almacenado en volumen normal en tanque V107',
@@ -2138,6 +2232,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3400,
     scientificNotation: false,
+    hasAdditionalCondition: 9,
   },
   {
     name: 'Concentración de metano almacenada en el tanque V107',
@@ -2149,6 +2244,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3400,
     scientificNotation: false,
+    hasAdditionalCondition: 10,
   },
   {
     name: 'moles de metano almacenada en tanque V107',
@@ -2160,6 +2256,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3400,
     scientificNotation: true,
+    hasAdditionalCondition: 11,
   },
   {
     name: 'moles de agua en V107',
@@ -2171,6 +2268,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3550,
     scientificNotation: true,
+    hasAdditionalCondition: 12,
   },
   {
     name: 'Humedad Relativa del biogás en V107',
@@ -2182,6 +2280,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3550,
     scientificNotation: false,
+    hasAdditionalCondition: 13,
   },
   {
     name: 'Energía total almacenada_V107',
@@ -2249,35 +2348,62 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
   {
     name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
     variable: 'K_R102',
-    unit: 'Ver columna de lógica',
+    unit: 'L / s',
     isShown: true,
-    diagramName: 'Ver columna de lógica',
+    diagramName: 'K',
     fixed: 4,
     x: 4500,
     y: 6200,
     scientificNotation: true,
+    hasAdditionalCondition: 0,
+  },
+  {
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    variable: 'K_R102',
+    unit: 'L / gSV',
+    isShown: true,
+    diagramName: 'ym',
+    fixed: 4,
+    x: 4500,
+    y: 6200,
+    scientificNotation: true,
+    hasAdditionalCondition: 1,
   },
   {
     name: 'Parámetro cinético energía de activación',
     variable: 'Ea_R102',
-    unit: 'Ver columna de lógica',
+    unit: 'J / mol',
     isShown: true,
-    diagramName: 'Ver columna de lógica',
+    diagramName: 'Ea',
     fixed: 4,
     x: 4500,
     y: 6350,
     scientificNotation: true,
+    hasAdditionalCondition: 2,
+  },
+  {
+    name: 'Parámetro cinético energía de activación',
+    variable: 'Ea_R102',
+    unit: 'L / gSV-s',
+    isShown: true,
+    diagramName: 'U',
+    fixed: 4,
+    x: 4500,
+    y: 6350,
+    scientificNotation: true,
+    hasAdditionalCondition: 3,
   },
   {
     name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás',
     variable: 'Lambda_R102',
-    unit: 'Ver columna de lógica',
+    unit: 's',
     isShown: true,
-    diagramName: 'Ver columna de lógica',
+    diagramName: 'λ',
     fixed: 4,
     x: 4500,
     y: 6500,
     scientificNotation: true,
+    hasAdditionalCondition: 3,
   },
   {
     name: 'Concentración de sólidos volátiles en gSV/L',

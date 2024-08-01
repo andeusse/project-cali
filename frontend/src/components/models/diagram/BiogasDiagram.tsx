@@ -5,6 +5,7 @@ import {
   DiagramBiogasUnitType,
   DiagramCompoundType,
   DiagramHumidityType,
+  OperationModelType,
   OperationModeType,
 } from '../../../types/models/biogas';
 import { DiagramVariableType } from '../../../types/models/common';
@@ -21,7 +22,6 @@ import mode4On from '../../../assets/biogas/Mode4On.gif';
 import mode5 from '../../../assets/biogas/Mode5.png';
 import mode5On from '../../../assets/biogas/Mode5On.gif';
 import DiagramVariables from '../common/DiagramVariables';
-import DiagramGrid from './DiagramGrid';
 
 type Props = {
   biogas: BiogasParameters;
@@ -128,19 +128,27 @@ const BiogasDiagram = (props: Props) => {
           variables={diagramVariables}
           additionalCondition={[
             !(
-              biogas.diagramBiogas === DiagramBiogasType.Stored &&
+              biogas.operationModelType === OperationModelType.Arrhenius ||
+              biogas.operationModelType === OperationModelType.ADM1
+            ),
+            !(biogas.operationModelType === OperationModelType.Gompertz),
+            !(biogas.operationModelType === OperationModelType.Arrhenius),
+            !(biogas.operationModelType === OperationModelType.Gompertz),
+            !(biogas.operationModelType === OperationModelType.ADM1),
+            !(
+              biogas.diagramBiogas === DiagramBiogasType.Accumulated &&
               biogas.diagramBiogasUnit === DiagramBiogasUnitType.NormalVolume
             ),
             !(
               biogas.diagramBiogas === DiagramBiogasType.Stored &&
+              biogas.diagramBiogasUnit === DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              biogas.diagramBiogas === DiagramBiogasType.Accumulated &&
               biogas.diagramBiogasUnit === DiagramBiogasUnitType.Pressure
             ),
             !(
-              biogas.diagramBiogas === DiagramBiogasType.Accumulated &&
-              biogas.diagramBiogasUnit === DiagramBiogasUnitType.NormalVolume
-            ),
-            !(
-              biogas.diagramBiogas === DiagramBiogasType.Accumulated &&
+              biogas.diagramBiogas === DiagramBiogasType.Stored &&
               biogas.diagramBiogasUnit === DiagramBiogasUnitType.Pressure
             ),
             !(biogas.diagramCompound === DiagramCompoundType.Concentration),
