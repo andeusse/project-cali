@@ -698,7 +698,7 @@ class BiogasPlantDT:
                 self.FT_P101 = self.FT_P101
                 self.TTO_P101 = self.TTO_P101
                 self.Qset_P101 = self.Qset_P101
-            elif self.OperationModo == "Modo3":
+            elif self.OperationModo in ["Modo3", "Modo4", "Modo5"]:
                 self.Q_P101 = self.SE101
 
 

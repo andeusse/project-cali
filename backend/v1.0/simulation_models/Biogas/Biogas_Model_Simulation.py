@@ -34,6 +34,7 @@ class BiogasPlantSimulation:
         self.TimeCounterPump_P101 = 0
         self.TimeCounterPump_P102 = 0
         #mixers
+        self.TimeCounterMixer_TK100 = 0
         self.TimeCounterMixer_R101 = 0
         self.TimeCounterMixer_R102 = 0
         #Biogas V_101
@@ -173,6 +174,7 @@ class BiogasPlantSimulation:
         self.mol_O2_V101 = 0
         self.mol_H2_V101 = 0
         self.mol_H2O_V101 = 0
+        self.mol_NH3_V101 = 0
 
         #Initial for V102
         self.Pacum_bio_V102 = 0
@@ -182,6 +184,7 @@ class BiogasPlantSimulation:
         self.mol_O2_V102 = 0
         self.mol_H2_V102 = 0
         self.mol_H2O_V102 = 0
+        self.mol_NH3_V102 = 0
 
         #Initial for biogas_treatment
         self.N0_1 = 0
@@ -190,6 +193,13 @@ class BiogasPlantSimulation:
 
         #Initial for V107
         self.Pacum_bio_V107 = 0
+        self.mol_CH4_V107 = 0
+        self.mol_CO2_V107 = 0
+        self.mol_H2S_V107 = 0
+        self.mol_O2_V107 = 0
+        self.mol_H2_V107 = 0
+        self.mol_H2O_V107 = 0
+        self.mol_NH3_V107 = 0
         
         #Propiedades del gas en condiciones estándas
         self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
@@ -343,9 +353,12 @@ class BiogasPlantSimulation:
         self.s_H2S = self.d
         
         self.MW_sustrato = self.n*12.01+self.a*1.01+self.b*16+self.c*14+self.d*32
-        self.Csus_ini = (self.rho*self.SV)/self.MW_sustrato
+        self.Csus_ini = (self.rho*(self.SV/100))/self.MW_sustrato
         self.Csus_ini_ST = (self.rho*self.ST)/self.MW_sustrato
         self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini
+
+        self.Csv = (self.rho*(self.SV/100))
+        self.Cst = (self.rho*(self.ST/100))
     
     def Pump104 (self, TRH=30, FT_P104=5, TTO_P104=10):    
         
@@ -375,11 +388,6 @@ class BiogasPlantSimulation:
 
         if self.TimeCounterPump_P104>=self.TurnOnDailyStep_P104*3600:
             self.TimeCounterPump_P104 = 0
-        
-
-        #testing model    
-        print("Tiempo de encendido de la bomba P_104: "+str(self.TimeCounterPump_P104))
-        print("Caudal de la bomba P_104: "+ str(self.Q_P104))
         
     def Pump101 (self, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
         
@@ -441,6 +449,24 @@ class BiogasPlantSimulation:
 
             if self.TimeCounterPump_P102>=self.TurnOnDailyStep_P102*3600:
                 self.TimeCounterPump_P102 = 0
+
+    def Mixing_TK100 (self, FT_mixin_TK100=5, TTO_mixing_TK100 = 10, RPM_TK100 = 50):
+        self.FT_mixing_TK100 = FT_mixin_TK100
+        self.TTO_mixing_TK100 = TTO_mixing_TK100
+        try:
+            self.TurnOnDailyStep_Mixing_TK100 = 24/self.FT_mixing_TK100
+        except ZeroDivisionError:
+            self.TurnOnDailyStep_Mixing_TK100 = 0
+        
+        if self.TimeCounterMixer_TK100<self.TTO_mixing_TK100:
+            self.RPM_TK100 = RPM_TK100
+        else:
+            self.RPM_TK100 = 0
+        
+        self.TimeCounterMixer_TK100 = self.TimeCounterMixer_TK100 + self.tp
+
+        if self.TimeCounterMixer_TK100>=self.TurnOnDailyStep_Mixing_TK100:
+            self.TimeCounterMixer_TK100 = 0
     
     def Mixing_R101 (self, FT_mixin_R101=5, TTO_mixing_R101 = 10, RPM_R101 = 50):
         self.FT_mixing_R101 = FT_mixin_R101
@@ -453,7 +479,7 @@ class BiogasPlantSimulation:
         if self.TimeCounterMixer_R101<self.TTO_mixing_R101:
             self.RPM_R101 = RPM_R101
         else:
-            self.RPM_R101 = RPM_R101
+            self.RPM_R101 = 0
         
         self.TimeCounterMixer_R101 = self.TimeCounterMixer_R101 + self.tp
 
@@ -474,7 +500,7 @@ class BiogasPlantSimulation:
             if self.TimeCounterMixer_R102<self.TTO_mixing_R102:
                 self.RPM_R102 = RPM_R102
             else:
-                self.RPM_R102 = RPM_R102
+                self.RPM_R102 = 0
             
             self.TimeCounterMixer_R102 = self.TimeCounterMixer_R102 + self.tp
 
@@ -1168,8 +1194,7 @@ class BiogasPlantSimulation:
 
                 self.Csus_ini_R102 = (self.mol_ini_R102 + (self.Q_P101*(self.tp/3600))*self.Csus_ini_R101 - self.mol_sus_stoichometric_R102)/(self.VR2 + (self.Q_P101*self.tp/3600))
                 self.mol_ini_R102 = self.Csus_ini_R102 * self.VR2
-                print(self.mol_ini_R102)
-
+        
                 # Solidos volátiles en porcentaje R102
                 self.SV_R102_p = self.Csus_ini_R102 * self.MW_sustrato / self.rho        #gSV/gT  
                 #Sólidos volátiles en gSV/L R102
@@ -1383,7 +1408,13 @@ class BiogasPlantSimulation:
         
         #Volumen de biogás acumulado
         self.Vnormal_bio_acum_V102 = self.Vnormal_CH4_acum_V102 + self.Vnormal_CO2_acum_V102 + self.Vnormal_H2S_acum_V102 + self.Vnormal_O2_acum_V102 + self.Vnormal_NH3_acum_V102 + self.Vnormal_H2_acum_V102 + self.Vnormal_H2O_acum_V102
-        self.mol_bio_acum_V102 = self.mol_CH4_R102 + self.mol_CO2_R102 + self.mol_H2S_R102 + self.mol_NH3_R102 + self.mol_H2_R102 + self.mol_H2O_R102
+        try:
+            self.mol_bio_acum_V102 = self.Vnormal_bio_acum_V101 / (self.Thermo.Hgases(xCH4 = self.Vnormal_CH4_acum_V102/self.Vnormal_bio_acum_V102, xCO2 = self.Vnormal_CO2_acum_V102/self.Vnormal_bio_acum_V102,
+                                                                                    xH2 = self.Vnormal_H2_acum_V102/self.Vnormal_bio_acum_V102, xH2O = self.Vnormal_H2O_acum_V102/self.Vnormal_bio_acum_V102, 
+                                                                                    xH2S = self.Vnormal_H2S_acum_V102/self.Vnormal_bio_acum_V102, xN2 = 0, xNH3 = self.Vnormal_NH3_acum_V102/self.Vnormal_bio_acum_V102,
+                                                                                    xO2 = self.Vnormal_O2_acum_V102/self.Vnormal_bio_acum_V102)[2])
+        except ZeroDivisionError:
+            self.mol_bio_acum_V102 = 0
 
         #Acumulated biogas Pressure in V_102
         self.Pacum_bio_V102 = ((self.mol_bio_acum_V102 * 8.314 * (self.Temperature + 273.15)) / (self.VG2/1000))/6894.76
@@ -1465,6 +1496,16 @@ class BiogasPlantSimulation:
                 self.mol_H2transfertobiogas_treatment = 0
                 self.mol_H2Otransfertobiogas_treatment = 0
             
+            try:
+                self.C_H2S_Molar = self.mol_CO2_V102/self.Vnormal_bio_V102
+                self.C_NH3_Molar = self.mol_NH3_V102/self.Vnormal_bio_V102
+                self.C_H2O_Molar = self.mol_H2O_V102/self.Vnormal_bio_V102
+            
+            except (ZeroDivisionError, AttributeError):
+                self.C_H2S_Molar = 0
+                self.C_NH3_Molar = 0
+                self.C_H2O_Molar = 0
+
             self.Pstorage_bio_V102 = 0
             self.mol_CH4_V102 = 0
             self.mol_CO2_V102 = 0
@@ -1474,38 +1515,114 @@ class BiogasPlantSimulation:
             self.mol_H2_V102 = 0
             self.mol_H2O_V102 = 0
 
-    def biogas_treatment (self, D1 , D2, D3):
+    def biogas_treatment (self, D1 , D2, D3, W1, W2, W3, L1, L2, L3):
 
-        def Model (N, t, Nai, D):
-            dN_dt = Nai - D*(Nai - N)
-            return dN_dt
+        def Model (N, t, Nai, Dab, W, L):
+            if W == 0:
+                return 0
+            else:
+                dN_dt = Dab / (W*L**2) * (Nai - N) - (N / W)  # Adjusted to be physically meaningful
+                return dN_dt
+                
+        
         t = np.linspace(self.GlobalTime - self.tp, self.GlobalTime, 5)
 
         #Treatment1 hydrogen sulfur
         N0_1 = self.N0_1
-        Nai_1 = self.mol_H2Stransfertobiogas_treatment
-        D_1 = -D1
-        results_1 = odeint(Model, N0_1, t, args=(Nai_1, D_1))
+        Nai_1 = self.C_H2S_Molar
+        D_1 = D1
+        W_1 = W1
+        L_1 = L1
+        results_1 = odeint(Model, N0_1, t, args=(Nai_1, D_1, W_1, L_1))
         self.N0_1 = float(results_1[-1])
         Nout_1 = Nai_1 - (float(results_1[-1] - results_1[0]))
+        self.mol_H2StransfertoV107 = Nout_1
         
         #treatment2 NH3
         N0_2 = self.N0_2
-        Nai_2 = self.mol_NH3transfertobiogas_treatment
-        D_2 = -D2
-        results_2 = odeint(Model, N0_2, t, args=(Nai_2, D_2))
+        Nai_2 = self.C_NH3_Molar
+        D_2 = D2
+        W_2 = W2
+        L_2 = L2
+        results_2 = odeint(Model, N0_2, t, args=(Nai_2, D_2, W_2, L_2))
         self.N0_2 = float(results_2[-1] - results_2[0])
         Nout_2 = Nai_2 - (float(results_2[-1] - results_2[0]))
+        self.mol_NH3transfertoV107 = Nout_2
 
         #Water treatment
         N0_3 = self.N0_3
-        Nai_3 = self.mol_H2Otransfertobiogas_treatment
-        D_3 = -D3
-        results_3 = odeint(Model, N0_3, t, args=(Nai_3, D_3))
+        Nai_3 = self.C_H2O_Molar
+        D_3 = D3
+        W_3 = W3
+        L_3 = L3
+        results_3 = odeint(Model, N0_3, t, args=(Nai_3, D_3, W_3, L_3))
         self.N0_3 = float(results_3[-1])
         Nout_3 = Nai_3 - (float(results_3[-1] - results_3[0]))
+        self.mol_H2OtransfertoV107 = Nout_3
+    
+    def V107 (self):
+        
+        self.Vnormal_CH4_acum_V107 = self.Vmolar_CH4 * (self.mol_CH4transfertobiogas_treatment)
+        self.Vnormal_CO2_acum_V107 = self.Vmolar_CO2 * (self.mol_CO2transfertobiogas_treatment)
+        self.Vnormal_H2S_acum_V107 = self.Vmolar_H2S * (self.mol_H2StransfertoV107)
+        self.Vnormal_O2_acum_V107 = self.Vmolar_O2 * (self.mol_O2transfertobiogas_treatment)
+        self.Vnormal_NH3_acum_V107 = self.Vmolar_NH3 * (self.mol_NH3transfertoV107)
+        self.Vnormal_H2_acum_V107 = self.Vmolar_H2 * (self.mol_H2transfertobiogas_treatment)
+        self.Vnormal_H2O_acum_V107 = self.Vmolar_H2O * (self.mol_H2OtransfertoV107)
 
-        print(Nout_1, Nout_2, Nout_3)
+        self.Vnormal_bio_acum_V107 = self.Vnormal_CH4_acum_V107 + self.Vnormal_CO2_acum_V107 + self.Vnormal_H2S_acum_V107 + self.Vnormal_O2_acum_V107 + self.Vnormal_NH3_acum_V107 + self.Vnormal_H2_acum_V107 + self.Vnormal_H2O_acum_V107
+        try:
+            self.mol_bio_acum_V107 = self.Vnormal_bio_acum_V101 / (self.Thermo.Hgases(xCH4 = self.Vnormal_CH4_acum_V107/self.Vnormal_bio_acum_V107, xCO2 = self.Vnormal_CO2_acum_V107/self.Vnormal_bio_acum_V107,
+                                                                                    xH2 = self.Vnormal_H2_acum_V107/self.Vnormal_bio_acum_V107, xH2O = self.Vnormal_H2O_acum_V107/self.Vnormal_bio_acum_V107, 
+                                                                                    xH2S = self.Vnormal_H2S_acum_V107/self.Vnormal_bio_acum_V107, xN2 = 0, xNH3 = self.Vnormal_NH3_acum_V107/self.Vnormal_bio_acum_V107,
+                                                                                    xO2 = self.Vnormal_O2_acum_V107/self.Vnormal_bio_acum_V107)[2])
+        except ZeroDivisionError:
+            self.mol_bio_acum_V107 = 0
+        
+        #Acumulated biogas Pressure in V107
+        self.Pacum_bio_V107 = ((self.mol_bio_acum_V107 * 8.314 * (self.Temperature + 273.15)) / (self.VG3/1000))/6894.76
+
+         #storage biogas in V102
+        if self.Pstorage_bio_V107 <= 50 and len(self.Operation_Data.index)>1:
+   
+            self.Pstorage_bio_V107 = self.Pstorage_bio_V107 + (self.Operation_Data.Pacum_bio_V107.iloc[-1] - self.Operation_Data.Pacum_bio_V107.iloc[-2])
+            
+            self.mol_CH4_V107 = self.mol_CH4_V107 + self.mol_CH4transfertobiogas_treatment  
+            self.mol_CO2_V107 = self.mol_CO2_V107 + self.mol_CO2transfertobiogas_treatment
+            self.mol_H2S_V107 = self.mol_H2S_V107 + self.mol_H2StransfertoV107    
+            self.mol_O2_V107 = self.mol_O2_V107 + self.mol_O2transfertobiogas_treatment 
+            self.mol_NH3_V107 = self.mol_NH3_V107 + self.mol_NH3transfertoV107
+            self.mol_H2_V107 = self.mol_H2_V107 + self.mol_H2transfertobiogas_treatment
+            self.mol_H2O_V107 = self.mol_H2O_V107 + self.mol_H2OtransfertoV107 
+
+            self.Vnormal_CH4_V102 = self.mol_CH4_V102 * self.Vmolar_CH4
+            self.Vnormal_CO2_V102 = self.mol_CO2_V102 * self.Vmolar_CO2
+            self.Vnormal_H2S_V102 = self.mol_H2S_V102 * self.Vmolar_H2S
+            self.Vnormal_O2_V102 = self.mol_O2_V102 * self.Vmolar_O2
+            self.Vnormal_NH3_V102 = self.mol_NH3_V102 * self.Vmolar_NH3
+            self.Vnormal_H2_V102 = self.mol_H2_V102 * self.Vmolar_H2
+            self.Vnormal_H2O_V102 = self.mol_H2O_V102 * self.Vmolar_H2O
+            self.Vnormal_bio_V102 = self.Vnormal_CH4_V102 + self.Vnormal_CO2_V102 + self.Vnormal_H2S_V102 + self.Vnormal_O2_V102 + self.Vnormal_NH3_V102 + self.Vnormal_H2_V102 + self.Vnormal_H2O_V102
+
+            try:
+                self.x_CH4_V102 = self.Vnormal_CH4_V102/self.Vnormal_bio_V102
+                self.x_CO2_V102 = self.Vnormal_CO2_V102/self.Vnormal_bio_V102
+                self.x_H2S_V102 = self.Vnormal_H2S_V102/self.Vnormal_bio_V102
+                self.x_O2_V102 = self.Vnormal_O2_V102/self.Vnormal_bio_V102 
+                self.x_NH3_V102 = self.Vnormal_NH3_V102/self.Vnormal_bio_V102   
+                self.x_H2_V102 = self.Vnormal_H2_V102/self.Vnormal_bio_V102 
+                self.RH_V102 = self.Thermo.BiogasRelativeHumidity(self.mol_H2O_V101, self.Vnormal_bio_V101, self.Temperature)
+            except ZeroDivisionError:
+                self.x_CH4_V102 = 0
+                self.x_CO2_V102 = 0
+                self.x_H2S_V102 = 0
+                self.x_O2_V102 = 0
+                self.x_NH3_V102 = 0   
+                self.x_H2_V102 = 0
+                self.RH_V102 = 0
+            
+
+
 
 
         

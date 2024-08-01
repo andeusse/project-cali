@@ -74,7 +74,7 @@ class BiogasModelTrain:
             variables = variables + ["mol_sus_int_ini_R102",
                                      "Csus_ini_R102",
                                      "Q_P101",
-                                     "Q_P¨102"
+                                     "Q_P102",
                                      "Temp_R102"]
     
         self.Data_set = DataBase[variables].tail(self.points)
@@ -109,21 +109,17 @@ class BiogasModelTrain:
             def objective(params):
                 K, Ea = params
                 total_squared_diff = 0
-                for i in range (len(temperatures)):
-                    T = temperatures[i]
-                    Q = Qi[i]
-                    Csus_ini = Csus_ini_i[i]
-                    T_func = lambda t: np.interp(t, self.t_train, temperatures)
-                    Q_func = lambda t: np.interp(t, self.t_train, Qi)
-                    Csus_ini_func = lambda t: np.interp(t, self.t_train, Csus_ini_i)
-                    # Integrate the model with the current values of K and Ea
-                    if self.Model== "Arrhenius":
-                        C_model = odeint(model_Arrehenius, y0, t, args=(K, Ea, VR, T_func, Q_func, Csus_ini_func)).flatten()
-                    elif self.Model == "ADM1":
-                        C_model = odeint(model_ADM1, y0, t, args=(K, VR, T_func, Q_func, Csus_ini_func)).flatten()
-                    # Calculate the sum of squared differences for this temperature
-                    squared_diff = np.sum((C_exp - C_model) ** 2)
-                    total_squared_diff += squared_diff
+                T_func = lambda t: np.interp(t, self.t_train, temperatures)
+                Q_func = lambda t: np.interp(t, self.t_train, Qi)
+                Csus_ini_func = lambda t: np.interp(t, self.t_train, Csus_ini_i)
+                # Integrate the model with the current values of K and Ea
+                if self.Model== "Arrhenius":
+                    C_model = odeint(model_Arrehenius, y0, t, args=(K, Ea, VR, T_func, Q_func, Csus_ini_func)).flatten()
+                elif self.Model == "ADM1":
+                    C_model = odeint(model_ADM1, y0, t, args=(K, VR, T_func, Q_func, Csus_ini_func)).flatten()
+                # Calculate the sum of squared differences for this temperature
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                total_squared_diff += squared_diff
                 return total_squared_diff
             
             # Perform the optimization
@@ -169,9 +165,9 @@ class BiogasModelTrain:
                     if self.Model == "Arrhenius": self.Eaini_R102 = self.Ea_R102
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
-                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
+                TE102_train = (self.train_set.Temp_R102 + 273.15).tolist()
                 Q_in_R102 = (self.train_set.Q_P101/60).tolist()
-                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
+                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini_i=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
                 
             elif self.OperationMode == "Modo4":
                 #R_101 Conditions
@@ -184,9 +180,9 @@ class BiogasModelTrain:
                     if self.Model == "Arrhenius": self.Eaini_R102 = self.Ea_R102
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
-                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
+                TE102_train = (self.train_set.Temp_R102 + 273.15).tolist()
                 Q_in_R102 = (self.train_set.Q_P101/60).tolist()
-                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
+                self.Optimization_R102 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini_i=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
                 self.K_R102 = float(self.Optimization_R102.x[0])
                 if self.Model == "Arrhenius": self.Ea_R102 = float(self.Optimization_R102.x[1])
 
@@ -201,10 +197,10 @@ class BiogasModelTrain:
                     if self.Model == "Arrhenius": self.Eaini_R102 = self.Ea_R102
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
-                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
+                TE102_train = (self.train_set.Temp_R102 + 273.15).tolist()
                 Q_in_R102 = ((self.train_set.Q_P101 + self.train_set.Q_P102)/60).tolist()
                 Csus_in_R102 = (self.train_data.Csus_ini_R101 + self.train_data.Csus_ini_R102).tolist()
-                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_in_R102, K = self.Kini_R102, Ea = self.Eaini_R102) 
+                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini_i=Csus_in_R102, K = self.Kini_R102, Ea = self.Eaini_R102) 
 
             #R_101 solution    
             self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R101, y0 = Csus_exp_train_R101[0], VR = self.VR1, temperatures=TE101_train, Qi=Q_in_R101, Csus_ini_i=Csus_in_R101, K = self.Kini_R101, Ea = self.Eaini_R101) 
