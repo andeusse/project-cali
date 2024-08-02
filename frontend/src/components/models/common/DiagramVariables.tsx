@@ -25,10 +25,13 @@ const DiagramVariables = <T,>(props: Props<T>) => {
           return null;
 
         let printValue: string = '-';
-        if (data && typeof data[v.variable as keyof T] === 'number') {
-          printValue = (data[v.variable as keyof T] as number).toFixed(v.fixed);
-        } else if (data && typeof data[v.variable as keyof T] === 'boolean') {
-          printValue = (data[v.variable as keyof T] as boolean) ? 'On' : 'Off';
+        const value = data[v.variable as keyof T];
+        if (data && typeof value === 'number' && !v.scientificNotation) {
+          printValue = (value as number).toFixed(v.fixed);
+        } else if (data && typeof value === 'number' && v.scientificNotation) {
+          printValue = (value as number).toExponential(v.fixed);
+        } else if (data && typeof value === 'boolean') {
+          printValue = (value as boolean) ? 'On' : 'Off';
         }
         return (
           <g key={v.variable}>

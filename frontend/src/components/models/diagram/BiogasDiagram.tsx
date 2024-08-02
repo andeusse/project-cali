@@ -151,11 +151,11 @@ const BiogasDiagram = (props: Props) => {
               biogas.diagramBiogas === DiagramBiogasType.Stored &&
               biogas.diagramBiogasUnit === DiagramBiogasUnitType.Pressure
             ),
+            !(biogas.diagramCompound === DiagramCompoundType.PartialVolume),
             !(biogas.diagramCompound === DiagramCompoundType.Concentration),
             !(biogas.diagramCompound === DiagramCompoundType.Moles),
-            !(biogas.diagramCompound === DiagramCompoundType.PartialVolume),
-            !(biogas.diagramHumidity === DiagramHumidityType.Relative),
             !(biogas.diagramHumidity === DiagramHumidityType.Moles),
+            !(biogas.diagramHumidity === DiagramHumidityType.Relative),
           ]}
           fontSize={80}
         ></DiagramVariables>
