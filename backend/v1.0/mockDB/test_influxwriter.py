@@ -1,10 +1,17 @@
 import os
 import sys
 import inspect
+from dotenv import load_dotenv
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
+load_dotenv('v1.0\.env')
+DB_IP = os.getenv('DB_IP')
+DB_Port = os.getenv('DB_Port')
+DB_Bucket = os.getenv('DB_Bucket')
+DB_Organization = os.getenv('DB_Organization')
+DB_Token = os.getenv('DB_Token')
 
 from tools import DBManager
 import pandas as pd
@@ -13,12 +20,9 @@ from datetime import datetime
 import random
 import numpy as np
 
-database_df = pd.read_excel('v1.0\mockDB\Registros_Modbus.xlsx', sheet_name = 'ConexionDB')
 testValues_dfs = pd.read_excel('v1.0\mockDB\Devices_test.xlsx', sheet_name = None)
 
-# 0:Eros    1:Daniel     2:Eusse     3:Checho
-database_index = 0
-influxDB = DBManager.InfluxDBmodel(server = 'http://' + str(database_df['IP'][database_index]) + ':' +  str(database_df['Port'][database_index]) + '/', org = database_df['Organization'][database_index], bucket = database_df['Bucket'][database_index], token = str(database_df['Token'][database_index]))
+influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
 msg = influxDB.InfluxDBconnection()
 
 

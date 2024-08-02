@@ -4,24 +4,26 @@ from simulation_models import TwinPVWF
 import pandas as pd
 from utils import ExcelReader
 from utils import InfluxDbConnection
+from dotenv import load_dotenv
+import os
 
 class Solar(Resource):
   def post(self):
     data = request.get_json()
+    load_dotenv('v1.0\.env')
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
     solarWind = {}
 
     if not data["inputOfflineOperation"]:
-      excelReader = ExcelReader()
-      excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
-      database_dic = excelReader.data
-      database_df = database_dic['ConexionDB']
       values_df = pd.DataFrame(columns=["field", "Value"])
       
 
       influxDB_Connection = InfluxDbConnection()
-      # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2], checho = [3]
-      db = 0
-      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
+      influxDB_Connection.createConnection(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
       influxDB = influxDB_Connection.data
 
       connectionState = influxDB.InfluxDBconnection()
