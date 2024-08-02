@@ -8,4 +8,4 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # start app
-CMD ["python", "test_collector.py"]
+CMD ["python", "Collector.py"]
