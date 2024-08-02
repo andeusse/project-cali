@@ -14,7 +14,7 @@ class BiogasModelTrain:
         self.OperationMode = OperationMode
         self.Model = Model
     
-        if self.OperationMode == 1 or self.OperationMode == 2:
+        if self.OperationMode == "Modo1" or self.OperationMode == "Modo2":
             self.VR1 = VR1
             if Model == "Gompertz":
                 self.ymini_R101 = A_R101
@@ -28,7 +28,7 @@ class BiogasModelTrain:
             elif Model == "ADM1":
                 self.Kini_R101 = A_R101
                 variables = ["timestamp", "K_R101"]
-        elif self.OperationMode == 3 or self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationMode == "Modo3" or self.OperationMode == "Modo4" or self.OperationMode == "Modo5":
             self.VR1 = VR1
             self.VR2 = VR2
             if Model == "Gompertz":
@@ -56,24 +56,25 @@ class BiogasModelTrain:
         
         variables = ["timestamp", 
                      "mol_sus_int_ini_R101",
+                     "Csus_ini",
                      "Csus_ini_R101",
                      "Q_P104",
                      "Temp_R101"]
         
-        if self.OperationMode == 2:
+        if self.OperationMode == "Modo2":
             variables.append("Q_P101")
             
-        elif self.OperationMode == 3:
+        elif self.OperationMode == "Modo3":
             variables = variables + ["mol_sus_int_ini_R102",
                                      "Csus_ini_R102",
                                      "Q_P101",
                                      "Temp_R102"]
 
-        elif self.OperationMode == 4 or self.OperationMode == 5:
+        elif self.OperationMode == "Modo4" or self.OperationMode == "Modo5":
             variables = variables + ["mol_sus_int_ini_R102",
                                      "Csus_ini_R102",
                                      "Q_P101",
-                                     "Q_P¨102"
+                                     "Q_P102",
                                      "Temp_R102"]
     
         self.Data_set = DataBase[variables].tail(self.points)
@@ -108,21 +109,17 @@ class BiogasModelTrain:
             def objective(params):
                 K, Ea = params
                 total_squared_diff = 0
-                for i in range (len(temperatures)):
-                    T = temperatures[i]
-                    Q = Qi[i]
-                    Csus_ini = Csus_ini_i[i]
-                    T_func = lambda t: np.interp(t, self.t_train, temperatures)
-                    Q_func = lambda t: np.interp(t, self.t_train, Qi)
-                    Csus_ini_func = lambda t: np.interp(t, self.t_train, Csus_ini_i)
-                    # Integrate the model with the current values of K and Ea
-                    if self.Model== "Arrhenius":
-                        C_model = odeint(model_Arrehenius, y0, t, args=(K, Ea, VR, T_func, Q_func, Csus_ini_func)).flatten()
-                    elif self.Model == "ADM1":
-                        C_model = odeint(model_ADM1, y0, t, args=(K, VR, T_func, Q_func, Csus_ini_func)).flatten()
-                    # Calculate the sum of squared differences for this temperature
-                    squared_diff = np.sum((C_exp - C_model) ** 2)
-                    total_squared_diff += squared_diff
+                T_func = lambda t: np.interp(t, self.t_train, temperatures)
+                Q_func = lambda t: np.interp(t, self.t_train, Qi)
+                Csus_ini_func = lambda t: np.interp(t, self.t_train, Csus_ini_i)
+                # Integrate the model with the current values of K and Ea
+                if self.Model== "Arrhenius":
+                    C_model = odeint(model_Arrehenius, y0, t, args=(K, Ea, VR, T_func, Q_func, Csus_ini_func)).flatten()
+                elif self.Model == "ADM1":
+                    C_model = odeint(model_ADM1, y0, t, args=(K, VR, T_func, Q_func, Csus_ini_func)).flatten()
+                # Calculate the sum of squared differences for this temperature
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                total_squared_diff += squared_diff
                 return total_squared_diff
             
             # Perform the optimization
@@ -147,17 +144,17 @@ class BiogasModelTrain:
             Csus_exp_train_R101 = self.train_set.Csus_ini_R101.tolist()
             TE101_train = (self.train_set.Temp_R101 + 273.15).tolist()
             
-            if self.OperationMode == 1:
+            if self.OperationMode == "Modo1":
                 #R_101 Conditions
                 Csus_in_R101 = self.train_set.Csus_ini.tolist()
                 Q_in_R101 = (self.train_set.Q_P104/60).tolist()
             
-            elif self.OperationMode == 2:
+            elif self.OperationMode == "Modo2":
                 #R_101 Conditions
                 Csus_in_R101 = (self.train_set.Csus_ini + self.train_set.Csus_ini_R101).tolist()
                 Q_in_R101 = ((self.train_set.Q_P104 + self.train_set.Q_P101)/60).tolist()
 
-            elif self.OperationMode == 3:
+            elif self.OperationMode == "Modo3":
                 #R_101 Conditions
                 Csus_in_R101 = self.train_set.Csus_ini.tolist()
                 Q_in_R101 = (self.train_set.Q_P104/60).tolist()
@@ -168,11 +165,11 @@ class BiogasModelTrain:
                     if self.Model == "Arrhenius": self.Eaini_R102 = self.Ea_R102
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
-                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
+                TE102_train = (self.train_set.Temp_R102 + 273.15).tolist()
                 Q_in_R102 = (self.train_set.Q_P101/60).tolist()
-                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
+                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini_i=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
                 
-            elif self.OperationMode == 4:
+            elif self.OperationMode == "Modo4":
                 #R_101 Conditions
                 Csus_in_R101 = (self.train_set.Csus_ini + self.train_set.Csus_ini_R102).tolist()
                 Q_in_R101 = ((self.train_set.Q_P104 + self.train_set.Q_P102)/60).tolist
@@ -183,13 +180,13 @@ class BiogasModelTrain:
                     if self.Model == "Arrhenius": self.Eaini_R102 = self.Ea_R102
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
-                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
+                TE102_train = (self.train_set.Temp_R102 + 273.15).tolist()
                 Q_in_R102 = (self.train_set.Q_P101/60).tolist()
-                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
+                self.Optimization_R102 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini_i=Csus_exp_train_R101, K = self.Kini_R102, Ea = self.Eaini_R102) 
                 self.K_R102 = float(self.Optimization_R102.x[0])
                 if self.Model == "Arrhenius": self.Ea_R102 = float(self.Optimization_R102.x[1])
 
-            elif self.OperationMode == 5:
+            elif self.OperationMode == "Modo5":
                 #R_101 Conditions
                 Csus_in_R101 = (self.train_set.Csus_ini).tolist()
                 Q_in_R101 = (self.train_set.Q_P104/60).tolist
@@ -200,10 +197,10 @@ class BiogasModelTrain:
                     if self.Model == "Arrhenius": self.Eaini_R102 = self.Ea_R102
 
                 Csus_exp_train_R102 = self.train_set.Csus_ini_R102.tolist() 
-                TE102_train = (self.train_set.Temp_102 + 273.15).tolist()
+                TE102_train = (self.train_set.Temp_R102 + 273.15).tolist()
                 Q_in_R102 = ((self.train_set.Q_P101 + self.train_set.Q_P102)/60).tolist()
                 Csus_in_R102 = (self.train_data.Csus_ini_R101 + self.train_data.Csus_ini_R102).tolist()
-                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini=Csus_in_R102, K = self.Kini_R102, Ea = self.Eaini_R102) 
+                self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R102, y0 = Csus_exp_train_R102[0], VR = self.VR2, temperatures=TE102_train, Qi=Q_in_R102, Csus_ini_i=Csus_in_R102, K = self.Kini_R102, Ea = self.Eaini_R102) 
 
             #R_101 solution    
             self.Optimization_R101 = Optimization(t = self.t_train, C_exp=Csus_exp_train_R101, y0 = Csus_exp_train_R101[0], VR = self.VR1, temperatures=TE101_train, Qi=Q_in_R101, Csus_ini_i=Csus_in_R101, K = self.Kini_R101, Ea = self.Eaini_R101) 
@@ -221,7 +218,7 @@ class BiogasModelTrain:
             self.Optimization_R101 = minimize(Optimization_Gompertz, Initial_values_R101, args=(self.t_train, y_exp_R101), method = 'Nelder-Mead')
             self.ym_R101, self.U_R101, self.L_R101 = self.Optimization_R101.x
 
-            if self.OperationMode in [3, 4, 5]:
+            if self.OperationMode in ["Modo3", "Modo4", "Modo5"]:
                 if len (self.train_data)>0:
                     self.ymini_R102 = self.ym_R102
                     self.Uini_R102 = self.U_R102
@@ -234,7 +231,7 @@ class BiogasModelTrain:
      
     def StorageData (self):
         self.timestamp = datetime.now()
-        if self.OperationMode == 1 or self.OperationMode == 2:
+        if self.OperationMode == "Modo1" or self.OperationMode == "Modo2":
             if self.Model == "Gompertz":
                 new_row = pd.DataFrame({"timestamp": [self.timestamp],
                                     "ym_R101" : [self.ym_R101],
@@ -250,7 +247,7 @@ class BiogasModelTrain:
                 new_row = pd.DataFrame({"timestamp": [self.timestamp],
                                     "K_R101" : [self.K_R101]})
         
-        elif self.OperationMode == 3 or self.OperationMode == 4 or self.OperationMode == 5: 
+        elif self.OperationMode == "Modo3" or self.OperationMode == "Modo4" or self.OperationMode == "Modo5": 
             if self.Model == "Gompertz":
                 new_row = pd.DataFrame({"timestamp": [self.timestamp],
                                         "ym_R101" : [self.ym_R101],

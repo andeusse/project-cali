@@ -2,32 +2,33 @@ from flask import request
 from flask_restful import Resource
 from simulation_models import TwinHydro
 import pandas as pd
-from utils import ExcelReader
 from utils import InfluxDbConnection
+from dotenv import load_dotenv
+import os
 
 class Turbine(Resource):
   def post(self):
     data = request.get_json()
+    load_dotenv('v1.0\.env')
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
     turbine = {}
 
     if not data["inputOfflineOperation"]:
-      excelReader = ExcelReader()
-      excelReader.read_excel('./v1.0/tools/DB_Mapping.xlsx', None)
-      database_dic = excelReader.data
-      database_df = database_dic['ConexionDB']
       values_df = pd.DataFrame(columns=["field", "Value"])
 
       influxDB_Connection = InfluxDbConnection()
-      # Cambiar datos de conexión DB según corresponda en el excel. Eros = [0], Daniel = [1], Eusse = [2], checho = [3]
-      db = 1
-      influxDB_Connection.createConnection(server = 'http://' + str(database_df['IP'][db]) + ':' +  str(database_df['Port'][db]) + '/', org = database_df['Organization'][db], bucket = database_df['Bucket'][db], token = str(database_df['Token'][db]))
+      influxDB_Connection.createConnection(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
       influxDB = influxDB_Connection.data
 
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
-      query = influxDB.QueryCreator(measurement='Módulo de turbinas', type=1)
+      query = influxDB.QueryCreator(measurement='Turbinas', type=1)
       values_df_temp = influxDB.InfluxDBreader(query)
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
@@ -36,10 +37,10 @@ class Turbine(Resource):
 
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
-    inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT001'],2)) * 9.8064 # mH2O to kPa conversion
-    inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FIT001'],2)
-    inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW001'],2)
-    inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP001'],2)
+    inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
+    inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FT-001'],2)
+    inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
+    inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     
     turbine["inputActivePower"] = inputActivePower
@@ -49,6 +50,7 @@ class Turbine(Resource):
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
     chargeCycleInitialSOC = data['simulatedChargeCycleInitialSOC'] if 'simulatedChargeCycleInitialSOC' in data else data["battery"]["stateOfCharge"]["value"]
     simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else True
+    sinkLoadMode = data['sinkLoadMode']
     if "simulatedSinkLoadState" in data:
       simulatedSinkLoadState = data["simulatedSinkLoadState"]
     elif data["controller"]["sinkLoadInitialState"] == "Apagada":
@@ -72,21 +74,22 @@ class Turbine(Resource):
 
     if not data["inputOfflineOperation"]:
       if data["turbineType"] == "Pelton":
-        T_bat = round(values_df["Value"]['TE003'],2)
-        P_h_meas = round(values_df["Value"]['PG001'],2)
-        P_CC_meas = round(values_df["Value"]['PB001'],2)
-        V_t = round(values_df["Value"]['VG001'],2)
-        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB001'],2)
+        T_bat = round(values_df["Value"]['TE-003'],2)
+        P_h_meas = round(values_df["Value"]['PG-001'],2)
+        P_CC_meas = round(values_df["Value"]['PC-001'],2)
+        V_t = round(values_df["Value"]['VG-001'],2)
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB-001'],2)
+        simulatedSinkLoadState = bool(int(values_df["Value"]['AUX-1001']))
       else:
-        T_bat = round(values_df["Value"]['TE004'],2)
-        P_h_meas = round(values_df["Value"]['PG002'],2)
-        P_CC_meas = round(values_df["Value"]['PB002'],2)
-        V_t = round(values_df["Value"]['VG002'],2)
-        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB002'],2)
+        T_bat = round(values_df["Value"]['TE-004'],2)
+        P_h_meas = round(values_df["Value"]['PG-002'],2)
+        P_CC_meas = round(values_df["Value"]['PC-002'],2)
+        V_t = round(values_df["Value"]['VG-002'],2)
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB-002'],2)
+        simulatedSinkLoadState = bool(int(values_df["Value"]['AUX-1002']))
 
-      V_CA = round(values_df["Value"]['VAC001'],2)
-      simulatedSinkLoadState = bool(int(values_df["Value"]['ED001']))
-      simulatedInverterState = bool(int(values_df["Value"]['EI001']))
+      V_CA = round(values_df["Value"]['VAC-002'],2)
+      simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
 
       if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 9.8064, 2) # kPa to mH2O conversion
       if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow, 2)
@@ -135,7 +138,7 @@ class Turbine(Resource):
           simulatedDirectCurrentVoltage = 24.0
 
     results = twinHydro.twinOutput(chargeCycleInitialSOC, batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
-                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
+                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, sinkLoadMode, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
 
     turbine["turbinePower"] = P_h

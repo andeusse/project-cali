@@ -238,6 +238,22 @@ class ThermoProperties:
 
          return self.AH
     
+    def BiogasRelativeHumidity (self, nH2O, VnormalTotal, T):
+         
+         self.nH2O = nH2O
+         self.Vnormal = VnormalTotal
+         self.AH = self.nH2O/self.Vnormal
+         self.T = T
+
+         A = 8.140191
+         B = 1810.94
+         C = 244.485
+
+         self.P_sat = 10**(A - B/(self.T + C))
+         self.RH = (self.AH * self.P_sat)/(461.5 * self.T * 100)
+
+         return self.RH
+
     def LHV (self, molCH4, molCO2, molH2S, molO2, molH2):
          
         molT = molCH4 + molCO2 + molH2S + molO2 + molH2
