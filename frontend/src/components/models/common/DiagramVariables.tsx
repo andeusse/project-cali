@@ -25,7 +25,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
           return null;
 
         let printValue: string = '-';
-        const value = data[v.variable as keyof T];
+        const value = data ? data[v.variable as keyof T] : null;
         if (data && typeof value === 'number' && !v.scientificNotation) {
           printValue = (value as number).toFixed(v.fixed);
         } else if (data && typeof value === 'number' && v.scientificNotation) {
