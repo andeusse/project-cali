@@ -213,11 +213,16 @@ class Biogas(Resource):
       Biogas_Plant.Pump102(FT_P102=biogas_input["FT_P102"], TTO_P102=biogas_input["TTO_P102"], Q_P102=biogas_input["Q_P102"])
       Biogas_Plant.Mixing_TK100(FT_mixin_TK100 = biogas_input["FT_mixing_TK100"], TTO_mixing_TK100 = biogas_input["TTO_mixing_TK100"], RPM_TK100 = biogas_input["RPM_TK100"])
       Biogas_Plant.Mixing_R101(FT_mixin_R101 = biogas_input["FT_mixing_R101"], TTO_mixing_R101 = biogas_input["TTO_mixing_R101"], RPM_R101 = biogas_input["RPM_R101"])
-      Biogas_Plant.Mixing_R102(FT_mixin_R102 = biogas_input["FT_mixing_R102"], TTO_mixing_R102=10, RPM_R102=50)
+      Biogas_Plant.Mixing_R102(FT_mixin_R102 = biogas_input["FT_mixing_R102"], TTO_mixing_R102=biogas_input["TTO_mixing_R102"], RPM_R102=biogas_input["RPM_R102"])
       Biogas_Plant.Data_simulation(Temperature_R101 = biogas_input["Temperature_R101"], Temperature_R102 = biogas_input["Temperature_R102"], pH_R101 = biogas_input["pH_R101"], pH_R102 = biogas_input["pH_R102"])
       Biogas_Plant.ReactorSimulation(Model = biogas_input["OperationModel"], A_R101 = biogas_input["A_R101"], B_R101 = biogas_input["B_R101"], C_R101 = biogas_input["C_R101"], 
                                      A_R102 = biogas_input["A_R102"], B_R102 = biogas_input["B_R102"], C_R102 = biogas_input["C_R102"])
       Biogas_Plant.V101()
+      Biogas_Plant.V102()
+      Biogas_Plant.Biogas_treatment(D1 = biogas_input["D1"], W1 = biogas_input["W1"], L1 = biogas_input["L1"], 
+                                    D2 = biogas_input["D2"], W2 = biogas_input["W2"], L2 = biogas_input["L2"],
+                                    D3 = biogas_input["D3"], W3 = biogas_input["W3"], L3 = biogas_input["L3"])
+      Biogas_Plant.V107()
 
       #Resultados del análisis elemental
       biogas_output["n"] = Biogas_Plant.n
@@ -242,7 +247,7 @@ class Biogas(Resource):
       biogas_output["SV_R101"] = Biogas_Plant.SV_R101_p
       biogas_output["C_st_R101"] = Biogas_Plant.ST_R101/100*Biogas_Plant.rho
       biogas_output["ST_R101"] = Biogas_Plant.ST_R101
-      biogas_output["organic_Charge_R101"] = float(Biogas_Plant.Organic_charge_R101)  #Revisar con eusse
+      biogas_output["Organic_Charge_R101"] = float(Biogas_Plant.Organic_charge_R101)  #Revisar con eusse
       biogas_output["pH_R101"] = Biogas_Plant.pH_R101
       biogas_output["Temp_R101"] = Biogas_Plant.Temp_R101
       biogas_output["x_R101"] = Biogas_Plant.x_R101 *100
@@ -271,7 +276,7 @@ class Biogas(Resource):
         biogas_output["SV_R102"] = Biogas_Plant.ST_R102
         biogas_output["C-st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
-        biogas_output["organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
+        biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
         biogas_output["x_R102"] = Biogas_Plant.X_R102 *100
 
         if biogas_input["OperationModel"] == "Arrhenius":  # revisar con eusse
@@ -298,7 +303,7 @@ class Biogas(Resource):
         biogas_output["SV_R102"] = Biogas_Plant.ST_R102
         biogas_output["C_st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
-        biogas_output["organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
+        biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
         biogas_output["x_R102"] = Biogas_Plant.x_R102 * 100
 
         if biogas_input["OperationModel"] == "Arrhenius":  # revisar con eusse
@@ -353,6 +358,99 @@ class Biogas(Resource):
 
       #Energía
       biogas_output["StorageEnergy_V101"] = Biogas_Plant.Energy_V101/3600
+
+      #V102
+      biogas_output["AcumBiogasVolumenV102"] = Biogas_Plant.Vnormal_bio_acum_V102
+      biogas_output["StorageBiogasVolumeV102"] = Biogas_Plant.Vnormal_bio_V102
+      biogas_output["AcumBiogasPressureV102"] = Biogas_Plant.Pacum_bio_V102
+      biogas_output["StorageBiogasPressureV102"] = Biogas_Plant.Pstorage_bio_V102
+
+      ## Metano
+      biogas_output["StorageCH4_V102Volume"] = Biogas_Plant.Vnormal_CH4_V102
+      biogas_output["StorageCH4_V102Concentration"] = Biogas_Plant.x_CH4_V102*100
+      biogas_output["StorageCH4_V102moles"] = Biogas_Plant.mol_CH4_V102
+
+      ## Dióxido de carbono
+      biogas_output["StorageCO2_V102Volume"] = Biogas_Plant.Vnormal_CO2_V102
+      biogas_output["StorageCO2_V102Concentration"] = Biogas_Plant.x_CO2_V102*100
+      biogas_output["StorageCO2_V102moles"] = Biogas_Plant.mol_CO2_V102
+
+      ## Sulfuro de de hidrógeno
+      biogas_output["StorageH2S_V102Volume"] = Biogas_Plant.Vnormal_H2S_V102
+      biogas_output["StorageH2S_V102Concentration"] = Biogas_Plant.x_H2S_V102*1000000
+      biogas_output["StorageH2S_V102moles"] = Biogas_Plant.mol_H2S_V102
+
+      ## Oxígeno
+      biogas_output["StorageO2_V102Volume"] = Biogas_Plant.Vnormal_O2_V102
+      biogas_output["StorageO2_V102Concentration"] = Biogas_Plant.x_O2_V102*100
+      biogas_output["StorageO2_V102moles"] = Biogas_Plant.mol_O2_V102
+
+      ## Amonio
+      biogas_output["StorageNH3_V102Volume"] = Biogas_Plant.Vnormal_NH3_V102
+      biogas_output["StorageNH3_V102Concentration"] = Biogas_Plant.x_NH3_V102*1000000
+      biogas_output["StorageNH3_V102moles"] = Biogas_Plant.mol_NH3_V102
+
+      ## Hidrógeno
+      biogas_output["StorageH2_V102Volume"] = Biogas_Plant.Vnormal_H2_V102
+      biogas_output["StorageH2_V102Concentration"] = Biogas_Plant.x_H2_V102*1000000
+      biogas_output["StorageH2_V102moles"] = Biogas_Plant.mol_H2_V102
+
+      #Agua
+      biogas_output["moles_humidity_V102"] = Biogas_Plant.mol_H2O_V102
+      biogas_output["Relative_humidity_V102"] = Biogas_Plant.RH_V102
+
+      #Energía
+      biogas_output["StorageEnergy_V102"] = Biogas_Plant.Energy_V102/3600
+
+      #Biogas Treatment
+      biogas_output["ads_NH3_bt"] = Biogas_Plant.mol_NH3_ads
+      biogas_output["ads_H2S_bt"] = Biogas_Plant.mol_H2S_ads
+      biogas_output["ads_H2O_bt"] = Biogas_Plant.mol_H2O_ads
+      biogas_output["x_bt"] = Biogas_Plant.x_tower*100
+
+      #V107
+      biogas_output["AcumBiogasVolumenV107"] = Biogas_Plant.Vnormal_bio_acum_V107
+      biogas_output["StorageBiogasVolumeV107"] = Biogas_Plant.Vnormal_bio_V107
+      biogas_output["AcumBiogasPressureV107"] = Biogas_Plant.Pacum_bio_V107
+      biogas_output["StorageBiogasPressureV107"] = Biogas_Plant.Pstorage_bio_V107
+
+      ## Metano
+      biogas_output["StorageCH4_V107Volume"] = Biogas_Plant.Vnormal_CH4_V107
+      biogas_output["StorageCH4_V107Concentration"] = Biogas_Plant.x_CH4_V107*100
+      biogas_output["StorageCH4_V107moles"] = Biogas_Plant.mol_CH4_V107
+
+      ## Dióxido de carbono
+      biogas_output["StorageCO2_V107Volume"] = Biogas_Plant.Vnormal_CO2_V107
+      biogas_output["StorageCO2_V107Concentration"] = Biogas_Plant.x_CO2_V107*100
+      biogas_output["StorageCO2_V107moles"] = Biogas_Plant.mol_CO2_V107
+
+      ## Sulfuro de de hidrógeno
+      biogas_output["StorageH2S_V107Volume"] = Biogas_Plant.Vnormal_H2S_V107
+      biogas_output["StorageH2S_V107Concentration"] = Biogas_Plant.x_H2S_V107*1000000
+      biogas_output["StorageH2S_V107moles"] = Biogas_Plant.mol_H2S_V107
+
+      ## Oxígeno
+      biogas_output["StorageO2_V107Volume"] = Biogas_Plant.Vnormal_O2_V107
+      biogas_output["StorageO2_V107Concentration"] = Biogas_Plant.x_O2_V107*100
+      biogas_output["StorageO2_V107moles"] = Biogas_Plant.mol_O2_V107
+
+      ## Amonio
+      biogas_output["StorageNH3_V107Volume"] = Biogas_Plant.Vnormal_NH3_V107
+      biogas_output["StorageNH3_V107Concentration"] = Biogas_Plant.x_NH3_V107*1000000
+      biogas_output["StorageNH3_V107moles"] = Biogas_Plant.mol_NH3_V107
+
+      ## Hidrógeno
+      biogas_output["StorageH2_V107Volume"] = Biogas_Plant.Vnormal_H2_V107
+      biogas_output["StorageH2_V107Concentration"] = Biogas_Plant.x_H2_V107*1000000
+      biogas_output["StorageH2_V107moles"] = Biogas_Plant.mol_H2_V107
+
+      #Agua
+      biogas_output["moles_humidity_V107"] = Biogas_Plant.mol_H2O_V107
+      biogas_output["Relative_humidity_V107"] = Biogas_Plant.RH_V107
+
+      #Energía
+      biogas_output["StorageEnergy_V107"] = Biogas_Plant.Energy_V107/3600
+      
 
 
 
