@@ -1073,7 +1073,7 @@ export const BIOGAS: BiogasParameters = {
 
 export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
-    name: 'Subindice de carbono formula empírica',
+    name: 'Subindice de carbono formula empírica n',
     variable: 'n',
     unit: '',
     isShown: true,
@@ -1084,7 +1084,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Subindice de hidrógeno formula empírica',
+    name: 'Subindice de hidrógeno formula empírica a',
     variable: 'a',
     unit: '',
     isShown: true,
@@ -1095,7 +1095,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Subindice de oxígeno formula empírica',
+    name: 'Subindice de oxígeno formula empírica b',
     variable: 'b',
     unit: '',
     isShown: true,
@@ -1106,7 +1106,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Subindice de nitrógeno formula empírica',
+    name: 'Subindice de nitrógeno formula empírica c',
     variable: 'c',
     unit: '',
     isShown: true,
@@ -1117,7 +1117,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Subindice de azufre formula empírica',
+    name: 'Subindice de azufre formula empírica d',
     variable: 'd',
     unit: '',
     isShown: true,
@@ -1128,7 +1128,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Velocidad de agitación tanque premezcla',
+    name: 'Velocidad de agitación tanque premezcla TK100',
     variable: 'Mix_Velocity_TK100',
     unit: 'RPM',
     isShown: true,
@@ -1139,7 +1139,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Concentración de sólidos volátiles en gSV/L',
+    name: 'Concentración de sólidos volátiles TK100',
     variable: 'C_sv',
     unit: 'gSV/L',
     isShown: true,
@@ -1150,7 +1150,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos volátiles en %',
+    name: 'Concentración de sólidos volátiles TK100',
     variable: 'SV',
     unit: '%',
     isShown: true,
@@ -1161,7 +1161,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Concentración de sólidos totales en gST/L',
+    name: 'Concentración de sólidos totales TK100',
     variable: 'C_st',
     unit: 'gST/L',
     isShown: true,
@@ -1172,7 +1172,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos totales en %',
+    name: 'Concentración de sólidos totales TK100',
     variable: 'ST',
     unit: '%',
     isShown: true,
@@ -1183,7 +1183,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Caudal',
+    name: 'Caudal bomba P104',
     variable: 'Pump104Flow',
     unit: 'L/h',
     isShown: true,
@@ -1205,7 +1205,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Concentración de sólidos volátiles en gSV/L',
+    name: 'Concentración de sólidos volátiles R101',
     variable: 'C_sv_R101',
     unit: 'gSV/L',
     isShown: true,
@@ -1216,7 +1216,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos volátiles en %',
+    name: 'Concentración de sólidos volátiles R101',
     variable: 'SV_R101',
     unit: '%',
     isShown: true,
@@ -1227,7 +1227,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Concentración de sólidos totales en gST/L',
+    name: 'Concentración de sólidos totales R101',
     variable: 'C_st_R101',
     unit: 'gST/L',
     isShown: true,
@@ -1238,7 +1238,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos totales en %',
+    name: 'Concentración de sólidos totales R101',
     variable: 'ST_R101',
     unit: '%',
     isShown: true,
@@ -1260,7 +1260,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'pH',
+    name: 'pH R101',
     variable: 'pH_R101',
     unit: '',
     isShown: true,
@@ -1282,7 +1282,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Conversión del reactivo límite',
+    name: 'Conversión del reactivo límite R101',
     variable: 'x_R101',
     unit: '%',
     isShown: true,
@@ -1293,7 +1293,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz R101',
     variable: 'K_R101',
     unit: 'L/s',
     isShown: true,
@@ -1305,7 +1305,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 0,
   },
   {
-    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz R101',
     variable: 'K_R101',
     unit: 'L / gSV',
     isShown: true,
@@ -1317,7 +1317,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 1,
   },
   {
-    name: 'Parámetro cinético energía de activación',
+    name: 'Parámetro cinético energía de activación R101',
     variable: 'Ea_R101',
     unit: 'J/mol',
     isShown: true,
@@ -1329,7 +1329,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 2,
   },
   {
-    name: 'Parámetro cinético energía de activación',
+    name: 'Parámetro cinético energía de activación R101',
     variable: 'Ea_R101',
     unit: 'L / gSV-s',
     isShown: true,
@@ -1341,7 +1341,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 3,
   },
   {
-    name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás',
+    name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás R101',
     variable: 'Lambda_R101',
     unit: 's',
     isShown: true,
@@ -1353,7 +1353,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 3,
   },
   {
-    name: 'Volumen normal de biogas acumulado',
+    name: 'Volumen normal de biogas acumulado V101',
     variable: 'AcumBiogasVolumenV101',
     unit: 'NL',
     isShown: true,
@@ -1365,7 +1365,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 5,
   },
   {
-    name: 'Volumen normal de biogas almacenado',
+    name: 'Volumen normal de biogas almacenado V101',
     variable: 'StorageBiogasVolumeV101',
     unit: 'NL',
     isShown: true,
@@ -1377,7 +1377,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 6,
   },
   {
-    name: 'Presión de biogás acumulado',
+    name: 'Presión de biogás acumulado V101',
     variable: 'AcumBiogasPressureV101',
     unit: 'psi',
     isShown: true,
@@ -1389,7 +1389,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 7,
   },
   {
-    name: 'Presión de biogás almacenado',
+    name: 'Presión de biogás almacenado V101',
     variable: 'StorageBiogasPressureV101',
     unit: 'psi',
     isShown: true,
@@ -1652,7 +1652,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Volumen normal de biogas acumulado',
+    name: 'Volumen normal de biogas acumulado V102',
     variable: 'AcumBiogasVolumenV102',
     unit: 'NL',
     isShown: true,
@@ -1664,7 +1664,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 5,
   },
   {
-    name: 'Volumen normal de biogas almacenado',
+    name: 'Volumen normal de biogas almacenado V102',
     variable: 'StorageBiogasVolumeV102',
     unit: 'NL',
     isShown: true,
@@ -1676,7 +1676,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 6,
   },
   {
-    name: 'Presión de biogás acumulado',
+    name: 'Presión de biogás acumulado V102',
     variable: 'AcumBiogasPressureV102',
     unit: 'psi',
     isShown: true,
@@ -1688,7 +1688,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 7,
   },
   {
-    name: 'Presión de biogás almacenado',
+    name: 'Presión de biogás almacenado V102',
     variable: 'StorageBiogasPressureV102',
     unit: 'psi',
     isShown: true,
@@ -1951,7 +1951,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'moles de amoniaco adsorbidas',
+    name: 'moles de amoniaco adsorbidas torre de adsorción',
     variable: 'ads_NH3_bt',
     unit: 'mol',
     isShown: true,
@@ -1962,7 +1962,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'moles de sulfuro de hidrógeno adsorbidas',
+    name: 'moles de sulfuro de hidrógeno torre de adsorción',
     variable: 'ads_H2S_bt',
     unit: 'mol',
     isShown: true,
@@ -1973,7 +1973,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'moles de agua adsorbidas',
+    name: 'moles de agua torre de adsorción',
     variable: 'ads_H2O_bt',
     unit: 'mol',
     isShown: true,
@@ -1984,7 +1984,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Eficiencia de adsorción',
+    name: 'Eficiencia de torre de adsorción',
     variable: 'x_bt',
     unit: '%',
     isShown: true,
@@ -1995,7 +1995,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Volumen normal de biogas acumulado',
+    name: 'Volumen normal de biogas acumulado V107',
     variable: 'AcumBiogasVolumenV107',
     unit: 'NL',
     isShown: true,
@@ -2007,7 +2007,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 5,
   },
   {
-    name: 'Volumen normal de biogas almacenado',
+    name: 'Volumen normal de biogas almacenado V107',
     variable: 'StorageBiogasVolumeV107',
     unit: 'NL',
     isShown: true,
@@ -2019,7 +2019,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 6,
   },
   {
-    name: 'Presión de biogás acumulado',
+    name: 'Presión de biogás acumulado V107',
     variable: 'AcumBiogasPressureV107',
     unit: 'psi',
     isShown: true,
@@ -2031,7 +2031,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 7,
   },
   {
-    name: 'Presión de biogás almacenado',
+    name: 'Presión de biogás almacenado V107',
     variable: 'StorageBiogasPressureV107',
     unit: 'psi',
     isShown: true,
@@ -2324,7 +2324,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'pH',
+    name: 'pH R102',
     variable: 'pH_R102',
     unit: '',
     isShown: true,
@@ -2346,7 +2346,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz R102',
     variable: 'K_R102',
     unit: 'L/s',
     isShown: true,
@@ -2358,7 +2358,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     hasAdditionalCondition: 0,
   },
   {
-    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz',
+    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz R102',
     variable: 'K_R102',
     unit: 'L / gSV',
     isShown: true,
@@ -2370,7 +2370,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     hasAdditionalCondition: 1,
   },
   {
-    name: 'Parámetro cinético energía de activación',
+    name: 'Parámetro cinético energía de activación R102',
     variable: 'Ea_R102',
     unit: 'J/mol',
     isShown: true,
@@ -2382,7 +2382,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     hasAdditionalCondition: 2,
   },
   {
-    name: 'Parámetro cinético energía de activación',
+    name: 'Parámetro cinético energía de activación R102',
     variable: 'Ea_R102',
     unit: 'L / gSV-s',
     isShown: true,
@@ -2394,7 +2394,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     hasAdditionalCondition: 3,
   },
   {
-    name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás',
+    name: 'Tiempo de retraso o periodo de tiempo mínimo para producir biogás R102',
     variable: 'Lambda_R102',
     unit: 's',
     isShown: true,
@@ -2406,7 +2406,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     hasAdditionalCondition: 3,
   },
   {
-    name: 'Concentración de sólidos volátiles en gSV/L',
+    name: 'Concentración de sólidos volátiles R102',
     variable: 'C_sv_R102',
     unit: 'gSV/L',
     isShown: true,
@@ -2417,7 +2417,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos volátiles en %',
+    name: 'Concentración de sólidos volátiles R102',
     variable: 'SV_R102',
     unit: '%',
     isShown: true,
@@ -2428,7 +2428,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'Concentración de sólidos totales en gST/L',
+    name: 'Concentración de sólidos totales R102',
     variable: 'C_st_R102',
     unit: 'gST/L',
     isShown: true,
@@ -2439,7 +2439,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Concentración de sólidos totales en %',
+    name: 'Concentración de sólidos totales R102',
     variable: 'ST_R102',
     unit: '%',
     isShown: true,
@@ -2461,7 +2461,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'Conversión del reactivo límite',
+    name: 'Conversión del reactivo límite R102',
     variable: 'x_R102',
     unit: '%',
     isShown: true,
