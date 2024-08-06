@@ -181,6 +181,14 @@ class BiogasPlantSimulation:
         self.mol_H2ini_V102 = 0
         self.mol_H2Oini_V102 = 0
 
+        self.mol_CH4_transfertoV102i = 0
+        self.mol_CO2_transfertoV102i = 0
+        self.mol_H2S_transfertoV102i = 0
+        self.mol_O2_transfertoV102i = 0
+        self.mol_NH3_transfertoV102i = 0
+        self.mol_H2_transfertoV102i = 0
+        self.mol_H2O_transfertoV102i = 0
+
         #adsortia tower
         self.N0_1 = 0
         self.N0_2 = 0
@@ -196,7 +204,15 @@ class BiogasPlantSimulation:
         self.mol_O2ini_V107 = 0
         self.mol_NH3ini_V107 = 0
         self.mol_H2ini_V107 = 0
-        self.mol_H2Oini_V107 = 0        
+        self.mol_H2Oini_V107 = 0 
+
+        self.mol_CH4_transfertoV107i = 0
+        self.mol_CO2_transfertoV107i = 0
+        self.mol_H2S_transfertoV107i = 0
+        self.mol_O2_transfertoV107i = 0
+        self.mol_NH3_transfertoV107i = 0
+        self.mol_H2_transfertoV107i = 0
+        self.mol_H2O_transfertoV107i = 0       
         
         #Propiedades del gas en condiciones estándas
         self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
@@ -1505,14 +1521,24 @@ class BiogasPlantSimulation:
             self.Energy_V101 = 0
     
     def V102(self):
+
+        #Accumulated trnasfer biogas
+        self.mol_CH4_transfertoV102i = self.mol_CH4_transfertoV102i + self.mol_CH4_transfertoV102
+        self.mol_CO2_transfertoV102i = self.mol_CO2_transfertoV102i + self.mol_CO2_transfertoV102
+        self.mol_H2S_transfertoV102i = self.mol_H2S_transfertoV102i + self.mol_H2S_transfertoV102
+        self.mol_O2_transfertoV102i = self.mol_O2_transfertoV102i + self.mol_O2_transfertoV102
+        self.mol_NH3_transfertoV102i = self.mol_NH3_transfertoV102i + self.mol_NH3_transfertoV102
+        self.mol_H2_transfertoV102i = self.mol_H2_transfertoV102i + self.mol_H2_transfertoV102
+        self.mol_H2O_transfertoV102i = self.mol_H2O_transfertoV102i + self.mol_H2O_transfertoV102     
+
         #Acumulated volume
-        self.Vnormal_CH4_acum_V102 = self.Vmolar_CH4 * (self.mol_CH4_R102 + self.mol_CH4_transfertoV102)
-        self.Vnormal_CO2_acum_V102 = self.Vmolar_CO2 * (self.mol_CO2_R102 + self.mol_CO2_transfertoV102)
-        self.Vnormal_H2S_acum_V102 = self.Vmolar_H2S * (self.mol_H2S_R102 + self.mol_H2S_transfertoV102)
-        self.Vnormal_O2_acum_V102 = self.Vmolar_O2 * (self.mol_O2_R102 + self.mol_O2_transfertoV102)
-        self.Vnormal_NH3_acum_V102 = self.Vmolar_NH3 * (self.mol_NH3_R102 + self.mol_NH3_transfertoV102)
-        self.Vnormal_H2_acum_V102 = self.Vmolar_H2 * (self.mol_H2_R102 + self.mol_H2_transfertoV102)
-        self.Vnormal_H2O_acum_V102 = self.Vmolar_H2O * (self.mol_H2O_R102 + self.mol_H2O_transfertoV102)
+        self.Vnormal_CH4_acum_V102 = self.Vmolar_CH4 * (self.mol_CH4_R102 + self.mol_CH4_transfertoV102i)
+        self.Vnormal_CO2_acum_V102 = self.Vmolar_CO2 * (self.mol_CO2_R102 + self.mol_CO2_transfertoV102i)
+        self.Vnormal_H2S_acum_V102 = self.Vmolar_H2S * (self.mol_H2S_R102 + self.mol_H2S_transfertoV102i)
+        self.Vnormal_O2_acum_V102 = self.Vmolar_O2 * (self.mol_O2_R102 + self.mol_O2_transfertoV102i)
+        self.Vnormal_NH3_acum_V102 = self.Vmolar_NH3 * (self.mol_NH3_R102 + self.mol_NH3_transfertoV102i)
+        self.Vnormal_H2_acum_V102 = self.Vmolar_H2 * (self.mol_H2_R102 + self.mol_H2_transfertoV102i)
+        self.Vnormal_H2O_acum_V102 = self.Vmolar_H2O * (self.mol_H2O_R102 + self.mol_H2O_transfertoV102i)
 
         #Volumen de biogás acumulado
         self.Vnormal_bio_acum_V102 = self.Vnormal_CH4_acum_V102 + self.Vnormal_CO2_acum_V102 + self.Vnormal_H2S_acum_V102 + self.Vnormal_O2_acum_V102 + self.Vnormal_NH3_acum_V102 + self.Vnormal_H2_acum_V102 + self.Vnormal_H2O_acum_V102
@@ -1698,14 +1724,23 @@ class BiogasPlantSimulation:
             self.x_tower = 0 
     
     def V107 (self):
+        #Acumulated trnasfer
+        self.mol_CH4_transfertoV107i = self.mol_CH4_transfertoV107i + self.mol_CH4_transfertoV107
+        self.mol_CO2_transfertoV107i = self.mol_CO2_transfertoV107i + self.mol_CO2_transfertoV107
+        self.mol_H2S_transfertoV107i = self.mol_H2S_transfertoV107i + self.mol_H2S_transfertoV107
+        self.mol_O2_transfertoV107i = self.mol_O2_transfertoV107i + self.mol_O2_transfertoV107
+        self.mol_NH3_transfertoV107i = self.mol_NH3_transfertoV107i + self.mol_NH3_transfertoV107
+        self.mol_H2_transfertoV107i = self.mol_H2_transfertoV107i + self.mol_H2_transfertoV107 
+        self.mol_H2O_transfertoV107i = self.mol_H2O_transfertoV107i + self.mol_H2O_transfertoV107 
+
         #Acumulated Volume
-        self.Vnormal_CH4_acum_V107 = self.Vmolar_CH4 * (self.mol_CH4_transfertoV107)
-        self.Vnormal_CO2_acum_V107 = self.Vmolar_CO2 * (self.mol_CO2_transfertoV107)
-        self.Vnormal_H2S_acum_V107 = self.Vmolar_H2S * (self.mol_H2S_transfertoV107)
-        self.Vnormal_O2_acum_V107 = self.Vmolar_O2 * (self.mol_O2_transfertoV107)
-        self.Vnormal_NH3_acum_V107 = self.Vmolar_NH3 * (self.mol_NH3_transfertoV107)
-        self.Vnormal_H2_acum_V107 = self.Vmolar_H2 * (self.mol_H2_transfertoV107)
-        self.Vnormal_H2O_acum_V107 = self.Vmolar_H2O * (self.mol_H2O_transfertoV107)
+        self.Vnormal_CH4_acum_V107 = self.Vmolar_CH4 * (self.mol_CH4_transfertoV107i)
+        self.Vnormal_CO2_acum_V107 = self.Vmolar_CO2 * (self.mol_CO2_transfertoV107i)
+        self.Vnormal_H2S_acum_V107 = self.Vmolar_H2S * (self.mol_H2S_transfertoV107i)
+        self.Vnormal_O2_acum_V107 = self.Vmolar_O2 * (self.mol_O2_transfertoV107i)
+        self.Vnormal_NH3_acum_V107 = self.Vmolar_NH3 * (self.mol_NH3_transfertoV107i)
+        self.Vnormal_H2_acum_V107 = self.Vmolar_H2 * (self.mol_H2_transfertoV107i)
+        self.Vnormal_H2O_acum_V107 = self.Vmolar_H2O * (self.mol_H2O_transfertoV107i)
 
         #Volumen de biogás acumulado
         self.Vnormal_bio_acum_V107 = self.Vnormal_CH4_acum_V107 + self.Vnormal_CO2_acum_V107 + self.Vnormal_H2S_acum_V107 + self.Vnormal_O2_acum_V107 + self.Vnormal_NH3_acum_V107 + self.Vnormal_H2_acum_V107 + self.Vnormal_H2O_acum_V107
