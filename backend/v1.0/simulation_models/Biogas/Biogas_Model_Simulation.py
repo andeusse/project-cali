@@ -98,64 +98,65 @@ class BiogasPlantSimulation:
         self.mol_H2O_R101 = 0
         #initial for gompertz
         self.mol_ini_R101 = self.Csus_ini_R101*self.VR1
-            
-        #Reactor 102 initial conditions
-        self.ST_R102 = ST_R102
-        self.SV_R102 = SV_R102
-        self.Cc_R102 = Cc_R102
-        self.Ch_R102 = Ch_R102
-        self.Co_R102 = Co_R102
-        self.Cn_R102 = Cn_R102
-        self.Cs_R102 = Cs_R102
-        self.rho_R102 = rho_R102
-        if self.ST_R102 == 0:
-            self.Csus_ini_R102 = 0
-            self.Csus_ini_ST_R102 = 0
-        else:
-            self.molC_R102 = self.Cc_R102*(1/12.01)
-            self.molH_R102 = self.Ch_R102*(1/1.01)
-            self.molO_R102 = self.Co_R102*(1/16)
-            self.molN_R102 = self.Cn_R102*(1/14)
-            self.molS_R102 = self.Cs_R102*(1/32)
 
-            n_R102 = self.molC_R102
-            a_R102 = self.molH_R102
-            b_R102 = self.molO_R102
-            c_R102 = self.molN_R102
-            d_R102 = self.molS_R102
+        if OperationMode in ["Modo3", "Modo4", "Modo5"]:    
+            #Reactor 102 initial conditions
+            self.ST_R102 = ST_R102
+            self.SV_R102 = SV_R102
+            self.Cc_R102 = Cc_R102
+            self.Ch_R102 = Ch_R102
+            self.Co_R102 = Co_R102
+            self.Cn_R102 = Cn_R102
+            self.Cs_R102 = Cs_R102
+            self.rho_R102 = rho_R102
+            if self.ST_R102 == 0:
+                self.Csus_ini_R102 = 0
+                self.Csus_ini_ST_R102 = 0
+            else:
+                self.molC_R102 = self.Cc_R102*(1/12.01)
+                self.molH_R102 = self.Ch_R102*(1/1.01)
+                self.molO_R102 = self.Co_R102*(1/16)
+                self.molN_R102 = self.Cn_R102*(1/14)
+                self.molS_R102 = self.Cs_R102*(1/32)
 
-            numbers_R102 = [n_R102, a_R102, b_R102, c_R102, d_R102]
-            denominators_R102 = [Fraction(num).limit_denominator(10).denominator for num in numbers_R102]
-            common_denominator_R102 = reduce(lcm, denominators_R102)
-            subindex_R102 = [int(num * common_denominator_R102) for num in numbers_R102]
+                n_R102 = self.molC_R102
+                a_R102 = self.molH_R102
+                b_R102 = self.molO_R102
+                c_R102 = self.molN_R102
+                d_R102 = self.molS_R102
 
-            self.n_R102 = subindex_R102[0]
-            self.a_R102 = subindex_R102[1]
-            self.b_R102 = subindex_R102[2]
-            self.c_R102 = subindex_R102[3]
-            self.d_R102 = subindex_R102[4]
-            
-            self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
-            self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
-            self.s_CO2_R102 = (self.n_R102/2)-(self.a_R102/8)+(self.b_R102/4)+(3/8)*self.c_R102-(self.d_R102/4)
-            self.s_NH3_R102 = self.c_R102
-            self.s_H2S_R102 = self.d_R102
-            
-            self.MW_sustrato_R102 = self.n_R102*12.01+self.a_R102*1.01+self.b_R102*16+self.c_R102*14+self.d_R102*32
-            self.Csus_ini_R102 = (self.rho_R102*self.SV_R102)/self.MW_sustrato_R102
-            self.Csus_ini_ST_R102 = (self.rho_R102*self.ST_R102)/self.MW_sustrato_R102
-            self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
+                numbers_R102 = [n_R102, a_R102, b_R102, c_R102, d_R102]
+                denominators_R102 = [Fraction(num).limit_denominator(10).denominator for num in numbers_R102]
+                common_denominator_R102 = reduce(lcm, denominators_R102)
+                subindex_R102 = [int(num * common_denominator_R102) for num in numbers_R102]
+
+                self.n_R102 = subindex_R102[0]
+                self.a_R102 = subindex_R102[1]
+                self.b_R102 = subindex_R102[2]
+                self.c_R102 = subindex_R102[3]
+                self.d_R102 = subindex_R102[4]
+                
+                self.s_H2O_R102 = self.n_R102-(self.a_R102/4)-(self.b_R102/2)+(3/4)*self.c_R102+(self.d_R102/2)
+                self.s_CH4_R102 = (self.n_R102/2)+(self.a_R102/8)-(self.b_R102/4)-(3/8)*self.c_R102-(self.d_R102/4)
+                self.s_CO2_R102 = (self.n_R102/2)-(self.a_R102/8)+(self.b_R102/4)+(3/8)*self.c_R102-(self.d_R102/4)
+                self.s_NH3_R102 = self.c_R102
+                self.s_H2S_R102 = self.d_R102
+                
+                self.MW_sustrato_R102 = self.n_R102*12.01+self.a_R102*1.01+self.b_R102*16+self.c_R102*14+self.d_R102*32
+                self.Csus_ini_R102 = (self.rho_R102*self.SV_R102)/self.MW_sustrato_R102
+                self.Csus_ini_ST_R102 = (self.rho_R102*self.ST_R102)/self.MW_sustrato_R102
+                self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
         
-        #initial for Arrhenius and ADM1
-        self.mol_CH4_R102 = 0
-        self.mol_CO2_R102 = 0
-        self.mol_H2S_R102 = 0
-        self.mol_NH3_R102 = 0
-        self.mol_O2_R102 = 0
-        self.mol_H2_R102 = 0
-        self.mol_H2O_R102 = 0
-        #initial for gompertz
-        self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
+            #initial for Arrhenius and ADM1
+            self.mol_CH4_R102 = 0
+            self.mol_CO2_R102 = 0
+            self.mol_H2S_R102 = 0
+            self.mol_NH3_R102 = 0
+            self.mol_O2_R102 = 0
+            self.mol_H2_R102 = 0
+            self.mol_H2O_R102 = 0
+            #initial for gompertz
+            self.mol_ini_R102 = self.Csus_ini_R102*self.VR2
 
         #Initial for V101
         self.Pacum_bio_V101 = 0
@@ -401,6 +402,7 @@ class BiogasPlantSimulation:
 
         if self.TimeCounterPump_P104>=self.TurnOnDailyStep_P104*3600:
             self.TimeCounterPump_P104 = 0
+        print(self.TimeCounterPump_P104)
         
     def Pump101 (self, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
         
@@ -1532,20 +1534,34 @@ class BiogasPlantSimulation:
         self.mol_H2O_transfertoV102i = self.mol_H2O_transfertoV102i + self.mol_H2O_transfertoV102     
 
         #Acumulated volume
-        self.Vnormal_CH4_acum_V102 = self.Vmolar_CH4 * (self.mol_CH4_R102 + self.mol_CH4_transfertoV102i)
-        self.Vnormal_CO2_acum_V102 = self.Vmolar_CO2 * (self.mol_CO2_R102 + self.mol_CO2_transfertoV102i)
-        self.Vnormal_H2S_acum_V102 = self.Vmolar_H2S * (self.mol_H2S_R102 + self.mol_H2S_transfertoV102i)
-        self.Vnormal_O2_acum_V102 = self.Vmolar_O2 * (self.mol_O2_R102 + self.mol_O2_transfertoV102i)
-        self.Vnormal_NH3_acum_V102 = self.Vmolar_NH3 * (self.mol_NH3_R102 + self.mol_NH3_transfertoV102i)
-        self.Vnormal_H2_acum_V102 = self.Vmolar_H2 * (self.mol_H2_R102 + self.mol_H2_transfertoV102i)
-        self.Vnormal_H2O_acum_V102 = self.Vmolar_H2O * (self.mol_H2O_R102 + self.mol_H2O_transfertoV102i)
+        if self.OperationMode in ["Modo3", "Modo4", "Modo5"]:
+            self.Vnormal_CH4_acum_V102 = self.Vmolar_CH4 * (self.mol_CH4_R102 + self.mol_CH4_transfertoV102i)
+            self.Vnormal_CO2_acum_V102 = self.Vmolar_CO2 * (self.mol_CO2_R102 + self.mol_CO2_transfertoV102i)
+            self.Vnormal_H2S_acum_V102 = self.Vmolar_H2S * (self.mol_H2S_R102 + self.mol_H2S_transfertoV102i)
+            self.Vnormal_O2_acum_V102 = self.Vmolar_O2 * (self.mol_O2_R102 + self.mol_O2_transfertoV102i)
+            self.Vnormal_NH3_acum_V102 = self.Vmolar_NH3 * (self.mol_NH3_R102 + self.mol_NH3_transfertoV102i)
+            self.Vnormal_H2_acum_V102 = self.Vmolar_H2 * (self.mol_H2_R102 + self.mol_H2_transfertoV102i)
+            self.Vnormal_H2O_acum_V102 = self.Vmolar_H2O * (self.mol_H2O_R102 + self.mol_H2O_transfertoV102i)
+            self.mol_bio_acum_V102 = ((self.mol_CH4_R102 + self.mol_CH4_transfertoV102) + (self.mol_CO2_R102 + self.mol_CO2_transfertoV102) + 
+                                (self.mol_H2S_R102 + self.mol_H2S_transfertoV102) + (self.mol_O2_R102 + self.mol_O2_transfertoV102) +
+                                (self.mol_NH3_R102 + self.mol_NH3_transfertoV102) + (self.mol_H2_R102 + self.mol_H2_transfertoV102) + 
+                                (self.mol_H2O_R102 + self.mol_H2O_transfertoV102))
+        else:
+            self.Vnormal_CH4_acum_V102 = self.Vmolar_CH4 * (self.mol_CH4_transfertoV102i)
+            self.Vnormal_CO2_acum_V102 = self.Vmolar_CO2 * (self.mol_CO2_transfertoV102i)
+            self.Vnormal_H2S_acum_V102 = self.Vmolar_H2S * (self.mol_H2S_transfertoV102i)
+            self.Vnormal_O2_acum_V102 = self.Vmolar_O2 * (self.mol_O2_transfertoV102i)
+            self.Vnormal_NH3_acum_V102 = self.Vmolar_NH3 * (self.mol_NH3_transfertoV102i)
+            self.Vnormal_H2_acum_V102 = self.Vmolar_H2 * (self.mol_H2_transfertoV102i)
+            self.Vnormal_H2O_acum_V102 = self.Vmolar_H2O * (self.mol_H2O_transfertoV102i)
+            self.mol_bio_acum_V102 = ((self.mol_CH4_transfertoV102) + (self.mol_CO2_transfertoV102) + 
+                                (self.mol_H2S_transfertoV102) + (self.mol_O2_transfertoV102) +
+                                (self.mol_NH3_transfertoV102) + (self.mol_H2_transfertoV102) + 
+                                (self.mol_H2O_transfertoV102))
 
         #Volumen de biogás acumulado
         self.Vnormal_bio_acum_V102 = self.Vnormal_CH4_acum_V102 + self.Vnormal_CO2_acum_V102 + self.Vnormal_H2S_acum_V102 + self.Vnormal_O2_acum_V102 + self.Vnormal_NH3_acum_V102 + self.Vnormal_H2_acum_V102 + self.Vnormal_H2O_acum_V102
-        self.mol_bio_acum_V102 = ((self.mol_CH4_R102 + self.mol_CH4_transfertoV102) + (self.mol_CO2_R102 + self.mol_CO2_transfertoV102) + 
-                                  (self.mol_H2S_R102 + self.mol_H2S_transfertoV102) + (self.mol_O2_R102 + self.mol_O2_transfertoV102) +
-                                   (self.mol_NH3_R102 + self.mol_NH3_transfertoV102) + (self.mol_H2_R102 + self.mol_H2_transfertoV102) + 
-                                   (self.mol_H2O_R102 + self.mol_H2O_transfertoV102))
+       
 
         #Acumulated biogas Pressure in V_102
         self.Pacum_bio_V102 = (((self.mol_bio_acum_V102 * 8.314 * (self.Temperature + 273.15)) / (self.VG2/1000))/6894.76)  #presion en psi
@@ -1557,15 +1573,26 @@ class BiogasPlantSimulation:
             self.Pstorage_bio_V102 = self.Pacum_bio_V102 - self.Pini_V102     #Presion en psi
 
             #Moles almacenadas
-            self.mol_CH4_V102 = (self.mol_CH4_R102 + self.mol_CH4_transfertoV102) - self.mol_CH4ini_V102
-            self.mol_CO2_V102 = (self.mol_CO2_R102 + self.mol_CO2_transfertoV102) - self.mol_CO2ini_V102
-            self.mol_H2S_V102 = (self.mol_H2S_R102 + self.mol_H2S_transfertoV102) - self.mol_H2Sini_V102
-            self.mol_O2_V102 = (self.mol_O2_R102 + self.mol_O2_transfertoV102) - self.mol_O2ini_V102
-            self.mol_NH3_V102 = (self.mol_NH3_R102 + self.mol_NH3_transfertoV102) - self.mol_NH3ini_V102
-            self.mol_H2_V102 = (self.mol_H2_R102 + self.mol_H2_transfertoV102) - self.mol_H2ini_V102
-            self.mol_H2O_V102 = (self.mol_H2O_R102 + self.mol_H2O_transfertoV102) - self.mol_H2Oini_V102
-            self.molTotales_V102 = self.mol_CH4_V102 + self.mol_CO2_V102 + self.mol_H2S_V102 + self.mol_O2_V102 + self.mol_NH3_V102 + self.mol_H2_V102 + self.mol_H2O_V102
+            if self.OperationMode in ["Modo3", "Modo4", "Modo5"]:
+                self.mol_CH4_V102 = (self.mol_CH4_R102 + self.mol_CH4_transfertoV102) - self.mol_CH4ini_V102
+                self.mol_CO2_V102 = (self.mol_CO2_R102 + self.mol_CO2_transfertoV102) - self.mol_CO2ini_V102
+                self.mol_H2S_V102 = (self.mol_H2S_R102 + self.mol_H2S_transfertoV102) - self.mol_H2Sini_V102
+                self.mol_O2_V102 = (self.mol_O2_R102 + self.mol_O2_transfertoV102) - self.mol_O2ini_V102
+                self.mol_NH3_V102 = (self.mol_NH3_R102 + self.mol_NH3_transfertoV102) - self.mol_NH3ini_V102
+                self.mol_H2_V102 = (self.mol_H2_R102 + self.mol_H2_transfertoV102) - self.mol_H2ini_V102
+                self.mol_H2O_V102 = (self.mol_H2O_R102 + self.mol_H2O_transfertoV102) - self.mol_H2Oini_V102
+                
+            else:
+                self.mol_CH4_V102 = (self.mol_CH4_transfertoV102) - self.mol_CH4ini_V102
+                self.mol_CO2_V102 = (self.mol_CO2_transfertoV102) - self.mol_CO2ini_V102
+                self.mol_H2S_V102 = (self.mol_H2S_transfertoV102) - self.mol_H2Sini_V102
+                self.mol_O2_V102 = (self.mol_O2_transfertoV102) - self.mol_O2ini_V102
+                self.mol_NH3_V102 = (self.mol_NH3_transfertoV102) - self.mol_NH3ini_V102
+                self.mol_H2_V102 = (self.mol_H2_transfertoV102) - self.mol_H2ini_V102
+                self.mol_H2O_V102 = (self.mol_H2O_transfertoV102) - self.mol_H2Oini_V102
+            
 
+            self.molTotales_V102 = self.mol_CH4_V102 + self.mol_CO2_V102 + self.mol_H2S_V102 + self.mol_O2_V102 + self.mol_NH3_V102 + self.mol_H2_V102 + self.mol_H2O_V102
             #Volumen almacenado
             self.Vnormal_CH4_V102 = self.mol_CH4_V102 * self.Vmolar_CH4
             self.Vnormal_CO2_V102 = self.mol_CO2_V102 * self.Vmolar_CO2
@@ -1713,7 +1740,11 @@ class BiogasPlantSimulation:
         self.mol_H2O_transfertoV107 = self.C_H2O_out * self.Vnormal_bio_V102
 
         mol_ads = self.mol_H2S_ads + self.mol_NH3_ads + self.mol_H2O_ads
-        mol_in = (self.mol_H2S_R102 + self.mol_H2S_transfertoV102) + (self.mol_NH3_R102 + self.mol_NH3_transfertoV102) + (self.mol_H2O_R102 + self.mol_H2O_transfertoV102)
+        if self.OperationMode in ["Modo3", "Modo4", "Modo5"]:
+            mol_in = (self.mol_H2S_R102 + self.mol_H2S_transfertoV102) + (self.mol_NH3_R102 + self.mol_NH3_transfertoV102) + (self.mol_H2O_R102 + self.mol_H2O_transfertoV102)
+        else:
+            mol_in = (self.mol_H2S_transfertoV102) + (self.mol_NH3_transfertoV102) + (self.mol_H2O_transfertoV102)
+
 
         try:
             if mol_in == 0:
