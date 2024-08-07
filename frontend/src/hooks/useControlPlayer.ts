@@ -27,6 +27,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
     updateModel<T, resp<G>>(url, model)
       .then((resp) => {
         if (isPlaying) {
+          model.iteration += 1;
           setData((_) => {
             const d = resp.data.model;
             for (const key in d) {
@@ -89,7 +90,6 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   }, [isPlaying, queryApi, model]);
 
   const onPlay = () => {
-    queryApi();
     setIsPlaying(true);
   };
 
@@ -99,6 +99,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   };
 
   const onStop = () => {
+    model.iteration = 1;
     setIsPlaying(false);
     setData(undefined);
     setHistoricData({});

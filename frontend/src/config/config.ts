@@ -55,6 +55,12 @@ export default class Config {
       windyUrlWindSpeed: process.env.REACT_APP_WINDY_URL_WIND_SPEED
         ? process.env.REACT_APP_WINDY_URL_WIND_SPEED
         : '',
+      webServerDmg9000Url: process.env.REACT_APP_WEB_SERVER_DMG9000_URL
+        ? process.env.REACT_APP_WEB_SERVER_DMG9000_URL
+        : '',
+      powerSpoutUrl: process.env.REACT_APP_POWER_SPOUT_URL
+        ? process.env.REACT_APP_POWER_SPOUT_URL
+        : '',
       typicalTemperatureProfile: process.env.REACT_APP_TYPICAL_TEMP_PROFILE
         ? process.env.REACT_APP_TYPICAL_TEMP_PROFILE.split(' ').map((n) =>
             parseFloat(n)

@@ -408,6 +408,7 @@ export type SolarWindOutputHistoric = CommonChartType & {
 
 export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
+  iteration: 1,
   steps: {
     disabled: false,
     value: 1,

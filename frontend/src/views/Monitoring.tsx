@@ -1,4 +1,4 @@
-import { Box, Container, Tab } from '@mui/material';
+import { Box, Button, Container, Tab } from '@mui/material';
 import CustomTab from '../components/UI/CustomTab';
 import { TabType } from '../types/tab';
 import IframeFull from '../components/UI/IframeFull';
@@ -10,7 +10,6 @@ type Props = {};
 
 const ElectricalTabs = () => {
   const electricalTabs = [
-    'Web server DMG9000',
     'Unifilar',
     'Eventos transitorios',
     'Totalizador',
@@ -43,6 +42,12 @@ const ElectricalTabs = () => {
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
+      <Button
+        target="_blank"
+        href={Config.getInstance().params.webServerDmg9000Url}
+      >
+        Web server DMG9000
+      </Button>
       <TabContext value={selectedTab}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList

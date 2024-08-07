@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CalculateIcon from '@mui/icons-material/Calculate';
 import { useCallback, useEffect, useState } from 'react';
 import {
   ControllerStateType,
@@ -54,6 +55,7 @@ import {
   Row,
 } from '@silevis/reactgrid';
 import { setTurbineTable } from '../../utils/models/setTurbine';
+import Config from '../../config/config';
 
 const Turbine = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -375,7 +377,7 @@ const Turbine = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={12} xl={12}>
+                <Grid item xs={12} md={12} xl={3}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
@@ -387,7 +389,7 @@ const Turbine = () => {
                     />
                   </FormControl>
                 </Grid>
-                {/* <Grid item xs={12} md={3} xl={3}>
+                <Grid item xs={12} md={3} xl={3}>
                   <CustomNumberField
                     variable={system.steps}
                     name="steps"
@@ -419,7 +421,7 @@ const Turbine = () => {
                       ))}
                     </Select>
                   </FormControl>
-                </Grid> */}
+                </Grid>
                 <Grid item xs={12} md={6} xl={3.5}>
                   <h3>Turbina</h3>
                   <Grid container spacing={2}>
@@ -619,6 +621,15 @@ const Turbine = () => {
               onChange={handleUploadSystem}
               multiple={false}
             />
+          </Button>
+          <Button
+            target="_blank"
+            href={Config.getInstance().params.powerSpoutUrl}
+            variant="contained"
+            color="info"
+            startIcon={<CalculateIcon />}
+          >
+            Calculadora
           </Button>
         </Grid>
 

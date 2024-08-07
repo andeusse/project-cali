@@ -286,6 +286,7 @@ export const TURGO_TURBINE_CONST: TurbineConsts = {
 
 export const TURBINE: TurbineParameters = {
   name: 'Nombre',
+  iteration: 1,
   steps: {
     disabled: false,
     value: 1,
