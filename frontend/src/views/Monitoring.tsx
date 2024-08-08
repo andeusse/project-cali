@@ -45,6 +45,8 @@ const ElectricalTabs = () => {
       <Button
         target="_blank"
         href={Config.getInstance().params.webServerDmg9000Url}
+        variant="contained"
+        color="primary"
       >
         Web server DMG9000
       </Button>
