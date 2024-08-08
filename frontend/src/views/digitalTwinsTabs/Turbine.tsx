@@ -628,8 +628,9 @@ const Turbine = () => {
             variant="contained"
             color="info"
             startIcon={<CalculateIcon />}
+            sx ={{ margin: '5px' }}
           >
-            Calculadora
+            Calculadora PowerSpout
           </Button>
         </Grid>
 
