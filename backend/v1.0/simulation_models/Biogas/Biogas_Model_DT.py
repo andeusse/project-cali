@@ -37,6 +37,7 @@ class BiogasPlantDT:
         self.tp = tp
         #Initial values
         #Global time
+        self.GlobalTime = 0
         #Pumps
         self.TimeCounterPump_P104 = 0
         self.TimeCounterPump_P101 = 0
@@ -744,7 +745,21 @@ class BiogasPlantDT:
                 self.FT_P102 = self.FT_P102
                 self.TTO_P102 = self.TTO_P102
                 self.Qset_P102 = self.Qset_P102
-
+    
+    def pHR101(self, manual_pH_R101 = False, pH = 7):
+        self.manual_pH_R101 = manual_pH_R101
+        if self.manual_pH_R101 == True:
+            self.pH_R101 = pH
+        else:
+            self.pH_R101 = self.AT_101
+    
+    def pHR102(self, manual_pH_R102 = False, pH = 7):
+        self.manual_pH_R102 = manual_pH_R102
+        if self.manual_pH_R102 == True:
+            self.pH_R102 = pH
+        else:
+            self.pH_R102 = self.AT_102
+            
     def Temperature_R101 (self, manual_temp_R101 = False, Temp_R101=35):
         
         self.manual_temp_R101 = manual_temp_R101
@@ -1056,8 +1071,7 @@ class BiogasPlantDT:
     def R101_DT (self):      
         
         self.mol_CH4_R101v = self.DT_Data["mol_CH4_acum_V101"].tolist()
-        self.organic_charge_R101_in = self.SV*self.rho*self.Q_P104*24
-
+        
         if len(self.mol_CH4_R101v)>=2:
             self.mol_CH4_R101 = self.mol_CH4_R101v[-1]
             self.mol_CH4_R101_i = self.mol_CH4_R101v[-2]
@@ -1085,23 +1099,19 @@ class BiogasPlantDT:
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600)))
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P104*(self.tp/3600))))/self.rho
                 self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P104*(self.tp/3600))))/self.rho
-                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-            
+                            
             elif self.OperationModo == "Modo2":
 
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600))
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
                 self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 - self.Q_P101*(self.tp/3600) + (self.Q_P104+self.Q_P101)*(self.tp/3600)))/self.rho
-                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-                self.organic_charge_R101_out_1 = self.SV_R101*self.rho*self.Q_P101*24
-
+                
             elif self.OperationModo == "Modo3" or self.OperationModo == "Modo5":
 
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 - self.mol_sus_stoichometricFR_R101)/(self.VR1+(self.Q_P101*(self.tp/3600)))
                 self.SV_R101 = ((self.volatilemass_int_ini_R101 + self.volatilemass_in_R101 - self.volatilemass_stoichometricFR_R101)/(self.VR1 + (self.Q_P101*(self.tp/3600))))/self.rho
                 self.ST_R101 = ((self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 - self.TotalSolids_stoichometricFR_R101)/(self.VR1+(self.Q_P101*(self.tp/3600))))/self.rho
-                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
-
+                
             elif self.OperationModo == "Modo4":
                 self.mol_sus_in_R101_2 = self.Q_P102*self.Csus_ini_R102
                 self.Csus_ini_R101 = (self.mol_sus_int_ini_R101 + self.mol_sus_in_R101 + self.mol_sus_in_R101_2 - self.mol_sus_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600))
@@ -1111,23 +1121,34 @@ class BiogasPlantDT:
 
                 self.TotalSolids_in_R101_2 = self.Q_P102*self.ST_R102*(self.tp/3600)
                 self.ST_R101 = (self.TotalSolids_int_ini_R101 + self.TotalSolids_in_R101 + self.TotalSolids_in_R101_2 - self.TotalSolids_stoichometricFR_R101)/(self.VR1 + (self.Q_P101)*(self.tp/3600))/self.rho
-                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
-            
+                            
             self.SV_R101_gL = self.SV_R101*self.rho
+            self.ST_R101_gl = self.ST_R101*self.rho
             self.X_R101 = (self.mol_sus_in_R101 - self.mol_sus_int_ini_R101)/self.mol_sus_in_R101
             self.y_gompertz_R101 = (self.V_normal_CH4_acum_V101/self.SV_R101_gL)*self.VR1
-            
+            try:
+                if self.GlobalTime == 0:
+                    self.organic_charge_R101 = self.SV_R101_gL
+                else:
+                    self.organic_charge_R101 = self.SV_R101_gL/self.GlobalTime
+            except ZeroDivisionError:
+                self.organic_charge_R101 = 0
+
         else:
             self.mol_sus_int_ini_R101 = self.Csus_ini_R101*self.VR1
             self.SV_R101_gL = self.SV_R101*self.rho
+            self.ST_R101_gl = self.ST_R101*self.rho
             self.X_R101 = (self.Csus_ini - self.Csus_ini_R101)/self.Csus_ini
             self.y_gompertz_R101 = (self.V_normal_CH4_acum_V101/self.SV_R101_gL)*self.VR1
+            try:
+                if self.GlobalTime == 0:
+                    self.organic_charge_R101 = self.SV_R101_gL
+                else:
+                    self.organic_charge_R101 = self.SV_R101_gL/self.GlobalTime
+            except ZeroDivisionError:
+                self.organic_charge_R101 = 0
 
-            if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
-                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P104*24
-                
-            elif self.OperationModo == "Modo3" or self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
-                self.organic_charge_R101_out = self.SV_R101*self.rho*self.Q_P101*24
+            
 
     def R102_DT (self):
         if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
@@ -1175,26 +1196,28 @@ class BiogasPlantDT:
                     self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600)))
                     self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+(self.Q_P101*(self.tp/3600))))/self.rho   
-                    self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
 
                 elif self.OperationModo == "Modo4":
                     self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600)))
                     self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600))))/self.rho
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+self.Q_P104)*(self.tp/3600))))/self.rho 
-                    self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
-                    self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
-
+                    
                 elif self.OperationModo == "Modo5":
                     self.Csus_ini_R102 = (self.mol_sus_int_ini_R102 + self.mol_sus_in_R102 - self.mol_sus_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600)))
                     self.SV_R102 = ((self.volatilemass_int_ini_R102 + self.volatilemass_in_R102 - self.volatilemass_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
                     self.ST_R102 = ((self.TotalSolids_int_ini_R102 + self.TotalSolids_in_R102 - self.TotalSolids_stoichometricFR_R102)/(self.VR2+((self.Q_P102+(self.Q_P104-self.Q_P102))*(self.tp/3600))))/self.rho
-                    self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
-                    self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
-                
+                    
                 self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR1
                 self.SV_R102_gL = self.SV_R102*self.rho
                 self.X_R102= (self.mol_sus_in_R102- self.mol_sus_int_ini_R102)/self.mol_sus_in_R102
                 self.y_gompertz_R102 = (self.mol_CH4_R102*self.V_mol_CH4/self.SV_R102_gL)*self.VR2
+                try:
+                    if self.GlobalTime == 0:
+                        self.organic_charge_R102 = self.SV_R102_gL
+                    else:
+                        self.organic_charge_R102 = self.SV_R102_gL/self.GlobalTime
+                except ZeroDivisionError:
+                    self.organic_charge_R102 = 0
         
             else:
                 self.mol_sus_int_ini_R102 = self.Csus_ini_R102*self.VR1
@@ -1204,14 +1227,14 @@ class BiogasPlantDT:
 
                 if self.OperationModo == "Modo1" or self.OperationModo == "Modo2":
                     pass
+                try:
+                    if self.GlobalTime == 0:
+                        self.organic_charge_R102 = self.SV_R102_gL
+                    else:
+                        self.organic_charge_R102 = self.SV_R102_gL/self.GlobalTime
+                except ZeroDivisionError:
+                    self.organic_charge_R102 = 0
                     
-                elif self.OperationModo == "Modo3":
-                    self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
-                
-                elif self.OperationModo == "Modo4" or self.OperationModo == "Modo5":
-                    self.organic_charge_R102_out = self.SV_R102*self.rho*self.Q_P101*24
-                    self.organic_charge_R102_out_1 = self.SV_R102*self.rho*self.Q_P102*24
-    
     def Energy_Biogas (self): 
         self.LHV_V101 = self.Thermo.LHV(molCH4 = self.mol_CH4_V101, molCO2 = self.mol_CO2_V101, molH2S = self.mol_H2S_V101, molO2 = self.mol_O2_V101, molH2 = self.mol_H2_V101)
         self.Energy_V101 = self.LHV_V101[1]
@@ -1393,6 +1416,7 @@ class BiogasPlantDT:
         new_row_filtered = new_row.dropna(axis=1, how ='all')
         self.DT_Data = self.DT_Data.dropna(axis=1, how='all')
         self.DT_Data = pd.concat([self.DT_Data, new_row_filtered], ignore_index=True)     
+        self.GlobalTime = self.GlobalTime + self.tp
        
     
 

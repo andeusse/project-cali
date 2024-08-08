@@ -166,6 +166,8 @@ class Biogas(Resource):
       Biogas_Plant.GetValuesFromBiogasPlant()
       Biogas_Plant.Substrate_conditions(manual_substrate = biogas_input["manual_substrate"],Cc = biogas_input["Cc"], Ch = biogas_input["Ch"], Co =  biogas_input["Co"],
                                         Cn = biogas_input["Cn"], Cs = biogas_input["Cs"], rho = biogas_input["rho"], ST = biogas_input["ST"], SV = biogas_input["SV"])
+      Biogas_Plant.pHR101(manual_pH_R101 = biogas_input["manual_pH_R101"], pH = biogas_input["pH_R101"])
+      Biogas_Plant.pHR102(manual_pH_R102 = biogas_input["pH_R102"], pH = biogas_input["pH_R102"])
       Biogas_Plant.Pump104(manual_P104 = biogas_input["manual_P104"], TRH = biogas_input["TRH"], FT_P104 = biogas_input["FT_P104"], TTO_P104 = biogas_input["TTO_P104"])
       Biogas_Plant.Pump101(manual_P101 = biogas_input["manual_P101"], FT_P101 = biogas_input["FT_P101"], TTO_P101 = biogas_input["TTO_P101"], Q_P101 = biogas_input["Q_P101"])
       Biogas_Plant.Pump102(manual_P102 = biogas_input["manual_P102"], FT_P102 = biogas_input["FT_P102"], TTO_P102 = biogas_input["TTO_P102"], Q_P102 = biogas_input["Q_P102"])
@@ -214,7 +216,19 @@ class Biogas(Resource):
 
       #Reactor R101
       biogas_output["Mix_Velocity_R101"] = Biogas_Plant.RPM_R101
-      
+      biogas_output["C_sv_R101"] = Biogas_Plant.SV_R101_gL
+      biogas_output["SV_R101"] = Biogas_Plant.SV_R101
+      biogas_output["C_st_R101"] = Biogas_Plant.ST_R101_gl
+      biogas_output["ST_R101"] = Biogas_Plant.ST_R101
+      biogas_output["Organic_Charge_R101"] = Biogas_Plant.organic_charge_R101
+      biogas_output["pH_R101"] = Biogas_Plant.pH_R101
+      biogas_output["Temp_R101"] = Biogas_Plant.Temp_R101
+      biogas_output["x_R101"] = Biogas_Plant.X_R101
+      #modelo cinético
+      if biogas_input["OperationModel"] == "Arrhenius":
+        biogas_output["K_R101"] = Biogas_learning.K_R101
+        biogas_output["Ea_R101"] = Biogas_learning.Ea_R101
+
 
       
 
