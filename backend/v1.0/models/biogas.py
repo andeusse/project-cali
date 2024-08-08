@@ -186,14 +186,37 @@ class Biogas(Resource):
       Biogas_Plant.StorageData()
       
       Biogas_learning_ini = MachineLearning_biogas_start.MachineLearningStart()
-      Biogas_learning_ini.starting(t_train= biogas_input["t_pred"], OperationMode = biogas_input["OperationMode"], Model = biogas_input["OperationModel"], A_R101 = biogas_input["A_R101"], 
+      Biogas_learning_ini.starting(t_train= biogas_input["t_pred"]*2, OperationMode = biogas_input["OperationMode"], Model = biogas_input["OperationModel"], A_R101 = biogas_input["A_R101"], 
                                    B_R101 = biogas_input["B_R101"], C_R101=biogas_input["C_R101"], A_R102=biogas_input["A_R102"], B_R102=biogas_input["B_R102"], 
                                    C_R102=biogas_input["C_R102"], VR1 = biogas_input["VR1"], VR2 = biogas_input["VR1"])
       Biogas_learning = Biogas_learning_ini.data
       Biogas_learning.Get_data_DT(DataBase = Biogas_Plant.DT_Data)
       Biogas_learning.DT_time_and_data()
-      Biogas_learning.Optimization(t_predict=biogas_input["t_pred"])
+      Biogas_learning.Optimization()
       Biogas_learning.StorageData()
+
+      #sustrato
+      biogas_output["n"] = Biogas_Plant.n
+      biogas_output["a"] = Biogas_Plant.a
+      biogas_output["b"] = Biogas_Plant.b
+      biogas_output["c"] = Biogas_Plant.c
+      biogas_output["d"] = Biogas_Plant.d
+
+      #Tanque de premezcla
+      biogas_output["Mix_Velocity_TK100"] = Biogas_Plant.RPM_TK100
+      biogas_output["C_sv"] = Biogas_Plant.Csv
+      biogas_output["SV"] = Biogas_Plant.SV
+      biogas_output["C_st"] = Biogas_Plant.Cst
+      biogas_output["ST"] = Biogas_Plant.ST
+
+      #bomba P104
+      biogas_output["Pump104Flow"] = Biogas_Plant.Q_P104
+
+      #Reactor R101
+      biogas_output["Mix_Velocity_R101"] = Biogas_Plant.RPM_R101
+      
+
+      
 
     else:  #Modo Gemelo Off
 
@@ -450,30 +473,8 @@ class Biogas(Resource):
 
       #Energía
       biogas_output["StorageEnergy_V107"] = Biogas_Plant.Energy_V107/3600
-      
 
-
-
-
+    
       
-      
-      
-      
-      
-      
-
-      # if biogas_input["OperationMode"] in ["Modo3", "Modo4", "Modo5"]:
-
-      
-      
-
-
-        
-
-      
-      
-      
-
-
 
     return {"model": biogas_output}, 200
