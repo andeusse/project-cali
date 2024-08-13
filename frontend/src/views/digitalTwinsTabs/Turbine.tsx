@@ -276,7 +276,7 @@ const Turbine = () => {
         if ('turbineType' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital solar');
+          setError('El archivo no corresponde a un gemelo digital de turbinas');
           setIsOpen(true);
         }
         event.target.value = '';
@@ -628,7 +628,7 @@ const Turbine = () => {
             variant="contained"
             color="info"
             startIcon={<CalculateIcon />}
-            sx ={{ margin: '5px' }}
+            sx={{ margin: '5px' }}
           >
             Calculadora PowerSpout
           </Button>

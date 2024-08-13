@@ -4,6 +4,7 @@ import { TabType } from '../types/tab';
 import Turbine from './digitalTwinsTabs/Turbine';
 import Solar from './digitalTwinsTabs/Solar';
 import Biogas from './digitalTwinsTabs/Biogas';
+import CoolingTower from './digitalTwinsTabs/CoolingTower';
 
 type Props = {};
 
@@ -27,7 +28,7 @@ const DigitalTwins = (props: Props) => {
     },
     {
       title: 'Torre de refrigeración',
-      children: <></>,
+      children: <CoolingTower></CoolingTower>,
     },
     {
       title: 'Potencial Bioquímico (Metano)',

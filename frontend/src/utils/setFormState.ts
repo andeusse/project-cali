@@ -8,11 +8,14 @@ import { setFormObjectValue } from './setFormObjectValue';
 import { InputArrayType, InputType } from '../types/inputType';
 import { setScenario } from './scenarios/setScenario';
 import { SmartSystemParameters } from '../types/scenarios/common';
+import { setCoolingTower } from './models/setCoolingTower';
+import { CoolingTowerParameters } from '../types/models/coolingTower';
 
 export type formType =
   | TurbineParameters
   | SolarWindParameters
   | BiogasParameters
+  | CoolingTowerParameters
   | SmartSystemParameters;
 
 export const setFormState = <T extends formType>(
@@ -63,6 +66,11 @@ export const setFormState = <T extends formType>(
       name === 'operationModelType'
     ) {
       return setBiogas(e, oldState);
+    }
+  }
+  if ('topWaterFlow' in oldState) {
+    if (name === 'asd') {
+      return setCoolingTower(e, oldState);
     }
   }
   if ('operationMode' in oldState) {
