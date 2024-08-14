@@ -4,6 +4,7 @@ import { useControlPlayer } from '../../hooks/useControlPlayer';
 import { useAppSelector } from '../../redux/reduxHooks';
 import {
   COOLING_TOWER,
+  COOLING_TOWER_DIAGRAM_VARIABLES,
   CoolingTowerOutput,
   CoolingTowerParameters,
   FillType,
@@ -34,6 +35,7 @@ import CustomNumberField from '../../components/UI/CustomNumberField';
 import { getValueByKey } from '../../utils/getValueByKey';
 import CustomToggle from '../../components/UI/CustomToggle';
 import CoolingTowerDiagram from '../../components/models/diagram/CoolingTowerDiagram';
+import TimeGraphs from '../../components/models/common/TimeGraphs';
 
 const CoolingTower = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -276,7 +278,6 @@ const CoolingTower = () => {
             </AccordionDetails>
           </Accordion>
         </Grid>
-
         <Grid
           item
           xs={12}
@@ -310,7 +311,6 @@ const CoolingTower = () => {
             />
           </Button>
         </Grid>
-
         <Grid item xs={12} md={12} xl={12}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={2.5} xl={2.5}>
@@ -396,6 +396,20 @@ const CoolingTower = () => {
             </Grid>
           </Grid>
         </Grid>
+        {charts !== undefined && system.timeMultiplier && (
+          <>
+            <Grid item xs={12} md={12} xl={12}>
+              <TimeGraphs
+                timeMultiplier={system.timeMultiplier}
+                handleChange={handleChange}
+                charts={charts}
+                variables={COOLING_TOWER_DIAGRAM_VARIABLES}
+                playerControl={playerControl}
+                isPlaying={isPlaying}
+              ></TimeGraphs>
+            </Grid>
+          </>
+        )}
       </Grid>
     </>
   );

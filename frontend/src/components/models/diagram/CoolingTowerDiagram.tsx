@@ -1,9 +1,11 @@
 import {
   CoolingTowerOutput,
   CoolingTowerParameters,
-  CoolingTowerVariables,
+  COOLING_TOWER_DIAGRAM_VARIABLES,
 } from '../../../types/models/coolingTower';
 import DiagramVariables from '../common/DiagramVariables';
+import coolingTowerOff from '../../../assets/tower/tower.png';
+import coolingTowerOn from '../../../assets/tower/towerOn.gif';
 
 type Props = {
   coolingTower: CoolingTowerParameters;
@@ -12,7 +14,7 @@ type Props = {
 };
 
 const CoolingTowerDiagram = (props: Props) => {
-  const { coolingTower, data, isPlaying } = props;
+  const { data, isPlaying } = props;
 
   return (
     <div
@@ -23,14 +25,14 @@ const CoolingTowerDiagram = (props: Props) => {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox={`0 0 4200 2520`}
+        viewBox={`0 0 6000 4300`}
       >
-        <image href={''}></image>
+        <image href={!isPlaying ? coolingTowerOff : coolingTowerOn}></image>
         <DiagramVariables
           data={data}
-          variables={CoolingTowerVariables}
+          variables={COOLING_TOWER_DIAGRAM_VARIABLES}
           additionalCondition={[]}
-          fontSize={40}
+          fontSize={60}
         ></DiagramVariables>
       </svg>
     </div>
