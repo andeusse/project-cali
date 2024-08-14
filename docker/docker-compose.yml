@@ -1,5 +1,3 @@
-version: '2'
-
 networks:
   laboratorio-default:
     driver: bridge
@@ -25,21 +23,21 @@ services:
     networks:
       - laboratorio-default
 
-  grafana:
-    image: grafanabase
-    restart: always
-    ports:
-      - '3000:3000'
-    hostname: grafana
-    container_name: grafana
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    depends_on:
-      - influxdb
-    environment:
-      - GF_SECURITY_ALLOW_EMBEDDING=true
-    networks:
-      - laboratorio-default
+  # grafana:
+  #   image: grafanabase
+  #   restart: always
+  #   ports:
+  #     - '3000:3000'
+  #   hostname: grafana
+  #   container_name: grafana
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #   depends_on:
+  #     - influxdb
+  #   environment:
+  #     - GF_SECURITY_ALLOW_EMBEDDING=true
+  #   networks:
+  #     - laboratorio-default
 
   frontend:
     build:
@@ -50,7 +48,7 @@ services:
       - '3001:3001'
     depends_on:
       - influxdb
-      - grafana
+      # - grafana
     networks:
       - laboratorio-default
 
@@ -63,7 +61,7 @@ services:
       - '5000:5000'
     depends_on:
       - influxdb
-      - grafana
+      # - grafana
     networks:
       - laboratorio-default
 
