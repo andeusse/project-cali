@@ -1,0 +1,4 @@
+cd "C:\Users\Administrador\Documents\GitHub\project-cali\docker\custom-grafana-image\assets\images"
+
+docker cp SolareEolico-SistemaHibrido.png USC_Grafana:/usr/share/grafana/public/img/bg/SolareEolico-SistemaHibrido.png
+docker cp TP-Unifilar.png USC_Grafana:/usr/share/grafana/public/img/bg/TP-Unifilar.png
