@@ -1,5 +1,7 @@
 import numpy as np
 import scipy.integrate as integrate
+import psychrolib
+
 
 class EosPengRobinson:
     def __init__ (self):
@@ -14,7 +16,7 @@ class EosPengRobinson:
                    'N2': {'A':3.115E+1, 'B': -1.357E-2, 'C': 2.680E-5, 'D': -1.168E-8}}
         self.component_list = ['H2O', 'O2', 'N2'] 
 
-    def AirCompositions (self, T, RH, P):
+    def AirCompositions_in (self, T, RH, P):  #La Humedad relativa se pasa en porcentaje (10.0%)
         self.T = T        #Kelvin
         self.RH = RH      #percentage 
         self.P = P        #Pascal absolute pressure
@@ -32,15 +34,35 @@ class EosPengRobinson:
         self.x_O2 = (w_air/(w_air + w_H2O))*0.21
         self.x_N2 = (w_air/(w_air + w_H2O))*0.79
         self.MW_air = 18.01528*self.x_H2O + 32*self.x_O2 + 28*self.x_N2
-        self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2}
+        self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2} 
     
-    def WaterComposition (self, T, P):
+    def AirComposition_out (self, T, P, x_H2O, x_O2, x_N2):
+        self.T = T
+        self.P = P
+        self.x_H2O = x_H2O
+        self.x_O2 = x_O2
+        self.x_N2 = x_N2
+        self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2}
+
+    def relativeHumidityTop (self):
+        self.w = (self.x_H2O)/(self.O2 + self.x_N2) * (18)/(287.97) 
+        P_H2O = (self.w*self.P)/(0.622-self.w)
+        Tcel = self.T - 273.15
+        Psat = 6.1078*10**((12.27*Tcel)/(Tcel + 273.15))   #This units are in hPa
+        Psat = Psat * 100                                  #convert pressure to Pa  
+        self.RH = (P_H2O/Psat)*100
+
+    def Wet_bulb_temperature (self):
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        self.T_wet = psychrolib.GetTWetBulbFromRelHum(self.T - 273.15, self.RH, self.P)
+    
+    def WaterComposition (self, T, P, xH2O, x_O2, x_N2):
         self.T = T        #Kelvin
         self.P = P        #Pascal
 
-        self.x_H2O = 1
-        self.x_O2 = 0
-        self.x_N2 = 0
+        self.x_H2O = xH2O
+        self.x_O2 = x_O2
+        self.x_N2 = x_N2
         self.MW_H2O = 18.01528*self.x_H2O + 32*self.x_O2 + 28*self.x_N2
         self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2}
 
@@ -78,6 +100,10 @@ class EosPengRobinson:
         self.B_mix = self.b_mix * self.P / (self.R * self.T)
 
         self.Z_l, self.Z_v = cubic_eq (self.A_mix, self.B_mix)
+    
+    def MolarVolume(self):
+        self.Vm_mix_l =  self.Z_l * self.R * self.T / self.P
+        self.Vm_mix_v =  self.Z_v * self.R * self.T / self.P
     
     def fugacity (self):
         
@@ -123,41 +149,14 @@ class EosPengRobinson:
         self.H_l = H_ig_mix + H_dep_l
         self.H_v = H_ig_mix + H_dep_v
     
-    def ergun_preddure_drop (self, L, mu, epsilon, U, dp):
-        self.Vm_mix_l = self.Z_l * self.R * self.T / self.P
-
-
-        
-
-
-
-
-    
-
-        
-
-
-
-        
-    
-    
-
-        
-
-
-
-
-
-
-
-
-
-
-            
-            
-
-
-
-        
+    def ergun_pressure_drop (self, L, epsilon, u, dp):
+        self.rho = self.Vm_mix_v/self.MW_air
+        C1 = 1.458e-6
+        S = 110.4
+        self.mu = C1 * self.T**1.5 / (self.T + S)
+        term_1 = (150 * self.mu * (1 - epsilon)**2 * u) / (epsilon**3 * dp**2)
+        term_2 = (1.75 * self.rho * (1 - epsilon) * u**2) / (epsilon**3 * dp)
+        delta_P_per_L = term_1 + term_2
+        self.delta_P = delta_P_per_L * L
 
         
