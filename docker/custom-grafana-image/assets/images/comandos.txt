@@ -1,4 +1,16 @@
 cd "C:\Users\Administrador\Documents\GitHub\project-cali\docker\custom-grafana-image\assets\images"
 
+docker cp Biogas-Modo1.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo1.png
+docker cp Biogas-Modo2.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo2.png
+docker cp Biogas-Modo3.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo3.png
+docker cp Biogas-Modo4.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo4.png
+docker cp Biogas-Modo5.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo5.png
+docker cp comandos.txt USC_Grafana:/usr/share/grafana/public/img/bg/comandos.txt
+docker cp Hidrogeno-Sistema.png USC_Grafana:/usr/share/grafana/public/img/bg/Hidrogeno-Sistema.png
+docker cp PBM-Sistema.png USC_Grafana:/usr/share/grafana/public/img/bg/PBM-Sistema.png
 docker cp SolareEolico-SistemaHibrido.png USC_Grafana:/usr/share/grafana/public/img/bg/SolareEolico-SistemaHibrido.png
+docker cp SolarEolico-SistemaAutonomo.png USC_Grafana:/usr/share/grafana/public/img/bg/SolarEolico-SistemaAutonomo.png
+docker cp Torre-Sistema.png USC_Grafana:/usr/share/grafana/public/img/bg/Torre-Sistema.png
 docker cp TP-Unifilar.png USC_Grafana:/usr/share/grafana/public/img/bg/TP-Unifilar.png
+docker cp Turbinas-ProcesoConversión.png USC_Grafana:/usr/share/grafana/public/img/bg/Turbinas-ProcesoConversión.png
+docker cp Turbinas-ProcesoGeneración.png USC_Grafana:/usr/share/grafana/public/img/bg/Turbinas-ProcesoGeneración.png
