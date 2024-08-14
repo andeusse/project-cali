@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
-import { useAppSelector } from '../../redux/reduxHooks';
 import {
   COOLING_TOWER,
   COOLING_TOWER_DIAGRAM_VARIABLES,
@@ -27,7 +26,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import { ThemeType } from '../../types/theme';
 import saveAs from 'file-saver';
 import PlayerControls from '../../components/UI/PlayerControls';
 import { setFormState } from '../../utils/setFormState';
@@ -36,15 +34,13 @@ import { getValueByKey } from '../../utils/getValueByKey';
 import CustomToggle from '../../components/UI/CustomToggle';
 import CoolingTowerDiagram from '../../components/models/diagram/CoolingTowerDiagram';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
+import coolingTower from '../../assets/illustrations/tower.png';
 
 const CoolingTower = () => {
-  const userTheme = useAppSelector((state) => state.theme.value);
-
   const [system, setSystem] = useState<CoolingTowerParameters>({
     ...COOLING_TOWER,
   });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
-  const [isSingleDiagramExpanded, setIsSingleDiagramExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -135,37 +131,8 @@ const CoolingTower = () => {
                   marginLeft: 'auto',
                   marginRight: 'auto',
                 }}
-                src={''}
-                alt="turbineIllustration"
-              ></img>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-        <Grid item xs={12} md={12} xl={12}>
-          <Accordion
-            expanded={isSingleDiagramExpanded}
-            onChange={() =>
-              setIsSingleDiagramExpanded(!isSingleDiagramExpanded)
-            }
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
-              sx={{ margin: 0 }}
-            >
-              <Typography variant="h4">Unifilar</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <img
-                style={{
-                  height: '500px',
-                  display: 'block',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}
-                src={userTheme === ThemeType.Light ? '' : ''}
-                alt="singleDiagram"
+                src={coolingTower}
+                alt="coolingTowerllustration"
               ></img>
             </AccordionDetails>
           </Accordion>
