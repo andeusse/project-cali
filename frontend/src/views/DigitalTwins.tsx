@@ -27,7 +27,7 @@ const DigitalTwins = (props: Props) => {
       children: <></>,
     },
     {
-      title: 'Torre de refrigeración',
+      title: 'Torre de enfriamiento',
       children: <CoolingTower></CoolingTower>,
     },
     {
