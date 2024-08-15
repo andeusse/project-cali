@@ -10,13 +10,13 @@ class CoolingTower:
     # Parametrizacion de turbinas de acuerdo a tipo
     def fillType(self, type):
         # Listones planos
-        if type == 0:
+        if type == 'FlatSlats':
             self.fillDensity = 16 # Densidad de relleno del empaque
         # Listones curvos
-        elif type == 1:
+        elif type == 'CurvedSlats':
             self.fillDensity = 25 # Densidad de relleno del empaque
         # Estructurado
-        elif type == 2:
+        elif type == 'Structured':
             self.fillDensity = 226 # Densidad de relleno del empaque
         return self.fillDensity
     

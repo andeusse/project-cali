@@ -9,6 +9,22 @@ import os
 class Tower(Resource):
   def post(self):
     data = request.get_json()
+    fillType = data
+    fillType = data["fillType"]["value"]
+    towerArea = data["towerArea"]
+    towerHeight = data["towerHeight"]
+    nominalAirFlow = data["nominalAirFlow"]
+    maximumAirPressure = data["maximumAirPressure"]
+    nominalWaterFlow = data["nominalWaterFlow"]
+    maximumWaterPressure = data["maximumWaterPressure"]
+    topWaterFlow = data["topWaterFlow"]
+    topWaterTemperature = data["topWaterTemperature"]
+    bottomAirFlow = data["bottomAirFlow"]
+    bottomAirTemperature = data["bottomAirTemperature"]
+    bottomAirHumidity = data["bottomAirHumidity"]
+    atmosphericPressure = data["atmosphericPressure"]
+
+
     load_dotenv('v1.0\.env')
     DB_IP = os.getenv('DB_IP')
     DB_Port = os.getenv('DB_Port')
