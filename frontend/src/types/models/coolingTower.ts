@@ -30,6 +30,8 @@ export type CoolingTowerParameters = CommonSystemParameter &
     bottomAirTemperature: InputType;
     bottomAirHumidity: InputType;
     atmosphericPressure: InputType;
+    simulatedBottomWaterTemperature: number | undefined;
+    simulatedTopAirTemperature: number | undefined;
   };
 
 export type CoolingTowerOutput = {
@@ -200,6 +202,8 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     max: 120,
     step: 0.1,
   },
+  simulatedBottomWaterTemperature: undefined,
+  simulatedTopAirTemperature: undefined,
 };
 
 export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
@@ -210,8 +214,8 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Flujo Agua Entrada',
     fixed: 2,
-    x: 4600,
-    y: 1800,
+    x: 4300,
+    y: 1000,
   },
   {
     name: 'Temperatura Agua superior',
@@ -220,7 +224,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temp. Agua Entrada',
     fixed: 2,
-    x: 3500,
+    x: 3600,
     y: 500,
   },
   {
@@ -230,7 +234,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temp. Aire Salida',
     fixed: 2,
-    x: 1800,
+    x: 1600,
     y: 100,
   },
   {
@@ -250,8 +254,8 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'ΔTemp. Aire',
     fixed: 2,
-    x: 1800,
-    y: 220,
+    x: 1600,
+    y: 250,
   },
   {
     name: 'Humedad Agua Inferior',
@@ -260,7 +264,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Tem. Agua Salida',
     fixed: 2,
-    x: 1800,
+    x: 1600,
     y: 2400,
   },
   {
@@ -270,8 +274,8 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'ΔTemp. Agua',
     fixed: 2,
-    x: 1800,
-    y: 2520,
+    x: 1600,
+    y: 2550,
   },
   {
     name: 'Flujo Aire inferior',
@@ -280,7 +284,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Flujo Aire Entrada',
     fixed: 2,
-    x: 1200,
+    x: 1400,
     y: 3480,
   },
   {
@@ -290,7 +294,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temp. Aire Entrada',
     fixed: 2,
-    x: 1600,
+    x: 1400,
     y: 2800,
   },
   {
@@ -300,8 +304,8 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Hum. Aire Entrada',
     fixed: 2,
-    x: 1600,
-    y: 2920,
+    x: 1400,
+    y: 2950,
   },
   {
     name: 'Energía aplicada al agua',
@@ -320,7 +324,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'ΔPresión',
     fixed: 2,
-    x: 3400,
-    y: 2250,
+    x: 3150,
+    y: 1400,
   },
 ];

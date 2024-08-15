@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import {
@@ -49,6 +49,22 @@ const CoolingTower = () => {
       'coolingTower',
       system
     );
+
+  useEffect(() => {
+    if (data !== undefined) {
+      setSystem((o) => ({
+        ...o,
+        simulatedBottomWaterTemperature: data.bottomAirTemperature,
+        simulatedTopAirTemperature: data.topAirTemperature,
+      }));
+    } else {
+      setSystem((o) => ({
+        ...o,
+        simulatedBottomWaterTemperature: undefined,
+        simulatedTopAirTemperature: undefined,
+      }));
+    }
+  }, [data]);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<CoolingTowerParameters>(

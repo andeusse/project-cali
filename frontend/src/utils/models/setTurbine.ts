@@ -32,7 +32,7 @@ export const setTurbine = (
     newState.controller.customize = e.target.checked;
     newState.controller.chargeVoltageBulk.disabled = !e.target.checked;
     newState.controller.chargeVoltageFloat.disabled = !e.target.checked;
-    newState.controller.chargingMinimunVoltage.disabled = !e.target.checked;
+    newState.controller.chargingMinimumVoltage.disabled = !e.target.checked;
     newState.controller.sinkOffVoltage.disabled = !e.target.checked;
     newState.controller.sinkOnVoltage.disabled = !e.target.checked;
   }

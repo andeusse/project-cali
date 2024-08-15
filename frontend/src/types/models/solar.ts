@@ -216,7 +216,7 @@ const CONTROLLER: IsConnected & CommonController = {
     max: 35,
     step: 0.1,
   },
-  chargingMinimunVoltage: {
+  chargingMinimumVoltage: {
     disabled: true,
     value: 11,
     tooltip: 'Voltaje mínimo de inicio de carga',
@@ -247,6 +247,14 @@ const OFFGRID_INVERTER: Inverter = {
     unit: 'W',
     variableString: 'P',
     variableSubString: 'Inversor',
+  },
+  minimumVoltage: {
+    disabled: true,
+    value: 22,
+    tooltip: 'Voltaje mínimo de operación',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'min',
   },
 };
 
@@ -292,7 +300,7 @@ const HYBRID_INVERTER: InverterHybrid = {
     max: 35,
     step: 0.1,
   },
-  chargingMinimunVoltage: {
+  chargingMinimumVoltage: {
     disabled: true,
     value: 22,
     tooltip: 'Voltaje mínimo de inicio de carga',
@@ -302,6 +310,14 @@ const HYBRID_INVERTER: InverterHybrid = {
     min: 22,
     max: 35,
     step: 0.1,
+  },
+  minimumVoltage: {
+    disabled: true,
+    value: 22,
+    tooltip: 'Voltaje mínimo de operación',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'min',
   },
 };
 

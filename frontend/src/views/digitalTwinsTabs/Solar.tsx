@@ -744,8 +744,8 @@ const Solar = () => {
                       </Grid>
                       <Grid item xs={6} md={6} xl={6}>
                         <CustomNumberField
-                          variable={system.controller.chargingMinimunVoltage}
-                          name="controller.chargingMinimunVoltage"
+                          variable={system.controller.chargingMinimumVoltage}
+                          name="controller.chargingMinimumVoltage"
                           handleChange={handleChange}
                           disabled={system.disableParameters}
                         ></CustomNumberField>
@@ -797,6 +797,13 @@ const Solar = () => {
                             <CustomNumberField
                               variable={system.offgridInverter.nominalPower}
                               name="offgridInverter.nominalPower"
+                              handleChange={handleChange}
+                            ></CustomNumberField>
+                          </Grid>
+                          <Grid item xs={6} md={6} xl={6}>
+                            <CustomNumberField
+                              variable={system.offgridInverter.minimumVoltage}
+                              name="offgridInverter.minimumVoltage"
                               handleChange={handleChange}
                             ></CustomNumberField>
                           </Grid>
@@ -887,9 +894,9 @@ const Solar = () => {
                           <Grid item xs={6} md={6} xl={6}>
                             <CustomNumberField
                               variable={
-                                system.hybridInverter.chargingMinimunVoltage
+                                system.hybridInverter.chargingMinimumVoltage
                               }
-                              name="hybridInverter.chargingMinimunVoltage"
+                              name="hybridInverter.chargingMinimumVoltage"
                               handleChange={handleChange}
                             ></CustomNumberField>
                           </Grid>

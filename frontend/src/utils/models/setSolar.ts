@@ -21,13 +21,13 @@ export const setSolar = (
     newState.controller.customize = e.target.checked;
     newState.controller.chargeVoltageBulk.disabled = !e.target.checked;
     newState.controller.chargeVoltageFloat.disabled = !e.target.checked;
-    newState.controller.chargingMinimunVoltage.disabled = !e.target.checked;
+    newState.controller.chargingMinimumVoltage.disabled = !e.target.checked;
   }
   if (e.target.name === 'hybridInverter.customize') {
     newState.hybridInverter.customize = e.target.checked;
     newState.hybridInverter.chargeVoltageBulk.disabled = !e.target.checked;
     newState.hybridInverter.chargeVoltageFloat.disabled = !e.target.checked;
-    newState.hybridInverter.chargingMinimunVoltage.disabled = !e.target.checked;
+    newState.hybridInverter.chargingMinimumVoltage.disabled = !e.target.checked;
   }
   if (name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
@@ -77,7 +77,7 @@ export const setSolar = (
 
         newState.controller.chargeVoltageBulk.value = 13.6;
         newState.controller.chargeVoltageFloat.value = 13.9;
-        newState.controller.chargingMinimunVoltage.value = 11.5;
+        newState.controller.chargingMinimumVoltage.value = 11.5;
         break;
       case OperationModeType.Mode2:
         newState.monocrystallinePanel.isConnected = true;
@@ -98,7 +98,7 @@ export const setSolar = (
 
         newState.controller.chargeVoltageBulk.value = 27.2;
         newState.controller.chargeVoltageFloat.value = 27.8;
-        newState.controller.chargingMinimunVoltage.value = 23;
+        newState.controller.chargingMinimumVoltage.value = 23;
         break;
       case OperationModeType.Mode3:
         newState.monocrystallinePanel.isConnected = true;
@@ -116,7 +116,7 @@ export const setSolar = (
 
         newState.controller.chargeVoltageBulk.value = 13.6;
         newState.controller.chargeVoltageFloat.value = 13.9;
-        newState.controller.chargingMinimunVoltage.value = 11.5;
+        newState.controller.chargingMinimumVoltage.value = 11.5;
         break;
       case OperationModeType.Mode4:
         newState.monocrystallinePanel.isConnected = false;
@@ -130,7 +130,7 @@ export const setSolar = (
 
         newState.controller.chargeVoltageBulk.value = 13.6;
         newState.controller.chargeVoltageFloat.value = 13.9;
-        newState.controller.chargingMinimunVoltage.value = 11.5;
+        newState.controller.chargingMinimumVoltage.value = 11.5;
         break;
       case OperationModeType.Mode5:
         newState.monocrystallinePanel.isConnected = true;
@@ -148,7 +148,7 @@ export const setSolar = (
 
         newState.controller.chargeVoltageBulk.value = 13.6;
         newState.controller.chargeVoltageFloat.value = 13.9;
-        newState.controller.chargingMinimunVoltage.value = 11.5;
+        newState.controller.chargingMinimumVoltage.value = 11.5;
         break;
     }
   }
@@ -173,7 +173,7 @@ export const setSolar = (
 
             newState.controller.chargeVoltageBulk.value = 13.6;
             newState.controller.chargeVoltageFloat.value = 13.9;
-            newState.controller.chargingMinimunVoltage.value = 11.5;
+            newState.controller.chargingMinimumVoltage.value = 11.5;
           } else if (newState.inputOperationMode !== OperationModeType.Mode5) {
             newState.policrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
@@ -200,7 +200,7 @@ export const setSolar = (
 
             newState.controller.chargeVoltageBulk.value = 13.6;
             newState.controller.chargeVoltageFloat.value = 13.9;
-            newState.controller.chargingMinimunVoltage.value = 11.5;
+            newState.controller.chargingMinimumVoltage.value = 11.5;
           } else if (newState.inputOperationMode !== OperationModeType.Mode5) {
             newState.monocrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
@@ -227,7 +227,7 @@ export const setSolar = (
 
             newState.controller.chargeVoltageBulk.value = 13.6;
             newState.controller.chargeVoltageFloat.value = 13.9;
-            newState.controller.chargingMinimunVoltage.value = 11.5;
+            newState.controller.chargingMinimumVoltage.value = 11.5;
           } else if (newState.inputOperationMode !== OperationModeType.Mode5) {
             newState.monocrystallinePanel.isConnected = true;
             newState.policrystallinePanel.isConnected = true;
@@ -254,7 +254,7 @@ export const setSolar = (
             newState.isBattery2 = true;
             newState.controller.chargeVoltageBulk.value = 27.2;
             newState.controller.chargeVoltageFloat.value = 27.8;
-            newState.controller.chargingMinimunVoltage.value = 23;
+            newState.controller.chargingMinimumVoltage.value = 23;
           }
           break;
         case 'offgridInverter':

@@ -533,8 +533,8 @@ const Turbine = () => {
                     </Grid>
                     <Grid item xs={6} md={6} xl={6}>
                       <CustomNumberField
-                        variable={system.controller.chargingMinimunVoltage}
-                        name="controller.chargingMinimunVoltage"
+                        variable={system.controller.chargingMinimumVoltage}
+                        name="controller.chargingMinimumVoltage"
                         handleChange={handleChange}
                         disabled={system.disableParameters}
                       ></CustomNumberField>
@@ -580,6 +580,13 @@ const Turbine = () => {
                       <CustomNumberField
                         variable={system.inverterNominalPower}
                         name="inverterNominalPower"
+                        handleChange={handleChange}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.inverterMinimumVoltage}
+                        name="inverterMinimumVoltage"
                         handleChange={handleChange}
                       ></CustomNumberField>
                     </Grid>

@@ -39,6 +39,7 @@ export type TurbineParameters = CommonSystemParameter &
     battery: Battery;
     inverterEfficiency: InputType;
     inverterNominalPower: InputType;
+    inverterMinimumVoltage: InputType;
     inputPressure: InputArrayType;
     inputFlow: InputArrayType;
     inputActivePower: InputArrayType;
@@ -150,7 +151,7 @@ const CONTROLLER: Controller = {
     max: 35,
     step: 0.1,
   },
-  chargingMinimunVoltage: {
+  chargingMinimumVoltage: {
     disabled: true,
     value: 22,
     tooltip: 'Voltaje mínimo de inicio de carga',
@@ -337,6 +338,14 @@ export const TURBINE: TurbineParameters = {
     unit: 'W',
     variableString: 'P',
     variableSubString: 'inverter',
+  },
+  inverterMinimumVoltage: {
+    disabled: true,
+    value: 22,
+    tooltip: 'Voltaje mínimo de operación',
+    unit: 'V',
+    variableString: 'V',
+    variableSubString: 'min',
   },
   inputOfflineOperation: true,
   inputDirectCurrentPower: false,

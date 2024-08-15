@@ -26,13 +26,14 @@ const CoolingTowerDiagram = (props: Props) => {
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
         viewBox={`0 0 6000 4300`}
+        transform={`scale(0.8 0.8)`}
       >
         <image href={!isPlaying ? coolingTowerOff : coolingTowerOn}></image>
         <DiagramVariables
           data={data}
           variables={COOLING_TOWER_DIAGRAM_VARIABLES}
           additionalCondition={[]}
-          fontSize={60}
+          fontSize={75}
         ></DiagramVariables>
       </svg>
     </div>

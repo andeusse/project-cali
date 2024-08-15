@@ -49,12 +49,13 @@ export type CommonController = {
   efficiency: InputType;
   chargeVoltageBulk: InputType;
   chargeVoltageFloat: InputType;
-  chargingMinimunVoltage: InputType;
+  chargingMinimumVoltage: InputType;
 };
 
 export type Inverter = IsConnected & {
   efficiency: InputType;
   nominalPower: InputType;
+  minimumVoltage: InputType;
 };
 
 export type InverterHybrid = IsConnected &
@@ -62,5 +63,5 @@ export type InverterHybrid = IsConnected &
     customize: boolean;
     chargeVoltageBulk: InputType;
     chargeVoltageFloat: InputType;
-    chargingMinimunVoltage: InputType;
+    chargingMinimumVoltage: InputType;
   };
