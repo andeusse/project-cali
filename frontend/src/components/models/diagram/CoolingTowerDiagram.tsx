@@ -33,7 +33,7 @@ const CoolingTowerDiagram = (props: Props) => {
           data={data}
           variables={COOLING_TOWER_DIAGRAM_VARIABLES}
           additionalCondition={[]}
-          fontSize={75}
+          fontSize={80}
         ></DiagramVariables>
       </svg>
     </div>
