@@ -218,7 +218,7 @@ const CONTROLLER: IsConnected & CommonController = {
   },
   chargingMinimunVoltage: {
     disabled: true,
-    value: 11.5,
+    value: 11,
     tooltip: 'Voltaje mínimo de inicio de carga',
     unit: 'V',
     variableString: 'V',
@@ -294,7 +294,7 @@ const HYBRID_INVERTER: InverterHybrid = {
   },
   chargingMinimunVoltage: {
     disabled: true,
-    value: 23,
+    value: 22,
     tooltip: 'Voltaje mínimo de inicio de carga',
     unit: 'V',
     variableString: 'V',

@@ -152,7 +152,7 @@ const CONTROLLER: Controller = {
   },
   chargingMinimunVoltage: {
     disabled: true,
-    value: 23,
+    value: 22,
     tooltip: 'Voltaje mínimo de inicio de carga',
     unit: 'V',
     variableString: 'V',
