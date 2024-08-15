@@ -23,12 +23,12 @@ const DigitalTwins = (props: Props) => {
       children: <Biogas></Biogas>,
     },
     {
-      title: 'Celda de Hidrógeno',
-      children: <></>,
-    },
-    {
       title: 'Torre de enfriamiento',
       children: <CoolingTower></CoolingTower>,
+    },
+    {
+      title: 'Celda de Hidrógeno',
+      children: <></>,
     },
     {
       title: 'Potencial Bioquímico (Metano)',
