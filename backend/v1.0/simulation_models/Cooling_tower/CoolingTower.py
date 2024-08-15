@@ -3,19 +3,18 @@ import numpy as np
 from scipy.optimize import fsolve
 
 class coolingtower:
-    def __init__ (self, L, D, epsilon, dp):  #L: Largo de la torre en metros, D: diametro de la torre en metros, epsilon: Porosidad de la torre, dp: Diametro de las partículas del lecho (m)
+    def __init__ (self, L, A, epsilon, dp):  #L: Largo de la torre en metros, A: area transversal de la torre en metros cuadrados, epsilon: Porosidad de la torre, dp: Diametro de las partículas del lecho (m)
         self.L = L
-        self.D = D
         self.epsilon = epsilon
         self.dp = dp
-        self.A = ((np.pi)/4) * (D**2)
+        self.A = A
     
     def TowerBalance (self, T_Lin, P_atm, Fv_Lin, T_vin, Fv_vin, RH_air_in):
         self.T_Lin = T_Lin              #Temperatura agua caliente a la entrada [K]
         self.P_atm = P_atm              #Presión atmosférica                    [Pa]
-        self.Fv_Lin = Fv_Lin              #Flujo volumétrico de agua a la entrada [m3/s] 
+        self.Fv_Lin = Fv_Lin            #Flujo volumétrico de agua a la entrada [m3/s] 
         self.T_vin = T_vin              #Temperatura de entrada aire            [K]   
-        self.Fv_vin = Fv_vin             #Flujo volumétrico de aire a la entrada [m3/s]
+        self.Fv_vin = Fv_vin            #Flujo volumétrico de aire a la entrada [m3/s]
         self.RH_air_in = RH_air_in      #Humedad relativa del aire a la entrada [%] (numero 60% es 60)
         self.u = self.Fv_vin/self.A
         Air_in = PR.EosPengRobinson()
