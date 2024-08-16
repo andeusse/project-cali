@@ -60,7 +60,7 @@ class Turbine(Resource):
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
-    controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
+    controllerChargingMinimumVoltage = data["controller"]["chargingMinimumVoltage"]["value"]
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
     controllerEfficiency = data["controller"]["efficiency"]["value"]
@@ -138,7 +138,7 @@ class Turbine(Resource):
           simulatedDirectCurrentVoltage = 24.0
 
     results = twinHydro.twinOutput(chargeCycleInitialSOC, batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
-                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, sinkLoadMode, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
+                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimumVoltage, sinkLoadMode, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
 
     turbine["turbinePower"] = P_h

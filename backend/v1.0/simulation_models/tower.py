@@ -1,9 +1,9 @@
 from scipy.optimize import minimize
 from scipy.optimize import Bounds
 from scipy.optimize import least_squares
-from simulation_models.Biogas import ThermoProperties as TP
+from simulation_models.CoolingTower import CoolingTower
 
-class CoolingTower:
+class TwinTower:
     def __init__(self, systemName):
         self.systemName = systemName # Nombre del sistema
 
@@ -23,17 +23,8 @@ class CoolingTower:
     # Parametrizacion de gemelo 
     def twinParameters (self):
         self.towerArea = 0.0225 # Area transversal de la torre en metros
-        self.towerHeight = 0.645 # Altura de la torre en metros
+        self.towerHeight = 0.580 # Altura de la torre en metros
     
-    # # Calculo de potencia de las turbinas
-    # def PowerOutput (self, Pressure, Flux):
-    #     self.Press = Pressure
-    #     self.Q = Flux
-    #     #Calculo de potencia de la turbina kW
-    #     self.P_h = ((self.n_t/100) * self.Press * self.Q * (1 - (self.f_h/100)))
-
-    #     return self.P_h
-        
     # def optimal_n_t(self, n_t, P_h_meas, Pressure, Flux):
     #     def turbinePowerOutput(n_t, P_h_meas, Pressure, Flux):      
     #         return ((n_t/100) * Pressure * Flux) - P_h_meas
@@ -50,16 +41,21 @@ class CoolingTower:
         self.bottomAirTemperature = bottomAirTemperature
         self.bottomAirHumidity = bottomAirHumidity
         self.atmosphericPressure = atmosphericPressure
+        epsilon = 0.8
+        dp = 0.005
 
-        self.bottomWaterTemperature = self.topWaterTemperature
+        towerModel = CoolingTower.coolingTowerModel(self.towerHeight, self.towerArea, epsilon, dp)
+        towerModel.towerBalance(self.topWaterTemperature, self.atmosphericPressure, self.topWaterFlow, self.bottomAirTemperature, self.bottomAirFlow, self.bottomAirHumidity)
+        towerResults = towerModel.solution
 
-        self.topAirTemperature = self.bottomAirTemperature
+        self.bottomWaterTemperature = towerResults[6]
+        self.topAirTemperature = towerResults[6]
         
         self.topAirHumidity = self.bottomAirHumidity
         
         self.energyAppliedToWater = self.topWaterTemperature - self.oldBottomWaterTemperature
 
-        self.waterTemperatureReduction = self.topWaterTemperature - self.bottomWaterTemperature
+        self.waterTemperatureReduction = self.bottomWaterTemperature - self.topWaterTemperature
         self.airTemperatureRise = self.topAirTemperature - self.bottomAirTemperature
 
         return round(self.bottomWaterTemperature,2), round(self.waterTemperatureReduction,2), round(self.topAirTemperature,2), round(self.topAirHumidity,2), round(self.airTemperatureRise), round(self.energyAppliedToWater)

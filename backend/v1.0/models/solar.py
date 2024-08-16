@@ -94,10 +94,10 @@ class Solar(Resource):
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
-    controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
+    controllerChargingMinimumVoltage = data["controller"]["chargingMinimumVoltage"]["value"]
     hybridChargeVoltageBulk = data["hybridInverter"]["chargeVoltageBulk"]["value"]
     hybridChargeVoltageFloat = data["hybridInverter"]["chargeVoltageFloat"]["value"]
-    hybridChargingMinimunVoltage = data["hybridInverter"]["chargingMinimunVoltage"]["value"]
+    hybridChargingMinimumVoltage = data["hybridInverter"]["chargingMinimumVoltage"]["value"]
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -179,7 +179,7 @@ class Solar(Resource):
       
       twinResults = twinPVWF.ongridTwinOutput(chargeCycleInitialSOC, batteryState, gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
                                 batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
-                                hybridChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
+                                hybridChargingMinimumVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
       
       solarWind["externalGridPower"] = twinResults[0]
@@ -235,7 +235,7 @@ class Solar(Resource):
       
       twinResults = twinPVWF.offgridTwinOutput(chargeCycleInitialSOC, batteryState, simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
                                  batteryTemperature, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, 
-                                 controllerChargeVoltageFloat, controllerChargingMinimunVoltage, PV_Voltage, WT_Voltage, 
+                                 controllerChargeVoltageFloat, controllerChargingMinimumVoltage, PV_Voltage, WT_Voltage, 
                                  directCurrentLoadVoltage, inverterVoltage, delta_t*timeMultiplier)
             
       solarWind["controllerPower"] = twinResults[0]
