@@ -142,7 +142,7 @@ const CoolingTower = () => {
             <AccordionDetails>
               <img
                 style={{
-                  height: '700px',
+                  height: '600px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',
