@@ -313,7 +313,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Potencia aplicada al agua',
     variable: 'powerAppliedToWater',
-    unit: 'kWh',
+    unit: 'kW',
     isShown: true,
     diagramName: 'Potencia aplicada',
     fixed: 2,
