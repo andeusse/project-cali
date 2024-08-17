@@ -164,7 +164,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   bottomAirFlow: {
     disabled: false,
-    value: 13.7,
+    value: 5.0,
     tooltip: 'Flujo',
     unit: 'm³ / min',
     variableString: 'Flujo',
@@ -310,7 +310,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Energía aplicada al agua',
     variable: 'energyAppliedToWater',
-    unit: 'kJ',
+    unit: 'kWh',
     isShown: true,
     diagramName: 'Energía aplicada',
     fixed: 2,
