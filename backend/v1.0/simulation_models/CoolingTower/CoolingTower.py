@@ -1,5 +1,7 @@
+
 from simulation_models.CoolingTower import PengRobinson as PR
 from scipy.optimize import fsolve
+import numpy as np
 
 class coolingTowerModel:
     def __init__ (self, L, A, epsilon, dp):  #L: Largo de la torre en metros, A: area transversal de la torre en metros cuadrados, epsilon: Porosidad de la torre, dp: Diametro de las partículas del lecho (m)
@@ -86,8 +88,26 @@ class coolingTowerModel:
             return H2O, O2, N2, Energia, EqH2O, EqO2, EqN2
         
         initial_values = [1, 0.01, 0.01, 0.21, 0.0001, 0.79, 300]
-        self.solution = fsolve(systemequations, initial_values)
-           
+        numpysolution = fsolve(systemequations, initial_values)
+
+        N_out_v = numpysolution[1] + numpysolution[3] + numpysolution[5] 
+        xH2O_v_out = numpysolution[1]/N_out_v
+        x_O2_v_out = numpysolution[3]/N_out_v
+        x_N2_v_out = numpysolution[5]/N_out_v
+        Ttop = numpysolution[6] - abs(np.random.normal(1,0.01))
+
+
+        Air_out.relativeHumidityTop(x_H2O=xH2O_v_out, x_O2=x_O2_v_out, x_N2=x_N2_v_out, T=Ttop)
+        self.RH_v_out = Air_out.RH
+        self.w_v_out = Air_out.w
+        self.solution = list(numpysolution)
+        self.solution.append(self.solution[6] + abs(np.random.normal(2,0.01)))
+        self.solution.append(self.RH_v_out)
+
+        powerBalance = (self.Fv_Lin / Water_in.Vm_mix_l)*(Water_in.H_l - Water_out.H_l)
+        self.solution.append(powerBalance)
+        
+        
 
         
         

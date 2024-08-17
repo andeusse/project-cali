@@ -19,19 +19,19 @@ class EosPengRobinson:
         self.T = T        #Kelvin
         self.RH = RH      #percentage 
         self.P = P        #Pascal absolute pressure
-
+        
         Tcel = self.T - 273.15
         Psat = 6.1078*10**((12.27*Tcel)/(Tcel + 273.15))   #This units are in hPa
         Psat = Psat * 100                                  #convert pressure to Pa  
-        P_H2O = self.RH/100 * Psat
+        P_H2O = (self.RH/100) * Psat
         self.w = 0.622 * (P_H2O)/(self.P + P_H2O)               #kgH2O / kgdry air
         
         #Basis 100 estimation of air composition
         w_air = 100/(self.w + 1)
         w_H2O = self.w*w_air
-        self.x_H2O =   w_H2O/(w_air + w_H2O)
-        self.x_O2 = (w_air/(w_air + w_H2O))*0.21
-        self.x_N2 = (w_air/(w_air + w_H2O))*0.79
+        self.x_H2O =   (w_H2O/(18))/((w_air/(28.96) + w_H2O/18))
+        self.x_O2 = ((w_air/(28.96))/((w_air/(28.96) + w_H2O/18)))*0.21
+        self.x_N2 = ((w_air/(28.96))/((w_air/(28.96) + w_H2O/18)))*0.79
         self.MW_air = 18.01528*self.x_H2O + 32*self.x_O2 + 28*self.x_N2
         self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2} 
     
@@ -43,14 +43,11 @@ class EosPengRobinson:
         self.x_N2 = x_N2
         self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2}
 
-    def relativeHumidityTop (self):
-        self.w = (self.x_H2O)/(self.O2 + self.x_N2) * (18)/(287.97) 
-        P_H2O = (self.w*self.P)/(0.622-self.w)
-        Tcel = self.T - 273.15
-        Psat = 6.1078*10**((12.27*Tcel)/(Tcel + 273.15))   #This units are in hPa
-        Psat = Psat * 100                                  #convert pressure to Pa  
-        self.RH = (P_H2O/Psat)*100
-
+    def relativeHumidityTop (self, x_H2O, x_O2, x_N2, T):
+        self.w = (x_H2O)/(x_O2 + x_N2) * (18)/(28.96) 
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        self.RH = psychrolib.GetRelHumFromHumRatio(T - 273.15, self.w, self.P) * 100
+       
     def Wet_bulb_temperature (self):
         psychrolib.SetUnitSystem(psychrolib.SI)
         self.T_wet = psychrolib.GetTWetBulbFromRelHum(self.T - 273.15, self.RH, self.P)
