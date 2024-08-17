@@ -33,13 +33,12 @@ class TwinTower:
     #     self.n_t = n_t.x[0]*random.uniform(0.98,1.02)
     #     return n_t.x[0]
     
-    def twinOutput(self, topWaterFlow, topWaterTemperature, oldBottomWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure):
+    def twinOutput(self, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
         self.topWaterFlow = topWaterFlow
         self.topWaterTemperature = topWaterTemperature
-        self.oldBottomWaterTemperature = oldBottomWaterTemperature
         self.bottomAirFlow = bottomAirFlow
         self.bottomAirTemperature = bottomAirTemperature
-        self.bottomAirHumidity = bottomAirHumidity
+        self.bottomAirHumidity = bottomAirHumidity / 100
         self.atmosphericPressure = atmosphericPressure
         epsilon = 0.8
         dp = 0.005
@@ -49,13 +48,12 @@ class TwinTower:
         towerResults = towerModel.solution
 
         self.bottomWaterTemperature = towerResults[6]
-        self.topAirTemperature = towerResults[6]
-        
-        self.topAirHumidity = self.bottomAirHumidity
-        
-        self.energyAppliedToWater = self.topWaterTemperature - self.oldBottomWaterTemperature
+        self.topAirTemperature = towerResults[7]
+        self.topAirHumidity = towerResults[8]
+        self.powerAppliedToWater = towerResults[9] / 1000
+        self.energyAppliedToWater = previousEnergyApplied + self.powerAppliedToWater * delta_t / 3600
 
         self.waterTemperatureReduction = self.bottomWaterTemperature - self.topWaterTemperature
         self.airTemperatureRise = self.topAirTemperature - self.bottomAirTemperature
 
-        return round(self.bottomWaterTemperature,2), round(self.waterTemperatureReduction,2), round(self.topAirTemperature,2), round(self.topAirHumidity,2), round(self.airTemperatureRise), round(self.energyAppliedToWater)
+        return round(self.bottomWaterTemperature,2), round(self.waterTemperatureReduction,2), round(self.topAirTemperature,2), round(self.topAirHumidity,2), round(self.airTemperatureRise,2), round(self.powerAppliedToWater,2), self.energyAppliedToWater

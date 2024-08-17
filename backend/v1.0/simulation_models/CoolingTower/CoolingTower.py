@@ -94,14 +94,14 @@ class coolingTowerModel:
         xH2O_v_out = numpysolution[1]/N_out_v
         x_O2_v_out = numpysolution[3]/N_out_v
         x_N2_v_out = numpysolution[5]/N_out_v
-        Ttop = numpysolution[6] - abs(np.random.normal(1,0.01))
+        Ttop = numpysolution[6] - abs(np.random.normal(1.3,0.01))
 
 
         Air_out.relativeHumidityTop(x_H2O=xH2O_v_out, x_O2=x_O2_v_out, x_N2=x_N2_v_out, T=Ttop)
         self.RH_v_out = Air_out.RH
         self.w_v_out = Air_out.w
         self.solution = list(numpysolution)
-        self.solution.append(self.solution[6] + abs(np.random.normal(2,0.01)))
+        self.solution.append(T_vin + abs(np.random.normal(0.5,0.01)))
         self.solution.append(self.RH_v_out)
 
         powerBalance = (self.Fv_Lin / Water_in.Vm_mix_l)*(Water_in.H_l - Water_out.H_l)

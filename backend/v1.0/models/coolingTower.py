@@ -50,7 +50,7 @@ class coolingTower(Resource):
     bottomAirTemperature = ((25.0 if not data["bottomAirTemperature"]["value"] else data["bottomAirTemperature"]["value"]) if not data["bottomAirTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2)) + 273.15 # °C to kelvin conversion
     bottomAirHumidity = ((80.0 if not data["bottomAirHumidity"]["value"] else data["bottomAirHumidity"]["value"]) if not data["bottomAirHumidity"]["disabled"] else round(values_df["Value"]['AT-101'],2))
     atmosphericPressure = ((101.3 if not data["atmosphericPressure"]["value"] else data["atmosphericPressure"]["value"]) if not data["atmosphericPressure"]["disabled"] else round(values_df["Value"]['PT-102'],2)) * 1000 # kPa to Pa conversion
-    oldBottomWaterTemperature = data["simulatedBottomWaterTemperature"] if "simulatedBottomWaterTemperature" in data else data["topWaterTemperature"]["value"]
+    previousEnergyApplied = data["simulatedEnergyAppliedToWater"] if "simulatedEnergyAppliedToWater" in data else 0.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -59,14 +59,15 @@ class coolingTower(Resource):
     twinTower.fillType(fillType)
     twinTower.twinParameters()
 
-    results = twinTower.twinOutput(topWaterFlow, topWaterTemperature, oldBottomWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure)
+    results = twinTower.twinOutput(topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
 
     tower["bottomWaterTemperature"] = results[0] - 273.15
     tower["waterTemperatureReduction"] = results[1]
     tower["topAirTemperature"] = results[2] - 273.15
     tower["topAirHumidity"] = results[3]
     tower["airTemperatureRise"] = results[4]
-    tower["energyAppliedToWater"] = results[5]
+    tower["powerAppliedToWater"] = results[5]
+    tower["energyAppliedToWater"] = results[6]
 
     tower["topWaterFlow"] = topWaterFlow * 60000
     tower["topWaterTemperature"] = topWaterTemperature - 273.15
