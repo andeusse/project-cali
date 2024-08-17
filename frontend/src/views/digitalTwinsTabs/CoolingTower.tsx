@@ -56,12 +56,14 @@ const CoolingTower = () => {
         ...o,
         simulatedBottomWaterTemperature: data.bottomAirTemperature,
         simulatedTopAirTemperature: data.topAirTemperature,
+        simulatedEnergyAppliedToWater: data.energyAppliedToWater,
       }));
     } else {
       setSystem((o) => ({
         ...o,
         simulatedBottomWaterTemperature: undefined,
         simulatedTopAirTemperature: undefined,
+        simulatedEnergyAppliedToWater: undefined,
       }));
     }
   }, [data]);

@@ -32,6 +32,7 @@ export type CoolingTowerParameters = CommonSystemParameter &
     atmosphericPressure: InputType;
     simulatedBottomWaterTemperature: number | undefined;
     simulatedTopAirTemperature: number | undefined;
+    simulatedEnergyAppliedToWater: number | undefined;
   };
 
 export type CoolingTowerOutput = {
@@ -46,6 +47,7 @@ export type CoolingTowerOutput = {
   bottomAirTemperature: number;
   bottomAirHumidity: number;
   energyAppliedToWater: number;
+  powerAppliedToWater: number;
   deltaPressure: number;
 };
 
@@ -61,6 +63,7 @@ export type CoolingTowerOutputHistoric = {
   bottomAirTemperature: number[];
   bottomAirHumidity: number[];
   energyAppliedToWater: number[];
+  powerAppliedToWater: number[];
   deltaPressure: number[];
 };
 
@@ -160,7 +163,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     variableString: 'Temperatura',
     min: 0,
     max: 100,
-    step: 0.1,
+    step: 1,
   },
   bottomAirFlow: {
     disabled: false,
@@ -180,7 +183,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     variableString: 'Temperatura',
     min: -20,
     max: 40,
-    step: 0.1,
+    step: 1,
   },
   bottomAirHumidity: {
     disabled: false,
@@ -190,7 +193,6 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     variableString: 'Humedad',
     min: 0,
     max: 100,
-    step: 0.1,
   },
   atmosphericPressure: {
     disabled: false,
@@ -204,6 +206,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   simulatedBottomWaterTemperature: undefined,
   simulatedTopAirTemperature: undefined,
+  simulatedEnergyAppliedToWater: undefined,
 };
 
 export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
@@ -283,7 +286,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     unit: 'm³/min',
     isShown: true,
     diagramName: 'Flujo Aire Entrada',
-    fixed: 2,
+    fixed: 1,
     x: 1410,
     y: 3610,
   },
@@ -308,6 +311,16 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 3160,
   },
   {
+    name: 'Potencia aplicada al agua',
+    variable: 'powerAppliedToWater',
+    unit: 'kWh',
+    isShown: true,
+    diagramName: 'Potencia aplicada',
+    fixed: 2,
+    x: 4300,
+    y: 4100,
+  },
+  {
     name: 'Energía aplicada al agua',
     variable: 'energyAppliedToWater',
     unit: 'kWh',
@@ -315,7 +328,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Energía aplicada',
     fixed: 2,
     x: 4300,
-    y: 4110,
+    y: 4240,
   },
   {
     name: 'Delta de presión',
@@ -326,5 +339,6 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     fixed: 2,
     x: 3100,
     y: 1680,
+    hasAdditionalCondition: 0,
   },
 ];

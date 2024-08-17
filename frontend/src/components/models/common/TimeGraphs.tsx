@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
+  Checkbox,
   FormControl,
   Grid,
   InputLabel,
+  ListItemText,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -139,7 +141,14 @@ const TimeGraphs = (props: Props) => {
                   if (v.isShown) {
                     return (
                       <MenuItem key={`${index}${v.name}`} value={v.variable}>
-                        {`${v.name} ${v.unit !== '' ? `[${v.unit}]` : ''}`}
+                        <Checkbox
+                          checked={selectedVariables.indexOf(v.variable) > -1}
+                        />
+                        <ListItemText
+                          primary={`${v.name} ${
+                            v.unit !== '' ? `[${v.unit}]` : ''
+                          }`}
+                        />
                       </MenuItem>
                     );
                   }

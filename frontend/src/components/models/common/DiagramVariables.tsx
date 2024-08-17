@@ -50,9 +50,9 @@ const DiagramVariables = <T,>(props: Props<T>) => {
                 >{`${v.diagramName}`}</text>
                 <g transform={`translate(${fontSize * 5},0)`}>
                   <rect
-                    width={`${fontSize * 6}`}
+                    width={`${fontSize * 6.5}`}
                     height={`${fontSize * 1.5}`}
-                    x={`${fontSize * -3}`}
+                    x={`${fontSize * -3.2}`}
                     y={`${(fontSize * -3) / 4}`}
                     rx="20"
                     ry="20"

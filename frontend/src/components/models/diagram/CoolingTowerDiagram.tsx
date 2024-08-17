@@ -32,7 +32,7 @@ const CoolingTowerDiagram = (props: Props) => {
         <DiagramVariables
           data={data}
           variables={COOLING_TOWER_DIAGRAM_VARIABLES}
-          additionalCondition={[]}
+          additionalCondition={[true]}
           fontSize={80}
         ></DiagramVariables>
       </svg>
