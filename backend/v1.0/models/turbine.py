@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from simulation_models import TwinHydro
 import pandas as pd
+import numpy as np
 from utils import InfluxDbConnection
 from dotenv import load_dotenv
 import os
@@ -35,12 +36,50 @@ class Turbine(Resource):
       values_df.set_index('field', inplace=True)
       influxDB.InfluxDBclose()
 
+    iteration = data["iteration"]
+    if data["stepUnit"] == "Second":
+      repeats = data["stepTime"]["value"]
+    elif data["stepUnit"] == "Minute":
+      repeats = 60 * data["stepTime"]["value"]
+    elif data["stepUnit"] == "Hour":
+      repeats = 3600 * data["stepTime"]["value"]
+    elif data["stepUnit"] == "Day":
+      repeats = 86400 * data["stepTime"]["value"]
+        
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
-    inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
-    inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FT-001'],2)
-    inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
-    inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
+    if data["inputPressure"]["arrayEnabled"]:
+      inputPressureArray = np.repeat(np.array(data["inputPressureArray"]),repeats)
+      if iteration <= len(inputPressureArray):
+        inputPressure = float(inputPressureArray[iteration-1] * 9.8064) # mH2O to kPa conversion
+      else:
+        inputPressure = float(inputPressureArray[-1] * 9.8064) # mH2O to kPa conversion
+    else:
+      inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
+    if data["inputFlow"]["arrayEnabled"]:
+      inputFlowArray = np.repeat(np.array(data["inputFlowArray"]),repeats)
+      if iteration <= len(inputFlowArray):
+        inputFlow = float(inputFlowArray[iteration-1])
+      else:
+        inputFlow = float(inputFlowArray[-1])
+    else:
+      inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FT-001'],2)
+    if data["inputActivePower"]["arrayEnabled"]:
+      inputActivePowerArray = np.repeat(np.array(data["inputActivePowerArray"]),repeats)
+      if iteration <= len(inputActivePowerArray):
+        inputActivePower = float(inputActivePowerArray[iteration-1])
+      else:
+        inputActivePower = float(inputActivePowerArray[-1])
+    else:
+      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
+    if data["inputPowerFactor"]["arrayEnabled"]:
+      inputPowerFactorArray = np.repeat(np.array(data["inputPowerFactorArray"]),repeats)
+      if iteration <= len(inputPowerFactorArray):
+        inputPowerFactor = float(inputPowerFactorArray[iteration-1])
+      else:
+        inputPowerFactor = float(inputPowerFactorArray[-1])
+    else:
+      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     
     turbine["inputActivePower"] = inputActivePower
