@@ -147,7 +147,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   topWaterFlow: {
     disabled: false,
-    value: 1.9,
+    value: 1,
     tooltip: 'Flujo',
     unit: 'L / min',
     variableString: 'Flujo',
@@ -157,7 +157,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   topWaterTemperature: {
     disabled: false,
-    value: 50,
+    value: 35,
     tooltip: 'Temperatura',
     unit: '°C',
     variableString: 'Temperatura',
@@ -167,7 +167,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   bottomAirFlow: {
     disabled: false,
-    value: 5.0,
+    value: 2,
     tooltip: 'Flujo',
     unit: 'm³ / min',
     variableString: 'Flujo',
@@ -177,7 +177,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   bottomAirTemperature: {
     disabled: false,
-    value: 25,
+    value: 29,
     tooltip: 'Temperatura',
     unit: '°C',
     variableString: 'Temperatura',
@@ -187,7 +187,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   bottomAirHumidity: {
     disabled: false,
-    value: 60,
+    value: 65,
     tooltip: 'Humedad',
     unit: '%',
     variableString: 'Humedad',
