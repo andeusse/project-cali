@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ErrorDialog from '../../components/UI/ErrorDialog';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import {
@@ -35,8 +35,22 @@ import CustomToggle from '../../components/UI/CustomToggle';
 import CoolingTowerDiagram from '../../components/models/diagram/CoolingTowerDiagram';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import coolingTower from '../../assets/illustrations/tower.png';
+import { StepUnitType, StepUnitText } from '../../types/common';
+import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
+import {
+  CellChange,
+  Column,
+  DefaultCellTypes,
+  ReactGrid,
+  Row,
+} from '@silevis/reactgrid';
+import { useAppSelector } from '../../redux/reduxHooks';
+import { ThemeType } from '../../types/theme';
+import { setCoolingTowerTable } from '../../utils/models/setCoolingTower';
 
 const CoolingTower = () => {
+  const userTheme = useAppSelector((state) => state.theme.value);
+
   const [system, setSystem] = useState<CoolingTowerParameters>({
     ...COOLING_TOWER,
   });
@@ -49,6 +63,161 @@ const CoolingTower = () => {
       'coolingTower',
       system
     );
+
+  const getColumns = useCallback((): Column[] => {
+    if (system.steps.value > 1) {
+      let arr: Column[] = [
+        { columnId: `variables`, width: 250 },
+        ...Array(system.steps.value)
+          .fill(0)
+          .map((_, i) => ({
+            columnId: `${i}`,
+            width: 100,
+          })),
+      ];
+      return arr;
+    }
+    return [];
+  }, [system.steps.value]);
+
+  const getRows = useCallback((): Row[] => {
+    if (system.steps.value > 1) {
+      let arr: Row[] = [];
+      arr.push({
+        rowId: 'header',
+        cells: [
+          { type: 'header', text: '', nonEditable: true },
+          ...Array(system.steps.value)
+            .fill(0)
+            .map((_, i) => {
+              const col: DefaultCellTypes = {
+                type: 'header',
+                text: `P ${i + 1}`,
+                nonEditable: true,
+              };
+              return col;
+            }),
+        ],
+      });
+
+      if (system.topWaterFlow.arrayEnabled)
+        arr.push({
+          rowId: '0',
+          cells: [
+            { type: 'header', text: 'Flujo agua [L / min]', nonEditable: true },
+            ...system.topWaterFlowArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.topWaterTemperature.arrayEnabled)
+        arr.push({
+          rowId: '1',
+          cells: [
+            {
+              type: 'header',
+              text: 'Temperatura agua [°C]',
+              nonEditable: true,
+            },
+            ...system.topWaterTemperatureArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.bottomAirFlow.arrayEnabled)
+        arr.push({
+          rowId: '2',
+          cells: [
+            {
+              type: 'header',
+              text: 'Flujo aire [m³ / min]',
+              nonEditable: true,
+            },
+            ...system.bottomAirFlowArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.bottomAirTemperature.arrayEnabled)
+        arr.push({
+          rowId: '3',
+          cells: [
+            {
+              type: 'header',
+              text: 'Temperatura aire [°C]',
+              nonEditable: true,
+            },
+            ...system.bottomAirTemperatureArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      if (system.bottomAirHumidity.arrayEnabled)
+        arr.push({
+          rowId: '4',
+          cells: [
+            { type: 'header', text: 'Humedad [%]', nonEditable: true },
+            ...system.bottomAirHumidityArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
+
+      return arr;
+    }
+    return [];
+  }, [
+    system.bottomAirFlow.arrayEnabled,
+    system.bottomAirFlowArray,
+    system.bottomAirHumidity.arrayEnabled,
+    system.bottomAirHumidityArray,
+    system.bottomAirTemperature.arrayEnabled,
+    system.bottomAirTemperatureArray,
+    system.steps.value,
+    system.topWaterFlow.arrayEnabled,
+    system.topWaterFlowArray,
+    system.topWaterTemperature.arrayEnabled,
+    system.topWaterTemperatureArray,
+  ]);
+
+  const [rows, setRows] = useState<Row[]>(getRows());
+
+  const [columns, setColumns] = useState<Column[]>(getColumns());
+
+  useEffect(() => {
+    if (system.steps.value > 1) {
+      setRows(getRows());
+      setColumns(getColumns());
+    }
+  }, [getColumns, getRows, system]);
+
+  const handleCellsChange = (e: CellChange[]) => {
+    setSystem(setCoolingTowerTable(e, system));
+  };
 
   useEffect(() => {
     if (data !== undefined) {
@@ -170,7 +339,7 @@ const CoolingTower = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={12} xl={12}>
+                <Grid item xs={12} md={12} xl={3}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
@@ -180,6 +349,39 @@ const CoolingTower = () => {
                       onChange={handleChange}
                       disabled={system.disableParameters}
                     />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
+                  <CustomNumberField
+                    variable={system.steps}
+                    name="steps"
+                    handleChange={handleChange}
+                    isInteger={true}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
+                  <CustomNumberField
+                    variable={system.stepTime}
+                    name="stepTime"
+                    handleChange={handleChange}
+                  ></CustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
+                  <FormControl fullWidth>
+                    <InputLabel id="step-unit-type">Unidad</InputLabel>
+                    <Select
+                      labelId="step-unit-type"
+                      label="Unidad"
+                      value={system.stepUnit}
+                      name="stepUnit"
+                      onChange={(e: any) => handleChange(e)}
+                    >
+                      {Object.keys(StepUnitType).map((key) => (
+                        <MenuItem key={key} value={key}>
+                          {getValueByKey(StepUnitText, key)}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} md={12} xl={4}>
@@ -316,42 +518,62 @@ const CoolingTower = () => {
                   <h3>Parámetros agua de entrada</h3>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.topWaterFlow}
                     name="topWaterFlow"
                     handleChange={handleChange}
-                  ></CustomNumberField>
+                    disabled={system.inputOfflineOperation}
+                    variableName="Flujo"
+                    arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.topWaterTemperature}
                     name="topWaterTemperature"
                     handleChange={handleChange}
-                  ></CustomNumberField>
+                    disabled={system.inputOfflineOperation}
+                    variableName="Temperatura"
+                    arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros aire de entrada</h3>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.bottomAirFlow}
                     name="bottomAirFlow"
                     handleChange={handleChange}
-                  ></CustomNumberField>
+                    disabled={system.inputOfflineOperation}
+                    variableName="Flujo"
+                    arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.bottomAirTemperature}
                     name="bottomAirTemperature"
                     handleChange={handleChange}
-                  ></CustomNumberField>
+                    disabled={system.inputOfflineOperation}
+                    variableName="Temperatura"
+                    arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
-                  <CustomNumberField
+                  <ToggleArrayCustomNumberField
                     variable={system.bottomAirHumidity}
                     name="bottomAirHumidity"
                     handleChange={handleChange}
-                  ></CustomNumberField>
+                    disabled={system.inputOfflineOperation}
+                    variableName="Humedad"
+                    arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
+                  ></ToggleArrayCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros ambientales</h3>
@@ -377,6 +599,34 @@ const CoolingTower = () => {
                     isPlaying={isPlaying}
                   ></CoolingTowerDiagram>
                 </Grid>
+                {(system.topWaterFlow.arrayEnabled ||
+                  system.topWaterTemperature.arrayEnabled ||
+                  system.bottomAirFlow.arrayEnabled ||
+                  system.bottomAirTemperature.arrayEnabled ||
+                  system.bottomAirHumidity.arrayEnabled) &&
+                  system.steps.value > 1 && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <div
+                        id={
+                          userTheme === ThemeType.Dark
+                            ? 'reactgrid-dark-mode'
+                            : 'reactgrid-light-mode'
+                        }
+                        style={{
+                          maxWidth: '100%',
+                          overflow: 'auto',
+                        }}
+                      >
+                        <ReactGrid
+                          rows={rows}
+                          columns={columns}
+                          onCellsChanged={(e: CellChange[]) => {
+                            handleCellsChange(e);
+                          }}
+                        />
+                      </div>
+                    </Grid>
+                  )}
               </Grid>
             </Grid>
           </Grid>
@@ -386,6 +636,13 @@ const CoolingTower = () => {
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
                 timeMultiplier={system.timeMultiplier}
+                timeMultiplierAdditionalCondition={
+                  system.topWaterFlow.arrayEnabled ||
+                  system.topWaterTemperature.arrayEnabled ||
+                  system.bottomAirFlow.arrayEnabled ||
+                  system.bottomAirTemperature.arrayEnabled ||
+                  system.bottomAirHumidity.arrayEnabled
+                }
                 handleChange={handleChange}
                 charts={charts}
                 variables={COOLING_TOWER_DIAGRAM_VARIABLES}

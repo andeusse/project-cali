@@ -23,6 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   timeMultiplier: InputType;
+  timeMultiplierAdditionalCondition?: boolean;
   handleChange: (e: any) => void;
   charts: ChartValues;
   variables: DiagramVariableType[];
@@ -38,6 +39,7 @@ const TimeGraphs = (props: Props) => {
     variables,
     playerControl,
     isPlaying,
+    timeMultiplierAdditionalCondition = false,
   } = props;
 
   const [availableGraphs, setAvailableGraphs] = useState([...charts.variables]);
@@ -110,7 +112,9 @@ const TimeGraphs = (props: Props) => {
                 marks={marks}
                 min={timeMultiplier.min}
                 max={timeMultiplier.max}
-                disabled={timeMultiplier.disabled}
+                disabled={
+                  timeMultiplier.disabled || timeMultiplierAdditionalCondition
+                }
                 onChange={handleChange}
               />
             </Grid>

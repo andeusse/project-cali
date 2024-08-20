@@ -1,6 +1,6 @@
 import Config from '../../config/config';
 import { CommonSystemParameter, StepUnitType } from '../common';
-import { InputType } from '../inputType';
+import { InputArrayType, InputType } from '../inputType';
 import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
 
 export enum FillType {
@@ -24,11 +24,16 @@ export type CoolingTowerParameters = CommonSystemParameter &
     maximumAirPressure: InputType;
     nominalWaterFlow: InputType;
     maximumWaterPressure: InputType;
-    topWaterFlow: InputType;
-    topWaterTemperature: InputType;
-    bottomAirFlow: InputType;
-    bottomAirTemperature: InputType;
-    bottomAirHumidity: InputType;
+    topWaterFlow: InputArrayType;
+    topWaterTemperature: InputArrayType;
+    bottomAirFlow: InputArrayType;
+    bottomAirTemperature: InputArrayType;
+    bottomAirHumidity: InputArrayType;
+    topWaterFlowArray: number[];
+    topWaterTemperatureArray: number[];
+    bottomAirFlowArray: number[];
+    bottomAirTemperatureArray: number[];
+    bottomAirHumidityArray: number[];
     atmosphericPressure: InputType;
     simulatedBottomWaterTemperature: number | undefined;
     simulatedTopAirTemperature: number | undefined;
@@ -154,6 +159,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     min: 0,
     max: 10,
     step: 0.1,
+    arrayEnabled: false,
   },
   topWaterTemperature: {
     disabled: false,
@@ -164,6 +170,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     min: 0,
     max: 100,
     step: 1,
+    arrayEnabled: false,
   },
   bottomAirFlow: {
     disabled: false,
@@ -174,6 +181,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     min: 0,
     max: 30,
     step: 0.1,
+    arrayEnabled: false,
   },
   bottomAirTemperature: {
     disabled: false,
@@ -184,6 +192,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     min: -20,
     max: 40,
     step: 1,
+    arrayEnabled: false,
   },
   bottomAirHumidity: {
     disabled: false,
@@ -193,6 +202,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     variableString: 'Humedad',
     min: 0,
     max: 100,
+    arrayEnabled: false,
   },
   atmosphericPressure: {
     disabled: false,
@@ -207,6 +217,11 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   simulatedBottomWaterTemperature: undefined,
   simulatedTopAirTemperature: undefined,
   simulatedEnergyAppliedToWater: undefined,
+  topWaterFlowArray: [],
+  topWaterTemperatureArray: [],
+  bottomAirFlowArray: [],
+  bottomAirTemperatureArray: [],
+  bottomAirHumidityArray: [],
 };
 
 export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [

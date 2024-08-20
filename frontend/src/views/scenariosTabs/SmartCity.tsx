@@ -308,7 +308,7 @@ const SmartCity = () => {
             <AccordionDetails>
               <img
                 style={{
-                  height: '500px',
+                  height: '750px',
                   display: 'block',
                   marginLeft: 'auto',
                   marginRight: 'auto',

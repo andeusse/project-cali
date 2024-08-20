@@ -453,7 +453,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     value: 1,
     tooltip: 'Multiplicador de tiempo',
     unit: '',
-    variableString: '',
+    variableString: 'TM',
     min: 1,
     max: 60,
   },
