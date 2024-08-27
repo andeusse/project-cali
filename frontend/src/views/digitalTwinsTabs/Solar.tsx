@@ -1260,15 +1260,7 @@ const Solar = () => {
                 variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
-                timeMultiplierAdditionalCondition={
-                  system.solarRadiation1.arrayEnabled ||
-                  system.solarRadiation2.arrayEnabled ||
-                  system.temperature.arrayEnabled ||
-                  system.windSpeed.arrayEnabled ||
-                  system.alternCurrentLoadPower.arrayEnabled ||
-                  system.alternCurrentLoadPowerFactor.arrayEnabled ||
-                  system.directCurrentLoadPower.arrayEnabled
-                }
+                timeMultiplierAdditionalCondition={system.steps.value !== 1}
               ></TimeGraphs>
             </Grid>
           </>

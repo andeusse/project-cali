@@ -636,13 +636,7 @@ const CoolingTower = () => {
             <Grid item xs={12} md={12} xl={12}>
               <TimeGraphs
                 timeMultiplier={system.timeMultiplier}
-                timeMultiplierAdditionalCondition={
-                  system.topWaterFlow.arrayEnabled ||
-                  system.topWaterTemperature.arrayEnabled ||
-                  system.bottomAirFlow.arrayEnabled ||
-                  system.bottomAirTemperature.arrayEnabled ||
-                  system.bottomAirHumidity.arrayEnabled
-                }
+                timeMultiplierAdditionalCondition={system.steps.value !== 1}
                 handleChange={handleChange}
                 charts={charts}
                 variables={COOLING_TOWER_DIAGRAM_VARIABLES}

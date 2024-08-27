@@ -38,6 +38,8 @@ export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
       newState.bottomAirFlow.arrayEnabled = false;
       newState.bottomAirTemperature.arrayEnabled = false;
       newState.bottomAirHumidity.arrayEnabled = false;
+    } else {
+      newState.timeMultiplier.value = 1;
     }
   }
 

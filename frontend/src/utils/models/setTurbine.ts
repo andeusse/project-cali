@@ -67,6 +67,8 @@ export const setTurbine = (
       newState.inputFlow.arrayEnabled = false;
       newState.inputActivePower.arrayEnabled = false;
       newState.inputPowerFactor.arrayEnabled = false;
+    } else {
+      newState.timeMultiplier.value = 1;
     }
   }
   return newState;

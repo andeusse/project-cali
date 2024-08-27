@@ -311,6 +311,8 @@ export const setSolar = (
       newState.alternCurrentLoadPower.arrayEnabled = false;
       newState.alternCurrentLoadPowerFactor.arrayEnabled = false;
       newState.directCurrentLoadPower.arrayEnabled = false;
+    } else {
+      newState.timeMultiplier.value = 1;
     }
   }
   return newState;
