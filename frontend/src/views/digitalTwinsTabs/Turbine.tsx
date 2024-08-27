@@ -817,6 +817,12 @@ const Turbine = () => {
                 }
                 playerControl={playerControl}
                 isPlaying={isPlaying}
+                timeMultiplierAdditionalCondition={
+                  system.inputPressure.arrayEnabled ||
+                  system.inputFlow.arrayEnabled ||
+                  system.inputActivePower.arrayEnabled ||
+                  system.inputPowerFactor.arrayEnabled
+                }
               ></TimeGraphs>
             </Grid>
           </>

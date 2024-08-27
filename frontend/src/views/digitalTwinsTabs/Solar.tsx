@@ -59,6 +59,7 @@ import {
   Row,
 } from '@silevis/reactgrid';
 import { setSolarTable } from '../../utils/models/setSolar';
+import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 
 const Solar = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -181,24 +182,6 @@ const Solar = () => {
             }),
           ],
         });
-      if (system.windDensity.arrayEnabled)
-        arr.push({
-          rowId: '4',
-          cells: [
-            {
-              type: 'header',
-              text: 'Densidad del viento [kg / m³]',
-              nonEditable: true,
-            },
-            ...system.windDensityArray.map((v) => {
-              const col: DefaultCellTypes = {
-                type: 'number',
-                value: v,
-              };
-              return col;
-            }),
-          ],
-        });
 
       if (system.alternCurrentLoadPower.arrayEnabled)
         arr.push({
@@ -262,8 +245,6 @@ const Solar = () => {
     system.steps.value,
     system.temperature.arrayEnabled,
     system.temperatureArray,
-    system.windDensity.arrayEnabled,
-    system.windDensityArray,
     system.windSpeed.arrayEnabled,
     system.windSpeedArray,
   ]);
@@ -1120,15 +1101,12 @@ const Solar = () => {
                       ></ToggleArrayCustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
-                      <ToggleArrayCustomNumberField
+                      <ToggleCustomNumberField
                         variable={system.windDensity}
                         name="windDensity"
                         handleChange={handleChange}
-                        variableName="Densidad del viento"
-                        arrayDisabled={!system.inputOfflineOperation}
-                        showToggle={false}
-                        steps={system.steps.value}
-                      ></ToggleArrayCustomNumberField>
+                        disabled={system.inputOfflineOperation}
+                      ></ToggleCustomNumberField>
                     </Grid>
                   </>
                 )}
@@ -1241,7 +1219,6 @@ const Solar = () => {
                   system.solarRadiation2.arrayEnabled ||
                   system.temperature.arrayEnabled ||
                   system.windSpeed.arrayEnabled ||
-                  system.windDensity.arrayEnabled ||
                   system.alternCurrentLoadPower.arrayEnabled ||
                   system.alternCurrentLoadPowerFactor.arrayEnabled ||
                   system.directCurrentLoadPower.arrayEnabled) &&
@@ -1283,6 +1260,15 @@ const Solar = () => {
                 variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
+                timeMultiplierAdditionalCondition={
+                  system.solarRadiation1.arrayEnabled ||
+                  system.solarRadiation2.arrayEnabled ||
+                  system.temperature.arrayEnabled ||
+                  system.windSpeed.arrayEnabled ||
+                  system.alternCurrentLoadPower.arrayEnabled ||
+                  system.alternCurrentLoadPowerFactor.arrayEnabled ||
+                  system.directCurrentLoadPower.arrayEnabled
+                }
               ></TimeGraphs>
             </Grid>
           </>

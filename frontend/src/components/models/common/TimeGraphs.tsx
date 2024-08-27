@@ -123,6 +123,7 @@ const TimeGraphs = (props: Props) => {
                 variable={timeMultiplier}
                 name="timeMultiplier"
                 handleChange={handleChange}
+                disabled={timeMultiplierAdditionalCondition}
               ></CustomNumberField>
             </Grid>
           </Grid>

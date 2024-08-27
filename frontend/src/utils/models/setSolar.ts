@@ -41,12 +41,12 @@ export const setSolar = (
     newState.alternCurrentLoadPowerFactor.disabled =
       !newState.inputOfflineOperation;
     newState.directCurrentLoadPower.disabled = !newState.inputOfflineOperation;
+    newState.windDensity.disabled = !newState.inputOfflineOperation;
 
     newState.solarRadiation1.arrayEnabled = false;
     newState.solarRadiation2.arrayEnabled = false;
     newState.temperature.arrayEnabled = false;
     newState.windSpeed.arrayEnabled = false;
-    newState.windDensity.arrayEnabled = false;
     newState.alternCurrentLoadPower.arrayEnabled = false;
     newState.alternCurrentLoadPowerFactor.arrayEnabled = false;
     newState.directCurrentLoadPower.arrayEnabled = false;
@@ -298,7 +298,6 @@ export const setSolar = (
     newState.solarRadiation2Array = Array(value ? value : 1).fill(800);
     newState.temperatureArray = Array(value ? value : 1).fill(25);
     newState.windSpeedArray = Array(value ? value : 1).fill(10);
-    newState.windDensityArray = Array(value ? value : 1).fill(1.12);
     newState.alternCurrentLoadPowerArray = Array(value ? value : 1).fill(200);
     newState.alternCurrentLoadPowerFactorArray = Array(value ? value : 1).fill(
       1
@@ -309,7 +308,6 @@ export const setSolar = (
       newState.solarRadiation2.arrayEnabled = false;
       newState.temperature.arrayEnabled = false;
       newState.windSpeed.arrayEnabled = false;
-      newState.windDensity.arrayEnabled = false;
       newState.alternCurrentLoadPower.arrayEnabled = false;
       newState.alternCurrentLoadPowerFactor.arrayEnabled = false;
       newState.directCurrentLoadPower.arrayEnabled = false;
@@ -337,7 +335,6 @@ export const setSolarTable = (
   oldArray.push(newState.solarRadiation2Array);
   oldArray.push(newState.temperatureArray);
   oldArray.push(newState.windSpeedArray);
-  oldArray.push(newState.windDensityArray);
   oldArray.push(newState.alternCurrentLoadPowerArray);
   oldArray.push(newState.alternCurrentLoadPowerFactorArray);
   oldArray.push(newState.directCurrentLoadPowerArray);
@@ -365,12 +362,6 @@ export const setSolarTable = (
     newState.windSpeedArray = newArrays[3].map((v) => {
       v = v < 100 ? v : 100;
       v = v > 0 ? v : 0;
-      return v;
-    });
-  if (newState.windDensity.arrayEnabled)
-    newState.windDensityArray = newArrays[4].map((v) => {
-      v = v < 1.5 ? v : 1.5;
-      v = v > 0.8 ? v : 0.8;
       return v;
     });
   if (newState.alternCurrentLoadPower.arrayEnabled)

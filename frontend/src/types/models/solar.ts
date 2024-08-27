@@ -9,7 +9,7 @@ import {
   StepUnitType,
 } from '../common';
 import { CommonChartType } from '../graph';
-import { InputArrayType } from '../inputType';
+import { InputArrayType, InputType } from '../inputType';
 import {
   Battery,
   CommonController,
@@ -57,7 +57,7 @@ export type SolarWindParameters = CommonSystemParameter &
     solarRadiation2: InputArrayType;
     temperature: InputArrayType;
     windSpeed: InputArrayType;
-    windDensity: InputArrayType;
+    windDensity: InputType;
     alternCurrentLoadPower: InputArrayType;
     alternCurrentLoadPowerFactor: InputArrayType;
     directCurrentLoadPower: InputArrayType;
@@ -65,7 +65,6 @@ export type SolarWindParameters = CommonSystemParameter &
     solarRadiation2Array: number[];
     temperatureArray: number[];
     windSpeedArray: number[];
-    windDensityArray: number[];
     alternCurrentLoadPowerArray: number[];
     alternCurrentLoadPowerFactorArray: number[];
     directCurrentLoadPowerArray: number[];
@@ -521,7 +520,6 @@ export const SOLAR_WIND: SolarWindParameters = {
     min: 0.8,
     max: 1.5,
     step: 0.01,
-    arrayEnabled: false,
   },
   alternCurrentLoadPower: {
     disabled: false,
@@ -561,7 +559,6 @@ export const SOLAR_WIND: SolarWindParameters = {
   solarRadiation2Array: [],
   temperatureArray: [],
   windSpeedArray: [],
-  windDensityArray: [],
   alternCurrentLoadPowerArray: [],
   alternCurrentLoadPowerFactorArray: [],
   directCurrentLoadPowerArray: [],
