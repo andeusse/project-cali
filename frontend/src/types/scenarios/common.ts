@@ -617,9 +617,9 @@ export const COMMON_SCENARIO: SmartSystemParameters = {
     tooltip: 'Tiempo por paso',
     unit: '',
     variableString: 'Tiempo por paso',
-    min: 0.1,
-    max: 100,
-    step: 0.1,
+    min: 1,
+    max: 1000,
+    step: 1,
   },
   stepUnit: StepUnitType.Hour,
   solarSystemNumber: {
