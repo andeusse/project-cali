@@ -36,15 +36,16 @@ class Turbine(Resource):
       values_df.set_index('field', inplace=True)
       influxDB.InfluxDBclose()
 
-    iteration = data["iteration"]
-    if data["stepUnit"] == "Second":
-      repeats = data["stepTime"]["value"]
-    elif data["stepUnit"] == "Minute":
-      repeats = 60 * data["stepTime"]["value"]
-    elif data["stepUnit"] == "Hour":
-      repeats = 3600 * data["stepTime"]["value"]
-    elif data["stepUnit"] == "Day":
-      repeats = 86400 * data["stepTime"]["value"]
+    if data["steps"]["value"] > 1:
+      iteration = data["iteration"]
+      if data["stepUnit"] == "Second":
+        repeats = data["stepTime"]["value"]
+      elif data["stepUnit"] == "Minute":
+        repeats = 60 * data["stepTime"]["value"]
+      elif data["stepUnit"] == "Hour":
+        repeats = 3600 * data["stepTime"]["value"]
+      elif data["stepUnit"] == "Day":
+        repeats = 86400 * data["stepTime"]["value"]
         
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
@@ -117,15 +118,27 @@ class Turbine(Resource):
         P_h_meas = round(values_df["Value"]['PG-001'],2)
         P_CC_meas = round(values_df["Value"]['PC-001'],2)
         V_t = round(values_df["Value"]['VG-001'],2)
-        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB-001'],2)
-        simulatedSinkLoadState = bool(int(values_df["Value"]['AUX-1001']))
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VCH-001'],2)
+        if values_df["Value"]['AUX-1001'] == "OFF":
+          simulatedSinkLoadState = False
+          sinkLoadMode = "Off"
+        elif values_df["Value"]['AUX-1001'] == "ON":
+          simulatedSinkLoadState = True
+          sinkLoadMode = "On"
       else:
         T_bat = round(values_df["Value"]['TE-004'],2)
         P_h_meas = round(values_df["Value"]['PG-002'],2)
         P_CC_meas = round(values_df["Value"]['PC-002'],2)
         V_t = round(values_df["Value"]['VG-002'],2)
-        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB-002'],2)
-        simulatedSinkLoadState = bool(int(values_df["Value"]['AUX-1002']))
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VCH-002'],2)
+        if values_df["Value"]['AUX-1002'] == "OFF":
+          simulatedSinkLoadState = False
+          sinkLoadMode = "Off"
+        elif values_df["Value"]['AUX-1002'] == "ON":
+          simulatedSinkLoadState = True
+          sinkLoadMode = "On"
+        elif values_df["Value"]['AUX-1002'] == "AUTO":
+          sinkLoadMode = "Auto"
 
       V_CA = round(values_df["Value"]['VAC-002'],2)
       simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
