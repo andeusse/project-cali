@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from simulation_models import TwinPVWF
 import pandas as pd
+import numpy as np
 from utils import ExcelReader
 from utils import InfluxDbConnection
 from dotenv import load_dotenv
@@ -37,8 +38,18 @@ class Solar(Resource):
       values_df.set_index('field', inplace=True)
       influxDB.InfluxDBclose()
 
-    name = data["name"]
+    if data["steps"]["value"] > 1:
+      iteration = data["iteration"]
+      if data["stepUnit"] == "Second":
+        repeats = data["stepTime"]["value"]
+      elif data["stepUnit"] == "Minute":
+        repeats = 60 * data["stepTime"]["value"]
+      elif data["stepUnit"] == "Hour":
+        repeats = 3600 * data["stepTime"]["value"]
+      elif data["stepUnit"] == "Day":
+        repeats = 86400 * data["stepTime"]["value"]
 
+    name = data["name"]
     monoModuleState = data["monocrystallinePanel"]["isConnected"]
     polyModuleState = data["policrystallinePanel"]["isConnected"]
     flexiModuleState = data["flexPanel"]["isConnected"]
@@ -63,20 +74,83 @@ class Solar(Resource):
     gridState = data["externalGridState"]
     batteryState = data['isBatteryConnected']
 
-    solarRadiation1 = (0.0 if not data["solarRadiation1"]["value"] else data["solarRadiation1"]["value"]) if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS-001'],2)
-    solarRadiation2 = (0.0 if not data["solarRadiation2"]["value"] else data["solarRadiation2"]["value"]) if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS-002'],2)
-    temperature = 0.0 if not data["temperature"]["value"] else data["temperature"]["value"]
-    windSpeed = (0.0 if not data["windSpeed"]["value"] else data["windSpeed"]["value"]) if not data["windSpeed"]["disabled"] else round(values_df["Value"]['VV-001'],2)
+    if data["solarRadiation1"]["arrayEnabled"]:
+      solarRadiation1Array = np.repeat(np.array(data["solarRadiation1Array"]),repeats)
+      if iteration <= len(solarRadiation1Array):
+        solarRadiation1 = float(solarRadiation1Array[iteration-1])
+      else:
+        solarRadiation1 = float(solarRadiation1Array[-1])
+    else:
+      solarRadiation1 = (0.0 if not data["solarRadiation1"]["value"] else data["solarRadiation1"]["value"]) if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS-001'],2)
+    if data["solarRadiation2"]["arrayEnabled"]:
+      solarRadiation2Array = np.repeat(np.array(data["solarRadiation2Array"]),repeats)
+      if iteration <= len(solarRadiation2Array):
+        solarRadiation2 = float(solarRadiation2Array[iteration-1])
+      else:
+        solarRadiation2 = float(solarRadiation2Array[-1])
+    else:
+      solarRadiation2 = (0.0 if not data["solarRadiation2"]["value"] else data["solarRadiation2"]["value"]) if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS-002'],2)
+    if data["temperature"]["arrayEnabled"]:
+      temperatureArray = np.repeat(np.array(data["temperatureArray"]),repeats)
+      if iteration <= len(temperatureArray):
+        temperature = float(temperatureArray[iteration-1])
+      else:
+        temperature = float(temperatureArray[-1])
+    else:
+      temperature = 0.0 if not data["temperature"]["value"] else data["temperature"]["value"]
+    if data["windSpeed"]["arrayEnabled"]:
+      windSpeedArray = np.repeat(np.array(data["windSpeedArray"]),repeats)
+      if iteration <= len(windSpeedArray):
+        windSpeed = float(windSpeedArray[iteration-1])
+      else:
+        windSpeed = float(windSpeedArray[-1])
+    else:
+      windSpeed = (0.0 if not data["windSpeed"]["value"] else data["windSpeed"]["value"]) if not data["windSpeed"]["disabled"] else round(values_df["Value"]['VV-001'],2)
+    if data["directCurrentLoadPower"]["arrayEnabled"]:
+      directCurrentLoadPowerArray = np.repeat(np.array(data["directCurrentLoadPowerArray"]),repeats)
+      if iteration <= len(directCurrentLoadPowerArray):
+        inputDirectCurrentPower = float(directCurrentLoadPowerArray[iteration-1])
+      else:
+        inputDirectCurrentPower = float(directCurrentLoadPowerArray[-1])
+    else:
+      inputDirectCurrentPower = (0.0 if not data["directCurrentLoadPower"]["value"] else data["directCurrentLoadPower"]["value"]) if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC-001'],2)
     windDensity = 0.0 if not data["windDensity"]["value"] else data["windDensity"]["value"]
-    inputDirectCurrentPower = (0.0 if not data["directCurrentLoadPower"]["value"] else data["directCurrentLoadPower"]["value"]) if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC-001'],2)
 
     if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState)) and inverterState:
-      inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-001'],2)
-      inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
+      if data["alternCurrentLoadPower"]["arrayEnabled"]:
+        alternCurrentLoadPowerArray = np.repeat(np.array(data["alternCurrentLoadPowerArray"]),repeats)
+        if iteration <= len(alternCurrentLoadPowerArray):
+          inputActivePower = float(alternCurrentLoadPowerArray[iteration-1])
+        else:
+          inputActivePower = float(alternCurrentLoadPowerArray[-1])
+      else:
+        inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
+      if data["alternCurrentLoadPowerFactor"]["arrayEnabled"]:
+        alternCurrentLoadPowerFactorArray = np.repeat(np.array(data["alternCurrentLoadPowerFactorArray"]),repeats)
+        if iteration <= len(alternCurrentLoadPowerFactorArray):
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[iteration-1])
+        else:
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[-1])
+      else: 
+        inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
       simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else inverterState
     elif data["inputOperationMode"] == 'Mode2' and hybridState:
-      inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
-      inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-002'],2)
+      if data["alternCurrentLoadPower"]["arrayEnabled"]:
+        alternCurrentLoadPowerArray = np.repeat(np.array(data["alternCurrentLoadPowerArray"]),repeats)
+        if iteration <= len(alternCurrentLoadPowerArray):
+          inputActivePower = float(alternCurrentLoadPowerArray[iteration-1])
+        else:
+          inputActivePower = float(alternCurrentLoadPowerArray[-1])
+      else:
+        inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-003'],2)
+      if data["alternCurrentLoadPowerFactor"]["arrayEnabled"]:
+        alternCurrentLoadPowerFactorArray = np.repeat(np.array(data["alternCurrentLoadPowerFactorArray"]),repeats)
+        if iteration <= len(alternCurrentLoadPowerFactorArray):
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[iteration-1])
+        else:
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[-1])
+      else:
+        inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-002'],2)
       inputDirectCurrentPower = 0.0
       simulatedInverterState = False
     else:
@@ -94,10 +168,10 @@ class Solar(Resource):
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
-    controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
+    controllerChargingMinimumVoltage = data["controller"]["chargingMinimumVoltage"]["value"]
     hybridChargeVoltageBulk = data["hybridInverter"]["chargeVoltageBulk"]["value"]
     hybridChargeVoltageFloat = data["hybridInverter"]["chargeVoltageFloat"]["value"]
-    hybridChargingMinimunVoltage = data["hybridInverter"]["chargingMinimunVoltage"]["value"]
+    hybridChargingMinimumVoltage = data["hybridInverter"]["chargingMinimumVoltage"]["value"]
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -106,25 +180,25 @@ class Solar(Resource):
 
     if not data["inputOfflineOperation"]:
       if data["inputOperationMode"] == 'Mode2' and hybridState:
-        batteryTemperature = round(values_df["Value"]['TB-002'],2)
+        batteryTemperature = 30.0
         measuredPV_Power = round(values_df["Value"]['PG-003'],2)
         measuredWT_Power = 0.0
-        measuredHybridDC_Power = round(values_df["Value"]['PB-002'],2)
+        measuredHybridDC_Power = round(values_df["Value"]['PC-003'],2)
         PV_Voltage = round(values_df["Value"]['VG-003'],2)
-        gridVoltage = round(values_df["Value"]['VGR-001'],2)
+        gridVoltage = round(values_df["Value"]['VAC-004'],2)
         WT_Voltage = 0.0
-        directCurrentVoltage = round(values_df["Value"]['VB-002'],2)
-        hybridInverterVoltage = round(values_df["Value"]['VAC-002'],2)
+        directCurrentVoltage = round(values_df["Value"]['VCH-002'],2)
+        hybridInverterVoltage = round(values_df["Value"]['VAC-006'],2)
       else:
-        batteryTemperature = round(values_df["Value"]['TB-001'],2)
+        batteryTemperature = 30.0
         simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
-        measuredPV_Power = round(values_df["Value"]['PG-001'],2)
-        measuredWT_Power = round(values_df["Value"]['PG-002'],2)
-        measuredControllerDC_Power = round(values_df["Value"]['PB-001'],2)
+        measuredPV_Power = round(values_df["Value"]['PC-001'],2)
+        measuredWT_Power = round(values_df["Value"]['PC-002'],2)
+        measuredControllerDC_Power = round(values_df["Value"]['PC-001']+values_df["Value"]['PC-002'],2)
         PV_Voltage = round(values_df["Value"]['VG-001'],2)
         WT_Voltage = round(values_df["Value"]['VG-002'],2)
-        directCurrentVoltage = round(values_df["Value"]['VB-001'],2)
-        inverterVoltage = round(values_df["Value"]['VAC-001'],2)
+        directCurrentVoltage = round(values_df["Value"]['VCH-001'],2)
+        inverterVoltage = round(values_df["Value"]['VAC-002'],2)
         directCurrentLoadVoltage = round(values_df["Value"]['VDC-001'],2)
         solarWind['windTurbineRevolutions'] = round(values_df["Value"]['RPM-001'],2)
 
@@ -179,7 +253,7 @@ class Solar(Resource):
       
       twinResults = twinPVWF.ongridTwinOutput(chargeCycleInitialSOC, batteryState, gridState, inputActivePower, inputPowerFactor, batteryTemperature, directCurrentVoltage, 
                                 batteryStateOfCharge, hybridChargeVoltageBulk, hybridChargeVoltageFloat, 
-                                hybridChargingMinimunVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
+                                hybridChargingMinimumVoltage, simulatedChargeCycle, PV_Voltage, gridVoltage, 
                                 hybridInverterVoltage, delta_t*timeMultiplier)
       
       solarWind["externalGridPower"] = twinResults[0]
@@ -235,7 +309,7 @@ class Solar(Resource):
       
       twinResults = twinPVWF.offgridTwinOutput(chargeCycleInitialSOC, batteryState, simulatedInverterState, inputActivePower, inputPowerFactor, inputDirectCurrentPower, 
                                  batteryTemperature, directCurrentVoltage, batteryStateOfCharge, controllerChargeVoltageBulk, 
-                                 controllerChargeVoltageFloat, controllerChargingMinimunVoltage, PV_Voltage, WT_Voltage, 
+                                 controllerChargeVoltageFloat, controllerChargingMinimumVoltage, PV_Voltage, WT_Voltage, 
                                  directCurrentLoadVoltage, inverterVoltage, delta_t*timeMultiplier)
             
       solarWind["controllerPower"] = twinResults[0]
