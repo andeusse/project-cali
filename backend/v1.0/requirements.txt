@@ -11,3 +11,4 @@ numpy==1.26.4
 importlib-metadata==7.0.1
 python-dotenv==1.0.1
 requests==2.31.0
+psychrolib==2.5.0

@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from simulation_models import TwinHydro
 import pandas as pd
+import numpy as np
 from utils import InfluxDbConnection
 from dotenv import load_dotenv
 import os
@@ -35,12 +36,51 @@ class Turbine(Resource):
       values_df.set_index('field', inplace=True)
       influxDB.InfluxDBclose()
 
+    if data["steps"]["value"] > 1:
+      iteration = data["iteration"]
+      if data["stepUnit"] == "Second":
+        repeats = data["stepTime"]["value"]
+      elif data["stepUnit"] == "Minute":
+        repeats = 60 * data["stepTime"]["value"]
+      elif data["stepUnit"] == "Hour":
+        repeats = 3600 * data["stepTime"]["value"]
+      elif data["stepUnit"] == "Day":
+        repeats = 86400 * data["stepTime"]["value"]
+        
     name = data["name"]
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
-    inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
-    inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FT-001'],2)
-    inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
-    inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
+    if data["inputPressure"]["arrayEnabled"]:
+      inputPressureArray = np.repeat(np.array(data["inputPressureArray"]),repeats)
+      if iteration <= len(inputPressureArray):
+        inputPressure = float(inputPressureArray[iteration-1] * 9.8064) # mH2O to kPa conversion
+      else:
+        inputPressure = float(inputPressureArray[-1] * 9.8064) # mH2O to kPa conversion
+    else:
+      inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
+    if data["inputFlow"]["arrayEnabled"]:
+      inputFlowArray = np.repeat(np.array(data["inputFlowArray"]),repeats)
+      if iteration <= len(inputFlowArray):
+        inputFlow = float(inputFlowArray[iteration-1])
+      else:
+        inputFlow = float(inputFlowArray[-1])
+    else:
+      inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FT-001'],2)
+    if data["inputActivePower"]["arrayEnabled"]:
+      inputActivePowerArray = np.repeat(np.array(data["inputActivePowerArray"]),repeats)
+      if iteration <= len(inputActivePowerArray):
+        inputActivePower = float(inputActivePowerArray[iteration-1])
+      else:
+        inputActivePower = float(inputActivePowerArray[-1])
+    else:
+      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
+    if data["inputPowerFactor"]["arrayEnabled"]:
+      inputPowerFactorArray = np.repeat(np.array(data["inputPowerFactorArray"]),repeats)
+      if iteration <= len(inputPowerFactorArray):
+        inputPowerFactor = float(inputPowerFactorArray[iteration-1])
+      else:
+        inputPowerFactor = float(inputPowerFactorArray[-1])
+    else:
+      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
     
     turbine["inputActivePower"] = inputActivePower
@@ -60,7 +100,7 @@ class Turbine(Resource):
 
     controllerChargeVoltageBulk = data["controller"]["chargeVoltageBulk"]["value"]
     controllerChargeVoltageFloat = data["controller"]["chargeVoltageFloat"]["value"]
-    controllerChargingMinimunVoltage = data["controller"]["chargingMinimunVoltage"]["value"]
+    controllerChargingMinimumVoltage = data["controller"]["chargingMinimumVoltage"]["value"]
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
     controllerEfficiency = data["controller"]["efficiency"]["value"]
@@ -78,15 +118,27 @@ class Turbine(Resource):
         P_h_meas = round(values_df["Value"]['PG-001'],2)
         P_CC_meas = round(values_df["Value"]['PC-001'],2)
         V_t = round(values_df["Value"]['VG-001'],2)
-        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB-001'],2)
-        simulatedSinkLoadState = bool(int(values_df["Value"]['AUX-1001']))
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VCH-001'],2)
+        if values_df["Value"]['AUX-1001'] == "OFF":
+          simulatedSinkLoadState = False
+          sinkLoadMode = "Off"
+        elif values_df["Value"]['AUX-1001'] == "ON":
+          simulatedSinkLoadState = True
+          sinkLoadMode = "On"
       else:
         T_bat = round(values_df["Value"]['TE-004'],2)
         P_h_meas = round(values_df["Value"]['PG-002'],2)
         P_CC_meas = round(values_df["Value"]['PC-002'],2)
         V_t = round(values_df["Value"]['VG-002'],2)
-        simulatedDirectCurrentVoltage = round(values_df["Value"]['VB-002'],2)
-        simulatedSinkLoadState = bool(int(values_df["Value"]['AUX-1002']))
+        simulatedDirectCurrentVoltage = round(values_df["Value"]['VCH-002'],2)
+        if values_df["Value"]['AUX-1002'] == "OFF":
+          simulatedSinkLoadState = False
+          sinkLoadMode = "Off"
+        elif values_df["Value"]['AUX-1002'] == "ON":
+          simulatedSinkLoadState = True
+          sinkLoadMode = "On"
+        elif values_df["Value"]['AUX-1002'] == "AUTO":
+          sinkLoadMode = "Auto"
 
       V_CA = round(values_df["Value"]['VAC-002'],2)
       simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
@@ -138,7 +190,7 @@ class Turbine(Resource):
           simulatedDirectCurrentVoltage = 24.0
 
     results = twinHydro.twinOutput(chargeCycleInitialSOC, batteryState, inputActivePower, simulatedInverterState, inputPowerFactor, inputDirectCurrentPower, T_bat, simulatedDirectCurrentVoltage, batteryStateOfCharge, 
-                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimunVoltage, sinkLoadMode, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
+                                     controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimumVoltage, sinkLoadMode, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA)
 
     turbine["turbinePower"] = P_h
