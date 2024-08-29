@@ -8,6 +8,7 @@ export type InputType = {
   min?: number;
   max?: number;
   step?: number;
+  stringValue?: string;
 };
 
 export type InputArrayType = InputType & {

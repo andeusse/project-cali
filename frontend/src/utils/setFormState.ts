@@ -10,13 +10,16 @@ import { setScenario } from './scenarios/setScenario';
 import { SmartSystemParameters } from '../types/scenarios/common';
 import { setCoolingTower } from './models/setCoolingTower';
 import { CoolingTowerParameters } from '../types/models/coolingTower';
+import { HydrogencellParameters } from '../types/models/hydrogenCell';
+import { setHydrogenCell } from './models/setHydrogenCell';
 
 export type formType =
   | TurbineParameters
   | SolarWindParameters
   | BiogasParameters
   | CoolingTowerParameters
-  | SmartSystemParameters;
+  | SmartSystemParameters
+  | HydrogencellParameters;
 
 export const setFormState = <T extends formType>(
   e: any,
@@ -71,6 +74,11 @@ export const setFormState = <T extends formType>(
   if ('topWaterFlow' in oldState) {
     if (name === 'inputOfflineOperation' || name === 'steps') {
       return setCoolingTower(e, oldState);
+    }
+  }
+  if ('electronicLoadMode' in oldState) {
+    if (name === 'inputOfflineOperation' || name === 'steps') {
+      return setHydrogenCell(e, oldState);
     }
   }
   if ('operationMode' in oldState) {

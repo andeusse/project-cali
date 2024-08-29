@@ -5,6 +5,7 @@ import Turbine from './digitalTwinsTabs/Turbine';
 import Solar from './digitalTwinsTabs/Solar';
 import Biogas from './digitalTwinsTabs/Biogas';
 import CoolingTower from './digitalTwinsTabs/CoolingTower';
+import HydrogenCell from './digitalTwinsTabs/HydrogenCell';
 
 type Props = {};
 
@@ -28,7 +29,7 @@ const DigitalTwins = (props: Props) => {
     },
     {
       title: 'Celda de Hidrógeno',
-      children: <></>,
+      children: <HydrogenCell></HydrogenCell>,
     },
     {
       title: 'Potencial Bioquímico (Metano)',
