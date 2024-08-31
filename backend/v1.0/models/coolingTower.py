@@ -10,7 +10,7 @@ import os
 class coolingTower(Resource):
   def post(self):
     data = request.get_json()
-    load_dotenv('v1.0\.env')
+    load_dotenv('./v1.0/.env')
     DB_IP = os.getenv('DB_IP')
     DB_Port = os.getenv('DB_Port')
     DB_Bucket = os.getenv('DB_Bucket')
@@ -29,8 +29,9 @@ class coolingTower(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
-      query = influxDB.QueryCreator(measurement='Torre_enfriamiento', type=1)
+      query = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', type=1)
       values_df_temp = influxDB.InfluxDBreader(query)
+      values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
       values_df.set_index('field', inplace=True)
@@ -115,12 +116,13 @@ class coolingTower(Resource):
     tower["airTemperatureRise"] = results[4]
     tower["powerAppliedToWater"] = results[5]
     tower["energyAppliedToWater"] = results[6]
+    tower["deltaPressure"] = results[7]
 
     tower["topWaterFlow"] = topWaterFlow * 60000
     tower["topWaterTemperature"] = topWaterTemperature - 273.15
     tower["bottomAirFlow"] = bottomAirFlow * 60
     tower["bottomAirTemperature"] = bottomAirTemperature - 273.15
     tower["bottomAirHumidity"] = bottomAirHumidity
-    tower["deltaPressure"] = 0.0
+    tower["atmosphericPressure"] = atmosphericPressure
 
     return {"model": tower}

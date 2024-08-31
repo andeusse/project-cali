@@ -12,7 +12,7 @@ class TwinHydro:
     def turbineType (self, type):
         # Pelton
         if type == 1:
-            self.n_t = 55.0
+            self.n_t = 60.0
             self.H_min = 0.0
             self.H_max = 130.0
             self.Q_min = 0.1
@@ -22,7 +22,7 @@ class TwinHydro:
             self.V_t = 40.0
         # Turgo
         elif type == 2:
-            self.n_t = 45.0
+            self.n_t = 55.0
             self.H_min = 0.0
             self.H_max = 30.0
             self.Q_min = 8.0

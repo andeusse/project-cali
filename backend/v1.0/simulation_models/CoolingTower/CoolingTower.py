@@ -1,7 +1,7 @@
-
 from simulation_models.CoolingTower import PengRobinson as PR
 from scipy.optimize import fsolve
 import numpy as np
+import psychrolib
 
 class coolingTowerModel:
     def __init__ (self, L, A, epsilon, dp):  #L: Largo de la torre en metros, A: area transversal de la torre en metros cuadrados, epsilon: Porosidad de la torre, dp: Diametro de las partículas del lecho (m)
@@ -16,7 +16,7 @@ class coolingTowerModel:
         self.Fv_Lin = Fv_Lin            #Flujo volumétrico de agua a la entrada [m3/s] 
         self.T_vin = T_vin              #Temperatura de entrada aire            [K]   
         self.Fv_vin = Fv_vin            #Flujo volumétrico de aire a la entrada [m3/s]
-        self.RH_air_in = RH_air_in      #Humedad relativa del aire a la entrada [%] (numero 60% es 60)
+        self.RH_air_in = RH_air_in      #Humedad relativa del aire a la entrada [%] (valor entre 0 y 1)
         self.u = self.Fv_vin/self.A
         Air_in = PR.EosPengRobinson()
         Air_out = PR.EosPengRobinson()
@@ -94,26 +94,24 @@ class coolingTowerModel:
         xH2O_v_out = numpysolution[1]/N_out_v
         x_O2_v_out = numpysolution[3]/N_out_v
         x_N2_v_out = numpysolution[5]/N_out_v
-        Ttop = numpysolution[6] - abs(np.random.normal(1.3,0.01))
-
-
+        Ttop = numpysolution[6] - abs(np.random.normal(1.1,0.01))
+        psychrolib.SetUnitSystem(psychrolib.SI)
+        
         Air_out.relativeHumidityTop(x_H2O=xH2O_v_out, x_O2=x_O2_v_out, x_N2=x_N2_v_out, T=Ttop)
+        # if self.Fv_Lin <= 0:
+        #     Air_out.RH = self.RH_air_in * 100
+        Tbottom = psychrolib.GetTWetBulbFromRelHum(Ttop - 273.15, Air_out.RH/100, Water_out.P)
+        Ttop_real = (numpysolution[6]-273.15)*((100-Air_out.RH)/100) + Tbottom*(Air_out.RH/100)
+        numpysolution[6] = Tbottom - abs(np.random.normal(1.2,0.01)) + 273.15
         self.RH_v_out = Air_out.RH
         self.w_v_out = Air_out.w
         self.solution = list(numpysolution)
-        self.solution.append(T_vin + abs(np.random.normal(0.5,0.01)))
+        self.solution.append(Ttop_real + 273.15)
+        
         self.solution.append(self.RH_v_out)
 
         powerBalance = (self.Fv_Lin / Water_in.Vm_mix_l)*(Water_in.H_l - Water_out.H_l)
         self.solution.append(powerBalance)
-        
-        
 
-        
-        
-   
-            
-            
-
-
-
+        Air_in.ergun_pressure_drop(L = self.L, epsilon = self.epsilon, u = self.u, dp = self.dp)
+        self.solution.append(Air_in.delta_P)
