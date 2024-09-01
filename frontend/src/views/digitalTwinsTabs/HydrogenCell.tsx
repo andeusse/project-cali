@@ -241,6 +241,50 @@ const HydrogenCell = (props: Props) => {
   };
 
   useEffect(() => {
+    if (data !== undefined) {
+      setSystem((o) => ({
+        ...o,
+        inputHydrogenFlow: {
+          ...o.inputHydrogenFlow,
+          value: data.hydrogenFlow
+            ? data.hydrogenFlow
+            : o.inputHydrogenFlow.value,
+        },
+        inputHydrogenPressure: {
+          ...o.inputHydrogenPressure,
+          value: data.hydrogenPressure
+            ? data.hydrogenPressure
+            : o.inputHydrogenPressure.value,
+        },
+        inputCellTemperature: {
+          ...o.inputCellTemperature,
+          value: data.cellTemperature
+            ? data.cellTemperature
+            : o.inputCellTemperature.value,
+        },
+        inputElectronicLoadCurrent: {
+          ...o.inputElectronicLoadCurrent,
+          value: data.electronicLoadCurrent
+            ? data.electronicLoadCurrent
+            : o.inputElectronicLoadCurrent.value,
+        },
+        inputElectronicLoadPower: {
+          ...o.inputElectronicLoadPower,
+          value: data.electronicLoadVoltage
+            ? data.electronicLoadVoltage
+            : o.inputElectronicLoadPower.value,
+        },
+        inputElectronicLoadResistance: {
+          ...o.inputElectronicLoadResistance,
+          value: data.electronicLoadPower
+            ? data.electronicLoadPower
+            : o.inputElectronicLoadResistance.value,
+        },
+      }));
+    }
+  }, [data]);
+
+  useEffect(() => {
     setSystem((o) => {
       return { ...o, disableParameters: isPlaying };
     });

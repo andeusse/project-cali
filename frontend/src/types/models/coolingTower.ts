@@ -54,6 +54,7 @@ export type CoolingTowerOutput = {
   energyAppliedToWater: number;
   powerAppliedToWater: number;
   deltaPressure: number;
+  atmosphericPressure: number;
 };
 
 export type CoolingTowerOutputHistoric = {

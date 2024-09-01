@@ -223,6 +223,40 @@ const CoolingTower = () => {
     if (data !== undefined) {
       setSystem((o) => ({
         ...o,
+        topWaterFlow: {
+          ...o.topWaterFlow,
+          value: data.topWaterFlow ? data.topWaterFlow : o.topWaterFlow.value,
+        },
+        topWaterTemperature: {
+          ...o.topWaterTemperature,
+          value: data.topWaterTemperature
+            ? data.topWaterTemperature
+            : o.topWaterTemperature.value,
+        },
+        bottomAirFlow: {
+          ...o.bottomAirFlow,
+          value: data.bottomAirFlow
+            ? data.bottomAirFlow
+            : o.bottomAirFlow.value,
+        },
+        bottomAirTemperature: {
+          ...o.bottomAirTemperature,
+          value: data.bottomAirTemperature
+            ? data.bottomAirTemperature
+            : o.bottomAirTemperature.value,
+        },
+        bottomAirHumidity: {
+          ...o.bottomAirHumidity,
+          value: data.bottomAirHumidity
+            ? data.bottomAirHumidity
+            : o.bottomAirHumidity.value,
+        },
+        atmosphericPressure: {
+          ...o.atmosphericPressure,
+          value: data.atmosphericPressure
+            ? data.atmosphericPressure
+            : o.atmosphericPressure.value,
+        },
         simulatedBottomWaterTemperature: data.bottomAirTemperature,
         simulatedTopAirTemperature: data.topAirTemperature,
         simulatedEnergyAppliedToWater: data.energyAppliedToWater,
@@ -583,6 +617,7 @@ const CoolingTower = () => {
                     variable={system.atmosphericPressure}
                     name="atmosphericPressure"
                     handleChange={handleChange}
+                    disabled={!system.inputOfflineOperation}
                   ></CustomNumberField>
                 </Grid>
               </Grid>
