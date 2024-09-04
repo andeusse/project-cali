@@ -207,7 +207,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   atmosphericPressure: {
     disabled: false,
-    value: 101.3,
+    value: 90.0,
     tooltip: 'Presión atmosférica',
     unit: 'kPa',
     variableString: 'Presión atmosférica',
