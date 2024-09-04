@@ -43,7 +43,7 @@ const HydrogenCellDiagram = (props: Props) => {
       >
         <image href={!isPlaying ? hydrogenCellOff : hydrogenCellOn}></image>
         <text
-          transform={`translate(5300, 2450)`}
+          transform={`translate(5400, 2450)`}
           style={{
             alignmentBaseline: 'central',
             textAnchor: 'end',

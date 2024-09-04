@@ -685,7 +685,7 @@ const HydrogenCell = (props: Props) => {
                     name="inputHydrogenPressure"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
-                    variableName="Flujo"
+                    variableName="Presión"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
@@ -696,7 +696,7 @@ const HydrogenCell = (props: Props) => {
                     name="inputCellTemperature"
                     handleChange={handleChange}
                     disabled={system.inputOfflineOperation}
-                    variableName="Flujo"
+                    variableName="Temperatura"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
@@ -757,6 +757,18 @@ const HydrogenCell = (props: Props) => {
                     ></ToggleArrayCustomNumberField>
                   </Grid>
                 )}
+                <Grid item xs={12} md={12} xl={12}>
+                  <h2>Parámetros semáforo</h2>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                  <CustomToggle
+                    value={system.lightsConnected}
+                    name="lightsConnected"
+                    handleChange={handleChange}
+                    trueString="Conectadas"
+                    falseString="Desconectadas"
+                  ></CustomToggle>
+                </Grid>
               </Grid>
             </Grid>
             <Grid item xs={12} md={9.5} xl={9.5}>
