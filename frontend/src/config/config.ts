@@ -82,7 +82,7 @@ export default class Config {
     };
 
     axios
-      .get(this.params.apiUrl)
+      .get(this.params.apiUrl, { timeout: 5000 })
       .then(() => {
         console.log(this.params.apiUrl);
       })
