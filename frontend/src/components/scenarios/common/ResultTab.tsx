@@ -1,8 +1,10 @@
 import {
   Button,
+  Checkbox,
   FormControl,
   Grid,
   InputLabel,
+  ListItemText,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -130,7 +132,7 @@ const ResultTab = (props: Props) => {
   };
 
   const handleAddGraph = () => {
-    selectedVariables.forEach((v) => setCurrentGraphs(selectedVariables));
+    setCurrentGraphs([...currentGraphs, ...selectedVariables]);
     setSelectedVariables([]);
   };
 
@@ -211,7 +213,8 @@ const ResultTab = (props: Props) => {
               >
                 {data.columns.map((v, index) => (
                   <MenuItem key={`${index}${v}`} value={v}>
-                    {v}
+                    <Checkbox checked={selectedVariables.indexOf(v) > -1} />
+                    <ListItemText primary={`${v}`} />
                   </MenuItem>
                 ))}
               </Select>

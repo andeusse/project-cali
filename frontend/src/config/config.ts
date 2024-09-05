@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { ConfigType } from '../types/config';
 
 export default class Config {
@@ -19,30 +20,15 @@ export default class Config {
 
   private constructor() {
     this.params = {
-      apiUrl:
-        process.env.REACT_APP_STATUS === 'dev'
-          ? process.env.REACT_APP_DEV_API_URL
-            ? process.env.REACT_APP_DEV_API_URL
-            : ''
-          : process.env.REACT_APP_PROD_API_URL
-          ? process.env.REACT_APP_PROD_API_URL
-          : '',
-      grafanaUrls:
-        process.env.REACT_APP_STATUS === 'dev'
-          ? process.env.REACT_APP_DEV_GRAFANA_TABS
-            ? process.env.REACT_APP_DEV_GRAFANA_TABS.split(' ')
-            : []
-          : process.env.REACT_APP_PROD_GRAFANA_TABS
-          ? process.env.REACT_APP_PROD_GRAFANA_TABS.split(' ')
-          : [],
-      electricalUrls:
-        process.env.REACT_APP_STATUS === 'dev'
-          ? process.env.REACT_APP_DEV_ELECTRICAL_TABS
-            ? process.env.REACT_APP_DEV_ELECTRICAL_TABS.split(' ')
-            : []
-          : process.env.REACT_APP_PROD_ELECTRICAL_TABS
-          ? process.env.REACT_APP_PROD_ELECTRICAL_TABS.split(' ')
-          : [],
+      apiUrl: process.env.REACT_APP_DEV_API_URL_PRIVATE
+        ? process.env.REACT_APP_DEV_API_URL_PRIVATE
+        : '',
+      grafanaUrls: process.env.REACT_APP_DEV_GRAFANA_TABS
+        ? process.env.REACT_APP_DEV_GRAFANA_TABS.split(' ')
+        : [],
+      electricalUrls: process.env.REACT_APP_DEV_ELECTRICAL_TABS
+        ? process.env.REACT_APP_DEV_ELECTRICAL_TABS.split(' ')
+        : [],
       projectName: process.env.REACT_APP_TITLE
         ? process.env.REACT_APP_TITLE
         : 'Project',
@@ -94,6 +80,18 @@ export default class Config {
           )
         : [],
     };
+
+    axios
+      .get(this.params.apiUrl)
+      .then(() => {
+        console.log(this.params.apiUrl);
+      })
+      .catch(() => {
+        this.params.apiUrl = process.env.REACT_APP_DEV_API_URL_PUBLIC
+          ? process.env.REACT_APP_DEV_API_URL_PUBLIC
+          : '';
+        console.log(this.params.apiUrl);
+      });
   }
 
   static getInstance() {
