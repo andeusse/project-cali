@@ -10,7 +10,7 @@ import os
 class Turbine(Resource):
   def post(self):
     data = request.get_json()
-    load_dotenv('v1.0\.env')
+    load_dotenv('./v1.0/.env')
     DB_IP = os.getenv('DB_IP')
     DB_Port = os.getenv('DB_Port')
     DB_Bucket = os.getenv('DB_Bucket')
@@ -30,7 +30,7 @@ class Turbine(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Turbinas', type=1)
-      values_df_temp = influxDB.InfluxDBreader(query)
+      values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
       values_df.set_index('field', inplace=True)
@@ -72,7 +72,7 @@ class Turbine(Resource):
       else:
         inputActivePower = float(inputActivePowerArray[-1])
     else:
-      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
+      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'] * 1000,2)
     if data["inputPowerFactor"]["arrayEnabled"]:
       inputPowerFactorArray = np.repeat(np.array(data["inputPowerFactorArray"]),repeats)
       if iteration <= len(inputPowerFactorArray):
@@ -80,8 +80,8 @@ class Turbine(Resource):
       else:
         inputPowerFactor = float(inputPowerFactorArray[-1])
     else:
-      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'],2)
-    inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 2.4
+      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
+    inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 3.6
     
     turbine["inputActivePower"] = inputActivePower
     turbine["inputPowerFactor"] = inputPowerFactor

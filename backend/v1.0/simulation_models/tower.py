@@ -34,13 +34,16 @@ class TwinTower:
     #     return n_t.x[0]
     
     def twinOutput(self, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
+        if topWaterFlow <= 1.67e-5:
+            topWaterFlow = 1.67e-5
+        print(topWaterFlow)
         self.topWaterFlow = topWaterFlow
         self.topWaterTemperature = topWaterTemperature
         self.bottomAirFlow = bottomAirFlow
         self.bottomAirTemperature = bottomAirTemperature
         self.bottomAirHumidity = bottomAirHumidity / 100
         self.atmosphericPressure = atmosphericPressure
-        epsilon = 0.8
+        epsilon = 0.7
         dp = 0.005
 
         towerModel = CoolingTower.coolingTowerModel(self.towerHeight, self.towerArea, epsilon, dp)
@@ -56,4 +59,6 @@ class TwinTower:
         self.waterTemperatureReduction = self.bottomWaterTemperature - self.topWaterTemperature
         self.airTemperatureRise = self.topAirTemperature - self.bottomAirTemperature
 
-        return round(self.bottomWaterTemperature,2), round(self.waterTemperatureReduction,2), round(self.topAirTemperature,2), round(self.topAirHumidity,2), round(self.airTemperatureRise,2), round(self.powerAppliedToWater,2), self.energyAppliedToWater
+        self.deltaPressure = towerResults[10]
+
+        return round(self.bottomWaterTemperature,2), round(self.waterTemperatureReduction,2), round(self.topAirTemperature,2), round(self.topAirHumidity,2), round(self.airTemperatureRise,2), round(self.powerAppliedToWater,2), self.energyAppliedToWater, round(self.deltaPressure,2)
