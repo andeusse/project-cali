@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import string2Theme from './utils/string2Theme';
 import Router from './router/Router';
 import './styles/table.scss';
+import Config from './config/config';
+import axios from 'axios';
+import { setIsLoading } from './redux/slices/isLoadingSlice';
 
 function App() {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -62,6 +65,35 @@ function App() {
             fontFamily: `"Lucida Sans Unicode","Roboto","Helvetica","Arial",sans-serif`,
           },
         });
+
+  useEffect(() => {
+    dispatch(setIsLoading(true));
+    axios
+      .get(Config.getInstance().params.apiUrl, { timeout: 1000 })
+      .then(() => {
+        console.log(Config.getInstance().params.apiUrl);
+        dispatch(setIsLoading(false));
+      })
+      .catch(() => {
+        Config.getInstance().params.apiUrl = process.env
+          .REACT_APP_DEV_API_URL_PUBLIC
+          ? process.env.REACT_APP_DEV_API_URL_PUBLIC
+          : '';
+        Config.getInstance().params.grafanaUrls = process.env
+          .REACT_APP_DEV_GRAFANA_TABS_PUBLIC
+          ? process.env.REACT_APP_DEV_GRAFANA_TABS_PUBLIC.split(' ')
+          : [];
+        Config.getInstance().params.electricalUrls = process.env
+          .REACT_APP_DEV_ELECTRICAL_TABS_PUBLIC
+          ? process.env.REACT_APP_DEV_ELECTRICAL_TABS_PUBLIC.split(' ')
+          : [];
+        console.log(Config.getInstance().params.apiUrl);
+        dispatch(setIsLoading(false));
+      })
+      .finally(() => {
+        dispatch(setIsLoading(false));
+      });
+  }, [dispatch]);
 
   return (
     <ThemeProvider theme={themeMode}>
