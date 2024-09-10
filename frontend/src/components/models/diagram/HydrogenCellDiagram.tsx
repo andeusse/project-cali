@@ -3,9 +3,12 @@ import {
   HYDROGEN_CELL_DIAGRAM_VARIABLES,
   HydrogenCellOutput,
   HydrogencellParameters,
+  LightsModeType,
 } from '../../../types/models/hydrogenCell';
 import hydrogenCellOff from '../../../assets/hydrogen/hydrogen.png';
-import hydrogenCellOn from '../../../assets/hydrogen/hydrogenOn.gif';
+import hydrogenCellOn1 from '../../../assets/hydrogen/hydrogenOn1.gif';
+import hydrogenCellOn2 from '../../../assets/hydrogen/hydrogenOn2.gif';
+import hydrogenCellOn3 from '../../../assets/hydrogen/hydrogenOn3.gif';
 import DiagramVariables from '../common/DiagramVariables';
 import { useEffect, useState } from 'react';
 import { getValueByKey } from '../../../utils/getValueByKey';
@@ -41,7 +44,17 @@ const HydrogenCellDiagram = (props: Props) => {
         viewBox={`0 0 5500 3500`}
         transform={`scale(0.9 0.9)`}
       >
-        <image href={!isPlaying ? hydrogenCellOff : hydrogenCellOn}></image>
+        <image
+          href={
+            !isPlaying
+              ? hydrogenCellOff
+              : !hydrogenCell.lightsConnected
+              ? hydrogenCellOn1
+              : hydrogenCell.lightsMode === LightsModeType.Parallel
+              ? hydrogenCellOn2
+              : hydrogenCellOn3
+          }
+        ></image>
         <text
           transform={`translate(5400, 2450)`}
           style={{

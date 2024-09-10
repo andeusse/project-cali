@@ -69,7 +69,7 @@ function App() {
   useEffect(() => {
     dispatch(setIsLoading(true));
     axios
-      .get(Config.getInstance().params.apiUrl, { timeout: 1000 })
+      .get(Config.getInstance().params.apiUrl, { timeout: 2000 })
       .then(() => {
         console.log(Config.getInstance().params.apiUrl);
         dispatch(setIsLoading(false));

@@ -21,7 +21,7 @@ import {
 import { setHydrogenCellTable } from '../../utils/models/setHydrogenCell';
 import saveAs from 'file-saver';
 import PlayerControls from '../../components/UI/PlayerControls';
-import hydrogenCellIllustration from '../../assets/illustrations/hydrogen.jpg';
+import hydrogenCellIllustration from '../../assets/illustrations/hydrogen.png';
 import singleDiagramLight from '../../assets/singleDiagram/singleDiagramHydrogenLight.png';
 import singleDiagramDark from '../../assets/singleDiagram/singleDiagramHydrogenDark.png';
 import { setFormState } from '../../utils/setFormState';
