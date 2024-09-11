@@ -6,6 +6,7 @@ import Solar from './digitalTwinsTabs/Solar';
 import Biogas from './digitalTwinsTabs/Biogas';
 import CoolingTower from './digitalTwinsTabs/CoolingTower';
 import HydrogenCell from './digitalTwinsTabs/HydrogenCell';
+import BiochemicalMethanePotential from './digitalTwinsTabs/BiochemicalMethanePotential';
 
 type Props = {};
 
@@ -33,7 +34,7 @@ const DigitalTwins = (props: Props) => {
     },
     {
       title: 'Potencial Bioquímico (Metano)',
-      children: <></>,
+      children: <BiochemicalMethanePotential></BiochemicalMethanePotential>,
     },
   ];
 

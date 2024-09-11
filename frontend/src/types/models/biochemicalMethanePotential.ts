@@ -3,7 +3,7 @@ import {
   OperationModelType,
   StepUnitType,
 } from '../common';
-import { CommonDigitalTwinsParameter } from './common';
+import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
 import { CommonChartType } from '../graph';
 import Config from '../../config/config';
 import { InputType } from '../inputType';
@@ -75,7 +75,7 @@ export enum DiagramCompoundUnitText {
 }
 
 export enum DiagramBiogasMeasurementMethodType {
-  Pressure = 'Relative',
+  Pressure = 'Pressure',
   VolumeDisplaced = 'VolumeDisplaced',
 }
 
@@ -641,11 +641,11 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   biogasVisualizationSideB: DiagramBiogasType.Stored,
   biogasVisualizationUnitsSideB: DiagramBiogasUnitType.NormalVolume,
   biogasCompoundsSideB: DiagramCompoundUnitType.Concentration,
-  stateSelectionSideA: false,
+  stateSelectionSideA: true,
   manualBiogasCompositionSideA: true,
   mixManualSideA: true,
   feefManualSideA: true,
-  stateSelectionSideB: false,
+  stateSelectionSideB: true,
   manualBiogasCompositionSideB: true,
   mixManualSideB: true,
   feefManualSideB: true,
@@ -1039,7 +1039,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     value: 80,
     tooltip: 'Fracción de agua [%]',
     unit: '%',
-    variableString: 'composición (Depende de la selección de regla de mezcla)',
+    variableString: 'Fracción',
     min: 0,
     max: 100,
   },
@@ -1734,7 +1734,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     value: 80,
     tooltip: 'Fracción de agua [%]',
     unit: '%',
-    variableString: 'composición (Depende de la selección de regla de mezcla)',
+    variableString: 'Fracción',
     min: 0,
     max: 100,
   },
@@ -2048,3 +2048,5 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     max: 12,
   },
 };
+
+export const BMP_VARIABLES: DiagramVariableType[] = [];

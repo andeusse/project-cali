@@ -12,6 +12,7 @@ import { setCoolingTower } from './models/setCoolingTower';
 import { CoolingTowerParameters } from '../types/models/coolingTower';
 import { HydrogencellParameters } from '../types/models/hydrogenCell';
 import { setHydrogenCell } from './models/setHydrogenCell';
+import { BiochemicalMethanePotentialParameters } from '../types/models/biochemicalMethanePotential';
 
 export type formType =
   | TurbineParameters
@@ -19,7 +20,8 @@ export type formType =
   | BiogasParameters
   | CoolingTowerParameters
   | SmartSystemParameters
-  | HydrogencellParameters;
+  | HydrogencellParameters
+  | BiochemicalMethanePotentialParameters;
 
 export const setFormState = <T extends formType>(
   e: any,
