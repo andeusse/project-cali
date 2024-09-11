@@ -1,5 +1,9 @@
 import Config from '../../config/config';
-import { CommonSystemParameter, StepUnitType } from '../common';
+import {
+  CommonSystemParameter,
+  OperationModelType,
+  StepUnitType,
+} from '../common';
 import { CommonChartType } from '../graph';
 import { InputType } from '../inputType';
 import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
@@ -12,20 +16,24 @@ export enum OperationModeType {
   Modo5 = 'Modo5',
 }
 
-export enum OperationModelType {
-  Arrhenius = 'Arrhenius',
-  ADM1 = 'ADM1',
-  Gompertz = 'Gompertz',
-}
-
 export enum DiagramBiogasType {
   Accumulated = 'Accumulated',
   Stored = 'Stored',
 }
 
+export enum DiagramBiogasText {
+  Accumulated = 'Acumulado',
+  Stored = 'Almacenado',
+}
+
 export enum DiagramBiogasUnitType {
   NormalVolume = 'NormalVolume',
   Pressure = 'Pressure',
+}
+
+export enum DiagramBiogasUnitText {
+  NormalVolume = 'Volumen normal',
+  Pressure = 'Presión',
 }
 
 export enum DiagramCompoundType {
@@ -34,24 +42,14 @@ export enum DiagramCompoundType {
   Moles = 'Moles',
 }
 
-export enum DiagramHumidityType {
-  Relative = 'Relative',
-  Moles = 'Moles',
-}
-
-export enum DiagramBiogasText {
-  Accumulated = 'Acumulado',
-  Stored = 'Almacenado',
-}
-
-export enum DiagramBiogasUnitText {
-  NormalVolume = 'Volumen normal',
-  Pressure = 'Presión',
-}
-
 export enum DiagramCompoundText {
   Concentration = 'Concentración',
   PartialVolume = 'Volumen parcial',
+  Moles = 'Moles',
+}
+
+export enum DiagramHumidityType {
+  Relative = 'Relative',
   Moles = 'Moles',
 }
 
@@ -413,10 +411,10 @@ export const BIOGAS: BiogasParameters = {
     tooltip: 'Multiplicador de tiempo',
     unit: '',
     variableString: '',
-
     min: 1,
     max: 10,
   },
+  inputOfflineOperation: true,
   anaerobicReactorVolume1: {
     disabled: false,
     value: 30,
@@ -779,7 +777,6 @@ export const BIOGAS: BiogasParameters = {
       step: 0.01,
     },
   },
-  inputOfflineOperation: true,
   inputSubstrateConditions: true,
   inputProximateAnalysisTotalSolids: {
     disabled: false,

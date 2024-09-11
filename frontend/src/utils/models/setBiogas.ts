@@ -1,9 +1,6 @@
 import Config from '../../config/config';
-import {
-  BiogasParameters,
-  OperationModelType,
-  OperationModeType,
-} from '../../types/models/biogas';
+import { OperationModelType } from '../../types/common';
+import { BiogasParameters, OperationModeType } from '../../types/models/biogas';
 import { getKeyByValue } from '../getKeyByValue';
 
 export const setBiogas = (

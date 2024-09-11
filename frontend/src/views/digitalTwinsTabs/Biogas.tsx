@@ -30,7 +30,6 @@ import {
   DiagramBiogasUnitText,
   DiagramBiogasUnitType,
   OperationModeType,
-  OperationModelType,
 } from '../../types/models/biogas';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import { setFormState } from '../../utils/setFormState';
@@ -47,6 +46,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { getValueByKey } from '../../utils/getValueByKey';
+import { OperationModelType } from '../../types/common';
 
 const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });

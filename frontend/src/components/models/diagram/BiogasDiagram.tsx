@@ -5,7 +5,6 @@ import {
   DiagramBiogasUnitType,
   DiagramCompoundType,
   DiagramHumidityType,
-  OperationModelType,
   OperationModeType,
 } from '../../../types/models/biogas';
 import { DiagramVariableType } from '../../../types/models/common';
@@ -22,6 +21,7 @@ import mode4On from '../../../assets/biogas/Mode4On.gif';
 import mode5 from '../../../assets/biogas/Mode5.png';
 import mode5On from '../../../assets/biogas/Mode5On.gif';
 import DiagramVariables from '../common/DiagramVariables';
+import { OperationModelType } from '../../../types/common';
 
 type Props = {
   biogas: BiogasParameters;

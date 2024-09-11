@@ -10,6 +10,12 @@ export type CommonSystemParameter = {
   name: string;
 };
 
+export enum OperationModelType {
+  Arrhenius = 'Arrhenius',
+  ADM1 = 'ADM1',
+  Gompertz = 'Gompertz',
+}
+
 export enum StepUnitType {
   Second = 'Second',
   Minute = 'Minute',
