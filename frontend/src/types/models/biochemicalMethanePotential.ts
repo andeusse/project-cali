@@ -877,9 +877,9 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   substrate3CompositionSideA: {
     disabled: false,
     value: 0,
-    tooltip: 'composición, volume o peso (depende de la regla de mezcla)',
+    tooltip: 'composición, volumen o peso',
     unit: '%',
-    variableString: 'composición (Depende de la selección de regla de mezcla)',
+    variableString: 'Composición',
     min: 0,
     max: 100,
   },
@@ -1333,22 +1333,18 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   dailyInyectionsByTimeSideA: {
     disabled: false,
     value: 4,
-    tooltip:
-      'Inyecciones diarias o Tiempo [horas] (Depende de Tipo de dosificación)',
-    unit: '',
-    variableString:
-      'Inyecciones diarias o Tiempo [Horas] (Depende de Tipo de dosificación)',
+    tooltip: 'Tiempo',
+    unit: 'horas',
+    variableString: 'Tiempo',
     min: 0,
     max: 24,
   },
   dailyInyectionsSideA: {
     disabled: false,
     value: 4,
-    tooltip:
-      'Inyecciones diarias o Tiempo [horas] (Depende de Tipo de dosificación)',
+    tooltip: 'Inyecciones diarias',
     unit: '',
-    variableString:
-      'Inyecciones diarias o Tiempo [Horas] (Depende de Tipo de dosificación)',
+    variableString: 'Inyecciones diarias',
     min: 4,
     max: 12,
   },
@@ -2028,22 +2024,18 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   dailyInyectionsByTimeSideB: {
     disabled: false,
     value: 4,
-    tooltip:
-      'Inyecciones diarias o Tiempo [horas] (Depende de Tipo de dosificación)',
+    tooltip: 'Tiempo',
     unit: 'horas',
-    variableString:
-      'Inyecciones diarias o Tiempo [Horas] (Depende de Tipo de dosificación)',
+    variableString: 'Tiempo',
     min: 0,
     max: 24,
   },
   dailyInyectionsSideB: {
     disabled: false,
     value: 4,
-    tooltip:
-      'Inyecciones diarias o Tiempo [horas] (Depende de Tipo de dosificación)',
-    unit: 'horas',
-    variableString:
-      'Inyecciones diarias o Tiempo [Horas] (Depende de Tipo de dosificación)',
+    tooltip: 'Inyecciones diarias',
+    unit: '',
+    variableString: 'Inyecciones diarias',
     min: 4,
     max: 12,
   },

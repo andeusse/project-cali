@@ -555,6 +555,7 @@ const HydrogenCell = (props: Props) => {
                           value={system.electronicLoadMode}
                           name="electronicLoadMode"
                           onChange={(e: any) => handleChange(e)}
+                          disabled={true}
                         >
                           {Object.keys(ElectronicLoadModeType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -668,7 +669,7 @@ const HydrogenCell = (props: Props) => {
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Parámetros celda hidrógeno</h2>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
+                {/* <Grid item xs={12} md={12} xl={12}>
                   <ToggleArrayCustomNumberField
                     variable={system.inputHydrogenFlow}
                     name="inputHydrogenFlow"
@@ -689,7 +690,7 @@ const HydrogenCell = (props: Props) => {
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleArrayCustomNumberField
                     variable={system.inputCellTemperature}

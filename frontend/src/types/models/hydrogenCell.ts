@@ -69,6 +69,7 @@ export type HydrogenCellOutput = {
   electronicLoadPower: number;
   cellSelfFeedingPower: number;
   lightsPower: number;
+  fanPercentage: number;
 };
 
 export type HydrogenCellOutputHistoric = CommonChartType & {
@@ -83,6 +84,7 @@ export type HydrogenCellOutputHistoric = CommonChartType & {
   electronicLoadPower: number[];
   cellSelfFeedingPower: number[];
   lightsPower: number[];
+  fanPercentage: number[];
 };
 
 export const HYDROGEN_CELL: HydrogencellParameters = {
@@ -387,5 +389,16 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     fixed: 2,
     x: 850,
     y: 3075,
+  },
+  {
+    name: 'Porcentaje de uso ventilador',
+    variable: 'fanPercentage',
+    unit: '%',
+    isShown: true,
+    diagramName: 'Ventilador',
+    fixed: 2,
+    x: 4300,
+    y: 200,
+    hasAdditionalCondition: 0,
   },
 ];

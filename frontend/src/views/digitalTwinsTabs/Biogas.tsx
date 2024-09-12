@@ -285,8 +285,8 @@ const Biogas = () => {
                       sx={{ alignContent: 'center' }}
                     >
                       <CustomToggle
-                        name="digitalTwinState"
                         value={system.digitalTwinState}
+                        name="digitalTwinState"
                         handleChange={handleChange}
                         trueString="Gemelo on"
                         falseString="Gemelo off"

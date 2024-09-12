@@ -70,7 +70,7 @@ const HydrogenCellDiagram = (props: Props) => {
         <DiagramVariables
           data={data}
           variables={HYDROGEN_CELL_DIAGRAM_VARIABLES}
-          additionalCondition={[true]}
+          additionalCondition={[hydrogenCell.inputOfflineOperation]}
           fontSize={70}
         ></DiagramVariables>
       </svg>

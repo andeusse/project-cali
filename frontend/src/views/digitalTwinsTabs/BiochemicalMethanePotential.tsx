@@ -6,6 +6,14 @@ import {
   BMP_VARIABLES,
   DiagramBiogasMeasurementMethodText,
   DiagramBiogasMeasurementMethodType,
+  DiagramBiogasText,
+  DiagramBiogasType,
+  DiagramBiogasUnitText,
+  DiagramBiogasUnitType,
+  DiagramCompoundUnitText,
+  DiagramCompoundUnitType,
+  DosageText,
+  DosageType,
   MixRuleText,
   MixRuleType,
   PlantOperationText,
@@ -20,6 +28,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -29,12 +38,17 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BMPIllustration from '../../assets/illustrations/biogas.png';
 import { OperationModeType } from '../../types/models/solar';
 import { getValueByKey } from '../../utils/getValueByKey';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';
 import { OperationModelType } from '../../types/common';
+import TimeGraphs from '../../components/models/common/TimeGraphs';
+import BiochemicalMethanePotentialDiagram from '../../components/models/diagram/BiochemicalMethanePotentialDiagram';
+import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 
 type Props = {};
 
@@ -1302,6 +1316,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                           handleChange={handleChange}
                           disabled={system.disableParameters}
                           isInteger
+                          disableKeyDown
                         ></CustomNumberField>
                       </Grid>
                       <Grid item xs={12} md={6} xl={4}>
@@ -1893,6 +1908,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                           handleChange={handleChange}
                           disabled={system.disableParameters}
                           isInteger
+                          disableKeyDown
                         ></CustomNumberField>
                       </Grid>
                       <Grid item xs={12} md={6} xl={4}>
@@ -2469,6 +2485,494 @@ const BiochemicalMethanePotential = (props: Props) => {
             </AccordionDetails>
           </Accordion>
         </Grid>
+
+        <Grid
+          item
+          xs={12}
+          md={12}
+          xl={12}
+          sx={{ paddingTop: '0px', textAlign: 'center' }}
+        >
+          <Button
+            variant="contained"
+            color="info"
+            onClick={handleSaveSystem}
+            startIcon={<FileDownloadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Guardar
+          </Button>
+          <Button
+            component="label"
+            variant="contained"
+            color="info"
+            startIcon={<FileUploadIcon />}
+            sx={{ width: '120px', margin: '5px' }}
+          >
+            Cargar
+            <input
+              type="file"
+              accept=".json"
+              hidden
+              onChange={handleUploadSystem}
+              multiple={false}
+            />
+          </Button>
+        </Grid>
+
+        <Grid item xs={12} md={12} xl={12}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={2.5} xl={2.5}>
+              {system.plantOperation === PlantOperationType.SideA && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <h2>Operación planta</h2>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <ToggleCustomNumberField
+                      variable={system.testDurationSideA}
+                      name="testDurationSideA"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideA}
+                    ></ToggleCustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <ToggleCustomNumberField
+                      variable={system.TemperatureSideA}
+                      name="TemperatureSideA"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideA}
+                    ></ToggleCustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <ToggleCustomNumberField
+                      variable={system.pHSideA}
+                      name="pHSideA"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideA}
+                    ></ToggleCustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <h4>Agitación</h4>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.mixVelocitySideA}
+                      name="mixVelocitySideA"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.mixTimeSideA}
+                      name="mixTimeSideA"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.mixDailySideA}
+                      name="mixDailySideA"
+                      handleChange={handleChange}
+                      isInteger
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={6}>
+                    <h4>Alimentación</h4>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    xl={6}
+                    sx={{ alignContent: 'center' }}
+                  >
+                    <CustomToggle
+                      value={system.feefManualSideA}
+                      name="feefManualSideA"
+                      handleChange={handleChange}
+                    ></CustomToggle>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={12}>
+                    <FormControl fullWidth>
+                      <InputLabel>Modo de operación</InputLabel>
+                      <Select
+                        label="Modo de operación"
+                        value={system.dosificationTypeSideA}
+                        name="dosificationTypeSideA"
+                        disabled={!system.feefManualSideA}
+                        onChange={(e: any) => handleChange(e)}
+                      >
+                        {Object.values(DosageType).map((key) => (
+                          <MenuItem key={key} value={key}>
+                            {getValueByKey(DosageText, key)}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.dosificationVolumeSideA}
+                      name="dosificationVolumeSideA"
+                      handleChange={handleChange}
+                      disabled={!system.feefManualSideA}
+                    ></CustomNumberField>
+                  </Grid>
+                  {system.dosificationTypeSideA === DosageType.Time && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.dailyInyectionsByTimeSideA}
+                        name="dailyInyectionsByTimeSideA"
+                        handleChange={handleChange}
+                        isInteger
+                        disabled={!system.feefManualSideA}
+                      ></CustomNumberField>
+                    </Grid>
+                  )}
+                  {system.dosificationTypeSideA === DosageType.Injection && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.dailyInyectionsSideA}
+                        name="dailyInyectionsSideA"
+                        handleChange={handleChange}
+                        isInteger
+                        disabled={!system.feefManualSideA}
+                      ></CustomNumberField>
+                    </Grid>
+                  )}
+                </Grid>
+              )}
+              {system.plantOperation === PlantOperationType.SideB && (
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <h2>Operación planta</h2>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <ToggleCustomNumberField
+                      variable={system.testDurationSideB}
+                      name="testDurationSideB"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideB}
+                    ></ToggleCustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <ToggleCustomNumberField
+                      variable={system.TemperatureSideB}
+                      name="TemperatureSideB"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideB}
+                    ></ToggleCustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <ToggleCustomNumberField
+                      variable={system.pHSideB}
+                      name="pHSideB"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideB}
+                    ></ToggleCustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <h4>Agitación</h4>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.mixVelocitySideB}
+                      name="mixVelocitySideB"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.mixTimeSideB}
+                      name="mixTimeSideB"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.mixDailySideB}
+                      name="mixDailySideB"
+                      handleChange={handleChange}
+                      isInteger
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={6}>
+                    <h4>Alimentación</h4>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    xl={6}
+                    sx={{ alignContent: 'center' }}
+                  >
+                    <CustomToggle
+                      value={system.feefManualSideB}
+                      name="feefManualSideB"
+                      handleChange={handleChange}
+                    ></CustomToggle>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={12}>
+                    <FormControl fullWidth>
+                      <InputLabel>Modo de operación</InputLabel>
+                      <Select
+                        label="Modo de operación"
+                        value={system.dosificationTypeSideB}
+                        name="dosificationTypeSideB"
+                        disabled={!system.feefManualSideB}
+                        onChange={(e: any) => handleChange(e)}
+                      >
+                        {Object.values(DosageType).map((key) => (
+                          <MenuItem key={key} value={key}>
+                            {getValueByKey(DosageText, key)}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.dosificationVolumeSideB}
+                      name="dosificationVolumeSideB"
+                      handleChange={handleChange}
+                      disabled={!system.feefManualSideB}
+                    ></CustomNumberField>
+                  </Grid>
+                  {system.dosificationTypeSideB === DosageType.Time && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.dailyInyectionsByTimeSideB}
+                        name="dailyInyectionsByTimeSideB"
+                        handleChange={handleChange}
+                        isInteger
+                        disabled={!system.feefManualSideB}
+                      ></CustomNumberField>
+                    </Grid>
+                  )}
+                  {system.dosificationTypeSideB === DosageType.Injection && (
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.dailyInyectionsSideB}
+                        name="dailyInyectionsSideB"
+                        handleChange={handleChange}
+                        isInteger
+                        disabled={!system.feefManualSideB}
+                      ></CustomNumberField>
+                    </Grid>
+                  )}
+                </Grid>
+              )}
+            </Grid>
+            <Grid item xs={12} md={9.5} xl={9.5}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={12} xl={12}>
+                  {playerControl}
+                </Grid>
+                {system.plantOperation === PlantOperationType.SideA && (
+                  <Grid item xs={12} md={12} xl={12}>
+                    <Grid container spacing={2}>
+                      {system.measurementMethodSideA ===
+                        DiagramBiogasMeasurementMethodType.Pressure && (
+                        <>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <FormControl fullWidth>
+                              <InputLabel>Biogás</InputLabel>
+                              <Select
+                                label="Biogás"
+                                value={system.biogasVisualizationSideA}
+                                name="biogasVisualizationSideA"
+                                onChange={(e: any) => handleChange(e)}
+                              >
+                                {Object.keys(DiagramBiogasType).map((key) => (
+                                  <MenuItem key={key} value={key}>
+                                    {getValueByKey(DiagramBiogasText, key)}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <FormControl fullWidth>
+                              <InputLabel>Unidades</InputLabel>
+                              <Select
+                                label="Unidades"
+                                value={system.biogasVisualizationUnitsSideA}
+                                name="biogasVisualizationUnitsSideA"
+                                onChange={(e: any) => handleChange(e)}
+                              >
+                                {Object.keys(DiagramBiogasUnitType).map(
+                                  (key) => (
+                                    <MenuItem key={key} value={key}>
+                                      {getValueByKey(
+                                        DiagramBiogasUnitText,
+                                        key
+                                      )}
+                                    </MenuItem>
+                                  )
+                                )}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <FormControl fullWidth>
+                              <InputLabel>Energía</InputLabel>
+                              <Select
+                                label="Energía"
+                                value={system.measurementMethodSideA}
+                                name="measurementMethodSideA"
+                                onChange={(e: any) => handleChange(e)}
+                              >
+                                {Object.keys(
+                                  DiagramBiogasMeasurementMethodType
+                                ).map((key) => (
+                                  <MenuItem key={key} value={key}>
+                                    {getValueByKey(
+                                      DiagramBiogasMeasurementMethodText,
+                                      key
+                                    )}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                        </>
+                      )}
+                      <Grid item xs={12} md={6} xl={3}>
+                        <FormControl fullWidth>
+                          <InputLabel>Componentes</InputLabel>
+                          <Select
+                            label="Componentes"
+                            value={system.biogasCompoundsSideA}
+                            name="biogasCompoundsSideA"
+                            onChange={(e: any) => handleChange(e)}
+                          >
+                            {Object.keys(DiagramCompoundUnitType).map((key) => (
+                              <MenuItem key={key} value={key}>
+                                {getValueByKey(DiagramCompoundUnitText, key)}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )}
+                {system.plantOperation === PlantOperationType.SideB && (
+                  <Grid item xs={12} md={12} xl={12}>
+                    <Grid container spacing={2}>
+                      {system.measurementMethodSideB ===
+                        DiagramBiogasMeasurementMethodType.Pressure && (
+                        <>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <FormControl fullWidth>
+                              <InputLabel>Biogás</InputLabel>
+                              <Select
+                                label="Biogás"
+                                value={system.biogasVisualizationSideB}
+                                name="biogasVisualizationSideB"
+                                onChange={(e: any) => handleChange(e)}
+                              >
+                                {Object.keys(DiagramBiogasType).map((key) => (
+                                  <MenuItem key={key} value={key}>
+                                    {getValueByKey(DiagramBiogasText, key)}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <FormControl fullWidth>
+                              <InputLabel>Unidades</InputLabel>
+                              <Select
+                                label="Unidades"
+                                value={system.biogasVisualizationUnitsSideB}
+                                name="biogasVisualizationUnitsSideB"
+                                onChange={(e: any) => handleChange(e)}
+                              >
+                                {Object.keys(DiagramBiogasUnitType).map(
+                                  (key) => (
+                                    <MenuItem key={key} value={key}>
+                                      {getValueByKey(
+                                        DiagramBiogasUnitText,
+                                        key
+                                      )}
+                                    </MenuItem>
+                                  )
+                                )}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <FormControl fullWidth>
+                              <InputLabel>Energía</InputLabel>
+                              <Select
+                                label="Energía"
+                                value={system.measurementMethodSideB}
+                                name="measurementMethodSideB"
+                                onChange={(e: any) => handleChange(e)}
+                              >
+                                {Object.keys(
+                                  DiagramBiogasMeasurementMethodType
+                                ).map((key) => (
+                                  <MenuItem key={key} value={key}>
+                                    {getValueByKey(
+                                      DiagramBiogasMeasurementMethodText,
+                                      key
+                                    )}
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                        </>
+                      )}
+                      <Grid item xs={12} md={6} xl={3}>
+                        <FormControl fullWidth>
+                          <InputLabel>Componentes</InputLabel>
+                          <Select
+                            label="Componentes"
+                            value={system.biogasCompoundsSideB}
+                            name="biogasCompoundsSideB"
+                            onChange={(e: any) => handleChange(e)}
+                          >
+                            {Object.keys(DiagramCompoundUnitType).map((key) => (
+                              <MenuItem key={key} value={key}>
+                                {getValueByKey(DiagramCompoundUnitText, key)}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )}
+                <Grid item xs={12} md={12} xl={12}>
+                  <BiochemicalMethanePotentialDiagram
+                    bmp={system}
+                    data={data}
+                    isPlaying={isPlaying}
+                  ></BiochemicalMethanePotentialDiagram>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+        {charts !== undefined && system.timeMultiplier && (
+          <>
+            <Grid item xs={12} md={12} xl={12}>
+              <TimeGraphs
+                timeMultiplier={system.timeMultiplier}
+                handleChange={handleChange}
+                charts={charts}
+                variables={BMP_VARIABLES}
+                playerControl={playerControl}
+                isPlaying={isPlaying}
+                timeMultiplierAdditionalCondition={system.steps.value !== 1}
+              ></TimeGraphs>
+            </Grid>
+          </>
+        )}
       </Grid>
     </>
   );
