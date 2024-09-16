@@ -13,6 +13,7 @@ import { CoolingTowerParameters } from '../types/models/coolingTower';
 import { HydrogencellParameters } from '../types/models/hydrogenCell';
 import { setHydrogenCell } from './models/setHydrogenCell';
 import { BiochemicalMethanePotentialParameters } from '../types/models/biochemicalMethanePotential';
+import { setBiochemicalMethanePotential } from './models/setBiochemicalMethanePotential';
 
 export type formType =
   | TurbineParameters
@@ -81,6 +82,18 @@ export const setFormState = <T extends formType>(
   if ('electronicLoadMode' in oldState) {
     if (name === 'inputOfflineOperation' || name === 'steps') {
       return setHydrogenCell(e, oldState);
+    }
+  }
+  if ('measurementMethodSideA' in oldState) {
+    if (
+      name === 'stateSelectionSideA' ||
+      name === 'modelSelectionSideA' ||
+      name === 'mixRuleSideA' ||
+      name === 'stateSelectionSideB' ||
+      name === 'modelSelectionSideB' ||
+      name === 'mixRuleSideB'
+    ) {
+      return setBiochemicalMethanePotential(e, oldState);
     }
   }
   if ('operationMode' in oldState) {

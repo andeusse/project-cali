@@ -41,7 +41,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BMPIllustration from '../../assets/illustrations/biogas.png';
-import { OperationModeType } from '../../types/models/solar';
 import { getValueByKey } from '../../utils/getValueByKey';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';
@@ -59,8 +58,6 @@ const BiochemicalMethanePotential = (props: Props) => {
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-
-  const [diagramVariables, setDiagramVariables] = useState(BMP_VARIABLES);
 
   const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
     useControlPlayer<
@@ -2591,6 +2588,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       value={system.feefManualSideA}
                       name="feefManualSideA"
                       handleChange={handleChange}
+                      disabled={system.stateSelectionSideA}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={6} xl={12}>
