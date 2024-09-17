@@ -766,8 +766,8 @@ const HydrogenCell = (props: Props) => {
                     value={system.lightsConnected}
                     name="lightsConnected"
                     handleChange={handleChange}
-                    trueString="Conectadas"
-                    falseString="Desconectadas"
+                    trueString="Conectado"
+                    falseString="Desconectado"
                   ></CustomToggle>
                 </Grid>
               </Grid>
