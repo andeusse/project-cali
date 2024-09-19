@@ -10,17 +10,17 @@ import os
 class Solar(Resource):
   def post(self):
     data = request.get_json()
-    load_dotenv('./v1.0/.env')
-    DB_IP = os.getenv('DB_IP')
-    DB_Port = os.getenv('DB_Port')
-    DB_Bucket = os.getenv('DB_Bucket')
-    DB_Organization = os.getenv('DB_Organization')
-    DB_Token = os.getenv('DB_Token')
     solarWind = {}
 
     if not data["inputOfflineOperation"]:
+      load_dotenv('./v1.0/.env')
+      DB_IP = os.getenv('DB_IP')
+      DB_Port = os.getenv('DB_Port')
+      DB_Bucket = os.getenv('DB_Bucket')
+      DB_Organization = os.getenv('DB_Organization')
+      DB_Token = os.getenv('DB_Token')
+
       values_df = pd.DataFrame(columns=["field", "Value"])
-      
 
       influxDB_Connection = InfluxDbConnection()
       influxDB_Connection.createConnection(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
