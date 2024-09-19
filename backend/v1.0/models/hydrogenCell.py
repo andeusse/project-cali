@@ -70,42 +70,60 @@ class hydrogenCell(Resource):
       inputElectronicLoadCurrent = ((2.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
     cellSelfFeeding = data["cellSelfFeeding"]
     lightsConnected = data["lightsConnected"]
+    previousCellVoltage = data["simulatedCellVoltage"] if "simulatedCellVoltage" in data else 16.7
     previousGeneratedEnergy = data["simulatedGeneratedEnergy"] if "simulatedGeneratedEnergy" in data else 0.0
 
     if not data["inputOfflineOperation"]:
       hydrogenPressure = round(values_df["Value"]['PT-101'],2)
       fanPercentage = round(values_df["Value"]['F-101'],2)
+      if values_df["Value"]['LONOFF'] == "ON":
+        electronicLoadState = True
+      else:
+        electronicLoadState = False
+      lightsPower = round(values_df["Value"]['PC-102'],2)
+      cellSelfFeedingPower = round(values_df["Value"]['PC-101'],2)
+      cellPower_meas = round(values_df["Value"]['PG-101'],2)
+      electronicLoadPower_meas = round(values_df["Value"]['VM'],2) * round(values_df["Value"]['IM'])
     else:
       hydrogenPressure = 5.0
       fanPercentage = 100.0
+      electronicLoadState = True
+      if lightsMode == 'Parallel':
+          lightsPower = 9.0
+      elif lightsMode == 'Series':
+          lightsPower = 3.0
+      cellSelfFeedingPower = 6.0
 
+    inputElectronicLoadCurrent = inputElectronicLoadCurrent * electronicLoadState
+    lightsPower = lightsPower * lightsConnected
+    cellSelfFeedingPower = cellSelfFeedingPower * cellSelfFeeding
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
-    twinCell = twinCell(name)
-    twinCell.lightsPower(lightsMode, lightsConnected)
+    twinCell = TwinCell(name)
+    if not data["inputOfflineOperation"]:
+      twinCell.optimal_n_converter(self, cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
+    
     twinCell.twinParameters()
-
-    results = twinCell.twinOutput(inputCellTemperature, inputElectronicLoadCurrent, cellSelfFeeding, previousGeneratedEnergy, delta_t * timeMultiplier)
+    results = twinCell.twinOutput(previousCellVoltage, inputCellTemperature, inputElectronicLoadCurrent, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
 
     cell["hydrogenFlow"] = results[0]
     cell["cellCurrent"] = results[1]
     cell["cellVoltage"] = results[2]
     cell["cellPower"] = results[3]
     cell["electronicLoadVoltage"] = results[4]
-    cell["electronicLoadPower"] = results[5]
-    cell["cellSelfFeedingPower"] = results[6]
-    cell["lightsPower"] = results[7]
-    cell["cellEfficiency"] = results[8]
-    cell["cellGeneratedEnergy"] = results[9]
-
+    cell["electronicLoadCurrent"] = results[5]
+    cell["electronicLoadPower"] = results[6]
+    cell["cellEfficiency"] = results[7]
+    cell["cellGeneratedEnergy"] = results[8]
+    cell["converterEfficiency"] = results[9]
+    cell["cellSelfFeedingPower"] = results[10]
+    cell["lightsPower"] = results[11]
 
     cell["hydrogenPressure"] = hydrogenPressure
     cell["fanPercentage"] = fanPercentage
     cell["cellTemperature"] = inputCellTemperature
     cell["electronicLoadMode"] = data["electronicLoadMode"]
-    cell["electronicLoadCurrent"] = data["inputElectronicLoadCurrent"]["value"]
-
 
     return {"model": cell}
