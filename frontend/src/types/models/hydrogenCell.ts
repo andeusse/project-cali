@@ -70,6 +70,9 @@ export type HydrogenCellOutput = {
   cellSelfFeedingPower: number;
   lightsPower: number;
   fanPercentage: number;
+  cellEfficiency: number;
+  cellGeneratedEnergy: number;
+  converterEfficiency: number;
 };
 
 export type HydrogenCellOutputHistoric = CommonChartType & {
@@ -85,6 +88,9 @@ export type HydrogenCellOutputHistoric = CommonChartType & {
   cellSelfFeedingPower: number[];
   lightsPower: number[];
   fanPercentage: number[];
+  cellEfficiency: number[];
+  cellGeneratedEnergy: number[];
+  converterEfficiency: number[];
 };
 
 export const HYDROGEN_CELL: HydrogencellParameters = {
@@ -341,6 +347,26 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 1650,
   },
   {
+    name: 'Eficiencia de la celda',
+    variable: 'cellEfficiency',
+    unit: '%',
+    isShown: true,
+    diagramName: 'Eficiencia',
+    fixed: 2,
+    x: 4000,
+    y: 1800,
+  },
+  {
+    name: 'Energía generada de la celda',
+    variable: 'cellGeneratedEnergy',
+    unit: 'mWh',
+    isShown: true,
+    diagramName: 'Energía',
+    fixed: 2,
+    x: 4000,
+    y: 1950,
+  },
+  {
     name: 'Corriente carga electrónica',
     variable: 'electronicLoadCurrent',
     unit: 'A',
@@ -400,5 +426,15 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 4300,
     y: 200,
     hasAdditionalCondition: 0,
+  },
+  {
+    name: 'EFiciencia del inversor',
+    variable: 'converterEfficiency',
+    unit: '%',
+    isShown: true,
+    diagramName: 'Eficiencia',
+    fixed: 2,
+    x: 2700,
+    y: 2750,
   },
 ];
