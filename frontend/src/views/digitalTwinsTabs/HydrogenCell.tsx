@@ -280,6 +280,14 @@ const HydrogenCell = (props: Props) => {
             ? data.electronicLoadPower
             : o.inputElectronicLoadResistance.value,
         },
+        simulatedCellVoltage: data.cellVoltage,
+        simulatedGeneratedEnergy: data.cellGeneratedEnergy,
+      }));
+    } else {
+      setSystem((o) => ({
+        ...o,
+        simulatedCellVoltage: undefined,
+        simulatedGeneratedEnergy: undefined,
       }));
     }
   }, [data]);

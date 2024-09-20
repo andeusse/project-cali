@@ -55,6 +55,8 @@ export type HydrogencellParameters = CommonSystemParameter &
     inputElectronicLoadCurrentArray: number[];
     inputElectronicLoadPowerArray: number[];
     inputElectronicLoadResistanceArray: number[];
+    simulatedCellVoltage?: number;
+    simulatedGeneratedEnergy?: number;
   };
 
 export type HydrogenCellOutput = {

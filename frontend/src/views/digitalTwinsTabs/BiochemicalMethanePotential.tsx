@@ -2549,14 +2549,29 @@ const BiochemicalMethanePotential = (props: Props) => {
                       disabled={system.stateSelectionSideA}
                     ></ToggleCustomNumberField>
                   </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
+                  <Grid item xs={12} md={6} xl={6}>
                     <h4>Agitación</h4>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    xl={6}
+                    sx={{ alignContent: 'center' }}
+                  >
+                    <CustomToggle
+                      value={system.mixManualSideA}
+                      name="mixManualSideA"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideA}
+                    ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
                       variable={system.mixVelocitySideA}
                       name="mixVelocitySideA"
                       handleChange={handleChange}
+                      disabled={!system.mixManualSideA}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -2564,6 +2579,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.mixTimeSideA}
                       name="mixTimeSideA"
                       handleChange={handleChange}
+                      disabled={!system.mixManualSideA}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -2572,6 +2588,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       name="mixDailySideA"
                       handleChange={handleChange}
                       isInteger
+                      disabled={!system.mixManualSideA}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={6} xl={6}>
@@ -2670,14 +2687,29 @@ const BiochemicalMethanePotential = (props: Props) => {
                       disabled={system.stateSelectionSideB}
                     ></ToggleCustomNumberField>
                   </Grid>
-                  <Grid item xs={12} md={12} xl={12}>
+                  <Grid item xs={12} md={6} xl={6}>
                     <h4>Agitación</h4>
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={6}
+                    xl={6}
+                    sx={{ alignContent: 'center' }}
+                  >
+                    <CustomToggle
+                      value={system.mixManualSideB}
+                      name="mixManualSideB"
+                      handleChange={handleChange}
+                      disabled={system.stateSelectionSideB}
+                    ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
                     <CustomNumberField
                       variable={system.mixVelocitySideB}
                       name="mixVelocitySideB"
                       handleChange={handleChange}
+                      disabled={!system.mixManualSideB}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -2685,6 +2717,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.mixTimeSideB}
                       name="mixTimeSideB"
                       handleChange={handleChange}
+                      disabled={!system.mixManualSideB}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -2693,6 +2726,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       name="mixDailySideB"
                       handleChange={handleChange}
                       isInteger
+                      disabled={!system.mixManualSideB}
                     ></CustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={6} xl={6}>

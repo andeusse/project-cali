@@ -16,6 +16,7 @@ export const setBiochemicalMethanePotential = (
     newState.testDurationSideA.disabled = !newState.stateSelectionSideA;
     newState.TemperatureSideA.disabled = !newState.stateSelectionSideA;
     newState.pHSideA.disabled = !newState.stateSelectionSideA;
+    newState.mixManualSideA = newState.stateSelectionSideA;
     newState.feefManualSideA = newState.stateSelectionSideA;
     newState.manualBiogasCompositionSideA = newState.stateSelectionSideA;
   }
@@ -78,7 +79,7 @@ export const setBiochemicalMethanePotential = (
         newState.substrate4CompositionSideA.variableString = 'Fracción';
         newState.substrate4CompositionSideA.unit = '%';
 
-        newState.waterCompositionSideA.variableString = 'Fracción';
+        newState.waterCompositionSideA.variableString = 'Fracción de agua';
         newState.waterCompositionSideA.unit = '%';
         break;
       case MixRuleType.Volume:
@@ -94,7 +95,7 @@ export const setBiochemicalMethanePotential = (
         newState.substrate4CompositionSideA.variableString = 'Volumen';
         newState.substrate4CompositionSideA.unit = 'mL';
 
-        newState.waterCompositionSideA.variableString = 'Volumen';
+        newState.waterCompositionSideA.variableString = 'Volumen de agua';
         newState.waterCompositionSideA.unit = 'mL';
         break;
       case MixRuleType.Weight:
@@ -110,7 +111,7 @@ export const setBiochemicalMethanePotential = (
         newState.substrate4CompositionSideA.variableString = 'Peso';
         newState.substrate4CompositionSideA.unit = 'g';
 
-        newState.waterCompositionSideA.variableString = 'Peso';
+        newState.waterCompositionSideA.variableString = 'Peso de agua';
         newState.waterCompositionSideA.unit = 'g';
         break;
     }
@@ -121,6 +122,7 @@ export const setBiochemicalMethanePotential = (
     newState.testDurationSideB.disabled = !newState.stateSelectionSideB;
     newState.TemperatureSideB.disabled = !newState.stateSelectionSideB;
     newState.pHSideB.disabled = !newState.stateSelectionSideB;
+    newState.mixManualSideB = newState.stateSelectionSideB;
     newState.feefManualSideB = newState.stateSelectionSideB;
     newState.manualBiogasCompositionSideB = newState.stateSelectionSideB;
   }
@@ -183,7 +185,7 @@ export const setBiochemicalMethanePotential = (
         newState.substrate4CompositionSideB.variableString = 'Fracción';
         newState.substrate4CompositionSideB.unit = '%';
 
-        newState.waterCompositionSideB.variableString = 'Fracción';
+        newState.waterCompositionSideB.variableString = 'Fracción de agua';
         newState.waterCompositionSideB.unit = '%';
         break;
       case MixRuleType.Volume:
@@ -199,7 +201,7 @@ export const setBiochemicalMethanePotential = (
         newState.substrate4CompositionSideB.variableString = 'Volumen';
         newState.substrate4CompositionSideB.unit = 'mL';
 
-        newState.waterCompositionSideB.variableString = 'Volumen';
+        newState.waterCompositionSideB.variableString = 'Volumen de agua';
         newState.waterCompositionSideB.unit = 'mL';
         break;
       case MixRuleType.Weight:
@@ -215,7 +217,7 @@ export const setBiochemicalMethanePotential = (
         newState.substrate4CompositionSideB.variableString = 'Peso';
         newState.substrate4CompositionSideB.unit = 'g';
 
-        newState.waterCompositionSideB.variableString = 'Peso';
+        newState.waterCompositionSideB.variableString = 'Peso de agua';
         newState.waterCompositionSideB.unit = 'g';
         break;
     }

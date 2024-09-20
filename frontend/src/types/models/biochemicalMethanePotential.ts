@@ -1039,7 +1039,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     value: 80,
     tooltip: 'Fracción de agua [%]',
     unit: '%',
-    variableString: 'Fracción',
+    variableString: 'Fracción de agua',
     min: 0,
     max: 100,
   },
