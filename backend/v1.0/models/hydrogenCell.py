@@ -67,7 +67,7 @@ class hydrogenCell(Resource):
       else:
         inputElectronicLoadCurrent = float(inputElectronicLoadCurrentArray[-1])
     else:
-      inputElectronicLoadCurrent = ((2.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
+      inputElectronicLoadCurrent = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
     cellSelfFeeding = data["cellSelfFeeding"]
     lightsConnected = data["lightsConnected"]
     previousCellVoltage = data["simulatedCellVoltage"] if "simulatedCellVoltage" in data else 16.7
@@ -92,7 +92,7 @@ class hydrogenCell(Resource):
           lightsPower = 9.0
       elif lightsMode == 'Series':
           lightsPower = 3.0
-      cellSelfFeedingPower = 6.0
+      cellSelfFeedingPower = 5.0
 
     inputElectronicLoadCurrent = inputElectronicLoadCurrent * electronicLoadState
     lightsPower = lightsPower * lightsConnected
@@ -121,6 +121,8 @@ class hydrogenCell(Resource):
     cell["cellSelfFeedingPower"] = results[10]
     cell["lightsPower"] = results[11]
 
+    cell["inputCellTemperature"] = inputCellTemperature
+    cell["inputElectronicLoadCurrent"] = inputElectronicLoadCurrent
     cell["hydrogenPressure"] = hydrogenPressure
     cell["fanPercentage"] = fanPercentage
     cell["cellTemperature"] = inputCellTemperature

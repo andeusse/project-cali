@@ -65,7 +65,7 @@ class coolingTower(Resource):
       else:
         topWaterFlow = float(topWaterFlowArray[-1] / 60000) # L/min to m3/s conversion
     else:
-      topWaterFlow = ((1.0 if not data["topWaterFlow"]["value"] else data["topWaterFlow"]["value"]) if not data["topWaterFlow"]["disabled"] else round(values_df["Value"]['FT-102'],2)) / 60000 # L/min to m3/s conversion
+      topWaterFlow = ((1.0 if not data["topWaterFlow"]["value"] and data["topWaterFlow"]["value"]!=0 else data["topWaterFlow"]["value"]) if not data["topWaterFlow"]["disabled"] else round(values_df["Value"]['FT-102'],2)) / 60000 # L/min to m3/s conversion
     if data["topWaterTemperature"]["arrayEnabled"]:
       topWaterTemperatureArray = np.repeat(np.array(data["topWaterTemperatureArray"]),repeats)
       if iteration <= len(topWaterTemperatureArray):
@@ -73,7 +73,7 @@ class coolingTower(Resource):
       else:
         topWaterTemperature = float(topWaterTemperatureArray[-1] + 273.15) # °C to kelvin conversion
     else:
-      topWaterTemperature = ((50.0 if not data["topWaterTemperature"]["value"] else data["topWaterTemperature"]["value"]) if not data["topWaterTemperature"]["disabled"] else round(values_df["Value"]['TE-104'],2)) + 273.15 # °C to kelvin conversion
+      topWaterTemperature = ((35.0 if not data["topWaterTemperature"]["value"] and data["topWaterTemperature"]["value"]!=0 else data["topWaterTemperature"]["value"]) if not data["topWaterTemperature"]["disabled"] else round(values_df["Value"]['TE-104'],2)) + 273.15 # °C to kelvin conversion
     if data["bottomAirFlow"]["arrayEnabled"]:
       bottomAirFlowArray = np.repeat(np.array(data["bottomAirFlowArray"]),repeats)
       if iteration <= len(bottomAirFlowArray):
@@ -81,7 +81,7 @@ class coolingTower(Resource):
       else:
         bottomAirFlow = float(bottomAirFlowArray[-1] / 60) # m3/min to m3/s conversion
     else:
-      bottomAirFlow = ((13 if not data["bottomAirFlow"]["value"] else data["bottomAirFlow"]["value"]) if not data["bottomAirFlow"]["disabled"] else round(values_df["Value"]['FT-101'],2)) / 60 # m3/min to m3/s conversion
+      bottomAirFlow = ((2 if not data["bottomAirFlow"]["value"] and data["bottomAirFlow"]["value"]!=0 else data["bottomAirFlow"]["value"]) if not data["bottomAirFlow"]["disabled"] else round(values_df["Value"]['FT-101'],2)) / 60 # m3/min to m3/s conversion
     if data["bottomAirTemperature"]["arrayEnabled"]:
       bottomAirTemperatureArray = np.repeat(np.array(data["bottomAirTemperatureArray"]),repeats)
       if iteration <= len(bottomAirTemperatureArray):
@@ -89,7 +89,7 @@ class coolingTower(Resource):
       else:
         bottomAirTemperature = float(bottomAirTemperatureArray[-1] + 273.15) # °C to kelvin conversion
     else:
-      bottomAirTemperature = ((25.0 if not data["bottomAirTemperature"]["value"] else data["bottomAirTemperature"]["value"]) if not data["bottomAirTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2)) + 273.15 # °C to kelvin conversion
+      bottomAirTemperature = ((25.0 if not data["bottomAirTemperature"]["value"] and data["bottomAirTemperature"]["value"]!=0 else data["bottomAirTemperature"]["value"]) if not data["bottomAirTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2)) + 273.15 # °C to kelvin conversion
     if data["bottomAirHumidity"]["arrayEnabled"]:
       bottomAirHumidityArray = np.repeat(np.array(data["bottomAirHumidityArray"]),repeats)
       if iteration <= len(bottomAirHumidityArray):
@@ -97,7 +97,7 @@ class coolingTower(Resource):
       else:
         bottomAirHumidity = float(bottomAirHumidityArray[-1] + 273.15) # °C to kelvin conversion
     else:
-      bottomAirHumidity = ((80.0 if not data["bottomAirHumidity"]["value"] else data["bottomAirHumidity"]["value"]) if not data["bottomAirHumidity"]["disabled"] else round(values_df["Value"]['AT-101'],2))
+      bottomAirHumidity = ((80.0 if not data["bottomAirHumidity"]["value"] and data["bottomAirHumidity"]["value"]!=0 else data["bottomAirHumidity"]["value"]) if not data["bottomAirHumidity"]["disabled"] else round(values_df["Value"]['AT-101'],2))
     atmosphericPressure = ((101.3 if not data["atmosphericPressure"]["value"] else data["atmosphericPressure"]["value"]) if not data["atmosphericPressure"]["disabled"] else round(values_df["Value"]['PT-102'],2)) * 1000 # kPa to Pa conversion
     previousEnergyApplied = data["simulatedEnergyAppliedToWater"] if "simulatedEnergyAppliedToWater" in data else 0.0
 

@@ -81,7 +81,7 @@ class Turbine(Resource):
       else:
         inputPowerFactor = float(inputPowerFactorArray[-1])
     else:
-      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
+      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 3.6
     
     turbine["inputActivePower"] = inputActivePower
