@@ -21,11 +21,17 @@ class TwinCell:
 
         return n_converter.x[0]
         
-    def twinOutput(self, previousCellVoltage, inputCellTemperature, inputElectronicLoadCurrent, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t):
+    def twinOutput(self, previousCellVoltage, inputCellTemperature, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t):
         
         self.cellSelfFeedingPower = cellSelfFeedingPower
         self.lightsPower = lightsPower
-        self.electronicLoadCurrent = inputElectronicLoadCurrent
+
+         if electronicLoadMode == "Current":
+          self.electronicLoadCurrent = inputElectronicLoad
+        elif electronicLoadMode == "Power":
+          self.electronicLoadCurrent = inputElectronicLoad / previousCellVoltage
+        elif electronicLoadMode == "Resistance":
+          self.electronicLoadCurrent = previousCellVoltage / inputElectronicLoad
 
         self.cellCurrent = self.electronicLoadCurrent + ((cellSelfFeedingPower + lightsPower) / self.n_converter) / previousCellVoltage
         
