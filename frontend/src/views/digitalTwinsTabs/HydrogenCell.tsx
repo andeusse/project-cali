@@ -563,7 +563,6 @@ const HydrogenCell = (props: Props) => {
                           value={system.electronicLoadMode}
                           name="electronicLoadMode"
                           onChange={(e: any) => handleChange(e)}
-                          disabled={true}
                         >
                           {Object.keys(ElectronicLoadModeType).map((key) => (
                             <MenuItem key={key} value={key}>
