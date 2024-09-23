@@ -51,6 +51,7 @@ class hydrogenCell(Resource):
 
     name = data["name"]
     lightsMode = data["lightsMode"]
+    electronicLoadMode = data["electronicLoadMode"]
 
     if data["inputCellTemperature"]["arrayEnabled"]:
       inputCellTemperatureArray = np.repeat(np.array(data["inputCellTemperatureArray"]),repeats)
@@ -60,14 +61,34 @@ class hydrogenCell(Resource):
         inputCellTemperature = float(inputCellTemperatureArray[-1])
     else:
       inputCellTemperature = ((35.0 if not data["inputCellTemperature"]["value"] else data["inputCellTemperature"]["value"]) if not data["inputCellTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2))
-    if data["inputElectronicLoadCurrent"]["arrayEnabled"]:
-      inputElectronicLoadCurrentArray = np.repeat(np.array(data["inputElectronicLoadCurrentArray"]),repeats)
-      if iteration <= len(inputElectronicLoadCurrentArray):
-        inputElectronicLoadCurrent = float(inputElectronicLoadCurrentArray[iteration-1])
+    if electronicLoadMode == "Current"
+      if data["inputElectronicLoadCurrent"]["arrayEnabled"]:
+        inputElectronicLoadCurrentArray = np.repeat(np.array(data["inputElectronicLoadCurrentArray"]),repeats)
+        if iteration <= len(inputElectronicLoadCurrentArray):
+          inputElectronicLoad = float(inputElectronicLoadCurrentArray[iteration-1])
+        else:
+          inputElectronicLoad = float(inputElectronicLoadCurrentArray[-1])
       else:
-        inputElectronicLoadCurrent = float(inputElectronicLoadCurrentArray[-1])
-    else:
-      inputElectronicLoadCurrent = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
+        inputElectronicLoad = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
+    elif electronicLoadMode == "Power"
+      if data["inputElectronicLoadPower"]["arrayEnabled"]:
+        inputElectronicLoadPowerArray = np.repeat(np.array(data["iinputElectronicLoadPowerArray"]),repeats)
+        if iteration <= len(inputElectronicLoadPowerArray):
+          inputElectronicLoad = float(inputElectronicLoadPowerArray[iteration-1])
+        else:
+          inputElectronicLoad = float(inputElectronicLoadPowerArray[-1])
+      else:
+        inputElectronicLoad = ((0.0 if not data["inputElectronicLoadPower"]["value"] else data["inputElectronicLoadPower"]["value"]) if not data["inputElectronicLoadPower"]["disabled"] else round(values_df["Value"]['CW'],2))
+    elif electronicLoadMode == "Resistance"
+      if data["inputElectronicLoadResistance"]["arrayEnabled"]:
+          inputElectronicLoadResistanceArray = np.repeat(np.array(data["inputElectronicLoadResistanceArray"]),repeats)
+          if iteration <= len(inputElectronicLoadResistanceArray):
+            inputElectronicLoad = float(inputElectronicLoadResistanceArray[iteration-1])
+          else:
+            inputElectronicLoad = float(inputElectronicLoadResistanceArray[-1])
+        else:
+          inputElectronicLoad = ((1.0E6 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],2))
+    
     cellSelfFeeding = data["cellSelfFeeding"]
     lightsConnected = data["lightsConnected"]
     previousCellVoltage = data["simulatedCellVoltage"] if "simulatedCellVoltage" in data else 16.7
@@ -94,7 +115,7 @@ class hydrogenCell(Resource):
           lightsPower = 3.0
       cellSelfFeedingPower = 5.0
 
-    inputElectronicLoadCurrent = inputElectronicLoadCurrent * electronicLoadState
+    inputElectronicLoad = inputElectronicLoad * electronicLoadState
     lightsPower = lightsPower * lightsConnected
     cellSelfFeedingPower = cellSelfFeedingPower * cellSelfFeeding
 
@@ -106,7 +127,7 @@ class hydrogenCell(Resource):
       twinCell.optimal_n_converter(self, cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
     
     twinCell.twinParameters()
-    results = twinCell.twinOutput(previousCellVoltage, inputCellTemperature, inputElectronicLoadCurrent, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
+    results = twinCell.twinOutput(previousCellVoltage, inputCellTemperature, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
 
     cell["hydrogenFlow"] = results[0]
     cell["cellCurrent"] = results[1]
@@ -122,7 +143,12 @@ class hydrogenCell(Resource):
     cell["lightsPower"] = results[11]
 
     cell["inputCellTemperature"] = inputCellTemperature
-    cell["inputElectronicLoadCurrent"] = inputElectronicLoadCurrent
+    if electronicLoadMode == "Current":
+      cell["inputElectronicLoadCurrent"] = inputElectronicLoad
+    elif electronicLoadMode == "Power":
+      cell["inputElectronicLoadPower"] = inputElectronicLoad
+    elif electronicLoadMode == "Resistance":
+      cell["inputElectronicLoadResistance"] = inputElectronicLoad
     cell["hydrogenPressure"] = hydrogenPressure
     cell["fanPercentage"] = fanPercentage
     cell["cellTemperature"] = inputCellTemperature
