@@ -33,7 +33,7 @@ class TwinTower:
     #     self.n_t = n_t.x[0]*random.uniform(0.98,1.02)
     #     return n_t.x[0]
     
-    def twinOutput(self, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
+    def twinOutput(self, PackedType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
         if topWaterFlow <= 1.67e-5:
             topWaterFlow = 1.67e-5
         print(topWaterFlow)
@@ -46,7 +46,7 @@ class TwinTower:
         epsilon = 0.7
         dp = 0.005
 
-        towerModel = CoolingTower.coolingTowerModel(self.towerHeight, self.towerArea, epsilon, dp)
+        towerModel = CoolingTower.coolingTowerModel(PackedType =  PackedType, L = self.towerHeight, A = self.towerArea)
         towerModel.towerBalance(self.topWaterTemperature, self.atmosphericPressure, self.topWaterFlow, self.bottomAirTemperature, self.bottomAirFlow, self.bottomAirHumidity)
         towerResults = towerModel.solution
 
