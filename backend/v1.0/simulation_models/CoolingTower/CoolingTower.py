@@ -1657,7 +1657,7 @@ class coolingTowerModel:
             Water_0.Z_mix()
             Water_0.MolarVolume()
             Water_0.Enthalpy()
-            NL0 = (self.Fv_Lin/1000/60)/Water_0.Vm_mix_l
+            NL0 = (self.Fv_Lin)/Water_0.Vm_mix_l
             Water_0.ergun_pressure_drop(current = "Water", L=self.L, epsilon = self.epsilon, u = self.u_water, dp = self.dp)
 
             Water_8 = PR.EosPengRobinson()
@@ -1670,8 +1670,6 @@ class coolingTowerModel:
             Water_8.MolarVolume()
             Water_8.Enthalpy()
 
-            Energy = (NL0*Water_0.H_l - NL8*Water_8.H_l)/1000000
-
             Air_0 = PR.EosPengRobinson()
             Air_0.AirCompositions_in(T = self.T_vin, RH = self.RH_air_in, P = self.P_atm)
             Air_0.Z_mix()
@@ -1679,6 +1677,8 @@ class coolingTowerModel:
             Air_0.ergun_pressure_drop(current= "Air", L = self.L, epsilon = self.epsilon, u = self.u_air, dp = self.dp)
 
             #Energy Balance
+            Energy = (NL0*Water_0.H_l - NL8*Water_8.H_l)/1000000
+
             self.solution = list(result_8[0:5])
             self.solution.append(result_8[55])
             self.solution.append(result_8[6])
@@ -1711,7 +1711,7 @@ class coolingTowerModel:
             Water_0.Z_mix()
             Water_0.MolarVolume()
             Water_0.Enthalpy()
-            NL0 = (self.Fv_Lin/1000/60)/Water_0.Vm_mix_l
+            NL0 = (self.Fv_Lin)/Water_0.Vm_mix_l
             Water_0.ergun_pressure_drop(current = "Water", L=self.L, epsilon = self.epsilon, u = self.u_water, dp = self.dp)
 
             Water_4 = PR.EosPengRobinson()
@@ -1758,7 +1758,7 @@ class coolingTowerModel:
             Water_0.Z_mix()
             Water_0.MolarVolume()
             Water_0.Enthalpy()
-            NL0 = (self.Fv_Lin/1000/60)/Water_0.Vm_mix_l
+            NL0 = (self.Fv_Lin)/Water_0.Vm_mix_l
             Water_0.ergun_pressure_drop(current = "Water", L=self.L, epsilon = self.epsilon, u = self.u_water, dp = self.dp)
 
             Water_2 = PR.EosPengRobinson()
