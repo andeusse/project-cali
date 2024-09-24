@@ -264,20 +264,20 @@ const HydrogenCell = (props: Props) => {
         },
         inputElectronicLoadCurrent: {
           ...o.inputElectronicLoadCurrent,
-          value: data.electronicLoadCurrent
-            ? data.electronicLoadCurrent
+          value: data.inputElectronicLoadCurrent
+            ? data.inputElectronicLoadCurrent
             : o.inputElectronicLoadCurrent.value,
         },
         inputElectronicLoadPower: {
           ...o.inputElectronicLoadPower,
-          value: data.electronicLoadVoltage
-            ? data.electronicLoadVoltage
+          value: data.inputElectronicLoadPower
+            ? data.inputElectronicLoadPower
             : o.inputElectronicLoadPower.value,
         },
         inputElectronicLoadResistance: {
           ...o.inputElectronicLoadResistance,
-          value: data.electronicLoadPower
-            ? data.electronicLoadPower
+          value: data.inputElectronicLoadResistance
+            ? data.inputElectronicLoadResistance
             : o.inputElectronicLoadResistance.value,
         },
         simulatedCellVoltage: data.cellVoltage,

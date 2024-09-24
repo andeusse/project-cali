@@ -43,8 +43,8 @@ export const setHydrogenCell = (
     newState.inputHydrogenFlowArray = Array(value ? value : 1).fill(0.4);
     newState.inputHydrogenPressureArray = Array(value ? value : 1).fill(5);
     newState.inputCellTemperatureArray = Array(value ? value : 1).fill(30);
-    newState.inputElectronicLoadCurrentArray = Array(value ? value : 1).fill(4);
-    newState.inputElectronicLoadPowerArray = Array(value ? value : 1).fill(40);
+    newState.inputElectronicLoadCurrentArray = Array(value ? value : 1).fill(3);
+    newState.inputElectronicLoadPowerArray = Array(value ? value : 1).fill(20);
     newState.inputElectronicLoadResistanceArray = Array(value ? value : 1).fill(
       4
     );

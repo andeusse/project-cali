@@ -60,6 +60,9 @@ export type HydrogencellParameters = CommonSystemParameter &
   };
 
 export type HydrogenCellOutput = {
+  inputElectronicLoadCurrent: number;
+  inputElectronicLoadPower: number;
+  inputElectronicLoadResistance: number;
   hydrogenFlow: number;
   hydrogenPressure: number;
   cellCurrent: number;
@@ -69,6 +72,7 @@ export type HydrogenCellOutput = {
   electronicLoadCurrent: number;
   electronicLoadVoltage: number;
   electronicLoadPower: number;
+  electronicLoadResistance: number;
   cellSelfFeedingPower: number;
   lightsPower: number;
   fanPercentage: number;
@@ -259,12 +263,12 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
   },
   inputElectronicLoadPower: {
     disabled: false,
-    value: 40,
+    value: 20,
     tooltip: 'Potencia carga electrónica',
     unit: 'W',
     variableString: 'Potencia',
     min: 0,
-    max: 100,
+    max: 60,
     step: 1,
     arrayEnabled: false,
   },
