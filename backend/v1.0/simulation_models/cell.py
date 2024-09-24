@@ -26,7 +26,7 @@ class TwinCell:
         self.cellSelfFeedingPower = cellSelfFeedingPower
         self.lightsPower = lightsPower
 
-         if electronicLoadMode == "Current":
+        if electronicLoadMode == "Current":
           self.electronicLoadCurrent = inputElectronicLoad
         elif electronicLoadMode == "Power":
           self.electronicLoadCurrent = inputElectronicLoad / previousCellVoltage

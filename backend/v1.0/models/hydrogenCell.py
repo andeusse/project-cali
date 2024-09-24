@@ -61,7 +61,7 @@ class hydrogenCell(Resource):
         inputCellTemperature = float(inputCellTemperatureArray[-1])
     else:
       inputCellTemperature = ((35.0 if not data["inputCellTemperature"]["value"] else data["inputCellTemperature"]["value"]) if not data["inputCellTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2))
-    if electronicLoadMode == "Current"
+    if electronicLoadMode == "Current":
       if data["inputElectronicLoadCurrent"]["arrayEnabled"]:
         inputElectronicLoadCurrentArray = np.repeat(np.array(data["inputElectronicLoadCurrentArray"]),repeats)
         if iteration <= len(inputElectronicLoadCurrentArray):
@@ -70,24 +70,24 @@ class hydrogenCell(Resource):
           inputElectronicLoad = float(inputElectronicLoadCurrentArray[-1])
       else:
         inputElectronicLoad = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
-    elif electronicLoadMode == "Power"
+    elif electronicLoadMode == "Power":
       if data["inputElectronicLoadPower"]["arrayEnabled"]:
-        inputElectronicLoadPowerArray = np.repeat(np.array(data["iinputElectronicLoadPowerArray"]),repeats)
+        inputElectronicLoadPowerArray = np.repeat(np.array(data["inputElectronicLoadPowerArray"]),repeats)
         if iteration <= len(inputElectronicLoadPowerArray):
           inputElectronicLoad = float(inputElectronicLoadPowerArray[iteration-1])
         else:
           inputElectronicLoad = float(inputElectronicLoadPowerArray[-1])
       else:
         inputElectronicLoad = ((0.0 if not data["inputElectronicLoadPower"]["value"] else data["inputElectronicLoadPower"]["value"]) if not data["inputElectronicLoadPower"]["disabled"] else round(values_df["Value"]['CW'],2))
-    elif electronicLoadMode == "Resistance"
+    elif electronicLoadMode == "Resistance":
       if data["inputElectronicLoadResistance"]["arrayEnabled"]:
           inputElectronicLoadResistanceArray = np.repeat(np.array(data["inputElectronicLoadResistanceArray"]),repeats)
           if iteration <= len(inputElectronicLoadResistanceArray):
             inputElectronicLoad = float(inputElectronicLoadResistanceArray[iteration-1])
           else:
             inputElectronicLoad = float(inputElectronicLoadResistanceArray[-1])
-        else:
-          inputElectronicLoad = ((1.0E6 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],2))
+      else:
+        inputElectronicLoad = ((2.0 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],2))
     
     cellSelfFeeding = data["cellSelfFeeding"]
     lightsConnected = data["lightsConnected"]
@@ -152,6 +152,6 @@ class hydrogenCell(Resource):
     cell["hydrogenPressure"] = hydrogenPressure
     cell["fanPercentage"] = fanPercentage
     cell["cellTemperature"] = inputCellTemperature
-    cell["electronicLoadMode"] = data["electronicLoadMode"]
+    cell["electronicLoadMode"] = electronicLoadMode
 
     return {"model": cell}
