@@ -12,14 +12,14 @@ class coolingTowerModel:
         self.A = A
         self.PacketType = PackedType
         if PackedType == "Structured":
-            self.epsilon = 0.15
-            self.dp = 0.01
+            self.epsilon = 0.35
+            self.dp = 0.3
         if PackedType == "CurvedSlats":
-            self.epsilon = 0.08
-            self.dp = 0.0058
+            self.epsilon = 0.12
+            self.dp = 0.08
         if PackedType == "FlatSlats":
-            self.epsilon = 0.1
-            self.dp = 0.0085    
+            self.epsilon = 0.16
+            self.dp = 0.11    
 
     def towerBalance (self, T_Lin, P_atm, Fv_Lin, T_vin, Fv_vin, RH_air_in):
         self.T_Lin = T_Lin              #Temperatura agua caliente a la entrada [K]
@@ -1787,6 +1787,6 @@ class coolingTowerModel:
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
 
 
-# TowerOneStage = coolingTowerModel("Structured", 0.580, 0.0225)
-# TowerOneStage.towerBalance(T_Lin = 40+273.15, P_atm = 90017, Fv_Lin = (0.3/1000)/60, T_vin = 20+273.15, Fv_vin=1/60, RH_air_in = 57.4)
-# print(TowerOneStage.solution)
+TowerOneStage = coolingTowerModel("FlatSlats", 0.580, 0.0225)
+TowerOneStage.towerBalance(T_Lin = 40+273.15, P_atm = 90017, Fv_Lin = (1.5/1000)/60, T_vin = 20+273.15, Fv_vin=2.2/60, RH_air_in = 57.4)
+print(TowerOneStage.solution)
