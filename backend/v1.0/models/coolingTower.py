@@ -81,7 +81,7 @@ class coolingTower(Resource):
       else:
         bottomAirFlow = float(bottomAirFlowArray[-1] / 60) # m3/min to m3/s conversion
     else:
-      bottomAirFlow = ((2 if not data["bottomAirFlow"]["value"] and data["bottomAirFlow"]["value"]!=0 else data["bottomAirFlow"]["value"]) if not data["bottomAirFlow"]["disabled"] else round(values_df["Value"]['FT-101'],2)) / 60 # m3/min to m3/s conversion
+      bottomAirFlow = ((2.0 if not data["bottomAirFlow"]["value"] and data["bottomAirFlow"]["value"]!=0 else data["bottomAirFlow"]["value"]) if not data["bottomAirFlow"]["disabled"] else round(values_df["Value"]['FT-101'],2)) / 60 # m3/min to m3/s conversion
     if data["bottomAirTemperature"]["arrayEnabled"]:
       bottomAirTemperatureArray = np.repeat(np.array(data["bottomAirTemperatureArray"]),repeats)
       if iteration <= len(bottomAirTemperatureArray):
@@ -93,22 +93,20 @@ class coolingTower(Resource):
     if data["bottomAirHumidity"]["arrayEnabled"]:
       bottomAirHumidityArray = np.repeat(np.array(data["bottomAirHumidityArray"]),repeats)
       if iteration <= len(bottomAirHumidityArray):
-        bottomAirHumidity = float(bottomAirHumidityArray[iteration-1] + 273.15) # °C to kelvin conversion
+        bottomAirHumidity = float(bottomAirHumidityArray[iteration-1])
       else:
-        bottomAirHumidity = float(bottomAirHumidityArray[-1] + 273.15) # °C to kelvin conversion
+        bottomAirHumidity = float(bottomAirHumidityArray[-1])
     else:
       bottomAirHumidity = ((80.0 if not data["bottomAirHumidity"]["value"] and data["bottomAirHumidity"]["value"]!=0 else data["bottomAirHumidity"]["value"]) if not data["bottomAirHumidity"]["disabled"] else round(values_df["Value"]['AT-101'],2))
-    atmosphericPressure = ((101.3 if not data["atmosphericPressure"]["value"] else data["atmosphericPressure"]["value"]) if not data["atmosphericPressure"]["disabled"] else round(values_df["Value"]['PT-102'],2)) * 1000 # kPa to Pa conversion
+    atmosphericPressure = ((90.0 if not data["atmosphericPressure"]["value"] else data["atmosphericPressure"]["value"]) if not data["atmosphericPressure"]["disabled"] else round(values_df["Value"]['PT-102'],2)) * 1000 # kPa to Pa conversion
     previousEnergyApplied = data["simulatedEnergyAppliedToWater"] if "simulatedEnergyAppliedToWater" in data else 0.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
-
+    
     twinTower = TwinTower(name)
-    twinTower.fillType(fillType)
     twinTower.twinParameters()
-
-    results = twinTower.twinOutput(topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
+    results = twinTower.twinOutput(fillType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
 
     tower["bottomWaterTemperature"] = results[0] - 273.15
     tower["waterTemperatureReduction"] = results[1]
@@ -124,6 +122,6 @@ class coolingTower(Resource):
     tower["bottomAirFlow"] = bottomAirFlow * 60
     tower["bottomAirTemperature"] = bottomAirTemperature - 273.15
     tower["bottomAirHumidity"] = bottomAirHumidity
-    tower["atmosphericPressure"] = atmosphericPressure
+    tower["atmosphericPressure"] = atmosphericPressure / 1000
 
     return {"model": tower}

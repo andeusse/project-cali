@@ -31,6 +31,7 @@ class TwinCell:
         elif electronicLoadMode == "Power":
           self.electronicLoadCurrent = inputElectronicLoad / previousCellVoltage
         elif electronicLoadMode == "Resistance":
+          if inputElectronicLoad < 2.0: inputElectronicLoad = 2.0
           self.electronicLoadCurrent = previousCellVoltage / inputElectronicLoad
 
         self.cellCurrent = self.electronicLoadCurrent + ((cellSelfFeedingPower + lightsPower) / self.n_converter) / previousCellVoltage
