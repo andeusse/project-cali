@@ -1787,6 +1787,6 @@ class coolingTowerModel:
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
 
 
-TowerOneStage = coolingTowerModel("FlatSlats", 0.580, 0.0225)
-TowerOneStage.towerBalance(T_Lin = 40+273.15, P_atm = 90017, Fv_Lin = (1.5/1000)/60, T_vin = 20+273.15, Fv_vin=2.2/60, RH_air_in = 57.4)
-print(TowerOneStage.solution)
+# TowerOneStage = coolingTowerModel("FlatSlats", 0.580, 0.0225)
+# TowerOneStage.towerBalance(T_Lin = 40+273.15, P_atm = 90017, Fv_Lin = (1.5/1000)/60, T_vin = 20+273.15, Fv_vin=2.2/60, RH_air_in = 57.4)
+# print(TowerOneStage.solution)
