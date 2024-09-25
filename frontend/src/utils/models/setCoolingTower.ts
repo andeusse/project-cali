@@ -8,8 +8,8 @@ export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Config.QUERY_TIME_OFFLINE_TOWER
+      : Config.QUERY_TIME_ONLINE_TOWER;
 
     newState.topWaterFlow.disabled = !newState.inputOfflineOperation;
     newState.topWaterFlow.arrayEnabled = false;

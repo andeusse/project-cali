@@ -96,7 +96,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     step: 1,
   },
   stepUnit: StepUnitType.Second,
-  queryTime: Config.QUERY_TIME_OFFLINE,
+  queryTime: Config.QUERY_TIME_OFFLINE_TOWER,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,
