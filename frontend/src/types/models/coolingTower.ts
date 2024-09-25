@@ -349,10 +349,10 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Delta de presión',
     variable: 'deltaPressure',
-    unit: 'kPa',
+    unit: 'Pa',
     isShown: true,
     diagramName: 'ΔPresión',
-    fixed: 2,
+    fixed: 1,
     x: 3100,
     y: 1680,
   },
