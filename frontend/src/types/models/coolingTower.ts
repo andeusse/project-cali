@@ -157,7 +157,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     tooltip: 'Flujo',
     unit: 'L / min',
     variableString: 'Flujo',
-    min: 0,
+    min: 0.1,
     max: 10,
     step: 0.1,
     arrayEnabled: false,
@@ -349,12 +349,11 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Delta de presión',
     variable: 'deltaPressure',
-    unit: 'Pa',
+    unit: 'kPa',
     isShown: true,
     diagramName: 'ΔPresión',
     fixed: 2,
     x: 3100,
     y: 1680,
-    hasAdditionalCondition: 0,
   },
 ];
