@@ -30,7 +30,7 @@ class TwinTower:
         self.topAirTemperature = towerResults[6]
         self.topAirHumidity = towerResults[7] * 100
         self.powerAppliedToWater = towerResults[8] / 1000
-        self.deltaPressure = towerResults[9] / 1000
+        self.deltaPressure = towerResults[9]
         self.energyAppliedToWater = previousEnergyApplied + self.powerAppliedToWater * delta_t / 3600
 
         self.waterTemperatureReduction = self.bottomWaterTemperature - self.topWaterTemperature
