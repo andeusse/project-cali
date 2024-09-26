@@ -484,7 +484,7 @@ const HydrogenCell = (props: Props) => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} md={12} xl={4.5}>
-                  <h3>Torre</h3>
+                  <h3>Celda de hidrógeno</h3>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={6} xl={6}>
                       <CustomNumberField
