@@ -10,9 +10,9 @@ class EosPengRobinson:
         self.kij = np.array([[0, 0.3, 0.1241006],[0.3, 0, 0.3],[0.1241006, 0.3, 0]])  #interaction coefficients
         self.R = 8.314                                                              #Universal constans of gases [j/molK]
         self.Tref = 298.15                                                          #standard reference temperature
-        self.Cp = {'H2O': {'A':32.24, 'B': 1.92E-3, 'C':1.055E-5, 'D': -3.59E-9},
-                   'O2': {'A':2.811E+1, 'B': -3.68E-6, 'C':1.746E-5, 'D': -1.065E-8},
-                   'N2': {'A':3.115E+1, 'B': -1.357E-2, 'C': 2.680E-5, 'D': -1.168E-8}}
+        self.Cp = {'H2O': {'A':33.73, 'B': 14.59, 'C':2913.81, 'D': 0},
+                   'O2': {'A':29.03, 'B': 8.77, 'C':2237.912, 'D': 0},
+                   'N2': {'A':29.23, 'B': 5.62, 'C': 2574.677, 'D': 0}}
         self.component_list = ['H2O', 'O2', 'N2'] 
 
     def AirCompositions_in (self, T, RH, P):  #La Humedad relativa se pasa en porcentaje (10.0%)
@@ -21,13 +21,13 @@ class EosPengRobinson:
         self.P = P        #Pascal absolute pressure
         
         Tcel = self.T - 273.15
-        Psat = 6.1078*10**((12.27*Tcel)/(Tcel + 273.15))   #This units are in hPa
-        Psat = Psat * 100                                  #convert pressure to Pa  
+        Psat = 6.1078*10**((12.27*Tcel)/(Tcel + 273.15))       #This units are in hPa
+        Psat = Psat * 100                                       #convert pressure to Pa  
         P_H2O = (self.RH/100) * Psat
         self.w = 0.622 * (P_H2O)/(self.P + P_H2O)               #kgH2O / kgdry air
         
         #Basis 100 estimation of air composition
-        w_air = 100/(self.w + 1)
+        w_air = (1/(self.w + 1))
         w_H2O = self.w*w_air
         self.x_H2O =   (w_H2O/(18))/((w_air/(28.96) + w_H2O/18))
         self.x_O2 = ((w_air/(28.96))/((w_air/(28.96) + w_H2O/18)))*0.21
@@ -41,16 +41,25 @@ class EosPengRobinson:
         self.x_H2O = x_H2O
         self.x_O2 = x_O2
         self.x_N2 = x_N2
+        self.MW_air = 18.01528*self.x_H2O + 32*self.x_O2 + 28*self.x_N2
         self.x = {'H2O': self.x_H2O, 'O2': self.x_O2, 'N2': self.x_N2}
 
-    def relativeHumidityTop (self, x_H2O, x_O2, x_N2, T):
+    def relativeHumidityTop_1 (self, x_H2O, x_O2, x_N2, T):
         self.w = (x_H2O)/(x_O2 + x_N2) * (18)/(28.96) 
         psychrolib.SetUnitSystem(psychrolib.SI)
-        self.RH = psychrolib.GetRelHumFromHumRatio(T - 273.15, self.w, self.P) * 100
-       
-    def Wet_bulb_temperature (self):
+        self.RH = psychrolib.GetRelHumFromHumRatio((T - 273.15), self.w, self.P) * 100
+    
+    def relativeHumidityTop_2 (self, w, T, P):
+        Tcel = T - 273.15
+        Psat = 6.1078*10**((12.27*Tcel)/(Tcel + 273.15)) 
+        Psat = Psat * 100
+        PH2O = (w*P)/(0.622 - w)
+        RH = PH2O/Psat
+        return RH
+  
+    def Wet_bulb_temperature (self, T, RH):
         psychrolib.SetUnitSystem(psychrolib.SI)
-        self.T_wet = psychrolib.GetTWetBulbFromRelHum(self.T - 273.15, self.RH, self.P)
+        self.T_wet = psychrolib.GetTWetBulbFromRelHum(T - 273.15, RH, self.P)
     
     def WaterComposition (self, T, P, xH2O, x_O2, x_N2):
         self.T = T        #Kelvin
@@ -145,8 +154,11 @@ class EosPengRobinson:
         self.H_l = H_ig_mix + H_dep_l
         self.H_v = H_ig_mix + H_dep_v
     
-    def ergun_pressure_drop (self, L, epsilon, u, dp):
-        self.rho = self.Vm_mix_v/self.MW_air
+    def ergun_pressure_drop (self, current, L, epsilon, u, dp):
+        if current == "Air":
+            self.rho = self.Vm_mix_v/self.MW_air
+        else:
+            self.rho = self.Vm_mix_l/self.MW_H2O
         C1 = 1.458e-6
         S = 110.4
         self.mu = C1 * self.T**1.5 / (self.T + S)
@@ -154,5 +166,6 @@ class EosPengRobinson:
         term_2 = (1.75 * self.rho * (1 - epsilon) * u**2) / (epsilon**3 * dp)
         delta_P_per_L = term_1 + term_2
         self.delta_P = delta_P_per_L * L
+        return self.delta_P
 
-        
+

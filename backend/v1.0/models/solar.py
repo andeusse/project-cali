@@ -10,17 +10,17 @@ import os
 class Solar(Resource):
   def post(self):
     data = request.get_json()
-    load_dotenv('./v1.0/.env')
-    DB_IP = os.getenv('DB_IP')
-    DB_Port = os.getenv('DB_Port')
-    DB_Bucket = os.getenv('DB_Bucket')
-    DB_Organization = os.getenv('DB_Organization')
-    DB_Token = os.getenv('DB_Token')
     solarWind = {}
 
     if not data["inputOfflineOperation"]:
+      load_dotenv('./v1.0/.env')
+      DB_IP = os.getenv('DB_IP')
+      DB_Port = os.getenv('DB_Port')
+      DB_Bucket = os.getenv('DB_Bucket')
+      DB_Organization = os.getenv('DB_Organization')
+      DB_Token = os.getenv('DB_Token')
+
       values_df = pd.DataFrame(columns=["field", "Value"])
-      
 
       influxDB_Connection = InfluxDbConnection()
       influxDB_Connection.createConnection(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
@@ -131,7 +131,7 @@ class Solar(Resource):
         else:
           inputPowerFactor = float(alternCurrentLoadPowerFactorArray[-1])
       else: 
-        inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
+        inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] and data["alternCurrentLoadPowerFactor"]["value"]!=0 else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
       simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else inverterState
     elif data["inputOperationMode"] == 'Mode2' and hybridState:
       if data["alternCurrentLoadPower"]["arrayEnabled"]:
@@ -149,7 +149,7 @@ class Solar(Resource):
         else:
           inputPowerFactor = float(alternCurrentLoadPowerFactorArray[-1])
       else:
-        inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-002'] * (1 if values_df["Value"]['PKVAR-002'] >= 0.0 else -1),2)
+        inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] and data["alternCurrentLoadPowerFactor"]["value"]!=0 else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-002'] * (1 if values_df["Value"]['PKVAR-002'] >= 0.0 else -1),2)
       inputDirectCurrentPower = 0.0
       simulatedInverterState = False
     else:

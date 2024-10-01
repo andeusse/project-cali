@@ -10,15 +10,16 @@ import os
 class Turbine(Resource):
   def post(self):
     data = request.get_json()
-    load_dotenv('./v1.0/.env')
-    DB_IP = os.getenv('DB_IP')
-    DB_Port = os.getenv('DB_Port')
-    DB_Bucket = os.getenv('DB_Bucket')
-    DB_Organization = os.getenv('DB_Organization')
-    DB_Token = os.getenv('DB_Token')
     turbine = {}
 
     if not data["inputOfflineOperation"]:
+      load_dotenv('./v1.0/.env')
+      DB_IP = os.getenv('DB_IP')
+      DB_Port = os.getenv('DB_Port')
+      DB_Bucket = os.getenv('DB_Bucket')
+      DB_Organization = os.getenv('DB_Organization')
+      DB_Token = os.getenv('DB_Token')
+      
       values_df = pd.DataFrame(columns=["field", "Value"])
 
       influxDB_Connection = InfluxDbConnection()
@@ -80,7 +81,7 @@ class Turbine(Resource):
       else:
         inputPowerFactor = float(inputPowerFactorArray[-1])
     else:
-      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
+      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 3.6
     
     turbine["inputActivePower"] = inputActivePower
