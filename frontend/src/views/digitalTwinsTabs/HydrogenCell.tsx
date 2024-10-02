@@ -205,6 +205,25 @@ const HydrogenCell = (props: Props) => {
             }),
           ],
         });
+
+      if (system.inputFanPercentage.arrayEnabled)
+        arr.push({
+          rowId: '6',
+          cells: [
+            {
+              type: 'header',
+              text: 'Porcentaje ventilador [%]',
+              nonEditable: true,
+            },
+            ...system.inputFanPercentageArray.map((v) => {
+              const col: DefaultCellTypes = {
+                type: 'number',
+                value: v,
+              };
+              return col;
+            }),
+          ],
+        });
       return arr;
     }
     return [];
@@ -218,6 +237,8 @@ const HydrogenCell = (props: Props) => {
     system.inputElectronicLoadPowerArray,
     system.inputElectronicLoadResistance.arrayEnabled,
     system.inputElectronicLoadResistanceArray,
+    system.inputFanPercentage.arrayEnabled,
+    system.inputFanPercentageArray,
     system.inputHydrogenFlow.arrayEnabled,
     system.inputHydrogenFlowArray,
     system.inputHydrogenPressure.arrayEnabled,
@@ -702,6 +723,17 @@ const HydrogenCell = (props: Props) => {
                 </Grid> */}
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleArrayCustomNumberField
+                    variable={system.inputFanPercentage}
+                    name="inputFanPercentage"
+                    handleChange={handleChange}
+                    disabled={system.inputOfflineOperation}
+                    variableName="Porcentaje ventilador"
+                    arrayDisabled={!system.inputOfflineOperation}
+                    steps={system.steps.value}
+                  ></ToggleArrayCustomNumberField>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <ToggleArrayCustomNumberField
                     variable={system.inputCellTemperature}
                     name="inputCellTemperature"
                     handleChange={handleChange}
@@ -796,6 +828,7 @@ const HydrogenCell = (props: Props) => {
                 {(system.inputHydrogenFlow.arrayEnabled ||
                   system.inputHydrogenPressure.arrayEnabled ||
                   system.inputCellTemperature.arrayEnabled ||
+                  system.inputFanPercentage.arrayEnabled ||
                   (system.inputElectronicLoadCurrent.arrayEnabled &&
                     system.electronicLoadMode ===
                       ElectronicLoadModeType.Current) ||

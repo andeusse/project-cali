@@ -24,16 +24,16 @@ import {
 
 export enum OperationModeType {
   Mode1 = 'Mode1',
-  Mode2 = 'Mode2',
   Mode3 = 'Mode3',
+  Mode2 = 'Mode2',
   Mode4 = 'Mode4',
   Mode5 = 'Mode5',
 }
 
 export enum OperationModeText {
   Mode1 = 'Paneles individuales',
-  Mode2 = 'Paneles en serie',
   Mode3 = 'Paneles en paralelo',
+  Mode2 = 'Paneles en serie',
   Mode4 = 'Aerogenerador',
   Mode5 = 'Paneles y aerogenerador',
 }
@@ -61,6 +61,7 @@ export type SolarWindParameters = CommonSystemParameter &
     alternCurrentLoadPower: InputArrayType;
     alternCurrentLoadPowerFactor: InputArrayType;
     directCurrentLoadPower: InputArrayType;
+    directCurrentLoadConnected: boolean;
     solarRadiation1Array: number[];
     solarRadiation2Array: number[];
     temperatureArray: number[];
@@ -472,9 +473,9 @@ export const SOLAR_WIND: SolarWindParameters = {
   solarRadiation1: {
     disabled: false,
     value: 800,
-    tooltip: 'Irradiancia solar 1',
+    tooltip: 'Irradiancia solar estructura 2',
     unit: 'W / m²',
-    variableString: 'Irradiancia solar 1',
+    variableString: 'Irradiancia solar estructura 2',
     min: 0,
     max: 2000,
     step: 100,
@@ -483,9 +484,9 @@ export const SOLAR_WIND: SolarWindParameters = {
   solarRadiation2: {
     disabled: false,
     value: 800,
-    tooltip: 'Irradiancia solar 2',
+    tooltip: 'Irradiancia solar estructura 1',
     unit: 'W / m²',
-    variableString: 'Irradiancia solar 2',
+    variableString: 'Irradiancia solar estructura 1',
     min: 0,
     max: 2000,
     step: 100,
@@ -546,7 +547,8 @@ export const SOLAR_WIND: SolarWindParameters = {
   directCurrentLoadPower: {
     disabled: false,
     value: 6,
-    tooltip: 'Potencia de la carga de directa. Limitado a 6 W en el equipo del laboratorio',
+    tooltip:
+      'Potencia de la carga de directa. Limitado a 6 W en el equipo del laboratorio',
     unit: 'W',
     variableString: 'Potencia',
     min: 0,
@@ -554,6 +556,7 @@ export const SOLAR_WIND: SolarWindParameters = {
     step: 10,
     arrayEnabled: false,
   },
+  directCurrentLoadConnected: false,
   externalGridState: false,
   solarRadiation1Array: [],
   solarRadiation2Array: [],

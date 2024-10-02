@@ -41,7 +41,6 @@ export const setSolar = (
     newState.alternCurrentLoadPowerFactor.disabled =
       !newState.inputOfflineOperation;
     newState.directCurrentLoadPower.disabled = !newState.inputOfflineOperation;
-    newState.windDensity.disabled = !newState.inputOfflineOperation;
 
     newState.solarRadiation1.arrayEnabled = false;
     newState.solarRadiation2.arrayEnabled = false;
