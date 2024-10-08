@@ -732,7 +732,7 @@ const HydrogenCell = (props: Props) => {
                     steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
+                {/* <Grid item xs={12} md={12} xl={12}>
                   <ToggleArrayCustomNumberField
                     variable={system.inputCellTemperature}
                     name="inputCellTemperature"
@@ -742,7 +742,7 @@ const HydrogenCell = (props: Props) => {
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} md={12} xl={7}>
                   <h4>Autoalimentación eléctrica</h4>
                 </Grid>

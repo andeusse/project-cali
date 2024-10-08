@@ -287,7 +287,7 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
   },
   inputFanPercentage: {
     disabled: false,
-    value: 100,
+    value: 50,
     tooltip: 'Porcentaje de uso de ventiladores',
     unit: '%',
     variableString: 'Velocidad ventiladores',
