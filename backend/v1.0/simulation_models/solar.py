@@ -12,17 +12,20 @@ class TwinPVWF:
         self.polyModule = False
         self.flexiModule = False
         self.cdteModule = False
-        self.f_PV = 1.0
-        self.n_WT = 1.0
         self.Vmpp_monoModule = 17.08
         self.Vmpp_polyModule = 16.85
         self.Vmpp_flexiModule = 18.0
         self.Vmpp_cdteModule = 43.6
 
     # Parametrizacion de modulo de acuerdo a tipo
-    def moduleType(self, type):
+    def moduleType(self, type, offlineOperation, deratingFactor):
+        self.f_PV = deratingFactor
         # Silicio Monocristalino
         if type == 1:
+            if offlineOperation:
+                self.n_PV = 1.0
+            else:
+                self.n_PV = 0.1
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -34,6 +37,10 @@ class TwinPVWF:
             self.monoModule = True
         # Silicio Policristalino
         elif type == 2:
+            if offlineOperation:
+                self.n_PV = 1.0
+            else:
+                self.n_PV = 0.1
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -45,6 +52,10 @@ class TwinPVWF:
             self.polyModule = True
         # Silicio Monocristalino de Pelicula Delgada
         elif type == 3:
+            if offlineOperation:
+                self.n_PV = 1.0
+            else:
+                self.n_PV = 0.1
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.42
@@ -56,6 +67,10 @@ class TwinPVWF:
             self.flexiModule = True
         # Telururo de Cadmio    
         elif type == 4:
+            if offlineOperation:
+                self.n_PV = 1.0
+            else:
+                self.n_PV = 0.1
             self.P_PM = 77.5
             self.G_0 = 1000
             self.u_PM = -0.25
@@ -73,22 +88,34 @@ class TwinPVWF:
         # Calculo de temperatura del modulo
         self.T_cm = round((self.T_a + self.G * ((self.T_cNOCT-self.T_aNOCT) / self.G_NOCT) * (1 - ((self.n_c/100) / 0.9))), 4)
         # Calculo de potencia de cada modulo
-        self.P_PVm = (self.f_PV * (self.G / self.G_0) * self.P_PM * (1 + ((self.u_PM/100) * (self.T_cm - self.T_cSTC))))
+        self.P_PVm = (self.f_PV * self.n_PV * (self.G / self.G_0) * self.P_PM * (1 + ((self.u_PM/100) * (self.T_cm - self.T_cSTC))))
         return self.P_PVm, self.T_cm
     
     # Calculo de potencia del sistema
-    def WT_PowerOutput(self, turbineState, ro, V_a):
+    def WT_PowerOutput(self, offlineOperation, turbineState, ro, V_a):
         self.turbineState = turbineState
         self.ro = ro
         self.V_a = V_a
-        self.P_WM = 200.0
-        self.H_R = 1
-        self.H_A = 1
-        self.Z_0 = 0.03
-        self.V_C = 2.0
-        self.V_N = 11.5
-        self.V_F = 65.0
-        self.diameter = 1.24
+        if offlineOperation:
+            self.n_WT = 1.0
+            self.P_WM = 200.0
+            self.H_R = 1
+            self.H_A = 1
+            self.Z_0 = 0.03
+            self.V_C = 2.0
+            self.V_N = 11.5
+            self.V_F = 65.0
+            self.diameter = 1.24
+        else:
+            self.n_WT = 0.25
+            self.P_WM = 200.0
+            self.H_R = 1
+            self.H_A = 1
+            self.Z_0 = 0.03
+            self.V_C = 6.0
+            self.V_N = 16.0
+            self.V_F = 65.0
+            self.diameter = 1.24
         if not turbineState or self.cdteModule or not self.parallel:
             self.P_WT = 0.0
         else:
@@ -105,7 +132,7 @@ class TwinPVWF:
             self.P_WT = (self.ro / 1.225) * P_wtSTP
         return round(self.P_WT,2)
     
-    def arrayPowerOutput(self, monoModule, polyModule, flexiModule, cdteModule, T_a, G_1, G_2):
+    def arrayPowerOutput(self, offlineOperation, deratingFactorList, monoModule, polyModule, flexiModule, cdteModule, T_a, G_1, G_2):
         self.monoModule = monoModule
         self.polyModule = polyModule
         self.flexiModule = flexiModule
@@ -121,25 +148,25 @@ class TwinPVWF:
         self.Tc_cdte = T_a
 
         if cdteModule:
-                self.moduleType(4)
+                self.moduleType(4, offlineOperation, deratingFactorList[3])
                 self.G = G_2
                 self.P_PV += self.PV_PowerOutput()[0]
                 self.Tc_cdte = self.PV_PowerOutput()[1]
         else:
             if monoModule:
-                self.moduleType(1)
+                self.moduleType(1, offlineOperation, deratingFactorList[0])
                 self.G = G_1
                 self.P_PV += self.PV_PowerOutput()[0]
                 self.Tc_mono = self.PV_PowerOutput()[1]
 
             if polyModule:
-                self.moduleType(2)
+                self.moduleType(2, offlineOperation, deratingFactorList[1])
                 self.G = G_1
                 self.P_PV += self.PV_PowerOutput()[0]
                 self.Tc_poly = self.PV_PowerOutput()[1]
             
             if flexiModule:
-                self.moduleType(3)
+                self.moduleType(3, offlineOperation, deratingFactorList[2])
                 self.G = G_2
                 self.P_PV += self.PV_PowerOutput()[0]
                 self.Tc_flexi = self.PV_PowerOutput()[1]
