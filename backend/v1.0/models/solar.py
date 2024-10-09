@@ -50,7 +50,6 @@ class Solar(Resource):
 
     name = data["name"]
     deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
-    print(deratingFactorList)
     monoModuleState = data["monocrystallinePanel"]["isConnected"]
     polyModuleState = data["policrystallinePanel"]["isConnected"]
     flexiModuleState = data["flexPanel"]["isConnected"]
