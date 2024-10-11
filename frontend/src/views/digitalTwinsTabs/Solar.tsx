@@ -919,6 +919,8 @@ const Solar = () => {
                             system.cadmiumTelluridePanel.isConnected) ||
                           system.inputOperationMode ===
                             OperationModeType.Mode2 ||
+                          system.inputOperationMode ===
+                            OperationModeType.Mode4 ||
                           system.disableParameters
                         }
                       ></CustomToggle>
