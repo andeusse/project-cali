@@ -49,6 +49,7 @@ class Solar(Resource):
         repeats = 86400 * data["stepTime"]["value"]
 
     name = data["name"]
+    deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
     monoModuleState = data["monocrystallinePanel"]["isConnected"]
     polyModuleState = data["policrystallinePanel"]["isConnected"]
     flexiModuleState = data["flexPanel"]["isConnected"]
@@ -59,7 +60,7 @@ class Solar(Resource):
       turbineState = False
 
     batteries = 1 + int(data["isBattery2"])
-    if data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
+    if data["inputOperationMode"] == 'Mode2' or data["inputOperationMode"] == 'Mode4' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
       isParallel = False
     else:
       isParallel = True
@@ -105,14 +106,17 @@ class Solar(Resource):
         windSpeed = float(windSpeedArray[-1])
     else:
       windSpeed = (0.0 if not data["windSpeed"]["value"] else data["windSpeed"]["value"]) if not data["windSpeed"]["disabled"] else round(values_df["Value"]['VV-001'],2)
-    if data["directCurrentLoadPower"]["arrayEnabled"]:
-      directCurrentLoadPowerArray = np.repeat(np.array(data["directCurrentLoadPowerArray"]),repeats)
-      if iteration <= len(directCurrentLoadPowerArray):
-        inputDirectCurrentPower = float(directCurrentLoadPowerArray[iteration-1])
+    if data["inputOfflineOperation"]:
+      if data["directCurrentLoadPower"]["arrayEnabled"]:
+        directCurrentLoadPowerArray = np.repeat(np.array(data["directCurrentLoadPowerArray"]),repeats)
+        if iteration <= len(directCurrentLoadPowerArray):
+          inputDirectCurrentPower = float(directCurrentLoadPowerArray[iteration-1])
+        else:
+          inputDirectCurrentPower = float(directCurrentLoadPowerArray[-1])
       else:
-        inputDirectCurrentPower = float(directCurrentLoadPowerArray[-1])
+        inputDirectCurrentPower = 0.0 if not data["directCurrentLoadPower"]["value"] else data["directCurrentLoadPower"]["value"]
     else:
-      inputDirectCurrentPower = (0.0 if not data["directCurrentLoadPower"]["value"] else data["directCurrentLoadPower"]["value"]) if not data["directCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PDC-001'],2)
+      inputDirectCurrentPower = 6.0 if data["directCurrentLoadConnected"] else 0.0
     windDensity = 0.0 if not data["windDensity"]["value"] else data["windDensity"]["value"]
 
     if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState)) and inverterState:
@@ -216,25 +220,25 @@ class Solar(Resource):
       solarWind['windTurbineRevolutions'] = 0.0
 
     twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries, isParallel)
-    PV_Results = twinPVWF.arrayPowerOutput(monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
-    WT_Results = twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
+    PV_Results = twinPVWF.arrayPowerOutput(data["inputOfflineOperation"], deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+    WT_Results = twinPVWF.WT_PowerOutput(data["inputOfflineOperation"], turbineState, windDensity, windSpeed)
     
     if monoModuleState or polyModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation1"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
-        PV_Results = twinPVWF.arrayPowerOutput(monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+        PV_Results = twinPVWF.arrayPowerOutput(data["inputOfflineOperation"], deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
     elif flexiModuleState or cdteModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation2"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
-        PV_Results = twinPVWF.arrayPowerOutput(monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+        PV_Results = twinPVWF.arrayPowerOutput(data["inputOfflineOperation"], deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
     if turbineState and not data["inputOfflineOperation"] and data["windSpeed"]["disabled"]:
       twinPVWF.optimal_n_WT(measuredWT_Power)
-      WT_Results = twinPVWF.WT_PowerOutput(turbineState, windDensity, windSpeed)
+      WT_Results = twinPVWF.WT_PowerOutput(data["inputOfflineOperation"], turbineState, windDensity, windSpeed)
       twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
     solarWind["controllerEfficiency"] = twinPVWF.n_controller

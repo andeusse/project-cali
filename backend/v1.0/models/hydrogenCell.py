@@ -53,14 +53,24 @@ class hydrogenCell(Resource):
     lightsMode = data["lightsMode"]
     electronicLoadMode = data["electronicLoadMode"]
 
-    if data["inputCellTemperature"]["arrayEnabled"]:
-      inputCellTemperatureArray = np.repeat(np.array(data["inputCellTemperatureArray"]),repeats)
-      if iteration <= len(inputCellTemperatureArray):
-        inputCellTemperature = float(inputCellTemperatureArray[iteration-1])
+    # if data["inputCellTemperature"]["arrayEnabled"]:
+    #   inputCellTemperatureArray = np.repeat(np.array(data["inputCellTemperatureArray"]),repeats)
+    #   if iteration <= len(inputCellTemperatureArray):
+    #     inputCellTemperature = float(inputCellTemperatureArray[iteration-1])
+    #   else:
+    #     inputCellTemperature = float(inputCellTemperatureArray[-1])
+    # else:
+    #   inputCellTemperature = ((35.0 if not data["inputCellTemperature"]["value"] else data["inputCellTemperature"]["value"]) if not data["inputCellTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2))
+    
+    if data["inputFanPercentage"]["arrayEnabled"]:
+      inputFanPercentageArray = np.repeat(np.array(data["inputFanPercentageArray"]),repeats)
+      if iteration <= len(inputFanPercentageArray):
+        inputFanPercentage = float(inputFanPercentageArray[iteration-1])
       else:
-        inputCellTemperature = float(inputCellTemperatureArray[-1])
+        inputFanPercentage = float(inputFanPercentageArray[-1])
     else:
-      inputCellTemperature = ((35.0 if not data["inputCellTemperature"]["value"] else data["inputCellTemperature"]["value"]) if not data["inputCellTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2))
+      inputFanPercentage = ((50.0 if not data["inputFanPercentage"]["value"] else data["inputFanPercentage"]["value"]) if not data["inputFanPercentage"]["disabled"] else round(values_df["Value"]['F-101'],2))
+
     if electronicLoadMode == "Current":
       if data["inputElectronicLoadCurrent"]["arrayEnabled"]:
         inputElectronicLoadCurrentArray = np.repeat(np.array(data["inputElectronicLoadCurrentArray"]),repeats)
@@ -96,7 +106,7 @@ class hydrogenCell(Resource):
 
     if not data["inputOfflineOperation"]:
       hydrogenPressure = round(values_df["Value"]['PT-101'],2)
-      fanPercentage = round(values_df["Value"]['F-101'],2)
+      cellTemperature = round(values_df["Value"]['TE-101'],2)
       if values_df["Value"]['LONOFF'] == "ON":
         electronicLoadState = True
       else:
@@ -107,7 +117,7 @@ class hydrogenCell(Resource):
       electronicLoadPower_meas = round(values_df["Value"]['VM'],2) * round(values_df["Value"]['IM'])
     else:
       hydrogenPressure = 5.0
-      fanPercentage = 100.0
+      cellTemperature = 40.0
       electronicLoadState = True
       if lightsMode == 'Parallel':
           lightsPower = 9.0
@@ -127,7 +137,7 @@ class hydrogenCell(Resource):
       twinCell.optimal_n_converter(self, cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
     
     twinCell.twinParameters()
-    results = twinCell.twinOutput(previousCellVoltage, inputCellTemperature, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
+    results = twinCell.twinOutput(previousCellVoltage, inputFanPercentage, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
 
     cell["hydrogenFlow"] = results[0]
     cell["cellCurrent"] = results[1]
@@ -142,7 +152,7 @@ class hydrogenCell(Resource):
     cell["cellSelfFeedingPower"] = results[10]
     cell["lightsPower"] = results[11]
 
-    cell["inputCellTemperature"] = inputCellTemperature
+    cell["inputFanPercentage"] = inputFanPercentage
     if electronicLoadMode == "Current":
       cell["inputElectronicLoadCurrent"] = inputElectronicLoad
     elif electronicLoadMode == "Power":
@@ -150,8 +160,8 @@ class hydrogenCell(Resource):
     elif electronicLoadMode == "Resistance":
       cell["inputElectronicLoadResistance"] = inputElectronicLoad
     cell["hydrogenPressure"] = hydrogenPressure
-    cell["fanPercentage"] = fanPercentage
-    cell["cellTemperature"] = inputCellTemperature
+    cell["fanPercentage"] = inputFanPercentage
+    cell["cellTemperature"] = cellTemperature
     cell["electronicLoadMode"] = electronicLoadMode
 
     return {"model": cell}
