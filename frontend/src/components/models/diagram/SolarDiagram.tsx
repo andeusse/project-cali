@@ -218,7 +218,7 @@ const SolarDiagram = (props: Props) => {
               href={
                 solarWind.windSpeed.value !== 0 && isPlaying ? fanOn : fanOff
               }
-              transform="translate(350 380) scale(0.5 0.5)"
+              transform="translate(470 370) scale(0.4 0.4)"
             ></image>
             <image
               href={
@@ -226,7 +226,7 @@ const SolarDiagram = (props: Props) => {
                   ? turbineOn
                   : turbineOff
               }
-              transform="translate(830 150) scale(0.8 0.8)"
+              transform="translate(960 250) scale(0.8 0.8)"
             ></image>
           </g>
         )}

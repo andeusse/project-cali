@@ -919,6 +919,8 @@ const Solar = () => {
                             system.cadmiumTelluridePanel.isConnected) ||
                           system.inputOperationMode ===
                             OperationModeType.Mode2 ||
+                          system.inputOperationMode ===
+                            OperationModeType.Mode4 ||
                           system.disableParameters
                         }
                       ></CustomToggle>
@@ -1100,13 +1102,12 @@ const Solar = () => {
                         steps={system.steps.value}
                       ></ToggleArrayCustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <ToggleCustomNumberField
+                    <Grid item xs={12} md={7} xl={7}>
+                      <CustomNumberField
                         variable={system.windDensity}
                         name="windDensity"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
-                      ></ToggleCustomNumberField>
+                      ></CustomNumberField>
                     </Grid>
                   </>
                 )}
@@ -1153,15 +1154,34 @@ const Solar = () => {
                       <h3>Parámetros carga CC</h3>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
-                      <ToggleArrayCustomNumberField
-                        variable={system.directCurrentLoadPower}
-                        name="directCurrentLoadPower"
-                        handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
-                        variableName="Potencia"
-                        arrayDisabled={!system.inputOfflineOperation}
-                        steps={system.steps.value}
-                      ></ToggleArrayCustomNumberField>
+                      {system.inputOfflineOperation && (
+                        <ToggleArrayCustomNumberField
+                          variable={system.directCurrentLoadPower}
+                          name="directCurrentLoadPower"
+                          handleChange={handleChange}
+                          disabled={system.inputOfflineOperation}
+                          variableName="Potencia"
+                          arrayDisabled={!system.inputOfflineOperation}
+                          steps={system.steps.value}
+                        ></ToggleArrayCustomNumberField>
+                      )}
+                      {!system.inputOfflineOperation && (
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          xl={12}
+                          alignContent={'center'}
+                        >
+                          <CustomToggle
+                            value={system.directCurrentLoadConnected}
+                            name="directCurrentLoadConnected"
+                            handleChange={handleChange}
+                            trueString="Conectado: 6.0 W"
+                            falseString="Desconectado: 0.0 W"
+                          ></CustomToggle>
+                        </Grid>
+                      )}
                     </Grid>
                   </>
                 )}

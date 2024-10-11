@@ -49,12 +49,14 @@ export type HydrogencellParameters = CommonSystemParameter &
     inputElectronicLoadCurrent: InputArrayType;
     inputElectronicLoadPower: InputArrayType;
     inputElectronicLoadResistance: InputArrayType;
+    inputFanPercentage: InputArrayType;
     inputHydrogenFlowArray: number[];
     inputHydrogenPressureArray: number[];
     inputCellTemperatureArray: number[];
     inputElectronicLoadCurrentArray: number[];
     inputElectronicLoadPowerArray: number[];
     inputElectronicLoadResistanceArray: number[];
+    inputFanPercentageArray: number[];
     simulatedCellVoltage?: number;
     simulatedGeneratedEnergy?: number;
   };
@@ -283,12 +285,24 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
     step: 1,
     arrayEnabled: false,
   },
+  inputFanPercentage: {
+    disabled: false,
+    value: 50,
+    tooltip: 'Porcentaje de uso de ventiladores',
+    unit: '%',
+    variableString: 'Velocidad ventiladores',
+    min: 0,
+    max: 100,
+    step: 1,
+    arrayEnabled: false,
+  },
   inputCellTemperatureArray: [],
   inputElectronicLoadCurrentArray: [],
   inputElectronicLoadPowerArray: [],
   inputElectronicLoadResistanceArray: [],
   inputHydrogenFlowArray: [],
   inputHydrogenPressureArray: [],
+  inputFanPercentageArray: [],
 };
 
 export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [

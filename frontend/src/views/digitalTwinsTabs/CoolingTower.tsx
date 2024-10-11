@@ -612,7 +612,7 @@ const CoolingTower = () => {
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros ambientales</h3>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
+                <Grid item xs={12} md={7} xl={7}>
                   <CustomNumberField
                     variable={system.atmosphericPressure}
                     name="atmosphericPressure"

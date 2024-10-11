@@ -31,6 +31,8 @@ export const setHydrogenCell = (
     newState.inputElectronicLoadResistance.disabled =
       !newState.inputOfflineOperation;
     newState.inputElectronicLoadResistance.arrayEnabled = false;
+    newState.inputFanPercentage.disabled = !newState.inputOfflineOperation;
+    newState.inputFanPercentage.arrayEnabled = false;
 
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
@@ -48,6 +50,7 @@ export const setHydrogenCell = (
     newState.inputElectronicLoadResistanceArray = Array(value ? value : 1).fill(
       4
     );
+    newState.inputFanPercentageArray = Array(value ? value : 1).fill(100);
     if (value === 1) {
       newState.inputHydrogenFlow.arrayEnabled = false;
       newState.inputHydrogenPressure.arrayEnabled = false;
@@ -74,6 +77,7 @@ export const setHydrogenCellTable = (
   oldArray.push(newState.inputElectronicLoadCurrentArray);
   oldArray.push(newState.inputElectronicLoadPowerArray);
   oldArray.push(newState.inputElectronicLoadResistanceArray);
+  oldArray.push(newState.inputFanPercentageArray);
 
   const newArrays = CellChange2Array(e, oldArray);
   if (newState.inputHydrogenFlow.arrayEnabled)
@@ -119,6 +123,12 @@ export const setHydrogenCellTable = (
     newState.inputElectronicLoadResistanceArray = newArrays[5].map((v) => {
       v = v < 100 ? v : 100;
       v = v > 2 ? v : 2;
+      return v;
+    });
+  if (newState.inputFanPercentage.arrayEnabled)
+    newState.inputFanPercentageArray = newArrays[6].map((v) => {
+      v = v < 100 ? v : 100;
+      v = v > 0 ? v : 0;
       return v;
     });
   return newState;

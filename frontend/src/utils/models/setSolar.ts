@@ -41,7 +41,6 @@ export const setSolar = (
     newState.alternCurrentLoadPowerFactor.disabled =
       !newState.inputOfflineOperation;
     newState.directCurrentLoadPower.disabled = !newState.inputOfflineOperation;
-    newState.windDensity.disabled = !newState.inputOfflineOperation;
 
     newState.solarRadiation1.arrayEnabled = false;
     newState.solarRadiation2.arrayEnabled = false;
@@ -124,13 +123,13 @@ export const setSolar = (
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
 
-        newState.isBattery2 = false;
+        newState.isBattery2 = true;
 
         newState.hybridInverter.isConnected = false;
 
-        newState.controller.chargeVoltageBulk.value = 13.6;
-        newState.controller.chargeVoltageFloat.value = 13.9;
-        newState.controller.chargingMinimumVoltage.value = 11.5;
+        newState.controller.chargeVoltageBulk.value = 27.2;
+        newState.controller.chargeVoltageFloat.value = 27.8;
+        newState.controller.chargingMinimumVoltage.value = 23;
         break;
       case OperationModeType.Mode5:
         newState.monocrystallinePanel.isConnected = true;
