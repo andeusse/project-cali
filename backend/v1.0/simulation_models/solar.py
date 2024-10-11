@@ -116,7 +116,7 @@ class TwinPVWF:
             self.V_N = 16.0
             self.V_F = 65.0
             self.diameter = 1.24
-        if not turbineState or self.cdteModule or not self.parallel:
+        if not turbineState or self.cdteModule or self.parallel:
             self.P_WT = 0.0
         else:
             # Calculo de velocidad ajustada por altura

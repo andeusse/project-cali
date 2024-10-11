@@ -60,7 +60,7 @@ class Solar(Resource):
       turbineState = False
 
     batteries = 1 + int(data["isBattery2"])
-    if data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
+    if data["inputOperationMode"] == 'Mode2' or data["inputOperationMode"] == 'Mode4' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
       isParallel = False
     else:
       isParallel = True
