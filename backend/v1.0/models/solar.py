@@ -31,7 +31,7 @@ class Solar(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Solar_eolico', type=1)
-      values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
+      values_df_temp = influxDB.InfluxDBreader(query)
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
       values_df.set_index('field', inplace=True)
@@ -127,7 +127,7 @@ class Solar(Resource):
         else:
           inputActivePower = float(alternCurrentLoadPowerArray[-1])
       else:
-        inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-002'] * 1000,2)
+        inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
       if data["alternCurrentLoadPowerFactor"]["arrayEnabled"]:
         alternCurrentLoadPowerFactorArray = np.repeat(np.array(data["alternCurrentLoadPowerFactorArray"]),repeats)
         if iteration <= len(alternCurrentLoadPowerFactorArray):
@@ -145,7 +145,7 @@ class Solar(Resource):
         else:
           inputActivePower = float(alternCurrentLoadPowerArray[-1])
       else:
-        inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-003'] * 1000,2)
+        inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-003'],2)
       if data["alternCurrentLoadPowerFactor"]["arrayEnabled"]:
         alternCurrentLoadPowerFactorArray = np.repeat(np.array(data["alternCurrentLoadPowerFactorArray"]),repeats)
         if iteration <= len(alternCurrentLoadPowerFactorArray):
@@ -184,7 +184,7 @@ class Solar(Resource):
     if not data["inputOfflineOperation"]:
       if data["inputOperationMode"] == 'Mode2' and hybridState:
         batteryTemperature = 30.0
-        measuredPV_Power = round(values_df["Value"]['PG-003'],2)
+        measuredPV_Power = round(values_df["Value"]['PC-003'],2)
         measuredWT_Power = 0.0
         measuredHybridDC_Power = round(values_df["Value"]['PC-003'],2)
         PV_Voltage = round(values_df["Value"]['VG-003'],2)
