@@ -107,7 +107,6 @@ class TwinPVWF:
             self.V_F = 65.0
             self.diameter = 1.24
         else:
-            self.n_WT = 0.25
             self.P_WM = 200.0
             self.H_R = 1
             self.H_A = 1
@@ -221,10 +220,11 @@ class TwinPVWF:
     def optimal_n_WT(self, P_WT_meas):
         def optimal_WT_PowerOutput(n_WT, P_WT_meas):
             self.n_WT = n_WT[0]
-            return self.WT_PowerOutput(self.turbineState, self.ro, self.V_a) - P_WT_meas
+            return self.WT_PowerOutput(False, self.turbineState, self.ro, self.V_a) - P_WT_meas
         n_WT_0 = 1.0
-        n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.8, 1.2), args = [P_WT_meas])
+        n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.1, 1.2), args = [P_WT_meas])
         self.n_WT = n_WT.x[0]*random.uniform(0.98,1.02)
+        print(n_WT.x[0])
         return n_WT.x[0]
     
     def optimal_n_controller(self, P_CD, P_CC_meas):

@@ -13,13 +13,16 @@ class TwinCell:
         self.n_converter = 0.9
 
     def optimal_n_converter(self, cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas):
-        def converterPower(n_converter, cellSelfFeedingPower, lightsPower, cellPower, electronicLoadPower):
-            return cellPower - electronicLoadPower - (cellSelfFeedingPower + lightsPower) / n_converter
-        n_converter_0 = self.n_converter
-        n_converter = least_squares(converterPower, x0 = n_converter_0, bounds = (50, 99), args = (cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas))
-        self.n_converter = n_converter.x[0]
-
-        return n_converter.x[0]
+        if cellSelfFeedingPower_meas + lightsPower_meas > 0:
+            def converterPower(n_converter, cellSelfFeedingPower, lightsPower, cellPower, electronicLoadPower):
+                return cellPower - electronicLoadPower - (cellSelfFeedingPower + lightsPower) / n_converter
+            n_converter_0 = 0.9
+            n_converter = least_squares(converterPower, x0 = n_converter_0, bounds = (0.5, 0.99), args = (cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas))
+            self.n_converter = n_converter.x[0]
+            return n_converter.x[0]
+        else:
+            self.n_converter = 0.9
+            return self.n_converter
         
     def twinOutput(self, previousCellVoltage, inputFanPercentage, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t):
         
@@ -45,7 +48,7 @@ class TwinCell:
         
         # self.cellVoltage = 0.0128870679*self.cellCurrent**6 - 0.220519195*self.cellCurrent**5 + 1.48692377*self.cellCurrent**4 - 5.03979764*self.cellCurrent**3 + 9.11309881*self.cellCurrent**2 - 10.1063984*self.cellCurrent + 16.650003 - voltageDrop*(inputCellTemperature - 32.0)
         if inputFanPercentage < 100:
-            self.cellVoltage = 17.1 - 13.2672427*self.cellCurrent + 13.5756291*self.cellCurrent**2 - 6.66323789*self.cellCurrent**3 + 1.21415288*self.cellCurrent**4 - 0.0005*self.cellCurrent**5 - 0.016*self.cellCurrent**6 - 0.0111392658*inputFanPercentage + 0.00015*inputFanPercentage**2
+            self.cellVoltage = 16.9 - 13.2672427*self.cellCurrent + 13.5756291*self.cellCurrent**2 - 6.66323789*self.cellCurrent**3 + 1.21415288*self.cellCurrent**4 - 0.0005*self.cellCurrent**5 - 0.016*self.cellCurrent**6 - 0.0111392658*inputFanPercentage + 0.00015*inputFanPercentage**2
         else:
             self.cellVoltage = 16.8 - 12.55529151*self.cellCurrent + 13.2196722*self.cellCurrent**2 - 7.84413473*self.cellCurrent**3 + 2.40358984*self.cellCurrent**4 - 0.36143254*self.cellCurrent**5 - 0.02101814*self.cellCurrent**6
         
