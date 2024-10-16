@@ -17,7 +17,7 @@ class TwinCell:
             def converterPower(n_converter, cellSelfFeedingPower, lightsPower, cellPower, electronicLoadPower):
                 return cellPower - electronicLoadPower - (cellSelfFeedingPower + lightsPower) / n_converter
             n_converter_0 = 0.9
-            n_converter = least_squares(converterPower, x0 = n_converter_0, bounds = (0.5, 0.99), args = (cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas))
+            n_converter = least_squares(converterPower, x0 = n_converter_0, bounds = (0.4, 1.2), args = (cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas))
             self.n_converter = n_converter.x[0]
             return n_converter.x[0]
         else:
