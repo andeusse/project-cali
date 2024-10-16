@@ -67,7 +67,7 @@ class TwinHydro:
         def turbinePowerOutput(n_t, P_h_meas, Pressure, Flux):      
             return ((n_t/100) * Pressure * Flux) - P_h_meas
         n_t_0 = n_t
-        n_t = least_squares(turbinePowerOutput, x0 = n_t_0, bounds = (30, 90), args = (P_h_meas, Pressure, Flux))
+        n_t = least_squares(turbinePowerOutput, x0 = n_t_0, bounds = (30, 120), args = (P_h_meas, Pressure, Flux))
         self.n_t = n_t.x[0]*random.uniform(0.98,1.02)
         return n_t.x[0]
     
@@ -75,7 +75,7 @@ class TwinHydro:
         def controllerPowerOuput(n_controller, P_h, P_CD, P_CC_meas):
             return (P_h * n_controller / 100) - P_CD - P_CC_meas
         n_controller_0 = n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (40, 98), args = (P_h, P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (30, 120), args = (P_h, P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
         return n_controller.x[0]
     
