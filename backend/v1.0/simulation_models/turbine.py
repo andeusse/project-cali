@@ -43,7 +43,7 @@ class TwinHydro:
     
     # Parametrizacion de gemelo 
     def twinParameters (self, n_controller, n_inverter):
-        self.n_controller = n_controller # Eficiencia controlador en % -> se optomiza con medidas de potencia
+        self.n_controller = n_controller # Eficiencia controlador en % -> se optimiza con medidas de potencia
         self.n_inverter = n_inverter # Eficiencia de inversor en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
         self.cap_bat = 150.0 # Capacidad de las baterias en Ah
@@ -75,9 +75,8 @@ class TwinHydro:
         def controllerPowerOuput(n_controller, P_h, P_CD, P_CC_meas):
             return (P_h * n_controller / 100) - P_CD - P_CC_meas
         n_controller_0 = n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (70, 98), args = (P_h, P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (40, 98), args = (P_h, P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
-
         return n_controller.x[0]
     
     def twinOutput(self, chargeSOC_0, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkLoadMode, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA):
