@@ -9,7 +9,7 @@ class TwinTower:
     
     # Parametrizacion de gemelo 
     def twinParameters (self):
-        self.towerArea = 0.0225 # Area transversal de la torre en metros
+        self.towerArea = 0.0225 # Area transversal de la torre en metros cuadrados
         self.towerHeight = 0.580 # Altura de la torre en metros
     
     def twinOutput(self, PackedType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):

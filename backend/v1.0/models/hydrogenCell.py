@@ -31,7 +31,7 @@ class hydrogenCell(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Hidrogeno', type=1)
-      values_df_temp = influxDB.InfluxDBreader(query)
+      # values_df_temp = influxDB.InfluxDBreader(query)
       values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
@@ -107,7 +107,7 @@ class hydrogenCell(Resource):
     if not data["inputOfflineOperation"]:
       hydrogenPressure = round(values_df["Value"]['PT-101'],2)
       cellTemperature = round(values_df["Value"]['TE-101'],2)
-      if values_df["Value"]['LONOFF'] == "ON":
+      if values_df["Value"]['LONOFF']:
         electronicLoadState = True
       else:
         electronicLoadState = False
@@ -120,10 +120,10 @@ class hydrogenCell(Resource):
       cellTemperature = 40.0
       electronicLoadState = True
       if lightsMode == 'Parallel':
-          lightsPower = 9.0
+          lightsPower = 10.0
       elif lightsMode == 'Series':
-          lightsPower = 3.0
-      cellSelfFeedingPower = 5.0
+          lightsPower = 4.0
+      cellSelfFeedingPower = 11.0
 
     inputElectronicLoad = inputElectronicLoad * electronicLoadState
     lightsPower = lightsPower * lightsConnected
@@ -134,9 +134,10 @@ class hydrogenCell(Resource):
 
     twinCell = TwinCell(name)
     if not data["inputOfflineOperation"]:
-      twinCell.optimal_n_converter(self, cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
-    
-    twinCell.twinParameters()
+      twinCell.optimal_n_converter(cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
+    else:
+      twinCell.twinParameters()
+
     results = twinCell.twinOutput(previousCellVoltage, inputFanPercentage, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
 
     cell["hydrogenFlow"] = results[0]

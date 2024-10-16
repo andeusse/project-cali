@@ -19,13 +19,13 @@ class TwinPVWF:
 
     # Parametrizacion de modulo de acuerdo a tipo
     def moduleType(self, type, offlineOperation, deratingFactor):
-        self.f_PV = deratingFactor
         # Silicio Monocristalino
         if type == 1:
             if offlineOperation:
-                self.n_PV = 1.0
+                self.f_PV = deratingFactor
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -38,9 +38,10 @@ class TwinPVWF:
         # Silicio Policristalino
         elif type == 2:
             if offlineOperation:
-                self.n_PV = 1.0
+                self.f_PV = deratingFactor
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -53,9 +54,10 @@ class TwinPVWF:
         # Silicio Monocristalino de Pelicula Delgada
         elif type == 3:
             if offlineOperation:
-                self.n_PV = 1.0
+                self.f_PV = deratingFactor
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.42
@@ -68,9 +70,10 @@ class TwinPVWF:
         # Telururo de Cadmio    
         elif type == 4:
             if offlineOperation:
-                self.n_PV = 1.0
+                self.f_PV = deratingFactor
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 77.5
             self.G_0 = 1000
             self.u_PM = -0.25
@@ -97,24 +100,23 @@ class TwinPVWF:
         self.ro = ro
         self.V_a = V_a
         if offlineOperation:
-            self.n_WT = 1.0
+            self.n_WT = 0.29
             self.P_WM = 200.0
             self.H_R = 1
             self.H_A = 1
             self.Z_0 = 0.03
-            self.V_C = 2.0
-            self.V_N = 11.5
-            self.V_F = 65.0
+            self.V_C = 4.8
+            self.V_N = 12.2
+            self.V_F = 60.0
             self.diameter = 1.24
         else:
-            self.n_WT = 0.25
             self.P_WM = 200.0
             self.H_R = 1
             self.H_A = 1
             self.Z_0 = 0.03
-            self.V_C = 6.0
-            self.V_N = 16.0
-            self.V_F = 65.0
+            self.V_C = 4.8
+            self.V_N = 12.2
+            self.V_F = 60.0
             self.diameter = 1.24
         if not turbineState or self.cdteModule or self.parallel:
             self.P_WT = 0.0
@@ -123,7 +125,8 @@ class TwinPVWF:
             self.V_r = self.V_a * (math.log(self.H_R/self.Z_0, math.e) / math.log(self.H_A/self.Z_0, math.e))
             #Calculo de potencia de cada aero generador
             if (self.V_r > self.V_C and self.V_r < self.V_N):
-                P_wtSTP = self.n_WT * self.P_WM * (((self.V_r**2) - (self.V_C**2)) / ((self.V_N**2) - (self.V_C**2)))
+                # P_wtSTP = self.n_WT * self.P_WM * (((self.V_r**2) - (self.V_C**2)) / ((self.V_N**2) - (self.V_C**2)))
+                P_wtSTP = self.n_WT * self.P_WM * (((self.V_r**4) - (self.V_C**4)) / ((self.V_N**4) - (self.V_C**4)))
             elif (self.V_r >= self.V_N and self.V_r < self.V_F):
                 P_wtSTP = self.n_WT * self.P_WM
             elif (self.V_r <= self.V_C or self.V_r >= self.V_F):
@@ -214,16 +217,16 @@ class TwinPVWF:
             self.f_PV = f_PV[0]
             return self.arrayPowerOutput(self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
         f_PV_0 = 1.0
-        f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.8, 1.2), args = [P_PV_meas])
+        f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.4, 3.0), args = [P_PV_meas])
         self.f_PV = f_PV.x[0]*random.uniform(0.98,1.02)
         return f_PV.x[0]
     
     def optimal_n_WT(self, P_WT_meas):
         def optimal_WT_PowerOutput(n_WT, P_WT_meas):
             self.n_WT = n_WT[0]
-            return self.WT_PowerOutput(self.turbineState, self.ro, self.V_a) - P_WT_meas
+            return self.WT_PowerOutput(False, self.turbineState, self.ro, self.V_a) - P_WT_meas
         n_WT_0 = 1.0
-        n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.8, 1.2), args = [P_WT_meas])
+        n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.1, 1.2), args = [P_WT_meas])
         self.n_WT = n_WT.x[0]*random.uniform(0.98,1.02)
         return n_WT.x[0]
     
@@ -232,7 +235,7 @@ class TwinPVWF:
             self.n_controller = n_controller[0]
             return ((self.P_PV + self.P_WT) * self.n_controller / 100) - (P_CD / (self.n_controller / 100)) - P_CC_meas
         n_controller_0 = self.n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (80.0, 98.0), args = (P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (40.0, 120.0), args = (P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]
         return n_controller.x[0]
     
