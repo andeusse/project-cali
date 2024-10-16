@@ -301,6 +301,12 @@ const HydrogenCell = (props: Props) => {
             ? data.inputElectronicLoadResistance
             : o.inputElectronicLoadResistance.value,
         },
+        inputFanPercentage: {
+          ...o.inputFanPercentage,
+          value: data.fanPercentage
+            ? data.fanPercentage
+            : o.inputFanPercentage.value,
+        },
         simulatedCellVoltage: data.cellVoltage,
         simulatedGeneratedEnergy: data.cellGeneratedEnergy,
       }));
