@@ -22,8 +22,8 @@ export enum LightsModeType {
 }
 
 export enum LightsModeText {
-  Parallel = 'Encendido en paralelo',
-  Series = 'Encendido en serie',
+  Parallel = 'Modo directo',
+  Series = 'Modo semáforo',
 }
 
 export type HydrogencellParameters = CommonSystemParameter &
@@ -222,7 +222,7 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
   inputHydrogenFlow: {
     disabled: false,
     value: 0.4,
-    tooltip: 'Fluho de hidrógeno',
+    tooltip: 'Flujo de hidrógeno',
     unit: 'L/min',
     variableString: 'Flujo hidrógeno',
     min: 0,
@@ -309,7 +309,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Flujo de hidrógeno',
     variable: 'hydrogenFlow',
-    unit: 'L/min',
+    unit: 'mL/min',
     isShown: true,
     diagramName: 'Flujo',
     fixed: 2,
