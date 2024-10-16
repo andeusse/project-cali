@@ -23,9 +23,9 @@ class TwinPVWF:
         if type == 1:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 1.0
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -39,9 +39,9 @@ class TwinPVWF:
         elif type == 2:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 1.0
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -55,9 +55,9 @@ class TwinPVWF:
         elif type == 3:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 1.0
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.42
@@ -71,9 +71,9 @@ class TwinPVWF:
         elif type == 4:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 1.0
+                self.n_PV = 0.2
             else:
-                self.n_PV = 0.1
+                self.n_PV = 0.2
             self.P_PM = 77.5
             self.G_0 = 1000
             self.u_PM = -0.25
@@ -217,7 +217,7 @@ class TwinPVWF:
             self.f_PV = f_PV[0]
             return self.arrayPowerOutput(self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
         f_PV_0 = 1.0
-        f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.8, 1.2), args = [P_PV_meas])
+        f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.4, 3.0), args = [P_PV_meas])
         self.f_PV = f_PV.x[0]*random.uniform(0.98,1.02)
         return f_PV.x[0]
     
@@ -235,7 +235,7 @@ class TwinPVWF:
             self.n_controller = n_controller[0]
             return ((self.P_PV + self.P_WT) * self.n_controller / 100) - (P_CD / (self.n_controller / 100)) - P_CC_meas
         n_controller_0 = self.n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (80.0, 98.0), args = (P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (40.0, 120.0), args = (P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]
         return n_controller.x[0]
     
