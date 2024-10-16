@@ -32,6 +32,7 @@ class Solar(Resource):
 
       query = influxDB.QueryCreator(measurement='Solar_eolico', type=1)
       values_df_temp = influxDB.InfluxDBreader(query)
+      # values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
       values_df.set_index('field', inplace=True)
