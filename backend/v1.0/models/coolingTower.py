@@ -31,8 +31,8 @@ class coolingTower(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', type=1)
-      values_df_temp = influxDB.InfluxDBreader(query)
-      # values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
+      # values_df_temp = influxDB.InfluxDBreader(query)
+      values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
       values_df.set_index('field', inplace=True)

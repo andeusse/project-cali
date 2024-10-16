@@ -84,7 +84,6 @@ class Turbine(Resource):
     else:
       inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 3.6
-    
     turbine["inputActivePower"] = inputActivePower
     turbine["inputPowerFactor"] = inputPowerFactor
 
@@ -106,7 +105,7 @@ class Turbine(Resource):
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
     controllerEfficiency = data["controller"]["efficiency"]["value"]
-    if data["turbineType"] == "Turgo": controllerEfficiency = 40.0
+    if data["turbineType"] == "Turgo": controllerEfficiency = 70.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
