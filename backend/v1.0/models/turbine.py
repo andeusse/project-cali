@@ -31,6 +31,7 @@ class Turbine(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Turbinas', type=1)
+      # values_df_temp = influxDB.InfluxDBreader(query)
       values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
@@ -105,6 +106,7 @@ class Turbine(Resource):
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
     controllerEfficiency = data["controller"]["efficiency"]["value"]
+    if data["turbineType"] == "Turgo": controllerEfficiency = 40.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
