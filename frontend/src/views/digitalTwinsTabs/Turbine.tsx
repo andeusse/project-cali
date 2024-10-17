@@ -692,7 +692,7 @@ const Turbine = () => {
                         name="inputDirectCurrentPower"
                         value={system.inputDirectCurrentPower}
                         handleChange={handleChange}
-                        trueString="Conectado: 2.4 W"
+                        trueString="Conectado: 3.6 W"
                         falseString="Desconectado: 0.0 W"
                       ></CustomToggle>
                     </Grid>
