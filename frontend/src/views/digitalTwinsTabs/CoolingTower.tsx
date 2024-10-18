@@ -432,6 +432,7 @@ const CoolingTower = () => {
                           value={system.fillType}
                           name="fillType"
                           onChange={(e: any) => handleChange(e)}
+                          disabled={isPlaying}
                         >
                           {Object.keys(FillType).map((key) => (
                             <MenuItem key={key} value={key}>
