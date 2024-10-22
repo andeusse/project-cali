@@ -12,6 +12,10 @@ class BMPModelOffline:
         #Initial values for mixing
         self.countermixing = 0
 
+        #Initial values for feed
+        self.counterfeed = 0
+        self.TotalVolFeed = 0
+
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
                             Fraction2 = 1, Volume2 = 1, Weight2 = 1, TS2 = 0.1, VS2 = 0.05, rho2 = 1000, Cc2 = 43, Hc2 = 5, Oc2 = 30, Nc2 = 2, Sc2 = 0.21,
@@ -249,36 +253,72 @@ class BMPModelOffline:
         self.s_H2S = d
 
         self.MW_sustrato = n*12.01+a*1.01+b*16+c*14+d*32
-        self.Csus_ini = (self.rho*(self.TSini/100))/self.MW_sustrato
-        self.Csus_ini_ST = (self.rho*self.TSini)/self.MW_sustrato
-        self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini
+        self.Csus_ini_ST = (self.rho*(self.TSini/100))/self.MW_sustrato
+        self.Csus_ini_SV = (self.rho*self.VSini/100)/self.MW_sustrato
+        self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini_SV
     
     def MixControl (self, MixVelocity, MixTime, DailyMixing):
-        MixTime = MixTime*60
-        TimeInterval = DailyMixing/24
+        self.MixTime = MixTime*60
+        TimeInterval = 24/DailyMixing
 
-        if MixTime < self.countermixing:
+        if self.countermixing < self.MixTime:
             self.MixVelocity = MixVelocity
         else:
             self.MixVelocity = 0
         
-        if self.countermixing > TimeInterval:
+        if self.countermixing > TimeInterval*3600:
             self.countermixing = 0
+
+        self.countermixing = self.countermixing + self.tp
+    
+    def SubstrateFeed (self, Mode = "Time", Volume = 50, Time = 4, Inyections = 4):
+        Q = 1         #mL/min    #Changed according to set of inyection
+        if Mode == "Time":
+            TimeFeed = (Volume/Q)*60
+            if self.counterfeed < TimeFeed:
+                self.Qr = Q
+            else:
+                self.Qr = 0
+            self.counterfeed = self.counterfeed + self.tp
+            if self.counterfeed > Time*3600:
+                self.counterfeed = 0
+
+        if Mode == "Injection":
+            IntervalTimeInyection = 24/Inyections
+            TimeFeed = (Volume/Q)*60
+            if self.counterfeed < TimeFeed:
+                self.Qr = Q
+            else:
+                self.Qr = 0
+            self.counterfeed = self.counterfeed + self.tp
+            if self.counterfeed > IntervalTimeInyection*3600:
+                self.counterfeed = 0 
+
+        self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
+        if Mode == "NoDosing":
+            self.Qr = 0
+            
+
+
+
         
-        self.countermixing = self.countermixing + self.tp          
+
+
+            
+
+
+          
         
 #test class
-BMP = BMPModelOffline (Vrxn = 750, Vf = 750, tp = 30)
-BMP.MixtureCalculation(substratesNumber = 4, MixtureRule = "Peso", WaterFraction = 60, WaterVolume = 400, WaterWeight = 1000, 
-                       Fraction1 = 10, Volume1 = 100, Weight1 = 150, TS1 = 30, VS1 = 20, rho1 = 700, Cc1 = 43, Hc1 = 5, Oc1 = 30, Nc1 = 2, Sc1 = 0.21,
-                       Fraction2 = 10, Volume2 = 100, Weight2 = 100, TS2 = 20, VS2 = 15, rho2 = 600, Cc2 = 40, Hc2 = 6, Oc2 = 29, Nc2 = 2, Sc2 = 1,
-                       Fraction3 = 10, Volume3 = 100, Weight3 = 100, TS3 = 30, VS3 = 15, rho3 = 500, Cc3 = 40, Hc3 = 6, Oc3 = 29, Nc3 = 2, Sc3 = 1,
-                       Fraction4 = 10, Volume4 = 100, Weight4 = 200, TS4 = 10, VS4 = 8, rho4 = 500, Cc4 = 40, Hc4 = 6, Oc4 = 29, Nc4 = 2, Sc4 = 1)
-        
-print(BMP.subindex)
-print(BMP.TSini)
-print(BMP.VSini)
-print(BMP.Csus_ini)
+# BMP = BMPModelOffline (Vrxn = 750, Vf = 750, tp = 30)
+# BMP.MixtureCalculation(substratesNumber = 4, MixtureRule = "Peso", WaterFraction = 60, WaterVolume = 400, WaterWeight = 1000, 
+#                        Fraction1 = 10, Volume1 = 100, Weight1 = 150, TS1 = 30, VS1 = 20, rho1 = 700, Cc1 = 43, Hc1 = 5, Oc1 = 30, Nc1 = 2, Sc1 = 0.21,
+#                        Fraction2 = 10, Volume2 = 100, Weight2 = 100, TS2 = 20, VS2 = 15, rho2 = 600, Cc2 = 40, Hc2 = 6, Oc2 = 29, Nc2 = 2, Sc2 = 1,
+#                        Fraction3 = 10, Volume3 = 100, Weight3 = 100, TS3 = 30, VS3 = 15, rho3 = 500, Cc3 = 40, Hc3 = 6, Oc3 = 29, Nc3 = 2, Sc3 = 1,
+#                        Fraction4 = 10, Volume4 = 100, Weight4 = 200, TS4 = 10, VS4 = 8, rho4 = 500, Cc4 = 40, Hc4 = 6, Oc4 = 29, Nc4 = 2, Sc4 = 1)
+
+
+
 
         
 
