@@ -31,8 +31,8 @@ class coolingTower(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', type=1)
-      values_df_temp = influxDB.InfluxDBreader(query)
-      # values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
+      # values_df_temp = influxDB.InfluxDBreader(query)
+      values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
       values_df.set_index('field', inplace=True)
@@ -107,6 +107,13 @@ class coolingTower(Resource):
     twinTower = TwinTower(name)
     twinTower.twinParameters()
     results = twinTower.twinOutput(fillType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
+    
+    if not data["inputOfflineOperation"] and data["topWaterFlow"]["disabled"] and data["topWaterTemperature"]["disabled"] and data["bottomAirFlow"] and data["bottomAirTemperature"] and data["bottomAirHumidity"]:
+      measuredBottomWaterTemperature = round(values_df["Value"]['TE-102'],2)
+      measuredTopAirTemperature = round(values_df["Value"]['TE-103'],2)
+      twinTower.optimal_waterOutput(measuredBottomWaterTemperature)
+      twinTower.optimal_airOutput(measuredTopAirTemperature)
+      results = twinTower.twinOutput(fillType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
 
     tower["bottomWaterTemperature"] = results[0] - 273.15
     tower["waterTemperatureReduction"] = results[1]
