@@ -12,8 +12,8 @@ class coolingTowerModel:
         self.A = A
         self.PacketType = PackedType
         if PackedType == "Structured":
-            self.epsilon = 0.35
-            self.dp = 0.3
+            self.epsilon = 0.19
+            self.dp = 0.11
         if PackedType == "CurvedSlats":
             self.epsilon = 0.12
             self.dp = 0.08
