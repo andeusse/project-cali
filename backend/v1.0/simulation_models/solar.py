@@ -23,9 +23,9 @@ class TwinPVWF:
         if type == 1:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.2
+                self.n_PV = 0.24
             else:
-                self.n_PV = 0.2
+                self.n_PV = 0.24
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -33,15 +33,15 @@ class TwinPVWF:
             self.T_cNOCT = 45
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 15.44
+            self.n_c = 1.0
             self.monoModule = True
         # Silicio Policristalino
         elif type == 2:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.2
+                self.n_PV = 0.27
             else:
-                self.n_PV = 0.2
+                self.n_PV = 0.27
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -49,15 +49,15 @@ class TwinPVWF:
             self.T_cNOCT = 45
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 15.44
+            self.n_c = 1.0
             self.polyModule = True
         # Silicio Monocristalino de Pelicula Delgada
         elif type == 3:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.2
+                self.n_PV = 0.3
             else:
-                self.n_PV = 0.2
+                self.n_PV = 0.3
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.42
@@ -65,15 +65,15 @@ class TwinPVWF:
             self.T_cNOCT = 45
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 15.43
+            self.n_c = 1.0
             self.flexiModule = True
         # Telururo de Cadmio    
         elif type == 4:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.2
+                self.n_PV = 0.19
             else:
-                self.n_PV = 0.2
+                self.n_PV = 0.19
             self.P_PM = 77.5
             self.G_0 = 1000
             self.u_PM = -0.25
@@ -81,7 +81,7 @@ class TwinPVWF:
             self.T_cNOCT = 42
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 11.0
+            self.n_c = 6.0
             self.cdteModule = True
         
         return self.f_PV, self.G_0, self.u_PM, self.T_cSTC, self.T_cNOCT, self.T_aNOCT, self.G_NOCT, self.n_c
@@ -217,7 +217,7 @@ class TwinPVWF:
             self.f_PV = f_PV[0]
             return self.arrayPowerOutput(self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
         f_PV_0 = 1.0
-        f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.4, 3.0), args = [P_PV_meas])
+        f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.1, 3.0), args = [P_PV_meas])
         self.f_PV = f_PV.x[0]*random.uniform(0.98,1.02)
         return f_PV.x[0]
     
@@ -226,7 +226,7 @@ class TwinPVWF:
             self.n_WT = n_WT[0]
             return self.WT_PowerOutput(False, self.turbineState, self.ro, self.V_a) - P_WT_meas
         n_WT_0 = 1.0
-        n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.1, 1.2), args = [P_WT_meas])
+        n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.1, 3.0), args = [P_WT_meas])
         self.n_WT = n_WT.x[0]*random.uniform(0.98,1.02)
         return n_WT.x[0]
     

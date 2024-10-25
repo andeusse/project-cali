@@ -1676,12 +1676,19 @@ class coolingTowerModel:
             Air_0.MolarVolume()
             Air_0.ergun_pressure_drop(current= "Air", L = self.L, epsilon = self.epsilon, u = self.u_air, dp = self.dp)
 
+            experimentalWaterFactor = 0.9
+            experimentalAirFactor = 0.85
+            bottomWaterTemperature = (result_8[55] - 273.15) * experimentalWaterFactor + 273.15
+            topAirTemperature = (result_8[6] - 273.15) * experimentalAirFactor + 273.15
+
             #Energy Balance
             Energy = (NL0*Water_0.H_l - NL8*Water_8.H_l)/1000000
 
             self.solution = list(result_8[0:5])
-            self.solution.append(result_8[55])
-            self.solution.append(result_8[6])
+            self.solution.append(bottomWaterTemperature)
+            # self.solution.append(result_8[55])
+            self.solution.append(topAirTemperature)            
+            # self.solution.append(result_8[6])
             self.solution.append(RH_top)
             self.solution.append(Energy)
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
@@ -1724,6 +1731,10 @@ class coolingTowerModel:
             Water_4.MolarVolume()
             Water_4.Enthalpy()
 
+            experimentalWaterFactor = 0.9
+            experimentalAirFactor = 0.85
+            bottomWaterTemperature = (result_4[27] - 273.15) * experimentalWaterFactor + 273.15
+            topAirTemperature = (result_4[6] - 273.15) * experimentalAirFactor + 273.15
             Energy = (NL0*Water_0.H_l - NL4*Water_4.H_l)/1000000
 
             Air_0 = PR.EosPengRobinson()
@@ -1733,8 +1744,10 @@ class coolingTowerModel:
             Air_0.ergun_pressure_drop(current= "Air", L = self.L, epsilon = self.epsilon, u = self.u_air, dp = self.dp)
             
             self.solution = list(result_4[0:5])
-            self.solution.append(result_4[27])
-            self.solution.append(result_4[6])
+            self.solution.append(bottomWaterTemperature)
+            # self.solution.append(result_4[27])
+            self.solution.append(topAirTemperature)            
+            # self.solution.append(result_4[6])
             self.solution.append(RH_top)
             self.solution.append(Energy)
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
@@ -1771,6 +1784,10 @@ class coolingTowerModel:
             Water_2.MolarVolume()
             Water_2.Enthalpy()
 
+            experimentalWaterFactor = 0.9
+            experimentalAirFactor = 0.85
+            bottomWaterTemperature = (result_2[13] - 273.15) * experimentalWaterFactor + 273.15
+            topAirTemperature = (result_2[6] - 273.15) * experimentalAirFactor + 273.15
             Energy = (NL0*Water_0.H_l - NL2*Water_2.H_l)/1000000
 
             Air_0 = PR.EosPengRobinson()
@@ -1780,8 +1797,10 @@ class coolingTowerModel:
             Air_0.ergun_pressure_drop(current= "Air", L = self.L, epsilon = self.epsilon, u = self.u_air, dp = self.dp)
 
             self.solution = list(result_2[0:5])
-            self.solution.append(result_2[13])
-            self.solution.append(result_2[6])
+            self.solution.append(bottomWaterTemperature)
+            # self.solution.append(result_2[13])
+            self.solution.append(topAirTemperature)
+            # self.solution.append(result_2[6])
             self.solution.append(RH_top)
             self.solution.append(Energy)
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
