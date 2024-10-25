@@ -186,7 +186,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   bottomAirTemperature: {
     disabled: false,
-    value: 29,
+    value: 25,
     tooltip: 'Temperatura',
     unit: '°C',
     variableString: 'Temperatura',
@@ -197,7 +197,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
   },
   bottomAirHumidity: {
     disabled: false,
-    value: 65,
+    value: 55,
     tooltip: 'Humedad',
     unit: '%',
     variableString: 'Humedad',
