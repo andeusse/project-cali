@@ -1,6 +1,8 @@
 from math import gcd
 from functools import reduce
 from fractions import Fraction
+import numpy as np
+from scipy.integrate import odeint
 
 
 class BMPModelOffline:
@@ -15,6 +17,9 @@ class BMPModelOffline:
         #Initial values for feed
         self.counterfeed = 0
         self.TotalVolFeed = 0
+
+        #Initial values for Reactor
+        self.counterReactor = 0
 
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
@@ -253,7 +258,7 @@ class BMPModelOffline:
         self.s_H2S = d
 
         self.MW_sustrato = n*12.01+a*1.01+b*16+c*14+d*32
-        self.Csus_ini_ST = (self.rho*(self.TSini/100))/self.MW_sustrato
+        self.Csus_ini_ST = (self.rho*(self.TSini/100))/self.MW_sustrato   #mol/L
         self.Csus_ini_SV = (self.rho*self.VSini/100)/self.MW_sustrato
         self.Csus_fixed = self.Csus_ini_ST - self.Csus_ini_SV
     
@@ -271,8 +276,7 @@ class BMPModelOffline:
 
         self.countermixing = self.countermixing + self.tp
     
-    def SubstrateFeed (self, Mode = "Time", Volume = 50, Time = 4, Inyections = 4):
-        Q = 1         #mL/min    #Changed according to set of inyection
+    def SubstrateFeed (self, Mode = "Time", Volume = 50, Time = 4, Inyections = 4, Q=1):  #from frontend requieres add entrance vble for sideA and SideB
         if Mode == "Time":
             TimeFeed = (Volume/Q)*60
             if self.counterfeed < TimeFeed:
@@ -297,7 +301,54 @@ class BMPModelOffline:
         self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
         if Mode == "NoDosing":
             self.Qr = 0
-            
+    
+    def Reactor (self, model, pH, T, K1, K2=1, K3=1):
+        def pH_effect (parameter, model):
+            if model == "Arrhenius":
+                variable = np.exp(-((float(parameter)-7)**2)/(2*5**2))
+            else:
+                variable = np.exp(-((float(parameter)-7)**2)/(2*1**2))
+            return variable
+        
+        def Temperature_effect (parameter):
+            variable = np.exp(-((float(parameter)-45)**2)/(2*35**2))
+            return variable
+        
+        def mixing_effect (parameter):
+            if parameter < 10:
+                variable = 1
+            elif parameter >= 10:
+                variable = np.random.uniform(0.99, 1)
+            return float(variable)
+        
+        def differentialEquation (C, t, Vrxn, Q, Csusi, model, pH, T, K1, K2 = 1, K3 = 1):
+            R = 8.314
+            pH = pH_effect(pH, model)
+            Teffect = Temperature_effect(T)
+            Vrxn = Vrxn/1000
+            Q = (Q/1000*60)
+            if model == "Arrhenius":
+                dC_dt = (Q/Vrxn)*(Csusi - C) - (C * K1 * np.exp (-(K2)/(R*T*pH)))/Vrxn
+            if model == "ADM1":
+                dC_dt = (Q/Vrxn)*(Csusi - C) - (C * K1 * pH * Teffect)/Vrxn
+            return dC_dt
+        
+        t_sim = [self.counterReactor, self.counterReactor + self.tp]
+        if self.counterReactor == 0:
+            self.Csus_ini = self.Csus_ini_SV
+        else:
+            self.Csus_ini = self.Csus_res[-1]
+        self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
+        self.SV = float(self.Csus_res[-1])*self.MW_sustrato
+        try:
+            self.OC = self.SV/(self.counterReactor/86400)
+        except ZeroDivisionError:
+            self.OC = 0
+        self.x = (self.Csus_ini_SV - float(self.Csus_res[-1]))/self.Csus_ini_SV
+        self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
+        self.counterReactor = self.counterReactor + self.tp
+
+
 
 
 
