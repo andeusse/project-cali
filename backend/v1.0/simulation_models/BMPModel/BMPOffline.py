@@ -3,6 +3,7 @@ from functools import reduce
 from fractions import Fraction
 import numpy as np
 from scipy.integrate import odeint
+from simulation_models.Biogas import ThermoProperties as TP
 
 
 class BMPModelOffline:
@@ -10,6 +11,9 @@ class BMPModelOffline:
         self.Vrxn = Vrxn       #mL
         self.Vf = Vf           #mL 
         self.tp = tp           #s
+
+        #Thermodynamic properties for biogas
+        self.Thermo = TP.ThermoProperties()
         
         #Initial values for mixing
         self.countermixing = 0
@@ -20,6 +24,9 @@ class BMPModelOffline:
 
         #Initial values for Reactor
         self.counterReactor = 0
+        self.mol_O2 = 0
+        self.mol_H2 = 0
+        self.mol_H2O = 0
 
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
@@ -303,6 +310,12 @@ class BMPModelOffline:
             self.Qr = 0
     
     def Reactor (self, model, pH, T, K1, K2=1, K3=1):
+        
+        self.K1 = K1
+        self.K2 = K2
+        self.K3 = K3
+        self.T = T
+        self.pH = pH
         def pH_effect (parameter, model):
             if model == "Arrhenius":
                 variable = np.exp(-((float(parameter)-7)**2)/(2*5**2))
@@ -333,20 +346,62 @@ class BMPModelOffline:
                 dC_dt = (Q/Vrxn)*(Csusi - C) - (C * K1 * pH * Teffect)/Vrxn
             return dC_dt
         
+        def model_Gompertz(t, ym, U, L):
+            y_t = ym * np.exp(-np.exp((U * np.e) / ym * (L - t) + 1))
+            return y_t
+        
         t_sim = [self.counterReactor, self.counterReactor + self.tp]
-        if self.counterReactor == 0:
-            self.Csus_ini = self.Csus_ini_SV
+
+        if model == "Gompertz":
+            if self.counterReactor == 0:
+                 self.SV = (self.Csus_ini_SV * self.MW_sustrato) / self.rho
+            else:
+                self.SV = (self.Csus_res * self.MW_sustrato) / self.rho
+            y_t = model_Gompertz(t_sim[-1], ym = K1, U = K2, L = K3)
+            self.y_t = y_t * mixing_effect(self.MixVelocity) * pH_effect(pH, model) * Temperature_effect(T)
+            self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+            self.mol_CH4 = (self.y_t*self.SV*self.rho*(self.Vrxn/1000))/self.Vmolar_CH4
+            self.mol_CO2 = self.mol_CH4*(self.s_CO2/self.s_CH4)
+            self.mol_H2S = self.mol_CH4*(self.s_H2S/self.s_CH4)
+            self.mol_NH3 = self.mol_CH4*(self.s_NH3/self.s_CH4)
+            self.mol_O2 = self.mol_O2 + ((self.mol_CH4)/np.random.uniform(0.45, 0.65))* np.random.uniform (0.001, 0.1) 
+            self.mol_H2 = self.mol_H2 + ((self.mol_CH4)/np.random.uniform(0.45, 0.65)) * np.random.uniform (0, 0.00001)
+            self.mol_H2O = self.mol_H2O + ((self.mol_CH4)/np.random.uniform(0.45, 0.65)) * np.random.normal(0.01, 0.1)
+           
+            #Stochoimetric spent
+            mol_SV = (self.Csus_ini_SV * (self.Vrxn/1000)) - (self.mol_CH4 * (1/self.s_CH4))
+            self.Csus_res = mol_SV/(self.Vrxn/1000)
+            self.SV = self.Csus_res * self.MW_sustrato
+            try:
+                self.OC = self.SV/(self.counterReactor/86400)
+            except ZeroDivisionError:
+                self.OC = 0
+            
+            self.x = (self.Csus_ini_SV - self.Csus_res)/self.Csus_ini_SV
+            self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
+
         else:
-            self.Csus_ini = self.Csus_res[-1]
-        self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
-        self.SV = float(self.Csus_res[-1])*self.MW_sustrato
-        try:
-            self.OC = self.SV/(self.counterReactor/86400)
-        except ZeroDivisionError:
-            self.OC = 0
-        self.x = (self.Csus_ini_SV - float(self.Csus_res[-1]))/self.Csus_ini_SV
-        self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
+
+            if self.counterReactor == 0:
+                self.Csus_ini = self.Csus_ini_SV
+            else:
+                self.Csus_ini = self.Csus_res[-1]
+            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
+            self.SV = float(self.Csus_res[-1]*mixing_effect(self.MixVelocity))*self.MW_sustrato
+            try:
+                self.OC = self.SV/(self.counterReactor/86400)
+            except ZeroDivisionError:
+                self.OC = 0
+            
+            self.x = (self.Csus_ini_SV - float(self.Csus_res[-1]*mixing_effect(self.MixVelocity)))/self.Csus_ini_SV
+            self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
+        
         self.counterReactor = self.counterReactor + self.tp
+    
+    
+
+        
+        
 
 
 

@@ -239,25 +239,25 @@ class ThermoProperties:
 
          return self.AH
     
-    def BiogasRelativeHumidity (self, nH2O, VnormalTotal, T):
-         
-        self.nH2O = nH2O
-        self.Vnormal = VnormalTotal
-        try:
-            if self.Vnormal == 0 or np.isnan(self.Vnormal) or np.isnan(self.nH2O):
-                raise ValueError("VnormalTotal or nH2O is zero or NaN")
-            self.AH = self.nH2O/self.Vnormal
-        except (ZeroDivisionError, ValueError):
-            self.AH = 0
+    def BiogasRelativeHumidity (self, nH2O, VnormalTotal, T, P):
         
-        self.T = T
+        R = 8.314
+        T_std = 273.15
+        P_std = 8.314
+        P = P * 6.89476    #Convert psi to kPa
+        n_total = (P_std * VnormalTotal)/(R*T_std)
+        if n_total == 0:
+            self.RH = 0
+        else:
+            y_H2O = nH2O / n_total
+            P_water = y_H2O * (P+P_std)    #Converto to absolute pressure
+        
+            A, B, C = 8.07131, 1730.63, 233.426
 
-        A = 8.140191
-        B = 1810.94
-        C = 244.485
+            P_sat = 10 ** (A - B / (C + T))   #Psat in mmhg
+            P_sat = P_sat/7.50063                      #Psat to kPa
 
-        self.P_sat = 10**(A - B/(self.T + C))
-        self.RH = (self.AH * self.P_sat)/(461.5 * self.T * 100)
+            self.RH = (P_water/P_sat)*100 
 
         return self.RH
 

@@ -97,20 +97,28 @@ class BMP(Resource):
       
       #Agitación
       R101.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
+      #---- Salidas Agitación
       bmp_output["mixVelocityR101"] = R101.MixVelocity
 
       #Alimentación
       R101.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
+      #---- Salidas alimentación
       bmp_output["caudalSideA"] = R101.Qr
       bmp_output["volumeSubstrateSideA"] = R101.TotalVolFeed
 
       #Reactor
       R101.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
+      #---- Salidas reactor R101
       bmp_output["SVR101"] = R101.SV
       bmp_output["OCR101"] = R101.OC
       bmp_output["STR101"] = R101.ST
       bmp_output["XR101"] = R101.x
+      bmp_output["KR101"] = R101.K1
+      bmp_output["EaR101"] = R101.K2
+      bmp_output["lambdaR101"] = R101.K3
+      bmp_output["TempR101"] = R101.T
+      bmp_output["pHR101"] = R101.pH
       
-
+    
     print(bmp_output)
     return {"model": bmp_output}, 200

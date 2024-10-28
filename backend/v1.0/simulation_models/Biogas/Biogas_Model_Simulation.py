@@ -803,7 +803,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.4, 0.1))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.1))
             
             elif self.OperationMode == "Modo4":
                 # R_101 Conditions
@@ -882,7 +882,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.4, 0.1))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.1))
 
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101*np.exp(-self.Ea_R101/(8.314*T_R101.iloc[-1]*pH_R101[-1]))) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
@@ -892,7 +892,7 @@ class BiogasPlantSimulation:
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
             self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.1) 
             self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.00001)
-            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101*np.random.normal(0.4, 0.1))
+            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101*np.random.normal(0.01, 0.1))
 
             # Solidos volátiles en porcentaje R101
             self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1017,7 +1017,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.4, 0.1))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.1))
 
             elif self.OperationMode == "Modo4":
                 # R_101 Conditions
@@ -1096,7 +1096,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.4, 0.1))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.1))
                 
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101 * pH_R101[-1] * T_R101[-1]) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
@@ -1106,7 +1106,7 @@ class BiogasPlantSimulation:
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
             self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.1) 
             self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.00001)
-            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101*np.random.normal(0.4, 0.1))
+            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101*np.random.normal(0.01, 0.1))
 
             # Solidos volátiles en porcentaje R101
             self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1452,7 +1452,7 @@ class BiogasPlantSimulation:
             self.Vnormal_bio_V101 = self.Vnormal_CH4_V101 + self.Vnormal_CO2_V101 + self.Vnormal_H2S_V101 + self.Vnormal_O2_V101 + self.Vnormal_NH3_V101 + self.Vnormal_H2_V101 + self.Vnormal_H2O_V101
 
             #humedad relativa
-            self.RH_V101 = self.Thermo.BiogasRelativeHumidity(nH2O = self.mol_H2O_V101, VnormalTotal = self.Vnormal_bio_V101, T = self.Temperature)
+            self.RH_V101 = self.Thermo.BiogasRelativeHumidity(nH2O = self.mol_H2O_V101, VnormalTotal = self.Vnormal_bio_V101, T = self.Temperature, P = self.Pstorage_bio_V101)
 
             #concentración
             try:
@@ -1606,7 +1606,7 @@ class BiogasPlantSimulation:
             self.Vnormal_bio_V102 = self.Vnormal_CH4_V102 + self.Vnormal_CO2_V102 + self.Vnormal_H2S_V102 + self.Vnormal_O2_V102 + self.Vnormal_NH3_V102 + self.Vnormal_H2_V102 + self.Vnormal_H2O_V102
 
             #humedad relativa
-            self.RH_V102 = self.Thermo.BiogasRelativeHumidity(nH2O = self.mol_H2O_V102, VnormalTotal = self.Vnormal_bio_V102, T = self.Temperature)
+            self.RH_V102 = self.Thermo.BiogasRelativeHumidity(nH2O = self.mol_H2O_V102, VnormalTotal = self.Vnormal_bio_V102, T = self.Temperature, P = self.Pstorage_bio_V102)
 
             #concentración
             try:
@@ -1809,7 +1809,7 @@ class BiogasPlantSimulation:
             self.Vnormal_bio_V107 = self.Vnormal_CH4_V107 + self.Vnormal_CO2_V107 + self.Vnormal_H2S_V107 + self.Vnormal_O2_V107 + self.Vnormal_NH3_V107 + self.Vnormal_H2_V107 + self.Vnormal_H2O_V107
 
             #humedad relativa
-            self.RH_V107 = self.Thermo.BiogasRelativeHumidity(nH2O = self.mol_H2O_V107, VnormalTotal = self.Vnormal_bio_V107, T = self.Temperature)
+            self.RH_V107 = self.Thermo.BiogasRelativeHumidity(nH2O = self.mol_H2O_V107, VnormalTotal = self.Vnormal_bio_V107, T = self.Temperature, P = self.Pstorage_bio_V107)
 
             #concentración
             try:
