@@ -118,7 +118,25 @@ class BMP(Resource):
       bmp_output["lambdaR101"] = R101.K3
       bmp_output["TempR101"] = R101.T
       bmp_output["pHR101"] = R101.pH
-      
-    
+      #---- Productos de reacción en moles [mol]
+      bmp_output["methanemolR101"] = R101.mol_CH4
+      bmp_output["carbondioxidemolR101"] = R101.mol_CO2
+      bmp_output["oxygenmolR101"] = R101.mol_O2
+      bmp_output["hydrogensulfurmolR101"] = R101.mol_H2S
+      bmp_output["hydrogenmolR101"] = R101.mol_H2
+      #---- Productos de reacción en vol normal [mL]
+      R101.CompoundsUnits()
+      bmp_output["methanevolR101"] = R101.Vnormal_CH4
+      bmp_output["carbondioxidevolR101"] = R101.Vnormal_CO2
+      bmp_output["oxygenvolR101"] = R101.Vnormal_O2
+      bmp_output["hydrogensulfurvolR101"] = R101.Vnormal_H2S
+      bmp_output["hydrogenvolR101"] = R101.Vnormal_H2
+      #---- Productos de reacción en concentracion [%]
+      bmp_output["methaneconcentrationR101"] = R101.x_CH4
+      bmp_output["carbondioxideconcentrationR101"] = R101.x_CO2
+      bmp_output["oxygenconcentrationR101"] = R101.x_O2
+      bmp_output["hydrogensulfurconcentrationR101"] = R101.x_H2S
+      bmp_output["hydrogenconcentrationR101"] = R101.x_H2
+
     print(bmp_output)
     return {"model": bmp_output}, 200

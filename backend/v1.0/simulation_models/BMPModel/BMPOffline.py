@@ -24,6 +24,7 @@ class BMPModelOffline:
 
         #Initial values for Reactor
         self.counterReactor = 0
+        self.mol_CH4_ini = 0
         self.mol_O2 = 0
         self.mol_H2 = 0
         self.mol_H2O = 0
@@ -351,7 +352,7 @@ class BMPModelOffline:
             return y_t
         
         t_sim = [self.counterReactor, self.counterReactor + self.tp]
-
+        
         if model == "Gompertz":
             if self.counterReactor == 0:
                  self.SV = (self.Csus_ini_SV * self.MW_sustrato) / self.rho
@@ -361,13 +362,15 @@ class BMPModelOffline:
             self.y_t = y_t * mixing_effect(self.MixVelocity) * pH_effect(pH, model) * Temperature_effect(T)
             self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
             self.mol_CH4 = (self.y_t*self.SV*self.rho*(self.Vrxn/1000))/self.Vmolar_CH4
+            mol_CH4_list = [self.mol_CH4_ini, self.mol_CH4]
             self.mol_CO2 = self.mol_CH4*(self.s_CO2/self.s_CH4)
             self.mol_H2S = self.mol_CH4*(self.s_H2S/self.s_CH4)
             self.mol_NH3 = self.mol_CH4*(self.s_NH3/self.s_CH4)
-            self.mol_O2 = self.mol_O2 + ((self.mol_CH4)/np.random.uniform(0.45, 0.65))* np.random.uniform (0.001, 0.1) 
-            self.mol_H2 = self.mol_H2 + ((self.mol_CH4)/np.random.uniform(0.45, 0.65)) * np.random.uniform (0, 0.00001)
-            self.mol_H2O = self.mol_H2O + ((self.mol_CH4)/np.random.uniform(0.45, 0.65)) * np.random.normal(0.01, 0.1)
-           
+            self.mol_O2 = self.mol_O2 + (mol_CH4_list[-1] - mol_CH4_list[0])* np.random.uniform (0.02, 0.2) 
+            self.mol_H2 = self.mol_H2 + (mol_CH4_list[-1] - mol_CH4_list[0]) * np.random.uniform (0, 0.00003)
+            self.mol_H2O = self.mol_H2O + (mol_CH4_list[-1] - mol_CH4_list[0]) * np.random.normal(0.01, 0.1)
+            self.mol_CH4_ini = self.mol_CH4
+            print(mol_CH4_list)
             #Stochoimetric spent
             mol_SV = (self.Csus_ini_SV * (self.Vrxn/1000)) - (self.mol_CH4 * (1/self.s_CH4))
             self.Csus_res = mol_SV/(self.Vrxn/1000)
@@ -385,20 +388,48 @@ class BMPModelOffline:
             if self.counterReactor == 0:
                 self.Csus_ini = self.Csus_ini_SV
             else:
-                self.Csus_ini = self.Csus_res[-1]
+                self.Csus_ini = float(self.Csus_res[-1])
             self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
-            self.SV = float(self.Csus_res[-1]*mixing_effect(self.MixVelocity))*self.MW_sustrato
+            self.SV = (self.Csus_ini*mixing_effect(self.MixVelocity))*self.MW_sustrato
             try:
                 self.OC = self.SV/(self.counterReactor/86400)
             except ZeroDivisionError:
                 self.OC = 0
             
-            self.x = (self.Csus_ini_SV - float(self.Csus_res[-1]*mixing_effect(self.MixVelocity)))/self.Csus_ini_SV
+            self.x = ((self.Csus_ini_SV - self.Csus_ini)/self.Csus_ini_SV)*(1+(1-mixing_effect(self.MixVelocity)))
             self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
+            self.mol_CH4 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4)
+            self.mol_CO2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CO2)
+            self.mol_H2S = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_H2S)
+            self.mol_NH3 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_NH3)
+            self.mol_O2 = self.mol_O2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.2) 
+            self.mol_H2 = self.mol_H2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
+            self.mol_H2O = self.mol_H2O + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
         
         self.counterReactor = self.counterReactor + self.tp
-    
-    
+
+    def CompoundsUnits (self):
+        self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+        self.Vmolar_CO2 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 1, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+        self.Vmolar_O2 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 1, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+        self.Vmolar_H2S = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 1, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+        self.Vmolar_H2 = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 1, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+        self.Vmolar_H2O = self.Thermo.Hgases(xCH4 = 0, xCO2 = 0, xH2O = 1, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
+
+        self.Vnormal_CH4 = (self.Vmolar_CH4 * self.mol_CH4) * 1000
+        self.Vnormal_CO2 = (self.Vmolar_CO2 * self.mol_CO2) * 1000
+        self.Vnormal_O2 = (self.Vmolar_O2 * self.mol_O2) * 1000
+        self.Vnormal_H2S = (self.Vmolar_H2S * self.mol_H2S) * 1000
+        self.Vnormal_H2 = (self.Vmolar_H2 * self.mol_H2) * 1000
+        self.Vnormal_H2O = (self.Vmolar_H2O * self.mol_H2O) * 1000
+
+        self.Vbiogas = self.Vnormal_CH4 + self.Vnormal_CO2 + self.Vnormal_O2 + self.Vnormal_H2S + self.Vnormal_H2
+        self.x_CH4 = (self.Vnormal_CH4/self.Vbiogas)*100
+        self.x_CO2 = (self.Vnormal_CO2/self.Vbiogas)*100
+        self.x_O2 = (self.Vnormal_O2/self.Vbiogas)*100
+        self.x_H2S = (self.Vnormal_H2S/self.Vbiogas)*1000000
+        self.x_H2 = (self.Vnormal_H2/self.Vbiogas)*1000000
+
 
         
         
