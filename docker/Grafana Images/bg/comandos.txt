@@ -1,4 +1,4 @@
-cd "C:\Users\Administrador\Documents\GitHub\project-cali\docker\custom-grafana-image\assets\images"
+cd "C:\Users\Betan\Documents\GitHub\project-cali\docker\Grafana Images\bg"
 
 docker cp Biogas-Modo1.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo1.png
 docker cp Biogas-Modo2.png USC_Grafana:/usr/share/grafana/public/img/bg/Biogas-Modo2.png
