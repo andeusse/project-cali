@@ -14,9 +14,13 @@ class BMP(Resource):
     if iteration == 1:
       bmp_simulation_start.BMPSimulationStart.reset_instance()
 
+    #lado A condiciones condiciones generales
     offline = data["stateSelectionSideA"]
+    SideA_measurementMethod = data["measurementMethodSideA"]
+
+    #lado condiciones de corrida
     SideA_Vrxn = data["rxnVolumeSideA"]["value"]
-    SideA_vf = data["freeVolumeSideA"]
+    SideA_vf = data["freeVolumeSideA"]["value"]
     SideA_tp = data["timeStepSideA"]["value"]
     SideA_MixRule = data["substrate1CompositionSideA"]["variableString"]
     SideA_substrateNumber = data["amountOfSubstratesSideA"]["value"]
@@ -80,7 +84,6 @@ class BMP(Resource):
     SideA_K1 = data["kineticKSideA"]["value"]
     SideA_K2 = data["kineticEaSideA"]["value"]
     SideA_K3 = data["kineticLambdaSideA"]["value"]
-    
 
     # Modo Offline
     if offline == True:
@@ -137,6 +140,13 @@ class BMP(Resource):
       bmp_output["oxygenconcentrationR101"] = R101.x_O2
       bmp_output["hydrogensulfurconcentrationR101"] = R101.x_H2S
       bmp_output["hydrogenconcentrationR101"] = R101.x_H2
+      #---- Biogás Volumen acumulado [mL]
+      bmp_output["accumbiogasR101"] = R101.Vbiogas
+      #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
+      R101.PressurebyBiogas()
+      if SideA_measurementMethod == "Pressure":
+        bmp_output["accumbiogaspressureR101"] = R101.P_acum
+        bmp_output["storagebiogaspressureR101"] = R101.P_storage
 
     print(bmp_output)
     return {"model": bmp_output}, 200
