@@ -15,7 +15,7 @@ class BMP(Resource):
       bmp_simulation_start.BMPSimulationStart.reset_instance()
 
     offline = data["stateSelectionSideA"]
-    SideA_Vrxn = data["rxnVolumeSideA"]
+    SideA_Vrxn = data["rxnVolumeSideA"]["value"]
     SideA_vf = data["freeVolumeSideA"]
     SideA_tp = data["timeStepSideA"]["value"]
     SideA_MixRule = data["substrate1CompositionSideA"]["variableString"]
@@ -72,6 +72,15 @@ class BMP(Resource):
     SideA_FeedVolume = data["dosificationVolumeSideA"]["value"]
     SideA_FeedTime = data["dailyInyectionsByTimeSideA"]["value"]
     SideA_Injections = data["dailyInyectionsSideA"]["value"]
+    #Reactor
+    SideA_Model = data["modelSelectionSideA"]
+    SideA_pHauto = data["pHSideA"]["disabled"]
+    SideA_pH = data["pHSideA"]["value"]
+    SideA_Temperatura = data["TemperatureSideA"]["value"]
+    SideA_K1 = data["kineticKSideA"]["value"]
+    SideA_K2 = data["kineticEaSideA"]["value"]
+    SideA_K3 = data["kineticLambdaSideA"]["value"]
+    
 
     # Modo Offline
     if offline == True:
@@ -85,16 +94,49 @@ class BMP(Resource):
                               Fraction2 = SideA_Fraction2, Volume2 = SideA_Fraction2, Weight2 = SideA_Fraction2, TS2 = SideA_TS2, VS2 = SideA_VS2, rho2 = SideA_rho2, Cc2 = SideA_Cc2, Hc2 = SideA_Ch2, Oc2 = SideA_Co2, Nc2 = SideA_Cn2, Sc2 = SideA_Cs2,
                               Fraction3 = SideA_Fraction3, Volume3 = SideA_Fraction3, Weight3 = SideA_Fraction3, TS3 = SideA_TS3, VS3 = SideA_VS3, rho3 = SideA_rho3, Cc3 = SideA_Cc3, Hc3 = SideA_Ch3, Oc3 = SideA_Co3, Nc3 = SideA_Cn3, Sc3 = SideA_Cs3,
                               Fraction4 = SideA_Fraction4, Volume4 = SideA_Fraction4, Weight4 = SideA_Fraction4, TS4 = SideA_TS4, VS4 = SideA_VS4, rho4 = SideA_rho4, Cc4 = SideA_Cc4, Hc4 = SideA_Ch4, Oc4 = SideA_Co4, Nc4 = SideA_Cn4, Sc4 = SideA_Cs4)
+      
       #Agitación
       R101.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
+      #---- Salidas Agitación
       bmp_output["mixVelocityR101"] = R101.MixVelocity
 
       #Alimentación
-      R101.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections)
+      R101.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
+      #---- Salidas alimentación
       bmp_output["caudalSideA"] = R101.Qr
       bmp_output["volumeSubstrateSideA"] = R101.TotalVolFeed
-      
 
-    
+      #Reactor
+      R101.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
+      #---- Salidas reactor R101
+      bmp_output["SVR101"] = R101.SV
+      bmp_output["OCR101"] = R101.OC
+      bmp_output["STR101"] = R101.ST
+      bmp_output["XR101"] = R101.x
+      bmp_output["KR101"] = R101.K1
+      bmp_output["EaR101"] = R101.K2
+      bmp_output["lambdaR101"] = R101.K3
+      bmp_output["TempR101"] = R101.T
+      bmp_output["pHR101"] = R101.pH
+      #---- Productos de reacción en moles [mol]
+      bmp_output["methanemolR101"] = R101.mol_CH4
+      bmp_output["carbondioxidemolR101"] = R101.mol_CO2
+      bmp_output["oxygenmolR101"] = R101.mol_O2
+      bmp_output["hydrogensulfurmolR101"] = R101.mol_H2S
+      bmp_output["hydrogenmolR101"] = R101.mol_H2
+      #---- Productos de reacción en vol normal [mL]
+      R101.CompoundsUnits()
+      bmp_output["methanevolR101"] = R101.Vnormal_CH4
+      bmp_output["carbondioxidevolR101"] = R101.Vnormal_CO2
+      bmp_output["oxygenvolR101"] = R101.Vnormal_O2
+      bmp_output["hydrogensulfurvolR101"] = R101.Vnormal_H2S
+      bmp_output["hydrogenvolR101"] = R101.Vnormal_H2
+      #---- Productos de reacción en concentracion [%]
+      bmp_output["methaneconcentrationR101"] = R101.x_CH4
+      bmp_output["carbondioxideconcentrationR101"] = R101.x_CO2
+      bmp_output["oxygenconcentrationR101"] = R101.x_O2
+      bmp_output["hydrogensulfurconcentrationR101"] = R101.x_H2S
+      bmp_output["hydrogenconcentrationR101"] = R101.x_H2
+
     print(bmp_output)
     return {"model": bmp_output}, 200

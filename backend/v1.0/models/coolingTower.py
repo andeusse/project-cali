@@ -73,7 +73,7 @@ class coolingTower(Resource):
       else:
         topWaterTemperature = float(topWaterTemperatureArray[-1] + 273.15) # °C to kelvin conversion
     else:
-      topWaterTemperature = ((35.0 if not data["topWaterTemperature"]["value"] and data["topWaterTemperature"]["value"]!=0 else data["topWaterTemperature"]["value"]) if not data["topWaterTemperature"]["disabled"] else round(values_df["Value"]['TE-104'],2)) + 273.15 # °C to kelvin conversion
+      topWaterTemperature = ((35.0 if not data["topWaterTemperature"]["value"] and data["topWaterTemperature"]["value"]!=0 else data["topWaterTemperature"]["value"]) if not data["topWaterTemperature"]["disabled"] else round(values_df["Value"]['TE-104'],2)) + 273.15# °C to kelvin conversion
     if data["bottomAirFlow"]["arrayEnabled"]:
       bottomAirFlowArray = np.repeat(np.array(data["bottomAirFlowArray"]),repeats)
       if iteration <= len(bottomAirFlowArray):
@@ -124,11 +124,11 @@ class coolingTower(Resource):
     tower["energyAppliedToWater"] = results[6]
     tower["deltaPressure"] = results[7]
 
-    tower["topWaterFlow"] = topWaterFlow * 60000
-    tower["topWaterTemperature"] = topWaterTemperature - 273.15
-    tower["bottomAirFlow"] = bottomAirFlow * 60
-    tower["bottomAirTemperature"] = bottomAirTemperature - 273.15
-    tower["bottomAirHumidity"] = bottomAirHumidity
-    tower["atmosphericPressure"] = atmosphericPressure / 1000
+    tower["topWaterFlow"] = round(topWaterFlow * 60000,2)
+    tower["topWaterTemperature"] = round(topWaterTemperature - 273.15,2)
+    tower["bottomAirFlow"] = round(bottomAirFlow * 60,2)
+    tower["bottomAirTemperature"] = round(bottomAirTemperature - 273.15,2)
+    tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
+    tower["atmosphericPressure"] = round(atmosphericPressure / 1000,2)
 
     return {"model": tower}
