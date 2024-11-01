@@ -11,6 +11,10 @@ import Config from './config/config';
 import axios from 'axios';
 import { setIsLoading } from './redux/slices/isLoadingSlice';
 
+const LABEL_SIZE = '22px';
+const PRIMARY_COLOR = '#002D71';
+const SECUNDARY_COLOR = '#f0f4fa';
+
 function App() {
   const userTheme = useAppSelector((state) => state.theme.value);
   const isLoading = useAppSelector((state) => state.isLoading.value);
@@ -30,29 +34,43 @@ function App() {
           palette: {
             mode: userTheme,
             primary: {
-              main: '#002D71',
+              main: PRIMARY_COLOR,
             },
             background: {
-              default: '#f0f4fa',
+              default: SECUNDARY_COLOR,
             },
             text: {
-              primary: '#002D71',
+              primary: PRIMARY_COLOR,
             },
           },
           typography: {
             fontFamily: `"Lucida Sans Unicode","Roboto","Helvetica","Arial",sans-serif`,
             allVariants: {
-              color: '#002D71',
+              color: PRIMARY_COLOR,
             },
           },
           components: {
             MuiAccordion: {
               styleOverrides: {
                 root: () => ({
-                  backgroundColor: '#f0f4fa',
+                  backgroundColor: SECUNDARY_COLOR,
                   boxShadow:
                     '0px 5px 5px 0px rgba(0,45,113,0.2), 0px 2px 2px 0px rgba(0,45,113,0.15), 0px 1px 5px 0px rgba(0,45,113,0.15)',
                 }),
+              },
+            },
+            MuiInputLabel: {
+              defaultProps: {
+                sx: {
+                  fontSize: LABEL_SIZE,
+                },
+              },
+            },
+            MuiOutlinedInput: {
+              defaultProps: {
+                sx: {
+                  fontSize: LABEL_SIZE,
+                },
               },
             },
           },
@@ -63,6 +81,22 @@ function App() {
           },
           typography: {
             fontFamily: `"Lucida Sans Unicode","Roboto","Helvetica","Arial",sans-serif`,
+          },
+          components: {
+            MuiInputLabel: {
+              defaultProps: {
+                sx: {
+                  fontSize: LABEL_SIZE,
+                },
+              },
+            },
+            MuiOutlinedInput: {
+              defaultProps: {
+                sx: {
+                  fontSize: LABEL_SIZE,
+                },
+              },
+            },
           },
         });
 
