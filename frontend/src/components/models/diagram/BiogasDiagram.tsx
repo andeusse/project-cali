@@ -63,6 +63,72 @@ const BiogasDiagram = (props: Props) => {
         {biogas.inputOperationMode === OperationModeType.Modo5 && (
           <image href={!isPlaying ? mode5 : mode5On}></image>
         )}
+        <g transform={`translate(100,6000)`}>
+          <rect
+            x={0}
+            y={0}
+            width={1300}
+            height={1000}
+            rx={100}
+            ry={100}
+            style={{ stroke: 'black', strokeWidth: 5, fillOpacity: 0.1 }}
+          ></rect>
+          <text
+            transform={`translate(600,100)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `150px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            UNITS
+          </text>
+          <text
+            transform={`translate(100,300)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `120px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *¹: gSV/L
+          </text>
+          <text
+            transform={`translate(100,500)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `120px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *²: gST/L
+          </text>
+          <text
+            transform={`translate(100,700)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `120px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *³: gSV/L-dia
+          </text>
+          <text
+            transform={`translate(100,900)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `120px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *⁴: J/mol
+          </text>
+        </g>
         <g transform={`translate(1000,125)`}>
           <text
             style={{

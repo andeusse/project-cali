@@ -498,7 +498,7 @@ export const BIOGAS: BiogasParameters = {
     disabled: false,
     value: 1000000,
     tooltip: 'Energía de activación R101',
-    unit: 'J/mol',
+    unit: '*⁴',
     variableString: 'Ea R101',
   },
   lambdaR101: {
@@ -519,7 +519,7 @@ export const BIOGAS: BiogasParameters = {
     disabled: false,
     value: 1000000,
     tooltip: 'Energía de activación R102',
-    unit: 'J/mol',
+    unit: '*⁴',
     variableString: 'Ea R102',
   },
   lambdaR102: {
@@ -1139,7 +1139,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos volátiles TK100',
     variable: 'C_sv',
-    unit: 'gSV/L',
+    unit: '*¹',
     isShown: true,
     diagramName: 'Csv',
     fixed: 2,
@@ -1161,7 +1161,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos totales TK100',
     variable: 'C_st',
-    unit: 'gST/L',
+    unit: '*²',
     isShown: true,
     diagramName: 'Cst',
     fixed: 2,
@@ -1205,7 +1205,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos volátiles R101',
     variable: 'C_sv_R101',
-    unit: 'gSV/L',
+    unit: '*¹',
     isShown: true,
     diagramName: 'Csv',
     fixed: 2,
@@ -1227,7 +1227,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos totales R101',
     variable: 'C_st_R101',
-    unit: 'gST/L',
+    unit: '*²',
     isShown: true,
     diagramName: 'Cst',
     fixed: 2,
@@ -1249,7 +1249,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Carga Orgánica en el reactor R101',
     variable: 'Organic_Charge_R101',
-    unit: 'gSV/L-dia',
+    unit: '*³',
     isShown: true,
     diagramName: 'OC',
     fixed: 1,
@@ -1317,7 +1317,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Parámetro cinético energía de activación R101',
     variable: 'Ea_R101',
-    unit: 'J/mol',
+    unit: '*⁴',
     isShown: true,
     diagramName: 'Ea',
     fixed: 1,
@@ -2370,7 +2370,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
   {
     name: 'Parámetro cinético energía de activación R102',
     variable: 'Ea_R102',
-    unit: 'J/mol',
+    unit: '*⁴',
     isShown: true,
     diagramName: 'Ea',
     fixed: 1,
@@ -2406,7 +2406,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos volátiles R102',
     variable: 'C_sv_R102',
-    unit: 'gSV/L',
+    unit: '*¹',
     isShown: true,
     diagramName: 'Csv',
     fixed: 2,
@@ -2428,7 +2428,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
   {
     name: 'Concentración de sólidos totales R102',
     variable: 'C_st_R102',
-    unit: 'gST/L',
+    unit: '*²',
     isShown: true,
     diagramName: 'Cst',
     fixed: 2,
@@ -2450,7 +2450,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
   {
     name: 'Carga Orgánica en el reactor R102',
     variable: 'Organic_Charge_R102',
-    unit: 'gSV/L-dia',
+    unit: '*³',
     isShown: true,
     diagramName: 'OC',
     fixed: 1,
