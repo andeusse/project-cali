@@ -112,14 +112,14 @@ class BMP(Resource):
       #Reactor
       R101.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
       #---- Salidas reactor R101
-      bmp_output["SVR101"] = R101.SV
+      bmp_output["SVR101"] = R101.SV 
       bmp_output["OCR101"] = R101.OC
       bmp_output["STR101"] = R101.ST
       bmp_output["XR101"] = R101.x
       bmp_output["KR101"] = R101.K1
       bmp_output["EaR101"] = R101.K2
       bmp_output["lambdaR101"] = R101.K3
-      bmp_output["TempR101"] = R101.T
+      bmp_output["TempR101"] = R101.T   
       bmp_output["pHR101"] = R101.pH
       #---- Productos de reacción en moles [mol]
       bmp_output["methanemolR101"] = R101.mol_CH4
@@ -147,6 +147,12 @@ class BMP(Resource):
       if SideA_measurementMethod == "Pressure":
         bmp_output["accumbiogaspressureR101"] = R101.P_acum
         bmp_output["storagebiogaspressureR101"] = R101.P_storage
+        bmp_output["storagebiogasR101"] = R101.V_storage
+      #Biogas energy
+      R101.biogasEnergy()
+      bmp_output["LHVR101"] = R101.LHV
+      bmp_output["EnergyR101"] = R101.TotalBiogasEnergy
+      
 
     print(bmp_output)
     return {"model": bmp_output}, 200
