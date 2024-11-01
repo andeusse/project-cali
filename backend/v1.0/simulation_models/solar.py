@@ -84,8 +84,6 @@ class TwinPVWF:
             self.n_c = 6.0
             self.cdteModule = True
         
-        return self.f_PV, self.G_0, self.u_PM, self.T_cSTC, self.T_cNOCT, self.T_aNOCT, self.G_NOCT, self.n_c
-    
     # Calculo de potencia del sistema
     def PV_PowerOutput(self):
         # Calculo de temperatura del modulo
@@ -100,13 +98,13 @@ class TwinPVWF:
         self.ro = ro
         self.V_a = V_a
         if offlineOperation:
-            self.n_WT = 0.36
+            self.n_WT = 0.49
             self.P_WM = 200.0
             self.H_R = 1
             self.H_A = 1
             self.Z_0 = 0.03
             self.V_C = 4.8
-            self.V_N = 12.2
+            self.V_N = 14.0
             self.V_F = 60.0
             self.diameter = 1.24
         else:
@@ -115,7 +113,7 @@ class TwinPVWF:
             self.H_A = 1
             self.Z_0 = 0.03
             self.V_C = 4.8
-            self.V_N = 12.2
+            self.V_N = 14.0
             self.V_F = 60.0
             self.diameter = 1.24
         if not turbineState or self.cdteModule or self.parallel:
@@ -133,7 +131,7 @@ class TwinPVWF:
                 P_wtSTP = 0
             # Ajuste de potencia por densidad de aire
             self.P_WT = (self.ro / 1.225) * P_wtSTP
-        return round(self.P_WT,2)
+        return self.P_WT
     
     def arrayPowerOutput(self, offlineOperation, deratingFactorList, monoModule, polyModule, flexiModule, cdteModule, T_a, G_1, G_2):
         self.monoModule = monoModule
@@ -215,7 +213,7 @@ class TwinPVWF:
     def optimal_f_PV(self, P_PV_meas):
         def optimal_PV_PowerOutput(f_PV, P_PV_meas):
             self.f_PV = f_PV[0]
-            return self.arrayPowerOutput(self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
+            return self.arrayPowerOutput(False, [1,1,1,1], self.monoModule, self.polyModule, self.flexiModule, self.cdteModule, self.T_a, self.G_1, self.G_2)[0] - P_PV_meas
         f_PV_0 = 1.0
         f_PV = least_squares(optimal_PV_PowerOutput, x0 = f_PV_0, bounds = (0.1, 3.0), args = [P_PV_meas])
         self.f_PV = f_PV.x[0]*random.uniform(0.98,1.02)
@@ -225,7 +223,7 @@ class TwinPVWF:
         def optimal_WT_PowerOutput(n_WT, P_WT_meas):
             self.n_WT = n_WT[0]
             return self.WT_PowerOutput(False, self.turbineState, self.ro, self.V_a) - P_WT_meas
-        n_WT_0 = 1.0
+        n_WT_0 = 0.36
         n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.1, 3.0), args = [P_WT_meas])
         self.n_WT = n_WT.x[0]*random.uniform(0.98,1.02)
         return n_WT.x[0]
@@ -368,7 +366,7 @@ class TwinPVWF:
         return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_PV,2), round(self.V_WT,2), round(self.V_CDload,2), round(self.SOC*100,3), round(self.V_bat,3), round(self.V_CD,2), round(self.V_CA,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), round(self.P_CD,2), self.inverterState, round(self.I_PV,2), round(self.I_WT,2), round(self.I_CD,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2)
     
     
-    def ongridTwinOutput(self, chargeSOC_0, batteryState, gridState, P_CA, PF, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, chargeCycle, V_PV, V_grid, V_CA, delta_t):
+    def ongridTwinOutput(self, offlineMode, chargeSOC_0, batteryState, gridState, P_CA, PF, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, chargeCycle, V_PV, V_grid, V_CA, delta_t):
         
         self.gridState = gridState
         self.P_CA = P_CA
@@ -415,6 +413,7 @@ class TwinPVWF:
                     chargeCycle = False
 
             self.P_grid = self.P_inv + self.P_bat - (self.P_PV * self.n_hybrid / 100)
+
         else:
             self.P_grid = 0.0
             self.P_bat = (self.P_PV * self.n_hybrid / 100) - self.P_inv # Potencia de la bateria, + carga, - descarga

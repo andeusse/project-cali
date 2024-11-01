@@ -29,6 +29,12 @@ class BMPModelOffline:
         self.mol_H2 = 0
         self.mol_H2O = 0
 
+        #Thermodynamics measuremnts
+        self.Vf1 = self.Vf       #free volume that change with substrate injections
+        self.n_ii_wet = 0
+        self.n_ii_dry = 0
+        self.P_storage=0
+
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
                             Fraction2 = 1, Volume2 = 1, Weight2 = 1, TS2 = 0.1, VS2 = 0.05, rho2 = 1000, Cc2 = 43, Hc2 = 5, Oc2 = 30, Nc2 = 2, Sc2 = 0.21,
@@ -285,6 +291,7 @@ class BMPModelOffline:
         self.countermixing = self.countermixing + self.tp
     
     def SubstrateFeed (self, Mode = "Time", Volume = 50, Time = 4, Inyections = 4, Q=1):  #from frontend requieres add entrance vble for sideA and SideB
+        self.Volume_feed = Volume
         if Mode == "Time":
             TimeFeed = (Volume/Q)*60
             if self.counterfeed < TimeFeed:
@@ -405,6 +412,8 @@ class BMPModelOffline:
             self.mol_O2 = self.mol_O2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.2) 
             self.mol_H2 = self.mol_H2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
             self.mol_H2O = self.mol_H2O + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
+            self.biogas_mol_dry = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2
+            self.biogas_mol_wet = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2 + self.mol_H2O
         
         self.counterReactor = self.counterReactor + self.tp
 
@@ -424,11 +433,49 @@ class BMPModelOffline:
         self.Vnormal_H2O = (self.Vmolar_H2O * self.mol_H2O) * 1000
 
         self.Vbiogas = self.Vnormal_CH4 + self.Vnormal_CO2 + self.Vnormal_O2 + self.Vnormal_H2S + self.Vnormal_H2
-        self.x_CH4 = (self.Vnormal_CH4/self.Vbiogas)*100
-        self.x_CO2 = (self.Vnormal_CO2/self.Vbiogas)*100
-        self.x_O2 = (self.Vnormal_O2/self.Vbiogas)*100
-        self.x_H2S = (self.Vnormal_H2S/self.Vbiogas)*1000000
-        self.x_H2 = (self.Vnormal_H2/self.Vbiogas)*1000000
+        try:
+            self.x_CH4 = (self.Vnormal_CH4/self.Vbiogas)*100
+            self.x_CO2 = (self.Vnormal_CO2/self.Vbiogas)*100
+            self.x_O2 = (self.Vnormal_O2/self.Vbiogas)*100
+            self.x_H2S = (self.Vnormal_H2S/self.Vbiogas)*1000000
+            self.x_H2 = (self.Vnormal_H2/self.Vbiogas)*1000000
+        except ZeroDivisionError:
+            self.x_CH4 = 0
+            self.x_CO2 = 0
+            self.x_O2 = 0
+            self.x_H2S = 0
+            self.x_H2 = 0
+    
+    def PressurebyBiogas (self):
+        P_std = 100000  #kPa
+        R = 8.314 #J/mol K
+
+        if self.Qr == 0:
+            self.Vf1 = self.Vf
+        else:
+            self.Vf1 = self.Vf - (self.TotalVolFeed)
+        print(self.Vf1)
+        self.P_acum = (self.biogas_mol_dry * R * (self.T+273.15))/(self.Vf1/1000000) #Pa pressure due biogas prodcution dry
+        self.P_acum = self.P_acum/6894.76
+
+        if self.P_storage >= 15:
+            self.n_ii_dry = self.biogas_mol_dry      #save the last value of biogas mol before release
+            self.n_ii_wet = self.biogas_mol_wet
+
+        self.n_i = (P_std*(self.Vf/1000000))/(R*(self.T+273.15))   #mol
+        self.mol_storage = (self.n_i + (self.biogas_mol_wet - self.n_ii_wet))
+        self.Pabs = (self.mol_storage * R * (self.T+273.15))/(self.Vf1/1000000)  #Pa  #pressure by increasing for inyection
+        self.P_storage = abs(self.Pabs - P_std)/6894.76      #psi  due inyection and biogas realese 
+            
+        
+
+        
+        
+
+
+        
+
+
 
 
         
