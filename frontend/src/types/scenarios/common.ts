@@ -336,9 +336,9 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   radiation: {
     disabled: false,
     value: 1000,
-    tooltip: 'Irradiancia solar máxima',
+    tooltip: 'Irradiancia máxima',
     unit: 'W / m²',
-    variableString: 'Irradiancia solar máxima',
+    variableString: 'Irradiancia máxima',
     min: 0,
     max: 2000,
     step: 100,
