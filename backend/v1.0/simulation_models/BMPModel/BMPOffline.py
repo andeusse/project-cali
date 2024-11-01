@@ -9,7 +9,7 @@ from simulation_models.Biogas import ThermoProperties as TP
 class BMPModelOffline:
     def __init__ (self, Vrxn, Vf, tp):
         self.Vrxn = Vrxn       #mL
-        self.Vf = Vf           #mL 
+        self.Vf = Vf + 50      #mL El 50es el volumen libre del reactor y vf el volumen del tarro
         self.tp = tp           #s
 
         #Thermodynamic properties for biogas
@@ -34,6 +34,10 @@ class BMPModelOffline:
         self.n_ii_wet = 0
         self.n_ii_dry = 0
         self.P_storage=0
+        self.v_i = 0
+        self.V_storage = 0
+        self.Vf2 = Vf           #variable to calculate the new volume when the gas is release
+        self.vol_actual = 0     #volume before the first dischar of digestate
 
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
@@ -370,14 +374,15 @@ class BMPModelOffline:
             self.Vmolar_CH4 = self.Thermo.Hgases(xCH4 = 1, xCO2 = 0, xH2O = 0, xO2 = 0, xN2 = 0, xH2S = 0, xH2 = 0, P = 0, Patm = 100, T = 273.15, xNH3=0)[2]
             self.mol_CH4 = (self.y_t*self.SV*self.rho*(self.Vrxn/1000))/self.Vmolar_CH4
             mol_CH4_list = [self.mol_CH4_ini, self.mol_CH4]
+            self.mol_CH4_ini = self.mol_CH4
             self.mol_CO2 = self.mol_CH4*(self.s_CO2/self.s_CH4)
             self.mol_H2S = self.mol_CH4*(self.s_H2S/self.s_CH4)
             self.mol_NH3 = self.mol_CH4*(self.s_NH3/self.s_CH4)
-            self.mol_O2 = self.mol_O2 + (mol_CH4_list[-1] - mol_CH4_list[0])* np.random.uniform (0.02, 0.2) 
+            self.mol_O2 = self.mol_O2 + (mol_CH4_list[-1] - mol_CH4_list[0])* np.random.uniform (0.01, 0.15) 
             self.mol_H2 = self.mol_H2 + (mol_CH4_list[-1] - mol_CH4_list[0]) * np.random.uniform (0, 0.00003)
             self.mol_H2O = self.mol_H2O + (mol_CH4_list[-1] - mol_CH4_list[0]) * np.random.normal(0.01, 0.1)
-            self.mol_CH4_ini = self.mol_CH4
-            print(mol_CH4_list)
+            self.biogas_mol_dry = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2
+            self.biogas_mol_wet = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2 + self.mol_H2O
             #Stochoimetric spent
             mol_SV = (self.Csus_ini_SV * (self.Vrxn/1000)) - (self.mol_CH4 * (1/self.s_CH4))
             self.Csus_res = mol_SV/(self.Vrxn/1000)
@@ -409,7 +414,7 @@ class BMPModelOffline:
             self.mol_CO2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CO2)
             self.mol_H2S = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_H2S)
             self.mol_NH3 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_NH3)
-            self.mol_O2 = self.mol_O2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.2) 
+            self.mol_O2 = self.mol_O2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.1) 
             self.mol_H2 = self.mol_H2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
             self.mol_H2O = self.mol_H2O + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
             self.biogas_mol_dry = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2
@@ -450,22 +455,39 @@ class BMPModelOffline:
         P_std = 100000  #kPa
         R = 8.314 #J/mol K
 
-        if self.Qr == 0:
+        if self.Vf1 <= 50:
             self.Vf1 = self.Vf
+            self.Vf2 = self.Vf
+            self.vol_actual = self.TotalVolFeed
         else:
-            self.Vf1 = self.Vf - (self.TotalVolFeed)
-        print(self.Vf1)
+            self.Vf1 = self.Vf - (self.TotalVolFeed - self.vol_actual)
+
         self.P_acum = (self.biogas_mol_dry * R * (self.T+273.15))/(self.Vf1/1000000) #Pa pressure due biogas prodcution dry
         self.P_acum = self.P_acum/6894.76
 
         if self.P_storage >= 15:
             self.n_ii_dry = self.biogas_mol_dry      #save the last value of biogas mol before release
             self.n_ii_wet = self.biogas_mol_wet
+            self.v_i = self.Vbiogas
+            self.Vf2 = self.Vf1
 
-        self.n_i = (P_std*(self.Vf/1000000))/(R*(self.T+273.15))   #mol
+        self.n_i = (P_std*(self.Vf2/1000000))/(R*(self.T+273.15))   #mol
         self.mol_storage = (self.n_i + (self.biogas_mol_wet - self.n_ii_wet))
         self.Pabs = (self.mol_storage * R * (self.T+273.15))/(self.Vf1/1000000)  #Pa  #pressure by increasing for inyection
         self.P_storage = abs(self.Pabs - P_std)/6894.76      #psi  due inyection and biogas realese 
+        self.V_storage = (self.Vbiogas - self.v_i)
+    
+    def biogasEnergy(self):
+        self.BiogasEnergy = self.Thermo.LHV(molCH4=self.mol_CH4, molCO2=self.mol_CO2, molH2S=self.mol_H2S, molH2 = self.mol_H2, molO2=self.mol_O2)
+        self.Vmolar_biogas = self.Thermo.Hgases(xCH4=self.x_CH4/100, xCO2=self.x_CO2/100, xH2O=0, xO2=self.x_O2/100, xN2 = 0, xH2S = self.x_H2S/1000000, xH2 = self.x_H2/1000000, P = 0, Patm=100, T=273.15, xNH3=0)[2]
+        self.LHV = self.BiogasEnergy[0]    #J/mol
+        self.LHV = (self.LHV/3600)/self.Vmolar_biogas*1000    #Wh/Nm3
+        #self.Vmolar_biogas = self.Thermo.Hgases()
+        self.TotalBiogasEnergy = self.BiogasEnergy[1]/3600 * 1000   #mWh
+    
+    
+
+
             
         
 
