@@ -16,9 +16,6 @@ const Home = (props: Props) => {
       <Box display="flex" justifyContent="center" alignItems="center">
         <h1>Plataforma Smartgrid - Laboratorio de Energías</h1>
       </Box>
-      <Box display="flex" justifyContent="center" alignItems="center">
-        <h1>Universidad Santiago de Cali</h1>
-      </Box>
       <Grid container spacing={3} marginTop={1}>
         <Grid item xs={12} md={4} xl={4}>
           <Link to={`/monitoring`}>
@@ -62,7 +59,7 @@ const Home = (props: Props) => {
             alignItems="center"
           ></Box>
         </Grid>
-        <Grid item xs={12} md={6} xl={6} marginTop={1}>
+        <Grid item xs={12} md={6} xl={6} marginTop={0}>
           <Box
             sx={{ display: { xs: 'grid', md: 'flex' } }}
             justifyContent="center"
@@ -71,7 +68,7 @@ const Home = (props: Props) => {
             <img style={{ width: '25%' }} src={logoDida} alt="logoDida"></img>
           </Box>
         </Grid>
-        <Grid item xs={12} md={6} xl={6} marginTop={1}>
+        <Grid item xs={12} md={6} xl={6} marginTop={0}>
           <Box
             sx={{ display: { xs: 'grid', md: 'flex' } }}
             justifyContent="center"

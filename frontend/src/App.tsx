@@ -11,7 +11,7 @@ import Config from './config/config';
 import axios from 'axios';
 import { setIsLoading } from './redux/slices/isLoadingSlice';
 
-const LABEL_SIZE = '22px';
+const LABEL_SIZE = '20px';
 const PRIMARY_COLOR = '#002D71';
 const SECUNDARY_COLOR = '#f0f4fa';
 
