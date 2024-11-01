@@ -1145,7 +1145,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 900,
     y: 1350,
-    scientificNotation: true,
+    scientificNotation: false,
   },
   {
     name: 'Concentración de sólidos volátiles TK100',
@@ -1167,7 +1167,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 900,
     y: 1650,
-    scientificNotation: true,
+    scientificNotation: false,
   },
   {
     name: 'Concentración de sólidos totales TK100',
@@ -1211,7 +1211,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 2200,
     y: 6200,
-    scientificNotation: true,
+    scientificNotation: false,
   },
   {
     name: 'Concentración de sólidos volátiles R101',
@@ -1233,7 +1233,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 2200,
     y: 6500,
-    scientificNotation: true,
+    scientificNotation: false,
   },
   {
     name: 'Concentración de sólidos totales R101',
@@ -1252,7 +1252,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'gSV/L-dia',
     isShown: true,
     diagramName: 'OC',
-    fixed: 2,
+    fixed: 1,
     x: 2200,
     y: 6800,
     scientificNotation: true,
@@ -1303,7 +1303,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 0,
   },
   {
-    name: 'Parámetro cinético preexponencias Arrhenius,  ADM1 y  Gompertz R101',
+    name: 'Parámetro cinético preexponencial Arrhenius,  ADM1 y  Gompertz R101',
     variable: 'K_R101',
     unit: 'L / gSV',
     isShown: true,
@@ -1311,7 +1311,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 1200,
     y: 6200,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 1,
   },
   {
@@ -1320,7 +1320,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     unit: 'J/mol',
     isShown: true,
     diagramName: 'Ea',
-    fixed: 2,
+    fixed: 1,
     x: 1200,
     y: 6350,
     scientificNotation: true,
@@ -1335,7 +1335,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 1200,
     y: 6350,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 3,
   },
   {
@@ -1347,7 +1347,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 1200,
     y: 6500,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 3,
   },
   {
@@ -1431,7 +1431,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 950,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1467,7 +1467,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 1100,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1503,7 +1503,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 1250,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1539,7 +1539,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 1400,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1575,7 +1575,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 1550,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1611,7 +1611,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 1700,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1623,7 +1623,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 3000,
     y: 1850,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 12,
   },
   {
@@ -1730,7 +1730,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 950,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1766,7 +1766,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 1100,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1802,7 +1802,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 1250,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1838,7 +1838,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 1400,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1874,7 +1874,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 1550,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1910,7 +1910,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 1700,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -1922,7 +1922,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 5400,
     y: 1850,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 12,
   },
   {
@@ -2073,7 +2073,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 2650,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -2109,7 +2109,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 2800,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -2145,7 +2145,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 2950,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -2181,7 +2181,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 3100,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -2217,7 +2217,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 3250,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -2253,7 +2253,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 3400,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 11,
   },
   {
@@ -2265,7 +2265,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     fixed: 2,
     x: 8400,
     y: 3550,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 12,
   },
   {
@@ -2364,7 +2364,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     fixed: 2,
     x: 4500,
     y: 6200,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 1,
   },
   {
@@ -2373,7 +2373,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     unit: 'J/mol',
     isShown: true,
     diagramName: 'Ea',
-    fixed: 2,
+    fixed: 1,
     x: 4500,
     y: 6350,
     scientificNotation: true,
@@ -2388,7 +2388,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     fixed: 2,
     x: 4500,
     y: 6350,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 3,
   },
   {
@@ -2400,7 +2400,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     fixed: 2,
     x: 4500,
     y: 6500,
-    scientificNotation: true,
+    scientificNotation: false,
     hasAdditionalCondition: 3,
   },
   {
@@ -2412,7 +2412,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     fixed: 2,
     x: 5500,
     y: 6200,
-    scientificNotation: true,
+    scientificNotation: false,
   },
   {
     name: 'Concentración de sólidos volátiles R102',
@@ -2434,7 +2434,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     fixed: 2,
     x: 5500,
     y: 6500,
-    scientificNotation: true,
+    scientificNotation: false,
   },
   {
     name: 'Concentración de sólidos totales R102',
@@ -2453,7 +2453,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     unit: 'gSV/L-dia',
     isShown: true,
     diagramName: 'OC',
-    fixed: 2,
+    fixed: 1,
     x: 5500,
     y: 6800,
     scientificNotation: true,
