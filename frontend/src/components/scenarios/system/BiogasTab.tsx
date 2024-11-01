@@ -165,7 +165,7 @@ const BiogasTab = (props: TabProps) => {
             </Grid>
           </Grid>
           <Grid item xs={12} md={12} xl={8}>
-            <h3>Parámetros turbina eólica</h3>
+            <h3>Parámetros reactores</h3>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6} xl={3}>
                 <CustomNumberField

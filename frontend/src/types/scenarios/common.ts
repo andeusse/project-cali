@@ -104,7 +104,7 @@ export enum SolarPanelModuleType {
 export enum SolarPanelModuleText {
   MonocrystallinePanel = 'Monocristalino',
   PolicrystallinePanel = 'Policristalino',
-  FlexPanel = 'Monocristalino flexible',
+  FlexPanel = 'Monocristalino película delgada',
   CadmiumTelluridePanel = 'Telururo de cadmio',
   Custom = 'Personalizado',
 }

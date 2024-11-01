@@ -59,7 +59,6 @@ import {
   Row,
 } from '@silevis/reactgrid';
 import { setSolarTable } from '../../utils/models/setSolar';
-import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 
 const Solar = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -609,7 +608,7 @@ const Solar = () => {
                     </Grid>
                     <Grid item xs={12} md={6} xl={3}>
                       <SolarPanel
-                        name="monocristalino flexible"
+                        name="monocristalino película delgada"
                         propertyName="flexPanel"
                         handleChange={handleChange}
                         panel={system.flexPanel}
