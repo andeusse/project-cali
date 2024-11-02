@@ -733,6 +733,58 @@ const Solar = () => {
                     </Grid>
                   </Grid>
                 )}
+                {(system.inputOperationMode === OperationModeType.Mode4 ||
+                  system.inputOperationMode === OperationModeType.Mode5) && (
+                  <Grid item xs={12} md={6} xl={3}>
+                    <Grid container spacing={2}>
+                      <>
+                        <Grid item xs={12} md={6} xl={6}>
+                          <h3>Inversor Autónomo</h3>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={12}
+                          xl={12}
+                          alignContent={'center'}
+                        >
+                          <CustomToggle
+                            name="offgridInverter.isConnected"
+                            value={system.offgridInverter.isConnected}
+                            handleChange={handleChange}
+                            trueString="Conectado"
+                            falseString="Desconectado"
+                            disabled={
+                              system.offgridInverter.isConnectedDisabled ||
+                              system.disableParameters
+                            }
+                          ></CustomToggle>
+                        </Grid>
+                        <Grid item xs={6} md={6} xl={6}>
+                          <CustomNumberField
+                            variable={system.offgridInverter.efficiency}
+                            name="offgridInverter.efficiency"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={6} md={6} xl={6}>
+                          <CustomNumberField
+                            variable={system.offgridInverter.nominalPower}
+                            name="offgridInverter.nominalPower"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                        <Grid item xs={6} md={6} xl={6}>
+                          <CustomNumberField
+                            variable={system.offgridInverter.minimumVoltage}
+                            name="offgridInverter.minimumVoltage"
+                            handleChange={handleChange}
+                          ></CustomNumberField>
+                        </Grid>
+                      </>
+                    </Grid>
+                  </Grid>
+                )}
                 {((system.inputOperationMode === OperationModeType.Mode1 &&
                   system.cadmiumTelluridePanel.isConnected) ||
                   system.inputOperationMode === OperationModeType.Mode2) && (
@@ -920,6 +972,8 @@ const Solar = () => {
                             OperationModeType.Mode2 ||
                           system.inputOperationMode ===
                             OperationModeType.Mode4 ||
+                          system.inputOperationMode ===
+                            OperationModeType.Mode5 ||
                           system.disableParameters
                         }
                       ></CustomToggle>
@@ -1110,6 +1164,37 @@ const Solar = () => {
                     </Grid>
                   </>
                 )}
+                {(system.inputOperationMode === OperationModeType.Mode4 ||
+                  system.inputOperationMode === OperationModeType.Mode5) &&
+                  system.offgridInverter.isConnected && (
+                    <>
+                      <Grid item xs={12} md={12} xl={12}>
+                        <h3>Parámetros carga CA</h3>
+                      </Grid>
+                      <Grid item xs={12} md={12} xl={12}>
+                        <ToggleArrayCustomNumberField
+                          variable={system.alternCurrentLoadPower}
+                          name="alternCurrentLoadPower"
+                          handleChange={handleChange}
+                          disabled={system.inputOfflineOperation}
+                          variableName="Potencia"
+                          arrayDisabled={!system.inputOfflineOperation}
+                          steps={system.steps.value}
+                        ></ToggleArrayCustomNumberField>
+                      </Grid>
+                      <Grid item xs={12} md={12} xl={12}>
+                        <ToggleArrayCustomNumberField
+                          variable={system.alternCurrentLoadPowerFactor}
+                          name="alternCurrentLoadPowerFactor"
+                          handleChange={handleChange}
+                          disabled={system.inputOfflineOperation}
+                          variableName="Factor de potencia"
+                          arrayDisabled={!system.inputOfflineOperation}
+                          steps={system.steps.value}
+                        ></ToggleArrayCustomNumberField>
+                      </Grid>
+                    </>
+                  )}
                 {((system.inputOperationMode === OperationModeType.Mode1 &&
                   system.cadmiumTelluridePanel.isConnected &&
                   system.offgridInverter.isConnected) ||
