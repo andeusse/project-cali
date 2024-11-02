@@ -27,7 +27,12 @@ const CustomTab = (props: Props) => {
             allowScrollButtonsMobile
           >
             {tabs.map((tab) => (
-              <Tab key={tab.title} label={tab.title} value={tab.title} />
+              <Tab
+                key={tab.title}
+                label={tab.title}
+                value={tab.title}
+                sx={{ fontSize: '18px', fontWeight: 1000 }}
+              />
             ))}
           </TabList>
         </Box>

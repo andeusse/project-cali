@@ -59,7 +59,12 @@ const ElectricalTabs = () => {
             allowScrollButtonsMobile
           >
             {electricalTabs.map((tab) => (
-              <Tab key={tab} label={tab} value={tab} />
+              <Tab
+                key={tab}
+                label={tab}
+                value={tab}
+                sx={{ fontSize: '16px', fontWeight: 1000 }}
+              />
             ))}
           </TabList>
         </Box>
