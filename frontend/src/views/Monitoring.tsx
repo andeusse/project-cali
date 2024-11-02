@@ -41,7 +41,12 @@ const ElectricalTabs = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
+    <Box
+      sx={{
+        width: '100%',
+        typography: 'body1',
+      }}
+    >
       <Button
         target="_blank"
         href={Config.getInstance().params.webServerDmg9000Url}
