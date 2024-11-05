@@ -151,7 +151,7 @@ const NavigationBar = (props: Props) => {
                 <LinkButton
                   key={page.text}
                   startIcon={page.icon}
-                  sx={{ marginRight: 2, color: 'white' }}
+                  sx={{ marginRight: 2, color: 'white', fontSize: '18px' }}
                   to={`${page.to}`}
                 >
                   {page.text}
