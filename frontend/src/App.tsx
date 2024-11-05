@@ -12,6 +12,7 @@ import axios from 'axios';
 import { setIsLoading } from './redux/slices/isLoadingSlice';
 
 const LABEL_SIZE = '20px';
+const TAB_SIZE = '18px';
 const PRIMARY_COLOR = '#002D71';
 const SECUNDARY_COLOR = '#f0f4fa';
 
@@ -73,6 +74,13 @@ function App() {
                 },
               },
             },
+            MuiTab: {
+              defaultProps: {
+                sx: {
+                  fontSize: TAB_SIZE,
+                },
+              },
+            },
           },
         })
       : createTheme({
@@ -94,6 +102,13 @@ function App() {
               defaultProps: {
                 sx: {
                   fontSize: LABEL_SIZE,
+                },
+              },
+            },
+            MuiTab: {
+              defaultProps: {
+                sx: {
+                  fontSize: TAB_SIZE,
                 },
               },
             },
