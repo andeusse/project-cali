@@ -255,7 +255,7 @@ class TwinPVWF:
             self.V_PV = V_PV
         
         if V_WT == 0.0:
-            self.V_WT = 12.0
+            self.V_WT = 18.0
         else:
             self.V_WT = V_WT
         
