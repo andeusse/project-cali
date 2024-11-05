@@ -78,6 +78,7 @@ function App() {
               defaultProps: {
                 sx: {
                   fontSize: TAB_SIZE,
+                  fontWeight: 1000,
                 },
               },
             },
@@ -109,6 +110,7 @@ function App() {
               defaultProps: {
                 sx: {
                   fontSize: TAB_SIZE,
+                  fontWeight: 1000,
                 },
               },
             },
