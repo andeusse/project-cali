@@ -44,7 +44,6 @@ const ElectricalTabs = () => {
     <Box
       sx={{
         width: '100%',
-        typography: 'body1',
       }}
     >
       <Button
