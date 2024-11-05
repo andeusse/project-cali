@@ -24,6 +24,8 @@ import {
   MODE_2_HYBRID,
   MODE_4,
   MODE_5,
+  MODE_4_INVERTER,
+  MODE_5_INVERTER,
 } from '../../types/models/solar';
 import { setFormState } from '../../utils/setFormState';
 import Iframe from 'react-iframe';
@@ -296,15 +298,31 @@ const Solar = () => {
       system.hybridInverter.isConnected
     ) {
       setDiagramVariables(MODE_2_HYBRID);
-    } else if (system.inputOperationMode === OperationModeType.Mode4) {
+    } else if (
+      system.inputOperationMode === OperationModeType.Mode4 &&
+      !system.offgridInverter.isConnected
+    ) {
       setDiagramVariables(MODE_4);
-    } else if (system.inputOperationMode === OperationModeType.Mode5) {
+    } else if (
+      system.inputOperationMode === OperationModeType.Mode4 &&
+      system.offgridInverter.isConnected
+    ) {
+      setDiagramVariables(MODE_4_INVERTER);
+    } else if (system.inputOperationMode === OperationModeType.Mode5 &&
+      !system.offgridInverter.isConnected
+    ) {
       setDiagramVariables(MODE_5);
+    } else if (
+      system.inputOperationMode === OperationModeType.Mode5 &&
+      system.offgridInverter.isConnected
+    ) {
+      setDiagramVariables(MODE_5_INVERTER);
     }
   }, [
     system.cadmiumTelluridePanel.isConnected,
     system.hybridInverter.isConnected,
     system.inputOperationMode,
+    system.offgridInverter.isConnected,
   ]);
 
   useEffect(() => {
