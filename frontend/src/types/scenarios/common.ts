@@ -31,9 +31,9 @@ export type SetSystemArrayType<T> = {
 };
 
 export enum SmartScenarioType {
-  smartCity,
-  smartFactory,
   smartHome,
+  smartFactory,
+  smartCity,
 }
 
 export enum SmartSystemType {

@@ -11,16 +11,16 @@ type Props = {};
 const Scenarios = (props: Props) => {
   const tabs: TabType[] = [
     {
-      title: 'Smart City',
-      children: <SmartCity></SmartCity>,
+      title: 'Smart Home',
+      children: <SmartHome></SmartHome>,
     },
     {
       title: 'Smart Factory',
       children: <SmartFactory></SmartFactory>,
     },
     {
-      title: 'Smart Home',
-      children: <SmartHome></SmartHome>,
+      title: 'Smart City',
+      children: <SmartCity></SmartCity>,
     },
   ];
   return (

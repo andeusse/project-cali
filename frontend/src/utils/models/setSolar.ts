@@ -116,7 +116,7 @@ export const setSolar = (
         newState.cadmiumTelluridePanel.isConnected = false;
 
         newState.isBattery2 = true;
-
+        
         newState.hybridInverter.isConnected = false;
 
         newState.controller.chargeVoltageBulk.value = 27.2;
@@ -125,7 +125,7 @@ export const setSolar = (
         break;
       case OperationModeType.Mode5:
         newState.monocrystallinePanel.isConnected = true;
-        newState.policrystallinePanel.isConnected = false;
+        newState.policrystallinePanel.isConnected = true;
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
 
@@ -137,9 +137,9 @@ export const setSolar = (
 
         newState.hybridInverter.isConnected = false;
 
-        newState.controller.chargeVoltageBulk.value = 13.6;
-        newState.controller.chargeVoltageFloat.value = 13.9;
-        newState.controller.chargingMinimumVoltage.value = 11.5;
+        newState.controller.chargeVoltageBulk.value = 27.2;
+        newState.controller.chargeVoltageFloat.value = 27.8;
+        newState.controller.chargingMinimumVoltage.value = 23;
         break;
     }
   }
