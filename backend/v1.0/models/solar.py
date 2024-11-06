@@ -61,7 +61,7 @@ class Solar(Resource):
       turbineState = False
 
     batteries = 1 + int(data["isBattery2"])
-    if data["inputOperationMode"] == 'Mode2' or data["inputOperationMode"] == 'Mode4' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState):
+    if (data["inputOperationMode"] == 'Mode1' and cdteModuleState) or data["inputOperationMode"] == 'Mode2' or data["inputOperationMode"] == 'Mode4' or data["inputOperationMode"] == 'Mode5':
       isParallel = False
     else:
       isParallel = True
@@ -120,8 +120,8 @@ class Solar(Resource):
       inputDirectCurrentPower = 6.0 if data["directCurrentLoadConnected"] else 0.0
     windDensity = 0.0 if not data["windDensity"]["value"] else data["windDensity"]["value"]
 
-    # if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState) or data["inputOperationMode"] == 'Mode4' or data["inputOperationMode"] == 'Mode5') and inverterState:
-    if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState)) and inverterState:
+    if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState) or data["inputOperationMode"] == 'Mode4' or data["inputOperationMode"] == 'Mode5') and inverterState:
+    # if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState)) and inverterState:
       if data["alternCurrentLoadPower"]["arrayEnabled"]:
         alternCurrentLoadPowerArray = np.repeat(np.array(data["alternCurrentLoadPowerArray"]),repeats)
         if iteration <= len(alternCurrentLoadPowerArray):
