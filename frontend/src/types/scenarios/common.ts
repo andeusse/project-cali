@@ -314,7 +314,7 @@ export const COMMON_SOLAR_SYSTEM: SolarSystem = {
   name: 'Sistema solar 1',
   modulesNumber: {
     disabled: false,
-    value: 100,
+    value: 30,
     tooltip: 'Número de módulos solares',
     unit: '',
     variableString: 'Módulos solares',
@@ -577,7 +577,7 @@ export const COMMON_LOAD_SYSTEM: LoadSystem = {
   informationMode: ScenariosLoadInputInformationType.Commercial,
   power: {
     disabled: false,
-    value: 100,
+    value: 20,
     tooltip: 'Potencia de demanda',
     unit: 'kW',
     variableString: 'Potencia de demanda',
@@ -587,7 +587,7 @@ export const COMMON_LOAD_SYSTEM: LoadSystem = {
   },
   peakPower: {
     disabled: false,
-    value: 100,
+    value: 20,
     tooltip: 'Potencia de demanda pico',
     unit: 'kW',
     variableString: 'Potencia de demanda pico',

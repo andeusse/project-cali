@@ -12,9 +12,10 @@ import {
   Box,
   Tab,
   Button,
+  Alert,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
   SMART_HOME,
@@ -80,7 +81,68 @@ const SmartHome = () => {
   const [data, setData] = useState<SmartSystemOutput | undefined>(undefined);
   const [error, setError] = useState('');
 
+  const [constraints, setConstraints] = useState<string[]>([]);
+
   const dispatch = useAppDispatch();
+
+  const calculateConstraints = useCallback(
+    (newSystem: SmartSystemParameters): string[] => {
+      const constraintsTemp: string[] = [];
+      let totalSolarPower = newSystem.solarSystems.reduce(
+        (a, s) => a + (s.modulePower.value * s.modulesNumber.value) / 1000,
+        0
+      );
+      const totalSolarAreaRelation = 0.2 * newSystem.houseArea.value;
+      if (!(totalSolarPower <= totalSolarAreaRelation)) {
+        constraintsTemp.push(
+          `La potencia instalada total de generación fotovoltaica (${totalSolarPower} kW) no puede 
+          superar el límite de capacidad para el área de la casa especificada (${totalSolarAreaRelation} kW)`
+        );
+      }
+
+      let totalBatteryCapacity = newSystem.batterySystems.reduce(
+        (a, s) => a + s.storageCapacity.value,
+        0
+      );
+      const totalBatteryAreaRelation = 0.5 * newSystem.houseArea.value;
+      if (!(totalBatteryCapacity <= totalBatteryAreaRelation)) {
+        constraintsTemp.push(
+          `La capacidad de almacenamiento total de los sistemas de baterías (${totalBatteryCapacity} kWh) no puede 
+          superar el límite de capacidad para el área de la casa especificada (${totalBatteryAreaRelation} kWh)`
+        );
+      }
+      newSystem.batterySystems.forEach((s) => {
+        const storageRelation = 2 * s.storageCapacity.value;
+        if (!(s.chargePower.value <= storageRelation)) {
+          constraintsTemp.push(
+            `La potencia de carga del sistema de batería ${s.name} (${s.chargePower.value} kW) no puede 
+            superar el límite para la capacidad de almacenamiento especificada (${storageRelation} kW)`
+          );
+        }
+        if (!(s.dischargePower.value <= storageRelation)) {
+          constraintsTemp.push(
+            `La potencia de descarga del sistema de batería ${s.name} (${s.dischargePower.value} kW) no puede 
+            superar el límite para la capacidad de almacenamiento especificada (${storageRelation} kW)`
+          );
+        }
+      });
+
+      let totalLoadPower = newSystem.loadSystems.reduce(
+        (a, s) => a + s.power.value,
+        0
+      );
+      const totalLoadAreaRelation = 0.2 * newSystem.houseArea.value;
+      if (!(totalLoadPower <= totalLoadAreaRelation)) {
+        constraintsTemp.push(
+          `La potencia de la carga instalada total (${totalLoadPower} kW) no puede 
+          superar el límite de capacidad para el área de la casa especificada (${totalLoadAreaRelation} kW)`
+        );
+      }
+
+      return constraintsTemp;
+    },
+    []
+  );
 
   const handleChange = (e: any, variableName?: string) => {
     chooseTab(e.target.name, parseInt(e.target.value));
@@ -90,7 +152,10 @@ const SmartHome = () => {
       variableName
     );
     if (newState) {
-      setSystem(newState as SmartSystemParameters);
+      setSystem((_) => {
+        setConstraints(calculateConstraints(newState as SmartSystemParameters));
+        return newState as SmartSystemParameters;
+      });
       setSortableList((newState as SmartSystemParameters).priorityList);
     }
   };
@@ -109,7 +174,10 @@ const SmartHome = () => {
     if (type === SmartSystemType.Load) {
       newState = setLoadSystemById(e, system, id);
     }
-    setSystem(newState as SmartSystemParameters);
+    setSystem((_) => {
+      setConstraints(calculateConstraints(newState as SmartSystemParameters));
+      return newState as SmartSystemParameters;
+    });
     setSortableList((newState as SmartSystemParameters).priorityList);
   };
 
@@ -488,6 +556,13 @@ const SmartHome = () => {
             />
           </Button>
         </Grid>
+        <Grid item xs={12} md={12} xl={12}>
+          {constraints.map((c) => (
+            <Alert sx={{ marginTop: '10px' }} severity="error" key={c}>
+              {c}
+            </Alert>
+          ))}
+        </Grid>
         <Grid
           item
           xs={12}
@@ -501,6 +576,7 @@ const SmartHome = () => {
             onClick={handleQueryScenario}
             startIcon={<PlayArrowIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={constraints.length !== 0}
           >
             Simular
           </Button>

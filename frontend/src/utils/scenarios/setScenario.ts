@@ -283,5 +283,6 @@ export const setScenario = (
       value: value,
     },
   };
+
   return newState;
 };
