@@ -38,6 +38,16 @@ class BMPModelOffline:
         self.V_storage = 0
         self.Vf2 = Vf           #variable to calculate the new volume when the gas is release
         self.vol_actual = 0     #volume before the first dischar of digestate
+        
+        #pool measurement
+        self.h_min = 35      #mm
+        self.h_max = 135     #mm
+        self.Apool = 60*50   #mm2
+        self.Vpool_min = (self.Apool * self.h_min)/1000    #mL   
+        self.Vpool_max = (self.Apool * self.h_max)/1000    #mL 
+        self.hpool_ini = self.h_min            #mm
+        self.Vpool_ini = self.Vpool_min        #mm
+        self.Vbiogas_actual = 0
 
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
@@ -328,6 +338,7 @@ class BMPModelOffline:
         self.K3 = K3
         self.T = T
         self.pH = pH
+        self.model = model
         def pH_effect (parameter, model):
             if model == "Arrhenius":
                 variable = np.exp(-((float(parameter)-7)**2)/(2*5**2))
@@ -394,7 +405,7 @@ class BMPModelOffline:
             
             self.x = (self.Csus_ini_SV - self.Csus_res)/self.Csus_ini_SV
             self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
-
+            
         else:
 
             if self.counterReactor == 0:
@@ -414,9 +425,9 @@ class BMPModelOffline:
             self.mol_CO2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CO2)
             self.mol_H2S = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_H2S)
             self.mol_NH3 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_NH3)
-            self.mol_O2 = self.mol_O2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.1) 
-            self.mol_H2 = self.mol_H2 + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
-            self.mol_H2O = self.mol_H2O + (float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
+            self.mol_O2 = self.mol_O2 + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.1) 
+            self.mol_H2 = self.mol_H2 + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
+            self.mol_H2O = self.mol_H2O + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
             self.biogas_mol_dry = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2
             self.biogas_mol_wet = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2 + self.mol_H2O
         
@@ -481,10 +492,53 @@ class BMPModelOffline:
         self.BiogasEnergy = self.Thermo.LHV(molCH4=self.mol_CH4, molCO2=self.mol_CO2, molH2S=self.mol_H2S, molH2 = self.mol_H2, molO2=self.mol_O2)
         self.Vmolar_biogas = self.Thermo.Hgases(xCH4=self.x_CH4/100, xCO2=self.x_CO2/100, xH2O=0, xO2=self.x_O2/100, xN2 = 0, xH2S = self.x_H2S/1000000, xH2 = self.x_H2/1000000, P = 0, Patm=100, T=273.15, xNH3=0)[2]
         self.LHV = self.BiogasEnergy[0]    #J/mol
-        self.LHV = (self.LHV/3600)/self.Vmolar_biogas*1000    #Wh/Nm3
+        try:
+            self.LHV = (self.LHV/3600)/self.Vmolar_biogas*1000    #Wh/Nm3
+        except ZeroDivisionError:
+            self.LHV = 0
         #self.Vmolar_biogas = self.Thermo.Hgases()
         self.TotalBiogasEnergy = self.BiogasEnergy[1]/3600 * 1000   #mWh
-    
+        
+        if self.model =="Gompertz":
+            try:
+                #self.PBM = self.Vbiogas/(((self.Csus_ini_SV - self.Csus_res))*self.MW_sustrato*(self.Vrxn/1000))
+                self.PBM = self.Vbiogas/(((self.Csus_ini_SV))*self.MW_sustrato*(self.Vrxn/1000))
+            except ZeroDivisionError:
+                self.PBM = 0
+        else:
+            try:
+                #self.PBM = self.Vbiogas/(((self.Csus_ini_SV - self.Csus_ini))*self.MW_sustrato*(self.Vrxn/1000))
+                self.PBM = self.Vbiogas/(((self.Csus_ini_SV))*self.MW_sustrato*(self.Vrxn/1000))
+            except ZeroDivisionError:
+                self.PBM = 0
+            
+    def poolSensor (self):
+        
+        self.Tpool = 25
+        self.Ppool = 1000*9.8*((self.hpool_ini-35))/1000    #Pa
+        if self.hpool_ini > self.h_max:
+            self.Vpool_ini = self.Vpool_min
+            self.vol_actual = self.TotalVolFeed
+            self.Vbiogas_actual = self.Vbiogas
+            
+        self.Vbiogasi = ((self.Vbiogas-self.Vbiogas_actual)*(self.Tpool+273.15)*(self.Ppool+100000))/(273.15*100000)  #mL
+        self.Vinj = self.TotalVolFeed - self.vol_actual
+        
+        self.Vpool_ini = self.Vpool_ini + (self.Vinj + self.Vbiogasi)    #mL
+        self.Vpool_ini_mm = self.Vpool_ini * 1000
+        
+        #Altura
+        self.hpool_ini = self.Vpool_ini_mm/self.Apool
+        self.hpool = self.hpool_ini - 35
+        
+        
+        
+          
+        
+
+        
+        
+        
     
 
 
@@ -514,17 +568,5 @@ class BMPModelOffline:
 
 
           
-        
-#test class
-# BMP = BMPModelOffline (Vrxn = 750, Vf = 750, tp = 30)
-# BMP.MixtureCalculation(substratesNumber = 4, MixtureRule = "Peso", WaterFraction = 60, WaterVolume = 400, WaterWeight = 1000, 
-#                        Fraction1 = 10, Volume1 = 100, Weight1 = 150, TS1 = 30, VS1 = 20, rho1 = 700, Cc1 = 43, Hc1 = 5, Oc1 = 30, Nc1 = 2, Sc1 = 0.21,
-#                        Fraction2 = 10, Volume2 = 100, Weight2 = 100, TS2 = 20, VS2 = 15, rho2 = 600, Cc2 = 40, Hc2 = 6, Oc2 = 29, Nc2 = 2, Sc2 = 1,
-#                        Fraction3 = 10, Volume3 = 100, Weight3 = 100, TS3 = 30, VS3 = 15, rho3 = 500, Cc3 = 40, Hc3 = 6, Oc3 = 29, Nc3 = 2, Sc3 = 1,
-#                        Fraction4 = 10, Volume4 = 100, Weight4 = 200, TS4 = 10, VS4 = 8, rho4 = 500, Cc4 = 40, Hc4 = 6, Oc4 = 29, Nc4 = 2, Sc4 = 1)
-
-
-
-
         
 

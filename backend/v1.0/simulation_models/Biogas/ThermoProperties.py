@@ -217,7 +217,10 @@ class ThermoProperties:
         self.Hbiogasmolar = self.xCH4*self.HCH4 + self.xCO2*self.HCO2 + self.xN2*self.HN2 + \
             self.xO2*self.HO2 + self.xH2O*self.HH2O + self.xH2S*self.HH2S + self.xH2*self.HH2 + self.xNH3*self.HNH3 # [kJ/kmol]
         
-        self.Hbiogasmas = self.Hbiogasmolar/self.MWgas  # [kJ/kg]
+        try:
+            self.Hbiogasmas = self.Hbiogasmolar/self.MWgas  # [kJ/kg]
+        except ZeroDivisionError:
+            self.Hbiogasmas = 0
         
         self.Volumenespbio = self.xCH4*self.vCH4 + self.xCO2*self.vCO2 + self.xN2*self.vN2 + \
             self.xO2*self.vO2 + self.xH2O*self.vH2O + self.xH2S*self.vH2S + self.xH2*self.vH2 + self.xNH3*self.vNH3  # [m^3/kmol]
