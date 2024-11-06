@@ -595,7 +595,7 @@ export const COMMON_LOAD_SYSTEM: LoadSystem = {
     max: 1000000,
     step: 0.1,
   },
-  powerArray: Array(24).fill(100),
+  powerArray: Array(24).fill(20),
 };
 
 export const COMMON_SCENARIO: SmartSystemParameters = {

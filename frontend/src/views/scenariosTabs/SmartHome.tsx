@@ -15,9 +15,11 @@ import {
   Alert,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import {
+  ScenariosCommonInputInformationType,
+  ScenariosLoadInputInformationType,
   SMART_HOME,
   SmartSystemOutput,
   SmartSystemParameters,
@@ -100,10 +102,12 @@ const SmartHome = () => {
         );
       }
 
-      let totalBatteryCapacity = newSystem.batterySystems.reduce(
-        (a, s) => a + s.storageCapacity.value,
-        0
-      );
+      let totalBatteryCapacity = newSystem.batterySystems.reduce((a, s) => {
+        if (s.informationMode === ScenariosCommonInputInformationType.Fixed) {
+          a += s.storageCapacity.value;
+        }
+        return a;
+      }, 0);
       const totalBatteryAreaRelation = 0.5 * newSystem.houseArea.value;
       if (!(totalBatteryCapacity <= totalBatteryAreaRelation)) {
         constraintsTemp.push(
@@ -113,24 +117,56 @@ const SmartHome = () => {
       }
       newSystem.batterySystems.forEach((s) => {
         const storageRelation = 2 * s.storageCapacity.value;
-        if (!(s.chargePower.value <= storageRelation)) {
-          constraintsTemp.push(
-            `La potencia de carga del sistema de batería ${s.name} (${s.chargePower.value} kW) no puede 
-            superar el límite para la capacidad de almacenamiento especificada (${storageRelation} kW)`
-          );
-        }
-        if (!(s.dischargePower.value <= storageRelation)) {
-          constraintsTemp.push(
-            `La potencia de descarga del sistema de batería ${s.name} (${s.dischargePower.value} kW) no puede 
-            superar el límite para la capacidad de almacenamiento especificada (${storageRelation} kW)`
-          );
+        if (s.informationMode === ScenariosCommonInputInformationType.Fixed) {
+          if (!(s.chargePower.value <= storageRelation)) {
+            constraintsTemp.push(
+              `La potencia de carga del sistema de batería ${s.name} (${s.chargePower.value} kW) no puede 
+              superar el límite para la capacidad de almacenamiento especificada (${storageRelation} kW)`
+            );
+          }
+          if (!(s.dischargePower.value <= storageRelation)) {
+            constraintsTemp.push(
+              `La potencia de descarga del sistema de batería ${s.name} (${s.dischargePower.value} kW) no puede 
+              superar el límite para la capacidad de almacenamiento especificada (${storageRelation} kW)`
+            );
+          }
+        } else if (
+          s.informationMode === ScenariosCommonInputInformationType.Custom
+        ) {
+          s.chargePowerArray.forEach((value, index) => {
+            if (!(value <= storageRelation)) {
+              constraintsTemp.push(
+                `La potencia de carga del sistema de batería ${
+                  s.name
+                } (${value} kW) en el periódo P${index + 1} no puede 
+                superar el límite de capacidad para el área de la casa especificada (${storageRelation} kW)`
+              );
+            }
+          });
+          s.dischargePowerArray.forEach((value, index) => {
+            if (!(value <= storageRelation)) {
+              constraintsTemp.push(
+                `La potencia de descarga del sistema de batería ${
+                  s.name
+                } (${value} kW) en el periódo P${index + 1} no puede 
+                superar el límite de capacidad para el área de la casa especificada (${storageRelation} kW)`
+              );
+            }
+          });
         }
       });
 
-      let totalLoadPower = newSystem.loadSystems.reduce(
-        (a, s) => a + s.power.value,
-        0
-      );
+      let totalLoadPower = newSystem.loadSystems.reduce((a, s) => {
+        if (s.informationMode === ScenariosLoadInputInformationType.Fixed) {
+          a += s.power.value;
+        }
+        if (
+          s.informationMode === ScenariosLoadInputInformationType.Residential
+        ) {
+          a += s.peakPower.value;
+        }
+        return a;
+      }, 0);
       const totalLoadAreaRelation = 0.2 * newSystem.houseArea.value;
       if (!(totalLoadPower <= totalLoadAreaRelation)) {
         constraintsTemp.push(
@@ -138,6 +174,20 @@ const SmartHome = () => {
           superar el límite de capacidad para el área de la casa especificada (${totalLoadAreaRelation} kW)`
         );
       }
+      newSystem.loadSystems.forEach((s) => {
+        if (s.informationMode === ScenariosLoadInputInformationType.Custom) {
+          s.powerArray.forEach((value, index) => {
+            if (!(value <= totalLoadAreaRelation)) {
+              constraintsTemp.push(
+                `La potencia instalada total (${value} kW) de la carga ${
+                  s.name
+                } en el periódo P${index + 1} no puede 
+                superar el límite de capacidad para el área de la casa especificada (${totalLoadAreaRelation} kW)`
+              );
+            }
+          });
+        }
+      });
 
       return constraintsTemp;
     },
@@ -196,7 +246,10 @@ const SmartHome = () => {
     if (type === SmartSystemType.Load) {
       newState = setLoadSystemArraysById({ e, oldState: system, id });
     }
-    setSystem(newState as SmartSystemParameters);
+    setSystem((_) => {
+      setConstraints(calculateConstraints(newState as SmartSystemParameters));
+      return newState as SmartSystemParameters;
+    });
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {

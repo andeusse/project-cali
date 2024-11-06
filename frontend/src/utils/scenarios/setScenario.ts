@@ -111,7 +111,7 @@ export const setScenario = (
       s.windSpeedArray = Array(value ? value : 1).fill(s.ratedWindSpeed.value);
     });
     newState.loadSystems.forEach((s) => {
-      s.powerArray = Array(value ? value : 1).fill(100);
+      s.powerArray = Array(value ? value : 1).fill(20);
     });
   }
   if (name.includes('SystemNumber')) {
@@ -267,7 +267,7 @@ export const setScenario = (
           {
             ...loadSystem,
             name: `Carga ${newState.loadSystemNumber.value + 1}`,
-            powerArray: Array(newState.steps.value).fill(100),
+            powerArray: Array(newState.steps.value).fill(20),
             id: uuidv4(),
           },
         ];
