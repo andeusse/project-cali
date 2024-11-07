@@ -233,8 +233,8 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Flujo Agua Entrada',
     fixed: 2,
-    x: 4300,
-    y: 1210,
+    x: 4250,
+    y: 1400,
   },
   {
     name: 'Temperatura Agua superior',
@@ -243,8 +243,8 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temp. Agua Entrada',
     fixed: 2,
-    x: 3700,
-    y: 710,
+    x: 4250,
+    y: 800,
   },
   {
     name: 'Temperatura Aire superior',
@@ -253,7 +253,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temp. Aire Salida',
     fixed: 2,
-    x: 1500,
+    x: 1480,
     y: 310,
   },
   {
@@ -263,7 +263,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Hum. Aire Salida',
     fixed: 2,
-    x: 3700,
+    x: 3600,
     y: 310,
   },
   {
@@ -273,7 +273,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'ΔTemp. Aire',
     fixed: 2,
-    x: 1500,
+    x: 1480,
     y: 460,
   },
   {
@@ -303,7 +303,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Flujo Aire Entrada',
     fixed: 1,
-    x: 1410,
+    x: 1390,
     y: 3610,
   },
   {
@@ -313,7 +313,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Temp. Aire Entrada',
     fixed: 2,
-    x: 1400,
+    x: 1390,
     y: 3010,
   },
   {
@@ -323,7 +323,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Hum. Aire Entrada',
     fixed: 2,
-    x: 1400,
+    x: 1390,
     y: 3160,
   },
   {
@@ -333,7 +333,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia aplicada',
     fixed: 2,
-    x: 4300,
+    x: 4250,
     y: 4100,
   },
   {
@@ -343,7 +343,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Energía aplicada',
     fixed: 2,
-    x: 4300,
+    x: 4250,
     y: 4240,
   },
   {

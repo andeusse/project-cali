@@ -103,14 +103,6 @@ const Monitoring = (props: Props) => {
       ),
     },
     {
-      title: 'Planta de Biogás',
-      children: (
-        <IframeFull
-          url={Config.getInstance().params.grafanaUrls[2]}
-        ></IframeFull>
-      ),
-    },
-    {
       title: 'Celda de Hidrógeno',
       children: (
         <IframeFull
@@ -119,7 +111,7 @@ const Monitoring = (props: Props) => {
       ),
     },
     {
-      title: 'Torre de refrigeración',
+      title: 'Torre de Enfriamiento',
       children: (
         <IframeFull
           url={Config.getInstance().params.grafanaUrls[4]}
@@ -127,13 +119,21 @@ const Monitoring = (props: Props) => {
       ),
     },
     {
-      title: 'Potencial Bioquímico (Metano)',
+      title: 'Planta de Biogás',
       children: (
         <IframeFull
-          url={Config.getInstance().params.grafanaUrls[5]}
+          url={Config.getInstance().params.grafanaUrls[2]}
         ></IframeFull>
       ),
     },
+    // {
+    //   title: 'Potencial Bioquímico (Metano)',
+    //   children: (
+    //     <IframeFull
+    //       url={Config.getInstance().params.grafanaUrls[5]}
+    //     ></IframeFull>
+    //   ),
+    // },
     {
       title: 'Tablero Eléctrico',
       children: <ElectricalTabs></ElectricalTabs>,

@@ -55,11 +55,11 @@ const pages: PageType[] = [
     to: '/scenarios',
     icon: <StackedLineChartIcon></StackedLineChartIcon>,
   },
-  {
-    text: 'Acerca de',
-    to: '/about',
-    icon: <InfoIcon></InfoIcon>,
-  },
+  // {
+  //   text: 'Acerca de',
+  //   to: '/about',
+  //   icon: <InfoIcon></InfoIcon>,
+  // },
 ];
 
 const NavigationBar = (props: Props) => {

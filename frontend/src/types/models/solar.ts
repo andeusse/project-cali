@@ -373,6 +373,7 @@ export type SolarWindOutput = {
   inputAlternCurrentLoadPowerFactor?: number;
   inputDirectCurrentLoadPower?: number;
   chargeCycleInitialSOC?: number;
+  inverterEfficiency?: number;
 };
 
 export type SolarWindOutputHistoric = CommonChartType & {
@@ -596,7 +597,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 1650,
-    y: 180,
+    y: 420,
   },
   {
     name: 'Potencia batería',
@@ -606,7 +607,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1650,
-    y: 260,
+    y: 340,
   },
   {
     name: 'Voltaje baterías',
@@ -616,7 +617,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 1650,
-    y: 340,
+    y: 180,
   },
   {
     name: 'Corriente baterías',
@@ -626,7 +627,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1650,
-    y: 420,
+    y: 260,
   },
   {
     name: 'Estado batería',
@@ -690,7 +691,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2260,
-    y: 1450,
+    y: 1610,
   },
   {
     name: 'Voltaje corriente directa',
@@ -700,7 +701,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 2260,
-    y: 1530,
+    y: 1450,
   },
   {
     name: 'Corriente controlador',
@@ -710,7 +711,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2260,
-    y: 1610,
+    y: 1530,
   },
   {
     name: 'Eficiencia controlador',
@@ -730,7 +731,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2220,
-    y: 1880,
+    y: 2040,
   },
   {
     name: 'Voltaje carga CD',
@@ -740,7 +741,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 2220,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Corriente carga CD',
@@ -750,7 +751,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2220,
-    y: 2040,
+    y: 1960,
   },
   {
     name: 'Potencia aparente inversor',
@@ -760,7 +761,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'P. aparente',
     fixed: 1,
     x: 3500,
-    y: 1020,
+    y: 1260,
   },
   {
     name: 'Potencia activa inversor',
@@ -770,7 +771,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'P. activa',
     fixed: 1,
     x: 3500,
-    y: 1100,
+    y: 1180,
   },
   {
     name: 'Potencia reactiva inversor',
@@ -780,7 +781,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'P. reactiva',
     fixed: 1,
     x: 3500,
-    y: 1180,
+    y: 1340,
   },
   {
     name: 'Voltaje inversor',
@@ -790,7 +791,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 3500,
-    y: 1260,
+    y: 1020,
   },
   {
     name: 'Corriente inversor',
@@ -800,27 +801,27 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 3500,
-    y: 1340,
+    y: 1100,
   },
   {
     name: 'Potencia entrada inversor',
     variable: 'inverterInputPower',
     unit: 'W',
     isShown: true,
-    diagramName: 'P. entrada',
+    diagramName: 'Potencia In',
     fixed: 1,
     x: 3500,
-    y: 540,
+    y: 620,
   },
   {
     name: 'Corriente entrada inversor',
     variable: 'inverterInputCurrent',
     unit: 'Acd',
     isShown: true,
-    diagramName: 'I. entrada',
+    diagramName: 'Corriente In',
     fixed: 1,
     x: 3500,
-    y: 620,
+    y: 540,
   },
   {
     name: 'Estado inversor',
@@ -830,7 +831,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Estado',
     fixed: 0,
     x: 3500,
-    y: 700,
+    y: 780,
   },
   {
     name: 'Eficiencia inversor',
@@ -840,7 +841,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Eficiencia',
     fixed: 1,
     x: 3500,
-    y: 780,
+    y: 700,
   },
   {
     name: 'Potencia paneles solares',
@@ -850,7 +851,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 460,
-    y: 2080,
+    y: 2240,
   },
   {
     name: 'Voltaje paneles solares',
@@ -860,7 +861,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 460,
-    y: 2160,
+    y: 2080,
   },
   {
     name: 'Corriente paneles solares',
@@ -870,7 +871,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 460,
-    y: 2240,
+    y: 2160,
   },
 ];
 
@@ -883,7 +884,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 1650,
-    y: 180,
+    y: 420,
   },
   {
     name: 'Potencia batería',
@@ -893,7 +894,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1650,
-    y: 260,
+    y: 340,
   },
   {
     name: 'Voltaje baterías',
@@ -903,7 +904,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 1650,
-    y: 340,
+    y: 180,
   },
   {
     name: 'Corriente baterías',
@@ -913,7 +914,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1650,
-    y: 420,
+    y: 260,
   },
   {
     name: 'Estado batería',
@@ -977,7 +978,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2260,
-    y: 1450,
+    y: 1610,
   },
   {
     name: 'Voltaje corriente directa',
@@ -987,7 +988,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 2260,
-    y: 1530,
+    y: 1450,
   },
   {
     name: 'Corriente controlador',
@@ -997,7 +998,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2260,
-    y: 1610,
+    y: 1530,
   },
   {
     name: 'Eficiencia controlador',
@@ -1017,7 +1018,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2220,
-    y: 1880,
+    y: 2040,
   },
   {
     name: 'Voltaje carga CD',
@@ -1027,7 +1028,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 2220,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Corriente carga CD',
@@ -1037,7 +1038,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2220,
-    y: 2040,
+    y: 1960,
   },
   {
     name: 'Potencia paneles solares',
@@ -1047,7 +1048,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 460,
-    y: 2080,
+    y: 2240,
   },
   {
     name: 'Voltaje paneles solares',
@@ -1057,7 +1058,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 460,
-    y: 2160,
+    y: 2080,
   },
   {
     name: 'Corriente paneles solares',
@@ -1067,7 +1068,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 460,
-    y: 2240,
+    y: 2160,
   },
 ];
 
@@ -1100,7 +1101,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 3050,
-    y: 1820,
+    y: 2060,
   },
   {
     name: 'Potencia batería',
@@ -1110,7 +1111,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 3050,
-    y: 1900,
+    y: 1980,
   },
   {
     name: 'Voltaje baterías',
@@ -1120,7 +1121,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 3050,
-    y: 1980,
+    y: 1820,
   },
   {
     name: 'Corriente baterías',
@@ -1130,7 +1131,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 3050,
-    y: 2060,
+    y: 1900,
   },
   {
     name: 'Estado batería',
@@ -1149,8 +1150,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. mono',
     fixed: 1,
-    x: 200,
-    y: 1020,
+    x: 900,
+    y: 1100,
     hasAdditionalCondition: 1,
   },
   {
@@ -1160,8 +1161,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. poli',
     fixed: 1,
-    x: 200,
-    y: 1100,
+    x: 900,
+    y: 1180,
     hasAdditionalCondition: 2,
   },
   {
@@ -1171,8 +1172,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. película',
     fixed: 1,
-    x: 200,
-    y: 1180,
+    x: 900,
+    y: 1260,
     hasAdditionalCondition: 3,
   },
   {
@@ -1182,8 +1183,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'T. Cadmio',
     fixed: 1,
-    x: 200,
-    y: 1260,
+    x: 900,
+    y: 1340,
     hasAdditionalCondition: 4,
   },
   {
@@ -1194,7 +1195,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 200,
-    y: 1800,
+    y: 1960,
   },
   {
     name: 'Voltaje red externa',
@@ -1204,7 +1205,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 200,
-    y: 1880,
+    y: 1800,
   },
   {
     name: 'Corriente red externa',
@@ -1214,7 +1215,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 200,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Estado red externa',
@@ -1234,7 +1235,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'P. aparente',
     fixed: 1,
     x: 3050,
-    y: 520,
+    y: 760,
   },
   {
     name: 'Potencia activa inversor híbrido',
@@ -1244,7 +1245,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'P. activa',
     fixed: 1,
     x: 3050,
-    y: 600,
+    y: 680,
   },
   {
     name: 'Potencia reactiva inversor híbrido',
@@ -1254,7 +1255,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'P. reactiva',
     fixed: 1,
     x: 3050,
-    y: 680,
+    y: 840,
   },
   {
     name: 'Voltaje inversor híbrido',
@@ -1264,7 +1265,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 3050,
-    y: 760,
+    y: 520,
   },
   {
     name: 'Corriente inversor híbrido',
@@ -1274,7 +1275,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 3050,
-    y: 840,
+    y: 600,
   },
   {
     name: 'Potencia paneles solares',
@@ -1283,8 +1284,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Potencia',
     fixed: 1,
-    x: 900,
-    y: 1140,
+    x: 200,
+    y: 1180,
   },
   {
     name: 'Voltaje paneles solares',
@@ -1293,8 +1294,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
-    x: 900,
-    y: 1220,
+    x: 200,
+    y: 1020,
   },
   {
     name: 'Corriente paneles solares',
@@ -1303,8 +1304,8 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
-    x: 900,
-    y: 1300,
+    x: 200,
+    y: 1100,
   },
   {
     name: 'Voltaje corriente directa paneles solares',
@@ -1337,7 +1338,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 1650,
-    y: 180,
+    y: 420,
   },
   {
     name: 'Potencia batería',
@@ -1347,7 +1348,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1650,
-    y: 260,
+    y: 340,
   },
   {
     name: 'Voltaje baterías',
@@ -1357,7 +1358,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 1650,
-    y: 340,
+    y: 180,
   },
   {
     name: 'Corriente baterías',
@@ -1367,7 +1368,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1650,
-    y: 420,
+    y: 260,
   },
   {
     name: 'Estado batería',
@@ -1387,7 +1388,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2260,
-    y: 1450,
+    y: 1610,
   },
   {
     name: 'Voltaje corriente directa',
@@ -1397,7 +1398,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 2260,
-    y: 1530,
+    y: 1450,
   },
   {
     name: 'Corriente controlador',
@@ -1407,7 +1408,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2260,
-    y: 1610,
+    y: 1530,
   },
   {
     name: 'Eficiencia controlador',
@@ -1427,7 +1428,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2220,
-    y: 1880,
+    y: 2040,
   },
   {
     name: 'Voltaje carga CD',
@@ -1437,7 +1438,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 2220,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Corriente carga CD',
@@ -1447,7 +1448,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2220,
-    y: 2040,
+    y: 1960,
   },
   {
     name: 'Potencia turbina',
@@ -1457,7 +1458,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1120,
-    y: 1040,
+    y: 1200,
   },
   {
     name: 'Voltaje turbina',
@@ -1467,7 +1468,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 1120,
-    y: 1120,
+    y: 1040,
   },
   {
     name: 'Corriente turbina',
@@ -1477,7 +1478,7 @@ export const MODE_4: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1120,
-    y: 1200,
+    y: 1120,
   },
   {
     name: 'Revoluciones turbina',
@@ -1501,7 +1502,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 1650,
-    y: 180,
+    y: 420,
   },
   {
     name: 'Potencia batería',
@@ -1511,7 +1512,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1650,
-    y: 260,
+    y: 340,
   },
   {
     name: 'Voltaje baterías',
@@ -1521,7 +1522,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 1650,
-    y: 340,
+    y: 180,
   },
   {
     name: 'Corriente baterías',
@@ -1531,7 +1532,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1650,
-    y: 420,
+    y: 260,
   },
   {
     name: 'Estado batería',
@@ -1551,7 +1552,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2260,
-    y: 1450,
+    y: 1610,
   },
   {
     name: 'Voltaje corriente directa',
@@ -1561,7 +1562,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 2260,
-    y: 1530,
+    y: 1450,
   },
   {
     name: 'Corriente controlador',
@@ -1571,7 +1572,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2260,
-    y: 1610,
+    y: 1530,
   },
   {
     name: 'Eficiencia controlador',
@@ -1591,7 +1592,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2220,
-    y: 1880,
+    y: 2040,
   },
   {
     name: 'Voltaje carga CD',
@@ -1601,7 +1602,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 2220,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Corriente carga CD',
@@ -1611,7 +1612,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2220,
-    y: 2040,
+    y: 1960,
   },
   {
     name: 'Potencia turbina',
@@ -1621,7 +1622,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1120,
-    y: 1040,
+    y: 1200,
   },
   {
     name: 'Voltaje turbina',
@@ -1631,7 +1632,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 1120,
-    y: 1120,
+    y: 1040,
   },
   {
     name: 'Corriente turbina',
@@ -1641,7 +1642,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1120,
-    y: 1200,
+    y: 1120,
   },
   {
     name: 'Revoluciones turbina',
@@ -1682,7 +1683,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. aparente',
     fixed: 1,
     x: 3500,
-    y: 1020,
+    y: 1260,
   },
   {
     name: 'Potencia activa inversor',
@@ -1692,7 +1693,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. activa',
     fixed: 1,
     x: 3500,
-    y: 1100,
+    y: 1180,
   },
   {
     name: 'Potencia reactiva inversor',
@@ -1702,7 +1703,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. reactiva',
     fixed: 1,
     x: 3500,
-    y: 1180,
+    y: 1340,
   },
   {
     name: 'Voltaje inversor',
@@ -1712,7 +1713,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 3500,
-    y: 1260,
+    y: 1020,
   },
   {
     name: 'Corriente inversor',
@@ -1722,7 +1723,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 3500,
-    y: 1340,
+    y: 1100,
   },
   {
     name: 'Potencia entrada inversor',
@@ -1732,7 +1733,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. entrada',
     fixed: 1,
     x: 3500,
-    y: 540,
+    y: 620,
   },
   {
     name: 'Corriente entrada inversor',
@@ -1742,7 +1743,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'I. entrada',
     fixed: 1,
     x: 3500,
-    y: 620,
+    y: 540,
   },
   {
     name: 'Estado inversor',
@@ -1752,7 +1753,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Estado',
     fixed: 0,
     x: 3500,
-    y: 700,
+    y: 780,
   },
   {
     name: 'Eficiencia inversor',
@@ -1762,7 +1763,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
     diagramName: 'Eficiencia',
     fixed: 1,
     x: 3500,
-    y: 780,
+    y: 700,
   },
 ];
 
@@ -1775,7 +1776,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 1650,
-    y: 180,
+    y: 420,
   },
   {
     name: 'Potencia batería',
@@ -1785,7 +1786,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1650,
-    y: 260,
+    y: 340,
   },
   {
     name: 'Voltaje baterías',
@@ -1795,7 +1796,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 1650,
-    y: 340,
+    y: 180,
   },
   {
     name: 'Corriente baterías',
@@ -1805,7 +1806,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1650,
-    y: 420,
+    y: 260,
   },
   {
     name: 'Estado batería',
@@ -1869,7 +1870,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2260,
-    y: 1450,
+    y: 1610,
   },
   {
     name: 'Voltaje corriente directa',
@@ -1879,7 +1880,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 2260,
-    y: 1530,
+    y: 1450,
   },
   {
     name: 'Corriente controlador',
@@ -1889,7 +1890,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2260,
-    y: 1610,
+    y: 1530,
   },
   {
     name: 'Eficiencia controlador',
@@ -1909,7 +1910,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2220,
-    y: 1880,
+    y: 2040,
   },
   {
     name: 'Voltaje carga CD',
@@ -1919,7 +1920,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 2220,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Corriente carga CD',
@@ -1929,7 +1930,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2220,
-    y: 2040,
+    y: 1960,
   },
   {
     name: 'Potencia paneles solares',
@@ -1939,7 +1940,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 460,
-    y: 2080,
+    y: 2240,
   },
   {
     name: 'Voltaje paneles solares',
@@ -1949,7 +1950,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 460,
-    y: 2160,
+    y: 2080,
   },
   {
     name: 'Corriente paneles solares',
@@ -1959,7 +1960,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 460,
-    y: 2240,
+    y: 2160,
   },
   {
     name: 'Potencia turbina',
@@ -1969,7 +1970,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1120,
-    y: 1040,
+    y: 1200,
   },
   {
     name: 'Voltaje turbina',
@@ -1979,7 +1980,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 1120,
-    y: 1120,
+    y: 1040,
   },
   {
     name: 'Corriente turbina',
@@ -1989,7 +1990,7 @@ export const MODE_5: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1120,
-    y: 1200,
+    y: 1120,
   },
   {
     name: 'Revoluciones turbina',
@@ -2013,7 +2014,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'SOC',
     fixed: 3,
     x: 1650,
-    y: 180,
+    y: 420,
   },
   {
     name: 'Potencia batería',
@@ -2023,7 +2024,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1650,
-    y: 260,
+    y: 340,
   },
   {
     name: 'Voltaje baterías',
@@ -2033,7 +2034,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 1650,
-    y: 340,
+    y: 180,
   },
   {
     name: 'Corriente baterías',
@@ -2043,7 +2044,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1650,
-    y: 420,
+    y: 260,
   },
   {
     name: 'Estado batería',
@@ -2107,7 +2108,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2260,
-    y: 1450,
+    y: 1610,
   },
   {
     name: 'Voltaje corriente directa',
@@ -2117,7 +2118,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 2260,
-    y: 1530,
+    y: 1450,
   },
   {
     name: 'Corriente controlador',
@@ -2127,7 +2128,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2260,
-    y: 1610,
+    y: 1530,
   },
   {
     name: 'Eficiencia controlador',
@@ -2147,7 +2148,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 2220,
-    y: 1880,
+    y: 2040,
   },
   {
     name: 'Voltaje carga CD',
@@ -2157,7 +2158,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 2220,
-    y: 1960,
+    y: 1880,
   },
   {
     name: 'Corriente carga CD',
@@ -2167,7 +2168,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 2220,
-    y: 2040,
+    y: 1960,
   },
   {
     name: 'Potencia paneles solares',
@@ -2177,7 +2178,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 460,
-    y: 2080,
+    y: 2240,
   },
   {
     name: 'Voltaje paneles solares',
@@ -2187,7 +2188,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 460,
-    y: 2160,
+    y: 2080,
   },
   {
     name: 'Corriente paneles solares',
@@ -2197,7 +2198,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 460,
-    y: 2240,
+    y: 2160,
   },
   {
     name: 'Potencia turbina',
@@ -2207,7 +2208,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Potencia',
     fixed: 1,
     x: 1120,
-    y: 1040,
+    y: 1200,
   },
   {
     name: 'Voltaje turbina',
@@ -2217,7 +2218,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 1120,
-    y: 1120,
+    y: 1040,
   },
   {
     name: 'Corriente turbina',
@@ -2227,7 +2228,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 1120,
-    y: 1200,
+    y: 1120,
   },
   {
     name: 'Revoluciones turbina',
@@ -2268,7 +2269,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. aparente',
     fixed: 1,
     x: 3500,
-    y: 1020,
+    y: 1260,
   },
   {
     name: 'Potencia activa inversor',
@@ -2278,7 +2279,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. activa',
     fixed: 1,
     x: 3500,
-    y: 1100,
+    y: 1180,
   },
   {
     name: 'Potencia reactiva inversor',
@@ -2288,7 +2289,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. reactiva',
     fixed: 1,
     x: 3500,
-    y: 1180,
+    y: 1340,
   },
   {
     name: 'Voltaje inversor',
@@ -2298,7 +2299,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 1,
     x: 3500,
-    y: 1260,
+    y: 1020,
   },
   {
     name: 'Corriente inversor',
@@ -2308,7 +2309,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 1,
     x: 3500,
-    y: 1340,
+    y: 1100,
   },
   {
     name: 'Potencia entrada inversor',
@@ -2318,7 +2319,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'P. entrada',
     fixed: 1,
     x: 3500,
-    y: 540,
+    y: 620,
   },
   {
     name: 'Corriente entrada inversor',
@@ -2328,7 +2329,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'I. entrada',
     fixed: 1,
     x: 3500,
-    y: 620,
+    y: 540,
   },
   {
     name: 'Estado inversor',
@@ -2338,7 +2339,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Estado',
     fixed: 0,
     x: 3500,
-    y: 700,
+    y: 780,
   },
   {
     name: 'Eficiencia inversor',
@@ -2348,6 +2349,6 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
     diagramName: 'Eficiencia',
     fixed: 1,
     x: 3500,
-    y: 780,
+    y: 700,
   },
 ];

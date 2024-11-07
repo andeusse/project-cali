@@ -21,21 +21,21 @@ const DigitalTwins = (props: Props) => {
       children: <Solar></Solar>,
     },
     {
-      title: 'Planta de Biogás',
-      children: <Biogas></Biogas>,
+      title: 'Celda de Hidrógeno',
+      children: <HydrogenCell></HydrogenCell>,
     },
     {
       title: 'Torre de enfriamiento',
       children: <CoolingTower></CoolingTower>,
     },
     {
-      title: 'Celda de Hidrógeno',
-      children: <HydrogenCell></HydrogenCell>,
+      title: 'Planta de Biogás',
+      children: <Biogas></Biogas>,
     },
-    {
-      title: 'Potencial Bioquímico (Metano)',
-      children: <BiochemicalMethanePotential></BiochemicalMethanePotential>,
-    },
+    // {
+    //   title: 'Potencial Bioquímico (Metano)',
+    //   children: <BiochemicalMethanePotential></BiochemicalMethanePotential>,
+    // },
   ];
 
   return (

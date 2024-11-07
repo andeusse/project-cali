@@ -313,7 +313,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Flujo',
     fixed: 2,
-    x: 2000,
+    x: 2200,
     y: 1200,
   },
   {
@@ -323,7 +323,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
-    x: 2000,
+    x: 2200,
     y: 1350,
   },
   {
@@ -334,7 +334,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 2,
     x: 4000,
-    y: 1200,
+    y: 1350,
   },
   {
     name: 'Voltaje de la celda',
@@ -344,7 +344,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 3,
     x: 4000,
-    y: 1350,
+    y: 1200,
   },
   {
     name: 'Potencia de la celda',
@@ -364,7 +364,8 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Temperatura',
     fixed: 2,
     x: 4000,
-    y: 1650,
+    y: 1950,
+    hasAdditionalCondition: 0,
   },
   {
     name: 'Eficiencia de la celda',
@@ -374,7 +375,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Eficiencia',
     fixed: 2,
     x: 4000,
-    y: 1800,
+    y: 1650,
   },
   {
     name: 'Energía generada de la celda',
@@ -384,7 +385,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Energía',
     fixed: 0,
     x: 4000,
-    y: 1950,
+    y: 1800,
   },
   {
     name: 'Corriente carga electrónica',
@@ -394,7 +395,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Corriente',
     fixed: 2,
     x: 4300,
-    y: 2600,
+    y: 2750,
   },
   {
     name: 'Voltaje carga electrónica',
@@ -404,7 +405,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Voltaje',
     fixed: 2,
     x: 4300,
-    y: 2750,
+    y: 2600,
   },
   {
     name: 'Potencia carga electrónica',
@@ -434,7 +435,7 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'P. Semáforo',
     fixed: 2,
     x: 850,
-    y: 3075,
+    y: 3085,
   },
   {
     name: 'Porcentaje de uso ventilador',
@@ -445,7 +446,6 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     fixed: 2,
     x: 4300,
     y: 200,
-    hasAdditionalCondition: 0,
   },
   {
     name: 'Eficiencia del convertidor',
@@ -455,6 +455,6 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     diagramName: 'Eficiencia',
     fixed: 1,
     x: 2000,
-    y: 3440,
+    y: 3450,
   },
 ];
