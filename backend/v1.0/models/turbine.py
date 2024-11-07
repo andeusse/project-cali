@@ -105,7 +105,10 @@ class Turbine(Resource):
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
     # controllerEfficiency = data["controller"]["efficiency"]["value"]
-    controllerEfficiency = 90.0
+    if turbineType == 1:
+      controllerEfficiency = 90.0
+    else:
+      controllerEfficiency = 72.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
