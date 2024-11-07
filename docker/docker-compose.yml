@@ -23,21 +23,21 @@ services:
     networks:
       - laboratorio-default
 
-  # grafana:
-  #   image: grafanabase
-  #   restart: always
-  #   ports:
-  #     - '3000:3000'
-  #   hostname: grafana
-  #   container_name: grafana
-  #   volumes:
-  #     - grafana-storage:/var/lib/grafana
-  #   depends_on:
-  #     - influxdb
-  #   environment:
-  #     - GF_SECURITY_ALLOW_EMBEDDING=true
-  #   networks:
-  #     - laboratorio-default
+  grafana:
+    image: grafana_image
+    restart: always
+    ports:
+      - '3000:3000'
+    hostname: grafana
+    container_name: grafana
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - influxdb
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    networks:
+      - laboratorio-default
 
   frontend:
     build:

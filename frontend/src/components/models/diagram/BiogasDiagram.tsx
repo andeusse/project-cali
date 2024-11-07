@@ -93,7 +93,7 @@ const BiogasDiagram = (props: Props) => {
               fill: theme.palette.text.primary,
             }}
           >
-            *¹: gSV/L
+            *¹: g SV/L
           </text>
           <text
             transform={`translate(100,500)`}
@@ -104,7 +104,7 @@ const BiogasDiagram = (props: Props) => {
               fill: theme.palette.text.primary,
             }}
           >
-            *²: gST/L
+            *²: g ST/L
           </text>
           <text
             transform={`translate(100,700)`}
@@ -115,7 +115,7 @@ const BiogasDiagram = (props: Props) => {
               fill: theme.palette.text.primary,
             }}
           >
-            *³: gSV/L-dia
+            *³: g SV/L-dia
           </text>
           <text
             transform={`translate(100,900)`}
