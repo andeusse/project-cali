@@ -143,7 +143,7 @@ const ResultTab = (props: Props) => {
   const handleSaveCSV = () => {
     const columns = [data.columns, ...data.data];
     const headers = ['Sistema', ...labels];
-    DownloadCSV(columns, headers, 'Sistema-data');
+    DownloadCSV(columns, headers, 'AllData');
   };
 
   const handleSavePNG = () => {

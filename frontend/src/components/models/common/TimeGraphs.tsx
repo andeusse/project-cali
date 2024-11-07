@@ -21,7 +21,8 @@ import CustomNumberField from '../../UI/CustomNumberField';
 import { InputType } from '../../../types/inputType';
 import { compareStrings } from '../../../utils/compareStrings';
 import { v4 as uuidv4 } from 'uuid';
-import { DownloadCSV } from '../../../utils/saveFormats';
+import { DownloadCSV, DownloadExcel } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   timeMultiplier: InputType;
@@ -99,6 +100,17 @@ const TimeGraphs = (props: Props) => {
     const columns = [charts.xValues, ...charts.variables.map((v) => v.yValues)];
     const headers = ['Time', ...charts.variables.map((v) => v.variable)];
     DownloadCSV(columns, headers, 'AllData');
+  };
+
+  const handleDownloadExcel = () => {
+    const data = [
+      ['Time', ...charts.variables.map((v) => v.variable)],
+      ...array2Array([
+        charts.xValues,
+        ...charts.variables.map((v) => v.yValues),
+      ]),
+    ];
+    DownloadExcel(data, 'test');
   };
 
   return (
@@ -202,7 +214,7 @@ const TimeGraphs = (props: Props) => {
                 fullWidth
                 variant="outlined"
                 startIcon={<FileDownloadIcon />}
-                onClick={handleSaveCSV}
+                onClick={handleDownloadExcel}
                 disabled={isPlaying}
               >
                 XLSX
