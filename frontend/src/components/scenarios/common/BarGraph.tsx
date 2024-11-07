@@ -20,7 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { saveAs } from 'file-saver';
 
-import { array2CSV } from '../../../utils/array2CSV';
+import { DownloadCSV } from '../../../utils/saveFormats';
 
 type Props = {
   title: string;
@@ -81,10 +81,9 @@ const BarGraph = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob([array2CSV([labels, serie.data], ['Time', title])], {
-      type: 'text/csv;charset=utf-8',
-    });
-    saveAs(blob, `${title}-data.csv`);
+    const columns = [labels, serie.data];
+    const headers = ['Time', title];
+    DownloadCSV(columns, headers, `${title}-data`);
   };
 
   const handleSavePNG = () => {

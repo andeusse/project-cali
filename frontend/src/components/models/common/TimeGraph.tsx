@@ -22,8 +22,8 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 import { ChartType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
-import { array2CSV } from '../../../utils/array2CSV';
 import { DiagramVariableType } from '../../../types/models/common';
+import { DownloadCSV } from '../../../utils/saveFormats';
 
 type Props = {
   chart: ChartType;
@@ -125,21 +125,15 @@ const TimeGraph = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob(
-      [
-        array2CSV(
-          [
-            chart.chartValues.xValues,
-            ...chart.chartValues.variables.map((v) => v.yValues),
-          ],
-          ['Time', ...chart.chartValues.variables.map((v) => v.variable)]
-        ),
-      ],
-      {
-        type: 'text/csv;charset=utf-8',
-      }
-    );
-    saveAs(blob, `Informacion.csv`);
+    const columns = [
+      chart.chartValues.xValues,
+      ...chart.chartValues.variables.map((v) => v.yValues),
+    ];
+    const headers = [
+      'Time',
+      ...chart.chartValues.variables.map((v) => v.variable),
+    ];
+    DownloadCSV(columns, headers, 'Data');
   };
 
   const handleSavePNG = () => {

@@ -21,8 +21,7 @@ import CustomNumberField from '../../UI/CustomNumberField';
 import { InputType } from '../../../types/inputType';
 import { compareStrings } from '../../../utils/compareStrings';
 import { v4 as uuidv4 } from 'uuid';
-import { array2CSV } from '../../../utils/array2CSV';
-import { saveAs } from 'file-saver';
+import { DownloadCSV } from '../../../utils/saveFormats';
 
 type Props = {
   timeMultiplier: InputType;
@@ -97,18 +96,9 @@ const TimeGraphs = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob(
-      [
-        array2CSV(
-          [charts.xValues, ...charts.variables.map((v) => v.yValues)],
-          ['Time', ...charts.variables.map((v) => v.variable)]
-        ),
-      ],
-      {
-        type: 'text/csv;charset=utf-8',
-      }
-    );
-    saveAs(blob, `Datos.csv`);
+    const columns = [charts.xValues, ...charts.variables.map((v) => v.yValues)];
+    const headers = ['Time', ...charts.variables.map((v) => v.variable)];
+    DownloadCSV(columns, headers, 'AllData');
   };
 
   return (
@@ -196,7 +186,7 @@ const TimeGraphs = (props: Props) => {
                 Add
               </Button>
             </Grid>
-            <Grid item xs={12} md={12} xl={12}>
+            <Grid item xs={12} md={6} xl={6}>
               <Button
                 fullWidth
                 variant="outlined"
@@ -204,7 +194,18 @@ const TimeGraphs = (props: Props) => {
                 onClick={handleSaveCSV}
                 disabled={isPlaying}
               >
-                Descargar datos
+                CSV
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={6} xl={6}>
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<FileDownloadIcon />}
+                onClick={handleSaveCSV}
+                disabled={isPlaying}
+              >
+                XLSX
               </Button>
             </Grid>
           </Grid>

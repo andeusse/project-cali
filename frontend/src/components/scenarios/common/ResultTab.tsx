@@ -31,7 +31,7 @@ import saveAs from 'file-saver';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import ImageIcon from '@mui/icons-material/Image';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { array2CSV } from '../../../utils/array2CSV';
+import { DownloadCSV } from '../../../utils/saveFormats';
 
 type Props = {
   data: SmartSystemOutput;
@@ -141,13 +141,9 @@ const ResultTab = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob(
-      [array2CSV([data.columns, ...data.data], ['Sistema', ...labels])],
-      {
-        type: 'text/csv;charset=utf-8',
-      }
-    );
-    saveAs(blob, `Sistema-data.csv`);
+    const columns = [data.columns, ...data.data];
+    const headers = ['Sistema', ...labels];
+    DownloadCSV(columns, headers, 'Sistema-data');
   };
 
   const handleSavePNG = () => {
