@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { ChartType, ChartValue, ChartValues } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
 import { DiagramVariableType } from '../../../types/models/common';
@@ -20,6 +21,8 @@ import CustomNumberField from '../../UI/CustomNumberField';
 import { InputType } from '../../../types/inputType';
 import { compareStrings } from '../../../utils/compareStrings';
 import { v4 as uuidv4 } from 'uuid';
+import { array2CSV } from '../../../utils/array2CSV';
+import { saveAs } from 'file-saver';
 
 type Props = {
   timeMultiplier: InputType;
@@ -93,6 +96,21 @@ const TimeGraphs = (props: Props) => {
     setCurrentGraphs(currentGraphs.filter((f) => f.guid !== e));
   };
 
+  const handleSaveCSV = () => {
+    var blob = new Blob(
+      [
+        array2CSV(
+          [charts.xValues, ...charts.variables.map((v) => v.yValues)],
+          ['Time', ...charts.variables.map((v) => v.variable)]
+        ),
+      ],
+      {
+        type: 'text/csv;charset=utf-8',
+      }
+    );
+    saveAs(blob, `Datos.csv`);
+  };
+
   return (
     <>
       <Grid container spacing={2}>
@@ -126,50 +144,70 @@ const TimeGraphs = (props: Props) => {
                 disabled={timeMultiplierAdditionalCondition}
               ></CustomNumberField>
             </Grid>
+            <Grid item xs={12} md={12} xl={12}>
+              <FormControl
+                fullWidth
+                sx={{ marginBottom: '10px', marginTop: '10px' }}
+              >
+                <InputLabel id="variable-select-label">Variable</InputLabel>
+                <Select
+                  labelId="variable-select-label"
+                  label="Variable"
+                  multiple
+                  value={selectedVariables}
+                  onChange={(e) => handleVariableSelectedChange(e)}
+                  renderValue={(selected) => selected.join(', ')}
+                >
+                  {variables
+                    .sort((a, b) => compareStrings(a.name, b.name))
+                    .map((v, index) => {
+                      if (v.isShown) {
+                        return (
+                          <MenuItem
+                            key={`${index}${v.name}`}
+                            value={v.variable}
+                          >
+                            <Checkbox
+                              checked={
+                                selectedVariables.indexOf(v.variable) > -1
+                              }
+                            />
+                            <ListItemText
+                              primary={`${v.name} ${
+                                v.unit !== '' ? `[${v.unit}]` : ''
+                              }`}
+                            />
+                          </MenuItem>
+                        );
+                      }
+                      return null;
+                    })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={12} xl={12}>
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<AddIcon />}
+                onClick={handleAddGraph}
+                disabled={selectedVariables.length === 0}
+              >
+                Add
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={12} xl={12}>
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<FileDownloadIcon />}
+                onClick={handleSaveCSV}
+                disabled={isPlaying}
+              >
+                Descargar datos
+              </Button>
+            </Grid>
           </Grid>
-          <FormControl
-            fullWidth
-            sx={{ marginBottom: '10px', marginTop: '10px' }}
-          >
-            <InputLabel id="variable-select-label">Variable</InputLabel>
-            <Select
-              labelId="variable-select-label"
-              label="Variable"
-              multiple
-              value={selectedVariables}
-              onChange={(e) => handleVariableSelectedChange(e)}
-              renderValue={(selected) => selected.join(', ')}
-            >
-              {variables
-                .sort((a, b) => compareStrings(a.name, b.name))
-                .map((v, index) => {
-                  if (v.isShown) {
-                    return (
-                      <MenuItem key={`${index}${v.name}`} value={v.variable}>
-                        <Checkbox
-                          checked={selectedVariables.indexOf(v.variable) > -1}
-                        />
-                        <ListItemText
-                          primary={`${v.name} ${
-                            v.unit !== '' ? `[${v.unit}]` : ''
-                          }`}
-                        />
-                      </MenuItem>
-                    );
-                  }
-                  return null;
-                })}
-            </Select>
-          </FormControl>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={handleAddGraph}
-            disabled={selectedVariables.length === 0}
-          >
-            Add
-          </Button>
         </Grid>
         <Grid item xs={12} md={10} xl={10}>
           {playerControl}
