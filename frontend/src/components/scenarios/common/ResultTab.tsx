@@ -32,6 +32,7 @@ import { CustomIconButton } from '../../UI/CustomIconButton';
 import ImageIcon from '@mui/icons-material/Image';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { DownloadCSV } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   data: SmartSystemOutput;
@@ -141,9 +142,11 @@ const ResultTab = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    const columns = [data.columns, ...data.data];
-    const headers = ['Sistema', ...labels];
-    DownloadCSV(columns, headers, 'AllData');
+    const d = [
+      ['Sistema', ...labels],
+      ...array2Array([data.columns, ...data.data]),
+    ];
+    DownloadCSV(d, 'test');
   };
 
   const handleSavePNG = () => {

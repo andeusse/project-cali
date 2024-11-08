@@ -97,9 +97,14 @@ const TimeGraphs = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    const columns = [charts.xValues, ...charts.variables.map((v) => v.yValues)];
-    const headers = ['Time', ...charts.variables.map((v) => v.variable)];
-    DownloadCSV(columns, headers, 'AllData');
+    const data = [
+      ['Time', ...charts.variables.map((v) => v.variable)],
+      ...array2Array([
+        charts.xValues,
+        ...charts.variables.map((v) => v.yValues),
+      ]),
+    ];
+    DownloadCSV(data, 'test');
   };
 
   const handleDownloadExcel = () => {

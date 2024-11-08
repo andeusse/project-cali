@@ -21,6 +21,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { saveAs } from 'file-saver';
 
 import { DownloadCSV } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   title: string;
@@ -81,9 +82,8 @@ const BarGraph = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    const columns = [labels, serie.data];
-    const headers = ['Time', title];
-    DownloadCSV(columns, headers, `${title}-data`);
+    const data = [['Time', title], ...array2Array([labels, serie.data])];
+    DownloadCSV(data, 'test');
   };
 
   const handleSavePNG = () => {

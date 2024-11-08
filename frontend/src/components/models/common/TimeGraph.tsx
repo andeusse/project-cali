@@ -24,6 +24,7 @@ import { ChartType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import { DiagramVariableType } from '../../../types/models/common';
 import { DownloadCSV } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   chart: ChartType;
@@ -125,15 +126,14 @@ const TimeGraph = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    const columns = [
-      chart.chartValues.xValues,
-      ...chart.chartValues.variables.map((v) => v.yValues),
+    const data = [
+      ['Time', ...chart.chartValues.variables.map((v) => v.variable)],
+      ...array2Array([
+        chart.chartValues.xValues,
+        ...chart.chartValues.variables.map((v) => v.yValues),
+      ]),
     ];
-    const headers = [
-      'Time',
-      ...chart.chartValues.variables.map((v) => v.variable),
-    ];
-    DownloadCSV(columns, headers, 'Data');
+    DownloadCSV(data, 'test');
   };
 
   const handleSavePNG = () => {
