@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import GridOnIcon from '@mui/icons-material/GridOn';
 import { ChartType, ChartValue, ChartValues } from '../../../types/graph';
 import TimeGraph from './TimeGraph';
 import { DiagramVariableType } from '../../../types/models/common';
@@ -104,7 +105,7 @@ const TimeGraphs = (props: Props) => {
         ...charts.variables.map((v) => v.yValues),
       ]),
     ];
-    DownloadCSV(data, 'test');
+    DownloadCSV(data, 'AllData');
   };
 
   const handleDownloadExcel = () => {
@@ -115,7 +116,7 @@ const TimeGraphs = (props: Props) => {
         ...charts.variables.map((v) => v.yValues),
       ]),
     ];
-    DownloadExcel(data, 'test');
+    DownloadExcel(data, 'AllData');
   };
 
   return (
@@ -218,7 +219,7 @@ const TimeGraphs = (props: Props) => {
               <Button
                 fullWidth
                 variant="outlined"
-                startIcon={<FileDownloadIcon />}
+                startIcon={<GridOnIcon />}
                 onClick={handleDownloadExcel}
                 disabled={isPlaying}
               >

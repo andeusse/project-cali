@@ -19,11 +19,12 @@ import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import GridOnIcon from '@mui/icons-material/GridOn';
 
 import { ChartType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import { DiagramVariableType } from '../../../types/models/common';
-import { DownloadCSV } from '../../../utils/saveFormats';
+import { DownloadCSV, DownloadExcel } from '../../../utils/saveFormats';
 import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
@@ -133,7 +134,18 @@ const TimeGraph = (props: Props) => {
         ...chart.chartValues.variables.map((v) => v.yValues),
       ]),
     ];
-    DownloadCSV(data, 'test');
+    DownloadCSV(data, 'Data');
+  };
+
+  const handleDownloadExcel = () => {
+    const data = [
+      ['Time', ...chart.chartValues.variables.map((v) => v.variable)],
+      ...array2Array([
+        chart.chartValues.xValues,
+        ...chart.chartValues.variables.map((v) => v.yValues),
+      ]),
+    ];
+    DownloadExcel(data, 'Data');
   };
 
   const handleSavePNG = () => {
@@ -163,6 +175,11 @@ const TimeGraph = (props: Props) => {
           icon={<FileDownloadIcon fontSize="inherit" />}
           tooltip="Download CSV"
           handleClick={handleSaveCSV}
+        ></CustomIconButton>
+        <CustomIconButton
+          icon={<GridOnIcon fontSize="inherit" />}
+          tooltip="Download XLSX"
+          handleClick={handleDownloadExcel}
         ></CustomIconButton>
         <CustomIconButton
           icon={<ImageIcon fontSize="inherit" />}
