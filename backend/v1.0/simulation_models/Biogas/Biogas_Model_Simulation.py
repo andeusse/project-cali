@@ -803,7 +803,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.000001))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102)*abs(np.random.normal(0.01, 0.000001))
             
             elif self.OperationMode == "Modo4":
                 # R_101 Conditions
@@ -883,7 +883,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.000001))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102)*abs(np.random.normal(0.01, 0.000001))
 
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101*np.exp(-self.Ea_R101/(8.314*T_R101.iloc[-1]*pH_R101[-1]))) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
@@ -893,7 +893,7 @@ class BiogasPlantSimulation:
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
             self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.1) 
             self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.00001)
-            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101*np.random.normal(0.01, 0.000001))
+            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101)*abs(np.random.normal(0.01, 0.000001))
 
             # Solidos volátiles en porcentaje R101
             self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1019,7 +1019,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.000001))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102)*abs(np.random.normal(0.01, 0.000001))
 
             elif self.OperationMode == "Modo4":
                 # R_101 Conditions
@@ -1099,7 +1099,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + self.mol_CH4_stoichometric_R102*np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102*np.random.normal(0.01, 0.000001))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_stoichometric_R102)*abs(np.random.normal(0.01, 0.000001))
                 
             # Estimación de biogás producido por componente en moles R101
             self.mol_CH4_stoichometric_R101 = (self.K_R101 * pH_R101[-1] * T_R101[-1]) * self.Csus_ini_R101 * self.s_CH4 * (self.tp / 3600)
@@ -1109,7 +1109,7 @@ class BiogasPlantSimulation:
             self.mol_NH3_R101 = self.mol_CH4_R101*(self.s_NH3/self.s_CH4)
             self.mol_O2_R101 = self.mol_O2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.1) 
             self.mol_H2_R101 = self.mol_H2_R101 + self.mol_CH4_stoichometric_R101*np.random.uniform (0, 0.00001)
-            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101*np.random.normal(0.01, 0.000001))
+            self.mol_H2O_R101 = self.mol_H2O_R101 + abs(self.mol_CH4_stoichometric_R101)*abs(np.random.normal(0.01, 0.000001))
 
             # Solidos volátiles en porcentaje R101
             self.SV_R101_p = self.Csus_ini_R101 * self.MW_sustrato / self.rho        #gSV/gT  
@@ -1255,7 +1255,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1] * np.random.normal(0.01, 0.000001))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * abs(np.random.normal(0.01, 0.000001))
 
                 #Estimación de gasto de reactivo límite
                 if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
@@ -1359,7 +1359,7 @@ class BiogasPlantSimulation:
                 self.mol_NH3_R102 = self.mol_CH4_R102*(self.s_NH3/self.s_CH4)
                 self.mol_O2_R102 = self.mol_O2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.1) 
                 self.mol_H2_R102 = self.mol_H2_R102 + (self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * np.random.uniform (0, 0.00001)
-                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1] * np.random.normal(0.01, 0.000001))
+                self.mol_H2O_R102 = self.mol_H2O_R102 + abs(self.mol_CH4_R102 - self.Operation_Data.mol_CH4_acum_R102 .iloc[-1]) * abs(np.random.normal(0.01, 0.000001))
 
                 #Estimación de gasto de reactivo límite en R102
                 if len (self.Operation_Data.mol_CH4_acum_R102) < 2:
