@@ -32,10 +32,10 @@ const DigitalTwins = (props: Props) => {
       title: 'Planta de Biogás',
       children: <Biogas></Biogas>,
     },
-    // {
-    //   title: 'Potencial Bioquímico (Metano)',
-    //   children: <BiochemicalMethanePotential></BiochemicalMethanePotential>,
-    // },
+    {
+      title: 'Potencial Bioquímico (Metano)',
+      children: <BiochemicalMethanePotential></BiochemicalMethanePotential>,
+    },
   ];
 
   return (
