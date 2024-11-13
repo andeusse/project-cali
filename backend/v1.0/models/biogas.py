@@ -311,10 +311,10 @@ class Biogas(Resource):
         biogas_output["Temp_R102"] = Biogas_Plant.Temp_R102
         biogas_output["C_sv_R102"] = Biogas_Plant.SV_R102_gL/100
         biogas_output["SV_R102"] = Biogas_Plant.ST_R102
-        biogas_output["C-st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
+        biogas_output["C_st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
         biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
-        biogas_output["x_R102"] = Biogas_Plant.X_R102 *100
+        biogas_output["x_R102"] = Biogas_Plant.x_R102 *100
 
         if biogas_input["OperationModel"] == "Arrhenius":  # revisar con eusse
           biogas_output["K_R102"] = Biogas_Plant.K_R102
