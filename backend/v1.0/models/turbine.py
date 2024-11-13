@@ -29,27 +29,22 @@ class Turbine(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
 
       query = influxDB.QueryCreator(measurement='Turbinas', type=1)
-      # values_df_temp = influxDB.InfluxDBreader(query)
-      # attempts = 1
-      # while attempts <= 5:
-      #   try:
-      #     values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
-      #     values_df['field'] = values_df_temp['_field']
-      #     values_df['Value'] = values_df_temp['_value']
-      #     values_df.set_index('field', inplace=True)
-      #     influxDB.InfluxDBclose()
-      #     break
-      #   except:
-      #     print(f"Intento: {attempts}", flush=True)
-      #     attempts += 1
-      #   finally:
-      #     influxDB.InfluxDBclose()
-          
-      values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
-      values_df['field'] = values_df_temp['_field']
-      values_df['Value'] = values_df_temp['_value']
-      values_df.set_index('field', inplace=True)
-      influxDB.InfluxDBclose()
+      
+      attempts = 1
+      while attempts <= 5:
+        try:
+          # values_df_temp = influxDB.InfluxDBreader(query)
+          values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
+          values_df['field'] = values_df_temp['_field']
+          values_df['Value'] = values_df_temp['_value']
+          values_df.set_index('field', inplace=True)
+          influxDB.InfluxDBclose()
+          break
+        except:
+          print(f"Intento: {attempts}", flush=True)
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
 
     if data["steps"]["value"] > 1:
       iteration = data["iteration"]
