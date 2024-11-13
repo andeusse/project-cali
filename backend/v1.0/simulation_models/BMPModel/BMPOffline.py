@@ -529,7 +529,7 @@ class BMPModelOffline:
         
         #Altura
         self.hpool_ini = self.Vpool_ini_mm/self.Apool
-        self.hpool = self.hpool_ini - 35
+        self.hpool = (self.hpool_ini - 35)/10
         
         
         

@@ -230,8 +230,6 @@ class Biogas(Resource):
         biogas_output["Ea_R101"] = Biogas_learning.Ea_R101
 
 
-      
-
     else:  #Modo Gemelo Off
 
       Biogas_Plant_ini = Biogas_Simulation_Start.BiogasSimulationStart()
