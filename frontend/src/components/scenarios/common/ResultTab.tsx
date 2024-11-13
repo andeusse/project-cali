@@ -31,7 +31,9 @@ import saveAs from 'file-saver';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import ImageIcon from '@mui/icons-material/Image';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { array2CSV } from '../../../utils/array2CSV';
+import GridOnIcon from '@mui/icons-material/GridOn';
+import { DownloadCSV, DownloadExcel } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   data: SmartSystemOutput;
@@ -141,13 +143,19 @@ const ResultTab = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob(
-      [array2CSV([data.columns, ...data.data], ['Sistema', ...labels])],
-      {
-        type: 'text/csv;charset=utf-8',
-      }
-    );
-    saveAs(blob, `Sistema-data.csv`);
+    const d = [
+      ['Sistema', ...labels],
+      ...array2Array([data.columns, ...data.data]),
+    ];
+    DownloadCSV(d, 'AllData');
+  };
+
+  const handleDownloadExcel = () => {
+    const d = [
+      ['Sistema', ...labels],
+      ...array2Array([data.columns, ...data.data]),
+    ];
+    DownloadExcel(d, 'AllData');
   };
 
   const handleSavePNG = () => {
@@ -179,6 +187,11 @@ const ResultTab = (props: Props) => {
           icon={<FileDownloadIcon fontSize="inherit" />}
           tooltip="Download CSV"
           handleClick={handleSaveCSV}
+        ></CustomIconButton>
+        <CustomIconButton
+          icon={<GridOnIcon fontSize="inherit" />}
+          tooltip="Download XLSX"
+          handleClick={handleDownloadExcel}
         ></CustomIconButton>
         <CustomIconButton
           icon={<ImageIcon fontSize="inherit" />}

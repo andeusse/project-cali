@@ -1,16 +1,13 @@
-export const array2CSV = (
-  arrays: Array<Array<number | string>>,
-  headers: Array<string>
-): string => {
-  const headerCSV = headers.join(',');
-  let csvString = headerCSV + '\n';
-  for (let i = 0; i < arrays[0].length; i++) {
-    let newLine = '';
-    for (let j = 0; j < arrays.length; j++) {
-      newLine = newLine + arrays[j][i];
-      newLine = j !== arrays.length - 1 ? newLine + ',' : newLine + '\n';
+export const array2Array = (
+  columns: Array<Array<number | string>>
+): Array<Array<number | string>> => {
+  let rows = [];
+  for (let i = 0; i < columns[0].length; i++) {
+    let row = [];
+    for (let j = 0; j < columns.length; j++) {
+      row.push(columns[j][i]);
     }
-    csvString = csvString + newLine;
+    rows.push(row);
   }
-  return csvString;
+  return rows;
 };

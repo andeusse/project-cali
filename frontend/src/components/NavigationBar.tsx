@@ -17,7 +17,6 @@ import HomeIcon from '@mui/icons-material/Home';
 import MonitorIcon from '@mui/icons-material/Monitor';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
-import InfoIcon from '@mui/icons-material/Info';
 
 import { ThemeType } from '../types/theme';
 import { changeTheme } from '../redux/slices/themeSlice';

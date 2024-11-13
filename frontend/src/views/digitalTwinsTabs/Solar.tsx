@@ -308,7 +308,8 @@ const Solar = () => {
       system.offgridInverter.isConnected
     ) {
       setDiagramVariables(MODE_4_INVERTER);
-    } else if (system.inputOperationMode === OperationModeType.Mode5 &&
+    } else if (
+      system.inputOperationMode === OperationModeType.Mode5 &&
       !system.offgridInverter.isConnected
     ) {
       setDiagramVariables(MODE_5);
@@ -331,15 +332,17 @@ const Solar = () => {
         ...o,
         solarRadiation1: {
           ...o.solarRadiation1,
-          value: data.inputSolarRadiation1
-            ? data.inputSolarRadiation1
-            : o.solarRadiation1.value,
+          value:
+            data.inputSolarRadiation1 !== undefined
+              ? data.inputSolarRadiation1
+              : o.solarRadiation1.value,
         },
         solarRadiation2: {
           ...o.solarRadiation2,
-          value: data.inputSolarRadiation2
-            ? data.inputSolarRadiation2
-            : o.solarRadiation2.value,
+          value:
+            data.inputSolarRadiation2 !== undefined
+              ? data.inputSolarRadiation2
+              : o.solarRadiation2.value,
         },
         windSpeed: {
           ...o.windSpeed,
@@ -347,21 +350,24 @@ const Solar = () => {
         },
         alternCurrentLoadPower: {
           ...o.alternCurrentLoadPower,
-          value: data.inputAlternCurrentLoadPower
-            ? data.inputAlternCurrentLoadPower
-            : o.alternCurrentLoadPower.value,
+          value:
+            data.inputAlternCurrentLoadPower !== undefined
+              ? data.inputAlternCurrentLoadPower
+              : o.alternCurrentLoadPower.value,
         },
         alternCurrentLoadPowerFactor: {
           ...o.alternCurrentLoadPowerFactor,
-          value: data.inputAlternCurrentLoadPowerFactor
-            ? data.inputAlternCurrentLoadPowerFactor
-            : o.alternCurrentLoadPowerFactor.value,
+          value:
+            data.inputAlternCurrentLoadPowerFactor !== undefined
+              ? data.inputAlternCurrentLoadPowerFactor
+              : o.alternCurrentLoadPowerFactor.value,
         },
         directCurrentLoadPower: {
           ...o.directCurrentLoadPower,
-          value: data.inputDirectCurrentLoadPower
-            ? data.inputDirectCurrentLoadPower
-            : o.directCurrentLoadPower.value,
+          value:
+            data.inputDirectCurrentLoadPower !== undefined
+              ? data.inputDirectCurrentLoadPower
+              : o.directCurrentLoadPower.value,
         },
         simulatedBatteryStateOfCharge: data.batteryStateOfCharge,
         simulatedDirectCurrentVoltage: data.directCurrentVoltage,

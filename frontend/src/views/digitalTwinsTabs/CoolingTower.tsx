@@ -229,33 +229,38 @@ const CoolingTower = () => {
         },
         topWaterTemperature: {
           ...o.topWaterTemperature,
-          value: data.topWaterTemperature
-            ? data.topWaterTemperature
-            : o.topWaterTemperature.value,
+          value:
+            data.topWaterTemperature !== undefined
+              ? data.topWaterTemperature
+              : o.topWaterTemperature.value,
         },
         bottomAirFlow: {
           ...o.bottomAirFlow,
-          value: data.bottomAirFlow
-            ? data.bottomAirFlow
-            : o.bottomAirFlow.value,
+          value:
+            data.bottomAirFlow !== undefined
+              ? data.bottomAirFlow
+              : o.bottomAirFlow.value,
         },
         bottomAirTemperature: {
           ...o.bottomAirTemperature,
-          value: data.bottomAirTemperature
-            ? data.bottomAirTemperature
-            : o.bottomAirTemperature.value,
+          value:
+            data.bottomAirTemperature !== undefined
+              ? data.bottomAirTemperature
+              : o.bottomAirTemperature.value,
         },
         bottomAirHumidity: {
           ...o.bottomAirHumidity,
-          value: data.bottomAirHumidity
-            ? data.bottomAirHumidity
-            : o.bottomAirHumidity.value,
+          value:
+            data.bottomAirHumidity !== undefined
+              ? data.bottomAirHumidity
+              : o.bottomAirHumidity.value,
         },
         atmosphericPressure: {
           ...o.atmosphericPressure,
-          value: data.atmosphericPressure
-            ? data.atmosphericPressure
-            : o.atmosphericPressure.value,
+          value:
+            data.atmosphericPressure !== undefined
+              ? data.atmosphericPressure
+              : o.atmosphericPressure.value,
         },
         simulatedBottomWaterTemperature: data.bottomAirTemperature,
         simulatedTopAirTemperature: data.topAirTemperature,

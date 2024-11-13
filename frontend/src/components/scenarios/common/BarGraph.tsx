@@ -18,9 +18,11 @@ import {
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import GridOnIcon from '@mui/icons-material/GridOn';
 import { saveAs } from 'file-saver';
 
-import { array2CSV } from '../../../utils/array2CSV';
+import { DownloadCSV, DownloadExcel } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   title: string;
@@ -81,10 +83,13 @@ const BarGraph = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob([array2CSV([labels, serie.data], ['Time', title])], {
-      type: 'text/csv;charset=utf-8',
-    });
-    saveAs(blob, `${title}-data.csv`);
+    const data = [['Time', title], ...array2Array([labels, serie.data])];
+    DownloadCSV(data, 'Data');
+  };
+
+  const handleDownloadExcel = () => {
+    const data = [['Time', title], ...array2Array([labels, serie.data])];
+    DownloadExcel(data, 'Data');
   };
 
   const handleSavePNG = () => {
@@ -109,6 +114,11 @@ const BarGraph = (props: Props) => {
           icon={<FileDownloadIcon fontSize="inherit" />}
           tooltip="Download CSV"
           handleClick={handleSaveCSV}
+        ></CustomIconButton>
+        <CustomIconButton
+          icon={<GridOnIcon fontSize="inherit" />}
+          tooltip="Download XLSX"
+          handleClick={handleDownloadExcel}
         ></CustomIconButton>
         <CustomIconButton
           icon={<ImageIcon fontSize="inherit" />}

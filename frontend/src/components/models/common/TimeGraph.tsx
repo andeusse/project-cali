@@ -19,11 +19,13 @@ import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import GridOnIcon from '@mui/icons-material/GridOn';
 
 import { ChartType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
-import { array2CSV } from '../../../utils/array2CSV';
 import { DiagramVariableType } from '../../../types/models/common';
+import { DownloadCSV, DownloadExcel } from '../../../utils/saveFormats';
+import { array2Array } from '../../../utils/array2CSV';
 
 type Props = {
   chart: ChartType;
@@ -125,21 +127,25 @@ const TimeGraph = (props: Props) => {
   };
 
   const handleSaveCSV = () => {
-    var blob = new Blob(
-      [
-        array2CSV(
-          [
-            chart.chartValues.xValues,
-            ...chart.chartValues.variables.map((v) => v.yValues),
-          ],
-          ['Time', ...chart.chartValues.variables.map((v) => v.variable)]
-        ),
-      ],
-      {
-        type: 'text/csv;charset=utf-8',
-      }
-    );
-    saveAs(blob, `Informacion.csv`);
+    const data = [
+      ['Time', ...chart.chartValues.variables.map((v) => v.variable)],
+      ...array2Array([
+        chart.chartValues.xValues,
+        ...chart.chartValues.variables.map((v) => v.yValues),
+      ]),
+    ];
+    DownloadCSV(data, 'Data');
+  };
+
+  const handleDownloadExcel = () => {
+    const data = [
+      ['Time', ...chart.chartValues.variables.map((v) => v.variable)],
+      ...array2Array([
+        chart.chartValues.xValues,
+        ...chart.chartValues.variables.map((v) => v.yValues),
+      ]),
+    ];
+    DownloadExcel(data, 'Data');
   };
 
   const handleSavePNG = () => {
@@ -169,6 +175,11 @@ const TimeGraph = (props: Props) => {
           icon={<FileDownloadIcon fontSize="inherit" />}
           tooltip="Download CSV"
           handleClick={handleSaveCSV}
+        ></CustomIconButton>
+        <CustomIconButton
+          icon={<GridOnIcon fontSize="inherit" />}
+          tooltip="Download XLSX"
+          handleClick={handleDownloadExcel}
         ></CustomIconButton>
         <CustomIconButton
           icon={<ImageIcon fontSize="inherit" />}
