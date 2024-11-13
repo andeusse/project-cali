@@ -212,25 +212,29 @@ const Turbine = () => {
         ...o,
         inputPressure: {
           ...o.inputPressure,
-          value: data.inputPressure
-            ? data.inputPressure
-            : o.inputPressure.value,
+          value:
+            data.inputPressure !== undefined
+              ? data.inputPressure
+              : o.inputPressure.value,
         },
         inputFlow: {
           ...o.inputFlow,
-          value: data.inputFlow ? data.inputFlow : o.inputFlow.value,
+          value:
+            data.inputFlow !== undefined ? data.inputFlow : o.inputFlow.value,
         },
         inputActivePower: {
           ...o.inputActivePower,
-          value: data.inputActivePower
-            ? data.inputActivePower
-            : o.inputActivePower.value,
+          value:
+            data.inputActivePower !== undefined
+              ? data.inputActivePower
+              : o.inputActivePower.value,
         },
         inputPowerFactor: {
           ...o.inputPowerFactor,
-          value: data.inputPowerFactor
-            ? data.inputPowerFactor
-            : o.inputPowerFactor.value,
+          value:
+            data.inputPowerFactor !== undefined
+              ? data.inputPowerFactor
+              : o.inputPowerFactor.value,
         },
         simulatedBatteryStateOfCharge: data.batteryStateOfCharge,
         simulatedDirectCurrentVoltage: data.directCurrentVoltage,

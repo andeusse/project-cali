@@ -267,45 +267,52 @@ const HydrogenCell = (props: Props) => {
         ...o,
         inputHydrogenFlow: {
           ...o.inputHydrogenFlow,
-          value: data.hydrogenFlow
-            ? data.hydrogenFlow
-            : o.inputHydrogenFlow.value,
+          value:
+            data.hydrogenFlow !== undefined
+              ? data.hydrogenFlow
+              : o.inputHydrogenFlow.value,
         },
         inputHydrogenPressure: {
           ...o.inputHydrogenPressure,
-          value: data.hydrogenPressure
-            ? data.hydrogenPressure
-            : o.inputHydrogenPressure.value,
+          value:
+            data.hydrogenPressure !== undefined
+              ? data.hydrogenPressure
+              : o.inputHydrogenPressure.value,
         },
         inputCellTemperature: {
           ...o.inputCellTemperature,
-          value: data.cellTemperature
-            ? data.cellTemperature
-            : o.inputCellTemperature.value,
+          value:
+            data.cellTemperature !== undefined
+              ? data.cellTemperature
+              : o.inputCellTemperature.value,
         },
         inputElectronicLoadCurrent: {
           ...o.inputElectronicLoadCurrent,
-          value: data.inputElectronicLoadCurrent
-            ? data.inputElectronicLoadCurrent
-            : o.inputElectronicLoadCurrent.value,
+          value:
+            data.inputElectronicLoadCurrent !== undefined
+              ? data.inputElectronicLoadCurrent
+              : o.inputElectronicLoadCurrent.value,
         },
         inputElectronicLoadPower: {
           ...o.inputElectronicLoadPower,
-          value: data.inputElectronicLoadPower
-            ? data.inputElectronicLoadPower
-            : o.inputElectronicLoadPower.value,
+          value:
+            data.inputElectronicLoadPower !== undefined
+              ? data.inputElectronicLoadPower
+              : o.inputElectronicLoadPower.value,
         },
         inputElectronicLoadResistance: {
           ...o.inputElectronicLoadResistance,
-          value: data.inputElectronicLoadResistance
-            ? data.inputElectronicLoadResistance
-            : o.inputElectronicLoadResistance.value,
+          value:
+            data.inputElectronicLoadResistance !== undefined
+              ? data.inputElectronicLoadResistance
+              : o.inputElectronicLoadResistance.value,
         },
         inputFanPercentage: {
           ...o.inputFanPercentage,
-          value: data.fanPercentage
-            ? data.fanPercentage
-            : o.inputFanPercentage.value,
+          value:
+            data.fanPercentage !== undefined
+              ? data.fanPercentage
+              : o.inputFanPercentage.value,
         },
         simulatedCellVoltage: data.cellVoltage,
         simulatedGeneratedEnergy: data.cellGeneratedEnergy,
