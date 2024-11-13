@@ -42,7 +42,7 @@ class TwinCell:
         if inputFanPercentage < 90:
             self.cellVoltage = 16.9 - 13.2672427*self.cellCurrent + 13.5756291*self.cellCurrent**2 - 6.66323789*self.cellCurrent**3 + 1.21415288*self.cellCurrent**4 - 0.0005*self.cellCurrent**5 - 0.0155*self.cellCurrent**6 - 0.0111392658*inputFanPercentage + 0.00015*inputFanPercentage**2
         else:
-            self.cellVoltage = 16.9 - 12.55529151*self.cellCurrent + 13.2196722*self.cellCurrent**2 - 7.84413473*self.cellCurrent**3 + 2.40358984*self.cellCurrent**4 - 0.3615*self.cellCurrent**5 - 0.02101814*self.cellCurrent**6 - 0.1*inputFanPercentage + 0.0001*inputFanPercentage**2
+            self.cellVoltage = 17.2 - 12.55529151*self.cellCurrent + 13.2196722*self.cellCurrent**2 - 7.84413473*self.cellCurrent**3 + 2.40358984*self.cellCurrent**4 - 0.3615*self.cellCurrent**5 + 0.02101814*self.cellCurrent**6 - 0.1*inputFanPercentage + 0.001066*inputFanPercentage**2
         
         if self.cellVoltage <= 6.0:
             self.cellCurrent = 0.0

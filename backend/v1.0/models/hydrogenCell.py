@@ -3,7 +3,7 @@ from flask_restful import Resource
 from simulation_models import TwinCell
 import pandas as pd
 import numpy as np
-from utils import InfluxDbConnection
+from tools import DBManager
 from dotenv import load_dotenv
 import os
 
@@ -22,9 +22,7 @@ class hydrogenCell(Resource):
 
       values_df = pd.DataFrame(columns=["field", "Value"])
 
-      influxDB_Connection = InfluxDbConnection()
-      influxDB_Connection.createConnection(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
-      influxDB = influxDB_Connection.data
+      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
 
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:

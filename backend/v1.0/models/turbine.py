@@ -1,9 +1,9 @@
 from flask import request
 from flask_restful import Resource
+from tools import DBManager
 from simulation_models import TwinHydro
 import pandas as pd
 import numpy as np
-from utils import InfluxDbConnection
 from dotenv import load_dotenv
 import os
 
@@ -22,9 +22,7 @@ class Turbine(Resource):
       
       values_df = pd.DataFrame(columns=["field", "Value"])
 
-      influxDB_Connection = InfluxDbConnection()
-      influxDB_Connection.createConnection(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
-      influxDB = influxDB_Connection.data
+      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
 
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
@@ -32,6 +30,21 @@ class Turbine(Resource):
 
       query = influxDB.QueryCreator(measurement='Turbinas', type=1)
       # values_df_temp = influxDB.InfluxDBreader(query)
+      # attempts = 1
+      # while attempts <= 5:
+      #   try:
+      #     values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
+      #     values_df['field'] = values_df_temp['_field']
+      #     values_df['Value'] = values_df_temp['_value']
+      #     values_df.set_index('field', inplace=True)
+      #     influxDB.InfluxDBclose()
+      #     break
+      #   except:
+      #     print(f"Intento: {attempts}", flush=True)
+      #     attempts += 1
+      #   finally:
+      #     influxDB.InfluxDBclose()
+          
       values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
       values_df['field'] = values_df_temp['_field']
       values_df['Value'] = values_df_temp['_value']
@@ -74,7 +87,7 @@ class Turbine(Resource):
       else:
         inputActivePower = float(inputActivePowerArray[-1])
     else:
-      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'] * 1000,2)
+      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
     if data["inputPowerFactor"]["arrayEnabled"]:
       inputPowerFactorArray = np.repeat(np.array(data["inputPowerFactorArray"]),repeats)
       if iteration <= len(inputPowerFactorArray):
@@ -82,7 +95,7 @@ class Turbine(Resource):
       else:
         inputPowerFactor = float(inputPowerFactorArray[-1])
     else:
-      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
+      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round((values_df["Value"]['FP-001'] if values_df["Value"]['FP-001'] != 0.0 else 1.0)* (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 3.6
     turbine["inputActivePower"] = inputActivePower
     turbine["inputPowerFactor"] = inputPowerFactor

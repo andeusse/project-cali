@@ -18,7 +18,7 @@ class InfluxDBmodel:
     # %%  InfluxDB Connection         
     def InfluxDBconnection(self):
         try:
-            self.influxDBclient = InfluxDBClient(url = self.server, token = self.token)
+            self.influxDBclient = InfluxDBClient(url = self.server, token = self.token, timeout=10000)
             return self.influxDBclient.ping()
         except:
             return False
@@ -29,8 +29,8 @@ class InfluxDBmodel:
         try:
             self.influxReturndf = self.influxDBclient.query_api().query_data_frame(self.query, self.org)
             return self.influxReturndf
-        except:
-            return self.ERROR_MESSAGE
+        except Exception as error:
+            return error
 
     # %%  InfluxDB Writer         
     def InfluxDBwriter(self, measurement, device, variable, value, timestamp):
