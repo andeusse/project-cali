@@ -48,6 +48,7 @@ services:
       - '3001:3001'
     depends_on:
       - influxdb
+<<<<<<< Updated upstream
       # - grafana
     networks:
       - laboratorio-default
@@ -64,6 +65,24 @@ services:
   #     # - grafana
   #   networks:
   #     - laboratorio-default
+=======
+      - grafana
+    networks:
+      - laboratorio-default
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '5000:5000'
+    depends_on:
+      - influxdb
+      - grafana
+    networks:
+      - laboratorio-default
+>>>>>>> Stashed changes
 
   collector:
     build:
