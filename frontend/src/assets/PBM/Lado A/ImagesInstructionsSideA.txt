@@ -1,0 +1,13 @@
+*Imagenes para Lado A por método de medición por presión*
+- PBM_A.png, sería la figura estática sin darle run al modelo para el método de medición por presión
+- PBM_A_Agitador, sería la figura animada cuando únicamente la variable de salida agitacion Lado A "mixVelocityR101" sea diferente de 0.
+- PBM_A_inyector, Sería la figura animada cuando únicamnete la variable de salida caudal de inyección "caudalSideA" es diferente de 0.
+- PBM_A_agitador+inyector, sería la figurada animada cuando la variable de salida agitación lado A "mixVelocityR101" y el cuadal de inyección lado A son diferentes de 0 "caudalSideA".
+- Si agitación y caudal de inyección son cero, se mostratía la figura estática.
+
+*Imagenes para Lado A por método de medición por volumen*
+- PBM_A_piscina. Sería la figura estática sin darle run al modelo.
+- PBM_A_inyector+piscina, sería la figura animada que se muestra cuando el caudal de inyección "caudalSideA" es diferente o mayor a 0.
+- PBM_A_Agitador+piscina, sería la figura animada que se muestra cuando la agitación "mixVelocityR101" es diferente o mayor a 0. 
+- PBM_A_Agitador + inyector + Piscina, Sería la figurada animada que se muestra cuando el caudal de inyección "caudalSideA" y la agitación "mixVelocityR101" son diferentes de 0.
+- PBM_A_piscina. Se mostraría la figura estática en caso tal de que agitación y caudal de inyección sean 0.
