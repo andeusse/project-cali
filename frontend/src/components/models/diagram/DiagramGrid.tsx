@@ -15,6 +15,7 @@ const DiagramGrid = (props: Props) => {
           .map((_, index) => {
             return (
               <line
+                key={`H_${index}`}
                 x1={(index + 1) * 100}
                 y1={0}
                 x2={(index + 1) * 100}
@@ -33,6 +34,7 @@ const DiagramGrid = (props: Props) => {
           .map((_, index) => {
             return (
               <line
+                key={`V_${index}`}
                 x1={0}
                 y1={(index + 1) * 100}
                 x2={width}

@@ -2984,6 +2984,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                     bmp={system}
                     data={data}
                     isPlaying={isPlaying}
+                    diagramVariables={[]}
                   ></BiochemicalMethanePotentialDiagram>
                 </Grid>
               </Grid>
