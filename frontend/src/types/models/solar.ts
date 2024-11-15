@@ -612,7 +612,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -622,7 +622,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -696,7 +696,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -706,7 +706,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -736,7 +736,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Voltaje carga CD',
     variable: 'directCurrentLoadVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -746,7 +746,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Corriente carga CD',
     variable: 'directCurrentLoadCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -776,7 +776,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Potencia reactiva inversor',
     variable: 'inverterReactivePower',
-    unit: 'var',
+    unit: 'VAr',
     isShown: true,
     diagramName: 'P. reactiva',
     fixed: 1,
@@ -786,7 +786,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Voltaje inversor',
     variable: 'inverterVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -796,7 +796,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Corriente inversor',
     variable: 'inverterOutputCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -816,7 +816,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Corriente entrada inversor',
     variable: 'inverterInputCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente In',
     fixed: 1,
@@ -856,7 +856,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Voltaje paneles solares',
     variable: 'solarPanelVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -866,7 +866,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
   {
     name: 'Corriente paneles solares',
     variable: 'solarPanelCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -899,7 +899,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -909,7 +909,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -983,7 +983,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -993,7 +993,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1023,7 +1023,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Voltaje carga CD',
     variable: 'directCurrentLoadVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1033,7 +1033,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Corriente carga CD',
     variable: 'directCurrentLoadCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1053,7 +1053,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Voltaje paneles solares',
     variable: 'solarPanelVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -1063,7 +1063,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
   {
     name: 'Corriente paneles solares',
     variable: 'solarPanelCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1116,7 +1116,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -1126,7 +1126,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1200,7 +1200,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Voltaje red externa',
     variable: 'externalGridVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1210,7 +1210,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Corriente red externa',
     variable: 'externalGridCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1250,7 +1250,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Potencia reactiva inversor híbrido',
     variable: 'hybridInverterReactivePower',
-    unit: 'var',
+    unit: 'VAr',
     isShown: true,
     diagramName: 'P. reactiva',
     fixed: 1,
@@ -1260,7 +1260,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Voltaje inversor híbrido',
     variable: 'hybridInverterVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1270,7 +1270,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Corriente inversor híbrido',
     variable: 'hybridInverterOutputCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1290,7 +1290,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Voltaje paneles solares',
     variable: 'solarPanelVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -1300,7 +1300,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Corriente paneles solares',
     variable: 'solarPanelCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1310,7 +1310,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa paneles solares',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1353,7 +1353,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -1363,7 +1363,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1393,7 +1393,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -1403,7 +1403,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1433,7 +1433,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Voltaje carga CD',
     variable: 'directCurrentLoadVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1443,7 +1443,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Corriente carga CD',
     variable: 'directCurrentLoadCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1463,7 +1463,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Voltaje turbina',
     variable: 'windTurbineVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1473,7 +1473,7 @@ export const MODE_4: DiagramVariableType[] = [
   {
     name: 'Corriente turbina',
     variable: 'windTurbineCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1517,7 +1517,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -1527,7 +1527,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1557,7 +1557,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -1567,7 +1567,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1597,7 +1597,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje carga CD',
     variable: 'directCurrentLoadVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1607,7 +1607,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente carga CD',
     variable: 'directCurrentLoadCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1627,7 +1627,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje turbina',
     variable: 'windTurbineVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1637,7 +1637,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente turbina',
     variable: 'windTurbineCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1698,7 +1698,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Potencia reactiva inversor',
     variable: 'inverterReactivePower',
-    unit: 'var',
+    unit: 'VAr',
     isShown: true,
     diagramName: 'P. reactiva',
     fixed: 1,
@@ -1708,7 +1708,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje inversor',
     variable: 'inverterVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1718,7 +1718,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente inversor',
     variable: 'inverterOutputCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1738,7 +1738,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente entrada inversor',
     variable: 'inverterInputCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'I. entrada',
     fixed: 1,
@@ -1791,7 +1791,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -1801,7 +1801,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1875,7 +1875,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -1885,7 +1885,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1915,7 +1915,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Voltaje carga CD',
     variable: 'directCurrentLoadVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1925,7 +1925,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Corriente carga CD',
     variable: 'directCurrentLoadCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1945,7 +1945,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Voltaje paneles solares',
     variable: 'solarPanelVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -1955,7 +1955,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Corriente paneles solares',
     variable: 'solarPanelCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -1975,7 +1975,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Voltaje turbina',
     variable: 'windTurbineVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -1985,7 +1985,7 @@ export const MODE_5: DiagramVariableType[] = [
   {
     name: 'Corriente turbina',
     variable: 'windTurbineCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2029,7 +2029,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje baterías',
     variable: 'batteryVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 3,
@@ -2039,7 +2039,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente baterías',
     variable: 'batteryCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2113,7 +2113,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje corriente directa',
     variable: 'directCurrentVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -2123,7 +2123,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente controlador',
     variable: 'controllerCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2153,7 +2153,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje carga CD',
     variable: 'directCurrentLoadVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -2163,7 +2163,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente carga CD',
     variable: 'directCurrentLoadCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2183,7 +2183,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje paneles solares',
     variable: 'solarPanelVoltage',
-    unit: 'Vcd',
+    unit: 'VDC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 2,
@@ -2193,7 +2193,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente paneles solares',
     variable: 'solarPanelCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2213,7 +2213,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje turbina',
     variable: 'windTurbineVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -2223,7 +2223,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente turbina',
     variable: 'windTurbineCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2284,7 +2284,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Potencia reactiva inversor',
     variable: 'inverterReactivePower',
-    unit: 'var',
+    unit: 'VAr',
     isShown: true,
     diagramName: 'P. reactiva',
     fixed: 1,
@@ -2294,7 +2294,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Voltaje inversor',
     variable: 'inverterVoltage',
-    unit: 'Vca',
+    unit: 'VAC',
     isShown: true,
     diagramName: 'Voltaje',
     fixed: 1,
@@ -2304,7 +2304,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente inversor',
     variable: 'inverterOutputCurrent',
-    unit: 'Aca',
+    unit: 'A',
     isShown: true,
     diagramName: 'Corriente',
     fixed: 1,
@@ -2324,7 +2324,7 @@ export const MODE_5_INVERTER: DiagramVariableType[] = [
   {
     name: 'Corriente entrada inversor',
     variable: 'inverterInputCurrent',
-    unit: 'Acd',
+    unit: 'A',
     isShown: true,
     diagramName: 'I. entrada',
     fixed: 1,
