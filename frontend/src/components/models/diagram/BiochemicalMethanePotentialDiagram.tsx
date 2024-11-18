@@ -26,6 +26,8 @@ import pbmBInjectorOn from '../../../assets/PBM/Lado B/PBM_B_Inyector.gif';
 import pbmBInjectorPoolOn from '../../../assets/PBM/Lado B/PBM_B_Inyector+Piscina.gif';
 
 import DiagramGrid from './DiagramGrid';
+import { useTheme } from '@mui/material';
+import DiagramVariables from '../common/DiagramVariables';
 
 type Props = {
   bmp: BiochemicalMethanePotentialParameters;
@@ -36,6 +38,8 @@ type Props = {
 
 const BiochemicalMethanePotentialDiagram = (props: Props) => {
   const { bmp, data, isPlaying, diagramVariables } = props;
+  const theme = useTheme();
+
   return (
     <div
       style={{
@@ -253,6 +257,84 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
             )}
           </g>
         )}
+
+        <g transform={`translate(3300,5050)`}>
+          <rect
+            x={0}
+            y={0}
+            width={600}
+            height={400}
+            rx={100}
+            ry={100}
+            style={{ stroke: 'black', strokeWidth: 5, fillOpacity: 0.1 }}
+          ></rect>
+          <text
+            transform={`translate(300,100)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'middle',
+              fontSize: `80px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            UNITS
+          </text>
+          <text
+            transform={`translate(100,160)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `50px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *¹: g SV/L
+          </text>
+          <text
+            transform={`translate(100,220)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `50px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *²: g ST/L
+          </text>
+          <text
+            transform={`translate(100,280)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `50px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *³: g SV/L-dia
+          </text>
+          <text
+            transform={`translate(100,340)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `50px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *⁴: J/mol
+          </text>
+        </g>
+
+        <DiagramVariables
+          data={data}
+          variables={diagramVariables}
+          additionalCondition={[
+            !(bmp.plantOperation === PlantOperationType.SideA),
+            !(bmp.plantOperation === PlantOperationType.SideB),
+          ]}
+          fontSize={40}
+        ></DiagramVariables>
+
         <DiagramGrid height={5500} width={4000}></DiagramGrid>
       </svg>
     </div>
