@@ -15,7 +15,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
 
   return (
     <g>
-      {variables.map((v) => {
+      {variables.map((v, index) => {
         if (!v.isShown) return null;
         if (
           additionalCondition.length !== 0 &&
@@ -34,55 +34,135 @@ const DiagramVariables = <T,>(props: Props<T>) => {
           printValue = (value as boolean) ? 'On' : 'Off';
         }
         return (
-          <g key={v.variable}>
-            {printValue && v.diagramName !== '' && (
-              <g
-                transform={`translate(${v.x ? v.x + fontSize * 5 : 0},${v.y})`}
-              >
-                <text
-                  style={{
-                    alignmentBaseline: 'central',
-                    textAnchor: 'end',
-                    fontSize: `${fontSize}px`,
-                    fontWeight: 'bold',
-                    fill: theme.palette.text.primary,
-                  }}
-                >{`${v.diagramName}`}</text>
-                <g transform={`translate(${fontSize * 5},0)`}>
-                  <rect
-                    width={`${fontSize * 6.5}`}
-                    height={`${fontSize * 1.5}`}
-                    x={`${fontSize * -3.2}`}
-                    y={`${(fontSize * -3) / 4}`}
-                    rx="20"
-                    ry="20"
-                    fill="blue"
-                  ></rect>
-                  <text
-                    style={{
-                      alignmentBaseline: 'central',
-                      textAnchor: 'middle',
-                      fontSize: `${fontSize}px`,
-                      fill: 'white',
-                    }}
+          <g>
+            {v.isVertical !== null && !v.isVertical && (
+              <g key={`GrupoVariable${v.variable}_${index}`}>
+                {printValue && v.diagramName !== '' && (
+                  <g
+                    key={`GrupoTexto${v.variable}_${index}`}
+                    transform={`translate(${v.x ? v.x + fontSize * 5 : 0},${
+                      v.y
+                    })`}
                   >
-                    {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
-                  </text>
-                </g>
+                    <text
+                      key={`Texto${v.variable}_${index}`}
+                      style={{
+                        alignmentBaseline: 'central',
+                        textAnchor: 'end',
+                        fontSize: `${fontSize}px`,
+                        fontWeight: 'bold',
+                        fill: theme.palette.text.primary,
+                      }}
+                    >
+                      {`${v.diagramName}`}
+                    </text>
+                    <g
+                      key={`GrupoValor${v.variable}_${index}`}
+                      transform={`translate(${fontSize * 5},0)`}
+                    >
+                      <rect
+                        key={`RectValor${v.variable}_${index}`}
+                        width={`${fontSize * 6.5}`}
+                        height={`${fontSize * 1.5}`}
+                        x={`${fontSize * -3.2}`}
+                        y={`${(fontSize * -3) / 4}`}
+                        rx="20"
+                        ry="20"
+                        fill="blue"
+                      ></rect>
+                      <text
+                        key={`Valor${v.variable}_${index}`}
+                        style={{
+                          alignmentBaseline: 'central',
+                          textAnchor: 'middle',
+                          fontSize: `${fontSize}px`,
+                          fill: 'white',
+                        }}
+                      >
+                        {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
+                      </text>
+                    </g>
+                  </g>
+                )}
+                {printValue && v.diagramName === '' && (
+                  <g transform={`translate(${v.x},${v.y})`}>
+                    <text
+                      style={{
+                        alignmentBaseline: 'central',
+                        textAnchor: 'middle',
+                        fontSize: `${fontSize * 0.9}px`,
+                        fill: theme.palette.text.primary,
+                      }}
+                    >
+                      {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
+                    </text>
+                  </g>
+                )}
               </g>
             )}
-            {printValue && v.diagramName === '' && (
-              <g transform={`translate(${v.x},${v.y})`}>
-                <text
-                  style={{
-                    alignmentBaseline: 'central',
-                    textAnchor: 'middle',
-                    fontSize: `${fontSize * 0.9}px`,
-                    fill: theme.palette.text.primary,
-                  }}
-                >
-                  {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
-                </text>
+            {v.isVertical !== null && v.isVertical && (
+              <g key={`GrupoVariable${v.variable}_${index}`}>
+                {printValue && v.diagramName !== '' && (
+                  <g
+                    key={`GrupoTexto${v.variable}_${index}`}
+                    transform={`translate(${v.x ? v.x + fontSize * 5 : 0},${
+                      v.y
+                    })`}
+                  >
+                    <text
+                      key={`Texto${v.variable}_${index}`}
+                      style={{
+                        alignmentBaseline: 'central',
+                        textAnchor: 'middle',
+                        fontSize: `${fontSize}px`,
+                        fontWeight: 'bold',
+                        fill: theme.palette.text.primary,
+                      }}
+                    >
+                      {`${v.diagramName}`}
+                    </text>
+                    <g
+                      key={`GrupoValor${v.variable}_${index}`}
+                      transform={`translate(0,${fontSize * 2})`}
+                    >
+                      <rect
+                        key={`RectValor${v.variable}_${index}`}
+                        width={`${fontSize * 6.5}`}
+                        height={`${fontSize * 1.5}`}
+                        x={`${fontSize * -3.2}`}
+                        y={`${(fontSize * -3) / 4}`}
+                        rx="20"
+                        ry="20"
+                        fill="blue"
+                      ></rect>
+                      <text
+                        key={`Valor${v.variable}_${index}`}
+                        style={{
+                          alignmentBaseline: 'central',
+                          textAnchor: 'middle',
+                          fontSize: `${fontSize}px`,
+                          fill: 'white',
+                        }}
+                      >
+                        {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
+                      </text>
+                    </g>
+                  </g>
+                )}
+                {printValue && v.diagramName === '' && (
+                  <g>
+                    <text
+                      style={{
+                        alignmentBaseline: 'central',
+                        textAnchor: 'middle',
+                        fontSize: `${fontSize * 0.9}px`,
+                        fill: theme.palette.text.primary,
+                      }}
+                    >
+                      {`${printValue} ${printValue !== '-' ? v.unit : ''}`}
+                    </text>
+                  </g>
+                )}
               </g>
             )}
           </g>

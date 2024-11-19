@@ -17,6 +17,7 @@ export type DiagramVariableType = {
   y?: number;
   hasAdditionalCondition?: number;
   scientificNotation?: boolean;
+  isVertical?: boolean;
 };
 
 export type CommonDigitalTwinsParameter = {

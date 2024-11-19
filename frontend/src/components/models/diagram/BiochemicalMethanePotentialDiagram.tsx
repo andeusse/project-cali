@@ -3,6 +3,9 @@ import {
   BiochemicalMethanePotentialOutput,
   BiochemicalMethanePotentialParameters,
   DiagramBiogasMeasurementMethodType,
+  DiagramBiogasType,
+  DiagramBiogasUnitType,
+  DiagramCompoundUnitType,
   PlantOperationType,
 } from '../../../types/models/biochemicalMethanePotential';
 import { DiagramVariableType } from '../../../types/models/common';
@@ -28,6 +31,7 @@ import pbmBInjectorPoolOn from '../../../assets/PBM/Lado B/PBM_B_Inyector+Piscin
 import DiagramGrid from './DiagramGrid';
 import { useTheme } from '@mui/material';
 import DiagramVariables from '../common/DiagramVariables';
+import { OperationModelType } from '../../../types/common';
 
 type Props = {
   bmp: BiochemicalMethanePotentialParameters;
@@ -331,10 +335,139 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
           additionalCondition={[
             !(bmp.plantOperation === PlantOperationType.SideA),
             !(bmp.plantOperation === PlantOperationType.SideB),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.modelSelectionSideA === OperationModelType.Arrhenius
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.modelSelectionSideA === OperationModelType.ADM1
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.modelSelectionSideA === OperationModelType.Gompertz
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.measurementMethodSideA ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideA === DiagramBiogasType.Stored &&
+              bmp.biogasVisualizationUnitsSideA ===
+                DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.measurementMethodSideA ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideA === DiagramBiogasType.Stored &&
+              bmp.biogasVisualizationUnitsSideA ===
+                DiagramBiogasUnitType.Pressure
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.measurementMethodSideA ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideA === DiagramBiogasType.Accumulated &&
+              bmp.biogasVisualizationUnitsSideA ===
+                DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.measurementMethodSideA ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideA === DiagramBiogasType.Accumulated &&
+              bmp.biogasVisualizationUnitsSideA ===
+                DiagramBiogasUnitType.Pressure
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.measurementMethodSideA ===
+                DiagramBiogasMeasurementMethodType.VolumeDisplaced
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.biogasCompoundsSideA === DiagramCompoundUnitType.Moles
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.biogasCompoundsSideA === DiagramCompoundUnitType.NormalVolume
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.biogasCompoundsSideA === DiagramCompoundUnitType.Concentration
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.biogasCompoundsSideA === DiagramCompoundUnitType.Concentration
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.modelSelectionSideB === OperationModelType.Arrhenius
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.modelSelectionSideB === OperationModelType.ADM1
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.modelSelectionSideB === OperationModelType.Gompertz
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.measurementMethodSideB ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideB === DiagramBiogasType.Stored &&
+              bmp.biogasVisualizationUnitsSideB ===
+                DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.measurementMethodSideB ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideB === DiagramBiogasType.Stored &&
+              bmp.biogasVisualizationUnitsSideB ===
+                DiagramBiogasUnitType.Pressure
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.measurementMethodSideB ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideB === DiagramBiogasType.Accumulated &&
+              bmp.biogasVisualizationUnitsSideB ===
+                DiagramBiogasUnitType.NormalVolume
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.measurementMethodSideB ===
+                DiagramBiogasMeasurementMethodType.Pressure &&
+              bmp.biogasVisualizationSideB === DiagramBiogasType.Accumulated &&
+              bmp.biogasVisualizationUnitsSideB ===
+                DiagramBiogasUnitType.Pressure
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.measurementMethodSideB ===
+                DiagramBiogasMeasurementMethodType.VolumeDisplaced
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.biogasCompoundsSideB === DiagramCompoundUnitType.Moles
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.biogasCompoundsSideB === DiagramCompoundUnitType.NormalVolume
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.biogasCompoundsSideB === DiagramCompoundUnitType.Concentration
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.biogasCompoundsSideB === DiagramCompoundUnitType.Concentration
+            ),
           ]}
           fontSize={40}
         ></DiagramVariables>
-
         <DiagramGrid height={5500} width={4000}></DiagramGrid>
       </svg>
     </div>

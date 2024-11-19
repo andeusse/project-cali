@@ -2846,28 +2846,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                               </Select>
                             </FormControl>
                           </Grid>
-                          <Grid item xs={12} md={6} xl={3}>
-                            <FormControl fullWidth>
-                              <InputLabel>Energía</InputLabel>
-                              <Select
-                                label="Energía"
-                                value={system.measurementMethodSideA}
-                                name="measurementMethodSideA"
-                                onChange={(e: any) => handleChange(e)}
-                              >
-                                {Object.keys(
-                                  DiagramBiogasMeasurementMethodType
-                                ).map((key) => (
-                                  <MenuItem key={key} value={key}>
-                                    {getValueByKey(
-                                      DiagramBiogasMeasurementMethodText,
-                                      key
-                                    )}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          </Grid>
                         </>
                       )}
                       <Grid item xs={12} md={6} xl={3}>
@@ -2932,28 +2910,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                                     </MenuItem>
                                   )
                                 )}
-                              </Select>
-                            </FormControl>
-                          </Grid>
-                          <Grid item xs={12} md={6} xl={3}>
-                            <FormControl fullWidth>
-                              <InputLabel>Energía</InputLabel>
-                              <Select
-                                label="Energía"
-                                value={system.measurementMethodSideB}
-                                name="measurementMethodSideB"
-                                onChange={(e: any) => handleChange(e)}
-                              >
-                                {Object.keys(
-                                  DiagramBiogasMeasurementMethodType
-                                ).map((key) => (
-                                  <MenuItem key={key} value={key}>
-                                    {getValueByKey(
-                                      DiagramBiogasMeasurementMethodText,
-                                      key
-                                    )}
-                                  </MenuItem>
-                                ))}
                               </Select>
                             </FormControl>
                           </Grid>
