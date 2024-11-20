@@ -28,7 +28,6 @@ import pbmBMixerPoolOn from '../../../assets/PBM/Lado B/PBM_B_Inyector.gif';
 import pbmBInjectorOn from '../../../assets/PBM/Lado B/PBM_B_Inyector.gif';
 import pbmBInjectorPoolOn from '../../../assets/PBM/Lado B/PBM_B_Inyector+Piscina.gif';
 
-import DiagramGrid from './DiagramGrid';
 import { useTheme } from '@mui/material';
 import DiagramVariables from '../common/DiagramVariables';
 import { OperationModelType } from '../../../types/common';
@@ -273,7 +272,7 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
             style={{ stroke: 'black', strokeWidth: 5, fillOpacity: 0.1 }}
           ></rect>
           <text
-            transform={`translate(300,100)`}
+            transform={`translate(300,60)`}
             style={{
               alignmentBaseline: 'central',
               textAnchor: 'middle',
@@ -284,7 +283,7 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
             UNITS
           </text>
           <text
-            transform={`translate(100,160)`}
+            transform={`translate(100,120)`}
             style={{
               alignmentBaseline: 'central',
               textAnchor: 'start',
@@ -292,10 +291,10 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
               fill: theme.palette.text.primary,
             }}
           >
-            *¹: g SV/L
+            *¹: mLCH4/gSVelim
           </text>
           <text
-            transform={`translate(100,220)`}
+            transform={`translate(100,180)`}
             style={{
               alignmentBaseline: 'central',
               textAnchor: 'start',
@@ -303,10 +302,10 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
               fill: theme.palette.text.primary,
             }}
           >
-            *²: g ST/L
+            *²: J/Nm³
           </text>
           <text
-            transform={`translate(100,280)`}
+            transform={`translate(100,240)`}
             style={{
               alignmentBaseline: 'central',
               textAnchor: 'start',
@@ -314,10 +313,10 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
               fill: theme.palette.text.primary,
             }}
           >
-            *³: g SV/L-dia
+            *³: g/Ldia
           </text>
           <text
-            transform={`translate(100,340)`}
+            transform={`translate(100,300)`}
             style={{
               alignmentBaseline: 'central',
               textAnchor: 'start',
@@ -326,6 +325,17 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
             }}
           >
             *⁴: J/mol
+          </text>
+          <text
+            transform={`translate(100,360)`}
+            style={{
+              alignmentBaseline: 'central',
+              textAnchor: 'start',
+              fontSize: `50px`,
+              fill: theme.palette.text.primary,
+            }}
+          >
+            *⁵: mL/min
           </text>
         </g>
 
@@ -468,7 +478,6 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
           ]}
           fontSize={40}
         ></DiagramVariables>
-        <DiagramGrid height={5500} width={4000}></DiagramGrid>
       </svg>
     </div>
   );
