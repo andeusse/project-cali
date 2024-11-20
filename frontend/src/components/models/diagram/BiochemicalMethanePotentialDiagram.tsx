@@ -406,10 +406,7 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
               bmp.plantOperation === PlantOperationType.SideA &&
               bmp.biogasCompoundsSideA === DiagramCompoundUnitType.Concentration
             ),
-            !(
-              bmp.plantOperation === PlantOperationType.SideA &&
-              bmp.biogasCompoundsSideA === DiagramCompoundUnitType.Concentration
-            ),
+            false,
             !(
               bmp.plantOperation === PlantOperationType.SideB &&
               bmp.modelSelectionSideB === OperationModelType.Arrhenius
@@ -471,10 +468,7 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
               bmp.plantOperation === PlantOperationType.SideB &&
               bmp.biogasCompoundsSideB === DiagramCompoundUnitType.Concentration
             ),
-            !(
-              bmp.plantOperation === PlantOperationType.SideB &&
-              bmp.biogasCompoundsSideB === DiagramCompoundUnitType.Concentration
-            ),
+            false,
           ]}
           fontSize={40}
         ></DiagramVariables>
