@@ -17,7 +17,6 @@ class Biogas(Resource):
 
     biogas_input["iteration"] = data["iteration"]
     biogas_input["name"] = data["name"]
-    print(biogas_input["iteration"])
     
     if biogas_input["iteration"] == 1:
       Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
