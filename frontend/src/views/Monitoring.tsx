@@ -126,14 +126,14 @@ const Monitoring = (props: Props) => {
         ></IframeFull>
       ),
     },
-    // {
-    //   title: 'Potencial Bioquímico (Metano)',
-    //   children: (
-    //     <IframeFull
-    //       url={Config.getInstance().params.grafanaUrls[5]}
-    //     ></IframeFull>
-    //   ),
-    // },
+    {
+      title: 'Potencial Bioquímico (Metano)',
+      children: (
+        <IframeFull
+          url={Config.getInstance().params.grafanaUrls[5]}
+        ></IframeFull>
+      ),
+    },
     {
       title: 'Tablero Eléctrico',
       children: <ElectricalTabs></ElectricalTabs>,
