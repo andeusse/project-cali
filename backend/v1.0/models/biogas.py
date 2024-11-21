@@ -3,13 +3,8 @@ from flask_restful import Resource
 from utils import Biogas_Start
 from utils import MachineLearning_biogas_start
 from utils import Biogas_Simulation_Start
-from utils.multiuser import UserStorage
-from simulation_models.Biogas import Biogas_Model_Simulation
-import json
 import os
 
-current_folder = os.getcwd()
-users_folder = os.path.join(current_folder,"v1.0", "users", "users.json")
 biogas_instances = {}
 
 class Biogas(Resource):
@@ -20,18 +15,18 @@ class Biogas(Resource):
     biogas_input = {}
     biogas_output = {}
 
-    biogas_input["reset"] = data["restartFlag"]
+    biogas_input["iteration"] = data["iteration"]
     biogas_input["name"] = data["name"]
+    print(biogas_input["iteration"])
     
-    if biogas_input["reset"] == True:
-      Users = UserStorage.multiuserstorage(user = biogas_input["name"], instance = Biogas_Simulation_Start.BiogasSimulationStart())
-      Users.storageUser()
+    if biogas_input["iteration"] == 1:
+      Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
     
     #Operación Planta
     biogas_input["VR1"] = data["anaerobicReactorVolume1"]["value"]
     biogas_input["VR2"] = data["anaerobicReactorVolume2"]["value"]
     biogas_input["OperationMode"] = data["inputOperationMode"]
-
+    
     #Tanques de biogás
     biogas_input["VG1"] = data["biogasTankVolume1"]["value"]
     biogas_input["VG2"] = data["biogasTankVolume2"]["value"]
@@ -232,6 +227,8 @@ class Biogas(Resource):
       biogas_output["pH_R101"] = Biogas_Plant.pH_R101
       biogas_output["Temp_R101"] = Biogas_Plant.Temp_R101
       biogas_output["x_R101"] = Biogas_Plant.X_R101
+      
+      
       #modelo cinético
       if biogas_input["OperationModel"] == "Arrhenius":
         biogas_output["K_R101"] = Biogas_learning.K_R101
@@ -240,20 +237,11 @@ class Biogas(Resource):
 
     else:  #Modo Gemelo Off
       
-      try:
-        with open(users_folder, "r") as json_file:
-            users = json.load(json_file)
-        user_data = users.get(biogas_input["name"])
-        biogas_instance = Biogas_Simulation_Start.BiogasSimulationStart.from_dict(user_data)
-       
-
-
-      except FileNotFoundError:
-         print(f'Error: File{users_folder} not found.')
-      except json.JSONDecodeError:
-         print(f"Error: File '{users_folder}' is not a valid JSON file.")
-              
-      # Biogas_Plant_ini = Biogas_Simulation_Start.BiogasSimulationStart()
+      if biogas_input["name"] not in biogas_instances:
+        biogas_instances[biogas_input["name"]] = Biogas_Simulation_Start.BiogasSimulationStart()
+      
+      biogas_instance = biogas_instances[biogas_input["name"]]
+      
       biogas_instance.starting(VR1 = biogas_input["VR1"], VR2 = biogas_input["VR2"], VG1 = biogas_input["VG1"], VG2 = biogas_input["VG2"], VG3 = biogas_input["VG3"],
                                 tp = biogas_input["tp"], ST_R101 = biogas_input["ST_R101"], SV_R101 = biogas_input["SV_R101"], Cc_R101 = biogas_input["Cc_R101"],
                                 Ch_R101 = biogas_input["Ch_R101"], Co_R101 = biogas_input["Co_R101"], Cn_R101 = biogas_input["Cn_R101"], Cs_R101 = biogas_input["Cs_R101"], 

@@ -47,6 +47,17 @@ class BiogasPlantSimulation:
         self.Cn_R101 = Cn_R101
         self.Cs_R101 = Cs_R101
         self.rho_R101 = rho_R101
+        
+        #Reactor 102 initial conditions
+        self.ST_R102 = ST_R102
+        self.SV_R102 = SV_R102
+        self.Cc_R102 = Cc_R102
+        self.Ch_R102 = Ch_R102
+        self.Co_R102 = Co_R102
+        self.Cn_R102 = Cn_R102
+        self.Cs_R102 = Cs_R102
+        self.rho_R102 = rho_R102
+        
         if self.ST_R101 == 0:
             self.Csus_ini_R101 = 0
             self.Csus_ini_ST_R101 = 0
