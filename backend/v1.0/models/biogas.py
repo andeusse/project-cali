@@ -3,7 +3,6 @@ from flask_restful import Resource
 from utils import Biogas_Start
 from utils import MachineLearning_biogas_start
 from utils import Biogas_Simulation_Start
-import os
 
 biogas_instances = {}
 
@@ -20,7 +19,9 @@ class Biogas(Resource):
     
     if biogas_input["iteration"] == 1:
       Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
-    
+      Biogas_Start.BiogasStart.reset_instance()
+      MachineLearning_biogas_start.MachineLearningStart.reset_instance()
+          
     #Operación Planta
     biogas_input["VR1"] = data["anaerobicReactorVolume1"]["value"]
     biogas_input["VR2"] = data["anaerobicReactorVolume2"]["value"]
@@ -219,7 +220,7 @@ class Biogas(Resource):
       #Reactor R101
       biogas_output["Mix_Velocity_R101"] = Biogas_Plant.RPM_R101
       biogas_output["C_sv_R101"] = Biogas_Plant.SV_R101_gL
-      biogas_output["SV_R101"] = Biogas_Plant.SV_R101
+      biogas_output["SV_R101"] = Biogas_Plant.SV_R101_p
       biogas_output["C_st_R101"] = Biogas_Plant.ST_R101_gl
       biogas_output["ST_R101"] = Biogas_Plant.ST_R101
       biogas_output["Organic_Charge_R101"] = Biogas_Plant.organic_charge_R101
@@ -316,7 +317,7 @@ class Biogas(Resource):
         biogas_output["pH_R102"] = Biogas_Plant.pH_R102
         biogas_output["Temp_R102"] = Biogas_Plant.Temp_R102
         biogas_output["C_sv_R102"] = Biogas_Plant.SV_R102_gL/100
-        biogas_output["SV_R102"] = Biogas_Plant.ST_R102
+        biogas_output["SV_R102"] = Biogas_Plant.SV_R102_p
         biogas_output["C_st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
         biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
@@ -343,7 +344,7 @@ class Biogas(Resource):
         biogas_output["pH_R102"] = Biogas_Plant.pH_R102
         biogas_output["Temp_R102"] = Biogas_Plant.Temp_R102
         biogas_output["C_sv_R102"] = Biogas_Plant.SV_R102_gL/100
-        biogas_output["SV_R102"] = Biogas_Plant.ST_R102
+        biogas_output["SV_R102"] = Biogas_Plant.SV_R102_p
         biogas_output["C_st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
         biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)

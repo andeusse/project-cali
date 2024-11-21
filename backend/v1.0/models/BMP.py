@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from utils import bmp_simulation_start
 
+bmp_instances = {}
 
 class BMP(Resource):
   def post(self):
@@ -10,6 +11,7 @@ class BMP(Resource):
     
     iteration = data["iteration"]
     Side = data["plantOperation"]
+    user = data["name"]
 
     if iteration == 1:
       bmp_simulation_start.BMPSimulationStart.reset_instance()
@@ -90,7 +92,9 @@ class BMP(Resource):
     if offlineA == True:
 
       #---- Reactor 1
-      R101_ini = bmp_simulation_start.BMPSimulationStart()
+      if user is not bmp_instances:
+        bmp_instances[user] = bmp_simulation_start.BMPSimulationStart()
+      R101_ini = bmp_instances[user]
       R101_ini.starting(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
       R101 = R101_ini.data
       R101.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
@@ -162,7 +166,7 @@ class BMP(Resource):
       bmp_output["PBMR101"] = R101.PBM
       
       # ----- Reactor 2
-      R102_ini = bmp_simulation_start.BMPSimulationStart()
+      R102_ini = bmp_instances[user]
       R102_ini.starting(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
       R102 = R102_ini.data
       R102.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
@@ -234,7 +238,7 @@ class BMP(Resource):
       bmp_output["PBMR102"] = R102.PBM
       
       # ----- Reactor 3
-      R103_ini = bmp_simulation_start.BMPSimulationStart()
+      R103_ini = bmp_instances[user]
       R103_ini.starting(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
       R103 = R103_ini.data
       R103.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
@@ -306,7 +310,7 @@ class BMP(Resource):
       bmp_output["PBMR103"] = R103.PBM
       
       # ----- Reactor 4
-      R104_ini = bmp_simulation_start.BMPSimulationStart()
+      R104_ini = bmp_instances[user]
       R104_ini.starting(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
       R104 = R104_ini.data
       R104.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
@@ -378,7 +382,7 @@ class BMP(Resource):
       bmp_output["PBMR104"] = R104.PBM
       
       # ----- Reactor 5
-      R105_ini = bmp_simulation_start.BMPSimulationStart()
+      R105_ini = bmp_instances[user]
       R105_ini.starting(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
       R105 = R105_ini.data
       R105.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
@@ -528,7 +532,7 @@ class BMP(Resource):
     if offlineB == True:
 
       #---- Reactor 6
-      R106_ini = bmp_simulation_start.BMPSimulationStart()
+      R106_ini = bmp_instances[user]
       R106_ini.starting(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
       R106 = R106_ini.data
       R106.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
@@ -600,7 +604,7 @@ class BMP(Resource):
       bmp_output["PBMR106"] = R106.PBM
       
       #---- Reactor 7
-      R107_ini = bmp_simulation_start.BMPSimulationStart()
+      R107_ini = bmp_instances[user]
       R107_ini.starting(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
       R107 = R107_ini.data
       R107.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
@@ -672,7 +676,7 @@ class BMP(Resource):
       bmp_output["PBMR107"] = R107.PBM
       
       #---- Reactor 8
-      R108_ini = bmp_simulation_start.BMPSimulationStart()
+      R108_ini = bmp_instances[user]
       R108_ini.starting(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
       R108 = R108_ini.data
       R108.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
@@ -744,7 +748,7 @@ class BMP(Resource):
       bmp_output["PBMR108"] = R108.PBM
       
       #---- Reactor 9
-      R109_ini = bmp_simulation_start.BMPSimulationStart()
+      R109_ini = bmp_instances[user]
       R109_ini.starting(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
       R109 = R109_ini.data
       R109.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
@@ -816,7 +820,7 @@ class BMP(Resource):
       bmp_output["PBMR109"] = R109.PBM
       
       #---- Reactor 10
-      R110_ini = bmp_simulation_start.BMPSimulationStart()
+      R110_ini = bmp_instances[user]
       R110_ini.starting(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
       R110 = R110_ini.data
       R110.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
@@ -887,5 +891,4 @@ class BMP(Resource):
       bmp_output["EnergyR110"] = R110.TotalBiogasEnergy
       bmp_output["PBMR110"] = R110.PBM
 
-    print(bmp_output)
     return {"model": bmp_output}, 200
