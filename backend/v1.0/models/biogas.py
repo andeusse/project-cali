@@ -18,6 +18,8 @@ class Biogas(Resource):
     biogas_input["name"] = data["name"]
     
     if biogas_input["iteration"] == 1:
+      if biogas_input["name"] is biogas_instances:
+        del biogas_instance["name"]
       Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
       Biogas_Start.BiogasStart.reset_instance()
       MachineLearning_biogas_start.MachineLearningStart.reset_instance()

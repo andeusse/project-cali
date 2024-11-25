@@ -854,7 +854,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -934,7 +934,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1070,7 +1070,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1150,7 +1150,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1352,7 +1352,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1456,7 +1456,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
