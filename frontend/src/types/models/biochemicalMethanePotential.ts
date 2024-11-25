@@ -2921,7 +2921,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R101',
     variable: 'hydrogensulfurconcentrationR101',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -3209,7 +3209,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R102',
     variable: 'hydrogensulfurconcentrationR102',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -3245,7 +3245,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno concentración R102',
     variable: 'hydrogenconcentrationR102',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
@@ -3497,7 +3497,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R103',
     variable: 'hydrogensulfurconcentrationR103',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -3533,7 +3533,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno acumulado R103',
     variable: 'hydrogenconcentrationR103',
-    unit: 'mL',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
@@ -6414,7 +6414,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno concentración R110',
     variable: 'hydrogenconcentrationR101',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
