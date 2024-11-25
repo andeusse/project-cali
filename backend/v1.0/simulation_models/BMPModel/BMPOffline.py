@@ -315,8 +315,9 @@ class BMPModelOffline:
             self.counterfeed = self.counterfeed + self.tp
             if self.counterfeed > Time*3600:
                 self.counterfeed = 0
+            self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
 
-        if Mode == "Injection":
+        elif Mode == "Injection":
             IntervalTimeInyection = 24/Inyections
             TimeFeed = (Volume/Q)*60
             if self.counterfeed < TimeFeed:
@@ -326,10 +327,11 @@ class BMPModelOffline:
             self.counterfeed = self.counterfeed + self.tp
             if self.counterfeed > IntervalTimeInyection*3600:
                 self.counterfeed = 0 
-
-        self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
-        if Mode == "NoDosing":
+            self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
+            
+        elif Mode == "NoDosing":
             self.Qr = 0
+            self.TotalVolFeed = 0
     
     def Reactor (self, model, pH, T, K1, K2=1, K3=1):
         
@@ -410,27 +412,30 @@ class BMPModelOffline:
 
             if self.counterReactor == 0:
                 self.Csus_ini = self.Csus_ini_SV
+                print(self.Csus_ini)
             else:
                 self.Csus_ini = float(self.Csus_res[-1])
+
             self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
             self.SV = (self.Csus_ini*mixing_effect(self.MixVelocity))*self.MW_sustrato
+            
             try:
                 self.OC = self.SV/(self.counterReactor/86400)
             except ZeroDivisionError:
                 self.OC = 0
-            
+                     
             self.x = ((self.Csus_ini_SV - self.Csus_ini)/self.Csus_ini_SV)*(1+(1-mixing_effect(self.MixVelocity)))
             self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
             self.mol_CH4 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4)
             self.mol_CO2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CO2)
             self.mol_H2S = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_H2S)
             self.mol_NH3 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_NH3)
-            self.mol_O2 = self.mol_O2 + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.1) 
-            self.mol_H2 = self.mol_H2 + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
-            self.mol_H2O = self.mol_H2O + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
+            self.mol_O2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4*np.random.uniform(0.01, 0.05))
+            self.mol_H2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4 * np.random.uniform (0, 0.000005))
+            self.mol_H2O = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4 * np.random.normal(0.01, 0.05))
             self.biogas_mol_dry = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2
             self.biogas_mol_wet = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2 + self.mol_H2O
-        
+                
         self.counterReactor = self.counterReactor + self.tp
 
     def CompoundsUnits (self):
