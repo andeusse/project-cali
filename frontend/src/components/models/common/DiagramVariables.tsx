@@ -34,7 +34,7 @@ const DiagramVariables = <T,>(props: Props<T>) => {
           printValue = (value as boolean) ? 'On' : 'Off';
         }
         return (
-          <g>
+          <g key={`Grupo${v.variable}_${index}`}>
             {v.isVertical !== null && !v.isVertical && (
               <g key={`GrupoVariable${v.variable}_${index}`}>
                 {printValue && v.diagramName !== '' && (

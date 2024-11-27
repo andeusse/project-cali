@@ -40,7 +40,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import BMPIllustration from '../../assets/illustrations/biogas.png';
+import BMPIllustration from '../../assets/illustrations/PBM.png';
 import { getValueByKey } from '../../utils/getValueByKey';
 import CustomNumberField from '../../components/UI/CustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';

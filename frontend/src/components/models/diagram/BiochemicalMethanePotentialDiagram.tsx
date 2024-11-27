@@ -157,6 +157,7 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
             )}
           </g>
         )}
+
         {bmp.plantOperation === PlantOperationType.SideB && (
           <g>
             {bmp.measurementMethodSideB ===
@@ -468,7 +469,16 @@ const BiochemicalMethanePotentialDiagram = (props: Props) => {
               bmp.plantOperation === PlantOperationType.SideB &&
               bmp.biogasCompoundsSideB === DiagramCompoundUnitType.Concentration
             ),
-            false,
+            !(
+              bmp.plantOperation === PlantOperationType.SideA &&
+              bmp.measurementMethodSideA ===
+                DiagramBiogasMeasurementMethodType.VolumeDisplaced
+            ),
+            !(
+              bmp.plantOperation === PlantOperationType.SideB &&
+              bmp.measurementMethodSideB ===
+                DiagramBiogasMeasurementMethodType.VolumeDisplaced
+            ),
           ]}
           fontSize={40}
         ></DiagramVariables>
