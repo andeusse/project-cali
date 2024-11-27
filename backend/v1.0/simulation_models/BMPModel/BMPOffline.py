@@ -48,6 +48,7 @@ class BMPModelOffline:
         self.hpool_ini = self.h_min            #mm
         self.Vpool_ini = self.Vpool_min        #mm
         self.Vbiogas_actual = 0
+        
 
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
@@ -338,7 +339,7 @@ class BMPModelOffline:
         self.K1 = K1
         self.K2 = K2
         self.K3 = K3
-        self.T = T
+        self.T = T + 273.15
         self.pH = pH
         self.model = model
         def pH_effect (parameter, model):
@@ -364,7 +365,7 @@ class BMPModelOffline:
             pH = pH_effect(pH, model)
             Teffect = Temperature_effect(T)
             Vrxn = Vrxn/1000
-            Q = (Q/1000*60)
+            Q = (Q/(1000*60))
             if model == "Arrhenius":
                 dC_dt = (Q/Vrxn)*(Csusi - C) - (C * K1 * np.exp (-(K2)/(R*T*pH)))/Vrxn
             if model == "ADM1":
@@ -412,11 +413,11 @@ class BMPModelOffline:
 
             if self.counterReactor == 0:
                 self.Csus_ini = self.Csus_ini_SV
-                print(self.Csus_ini)
+                
             else:
                 self.Csus_ini = float(self.Csus_res[-1])
 
-            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
+            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, self.T, K1, K2, K3))
             self.SV = (self.Csus_ini*mixing_effect(self.MixVelocity))*self.MW_sustrato
             
             try:
@@ -481,7 +482,7 @@ class BMPModelOffline:
         self.P_acum = (self.biogas_mol_dry * R * (self.T+273.15))/(self.Vf1/1000000) #Pa pressure due biogas prodcution dry
         self.P_acum = self.P_acum/6894.76
 
-        if self.P_storage >= 15:
+        if (self.P_storage >= 15):
             self.n_ii_dry = self.biogas_mol_dry      #save the last value of biogas mol before release
             self.n_ii_wet = self.biogas_mol_wet
             self.v_i = self.Vbiogas

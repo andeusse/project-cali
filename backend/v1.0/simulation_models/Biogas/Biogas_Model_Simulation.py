@@ -846,7 +846,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except (ZeroDivisionError, ValueError):
                     self.Organic_charge_R102 = 0
                 
@@ -926,7 +926,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0   #gSV/L.dia
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia 
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia 
                 except (ZeroDivisionError, ValueError) :
                     self.Organic_charge_R102 = 0
                 
@@ -972,7 +972,7 @@ class BiogasPlantSimulation:
                 if self.GlobalTime == 0:
                     self.Organic_charge_R101 = 0
                 else:
-                    self.Organic_charge_R101 = (self.SV_R101_gL/(self.GlobalTime*86400))   #gSV/L.dia
+                    self.Organic_charge_R101 = (self.SV_R101_gL/(self.GlobalTime/86400))   #gSV/L.dia
             except (ZeroDivisionError, ValueError):
                 self.Organic_charge_R101 = 0
             
@@ -1062,7 +1062,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:    
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1142,7 +1142,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1187,7 +1187,7 @@ class BiogasPlantSimulation:
                 if self.GlobalTime == 0:
                     self.Organic_charge_R101 = 0
                 else:
-                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
 
             except ZeroDivisionError:
                 self.Organic_charge_R101 = 0
@@ -1242,7 +1242,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R101 = 0
                     else:
-                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R101 = 0
                 
@@ -1292,7 +1292,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R101 = 0
                     else:
-                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R101 = 0
                 
@@ -1344,7 +1344,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1396,7 +1396,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R101 = 0
                     else:
-                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R101 = 0
                 
@@ -1448,7 +1448,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 

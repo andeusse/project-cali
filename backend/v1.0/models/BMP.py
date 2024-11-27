@@ -25,19 +25,12 @@ class BMP(Resource):
     users_instances = [user_id101, user_id102, user_id103, user_id104, user_id105,
                             user_id106, user_id107, user_id108, user_id109, user_id110]
     
-    if iteration == 1:
-      if users_instances is bmp_instances:
-        del bmp_instances[user_id101]
-        del bmp_instances[user_id102]
-        del bmp_instances[user_id103]
-        del bmp_instances[user_id104]
-        del bmp_instances[user_id105]
-        del bmp_instances[user_id106]
-        del bmp_instances[user_id107]
-        del bmp_instances[user_id108]
-        del bmp_instances[user_id109]
-        del bmp_instances[user_id110]
-          
+    
+    if iteration == 1:   
+      for key in users_instances:
+        if key in bmp_instances:
+          del bmp_instances[key]
+            
     # SIDE A -------------
     #lado A condiciones condiciones generales
     offlineA = data["stateSelectionSideA"]
