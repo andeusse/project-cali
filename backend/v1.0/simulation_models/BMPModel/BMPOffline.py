@@ -9,7 +9,7 @@ from simulation_models.Biogas import ThermoProperties as TP
 class BMPModelOffline:
     def __init__ (self, Vrxn, Vf, tp):
         self.Vrxn = Vrxn       #mL
-        self.Vf = Vf + 50      #mL El 50es el volumen libre del reactor y vf el volumen del tarro
+        self.Vf = Vf  + 50         #mL El 50es el volumen libre del reactor y vf el volumen del tarro
         self.tp = tp           #s
 
         #Thermodynamic properties for biogas
@@ -36,7 +36,7 @@ class BMPModelOffline:
         self.P_storage=0
         self.v_i = 0
         self.V_storage = 0
-        self.Vf2 = Vf           #variable to calculate the new volume when the gas is release
+        self.Vf2 = self.Vf       #variable to calculate the new volume when the gas is release
         self.vol_actual = 0     #volume before the first dischar of digestate
         
         #pool measurement
@@ -56,7 +56,7 @@ class BMPModelOffline:
                             Fraction3 = 1, Volume3 = 1, Weight3 = 1, TS3 = 0.1, VS3 = 0.05, rho3 = 1000, Cc3 = 43, Hc3 = 5, Oc3 = 30, Nc3 = 2, Sc3 = 0.21,
                             Fraction4 = 1, Volume4 = 1, Weight4 = 1, TS4 = 0.1, VS4 = 0.05, rho4 = 1000, Cc4 = 43, Hc4 = 5, Oc4 = 30, Nc4 = 2, Sc4 = 0.21,):
         
-        if substratesNumber == 1 and MixtureRule == "Fracción":
+        if substratesNumber == 1 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 != 100:
                 Fraction1 = 100 - WaterFraction
             
@@ -71,7 +71,7 @@ class BMPModelOffline:
             self.Nc = Nc1
             self.Sc = Sc1
         
-        elif substratesNumber == 2 and MixtureRule == "Fracción":
+        elif substratesNumber == 2 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 + Fraction2 != 100:
                 Fraction2 = 100 - WaterFraction - Fraction1
             
@@ -93,7 +93,7 @@ class BMPModelOffline:
             self.Nc = (gN1 + gN2)/dryWeight
             self.Sc = (gS1 + gS2)/dryWeight
         
-        elif substratesNumber == 3 and MixtureRule == "Fracción":
+        elif substratesNumber == 3 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 + Fraction2 + Fraction3 != 100:
                 Fraction3 = 100 - WaterFraction - Fraction1 - Fraction2
             
@@ -116,7 +116,7 @@ class BMPModelOffline:
             self.Nc = (gN1 + gN2 + gN3)/dryWeight
             self.Sc = (gS1 + gS2 + gS3)/dryWeight
         
-        elif substratesNumber == 4 and MixtureRule == "Fracción":
+        elif substratesNumber == 4 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 + Fraction2 + Fraction3 + Fraction4 != 100:
                 Fraction4 = 100 - WaterFraction - Fraction1 - Fraction2 - Fraction3
             
@@ -339,7 +339,7 @@ class BMPModelOffline:
         self.K1 = K1
         self.K2 = K2
         self.K3 = K3
-        self.T = T + 273.15
+        self.T = T
         self.pH = pH
         self.model = model
         def pH_effect (parameter, model):
@@ -363,7 +363,7 @@ class BMPModelOffline:
         def differentialEquation (C, t, Vrxn, Q, Csusi, model, pH, T, K1, K2 = 1, K3 = 1):
             R = 8.314
             pH = pH_effect(pH, model)
-            Teffect = Temperature_effect(T)
+            Teffect = Temperature_effect(T-273.15)
             Vrxn = Vrxn/1000
             Q = (Q/(1000*60))
             if model == "Arrhenius":
@@ -417,7 +417,7 @@ class BMPModelOffline:
             else:
                 self.Csus_ini = float(self.Csus_res[-1])
 
-            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, self.T, K1, K2, K3))
+            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, self.T+273.15, K1, K2, K3))
             self.SV = (self.Csus_ini*mixing_effect(self.MixVelocity))*self.MW_sustrato
             
             try:
@@ -469,7 +469,7 @@ class BMPModelOffline:
             self.x_H2 = 0
     
     def PressurebyBiogas (self):
-        P_std = 100000  #kPa
+        P_std = 100000  #Pa
         R = 8.314 #J/mol K
 
         if self.Vf1 <= 50:
@@ -478,6 +478,7 @@ class BMPModelOffline:
             self.vol_actual = self.TotalVolFeed
         else:
             self.Vf1 = self.Vf - (self.TotalVolFeed - self.vol_actual)
+            
 
         self.P_acum = (self.biogas_mol_dry * R * (self.T+273.15))/(self.Vf1/1000000) #Pa pressure due biogas prodcution dry
         self.P_acum = self.P_acum/6894.76
@@ -489,7 +490,7 @@ class BMPModelOffline:
             self.Vf2 = self.Vf1
 
         self.n_i = (P_std*(self.Vf2/1000000))/(R*(self.T+273.15))   #mol
-        self.mol_storage = (self.n_i + (self.biogas_mol_wet - self.n_ii_wet))
+        self.mol_storage = (self.n_i + abs(self.biogas_mol_wet - self.n_ii_wet))
         self.Pabs = (self.mol_storage * R * (self.T+273.15))/(self.Vf1/1000000)  #Pa  #pressure by increasing for inyection
         self.P_storage = abs(self.Pabs - P_std)/6894.76      #psi  due inyection and biogas realese 
         self.V_storage = (self.Vbiogas - self.v_i)
