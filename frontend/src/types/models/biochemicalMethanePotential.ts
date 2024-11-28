@@ -64,7 +64,7 @@ export enum DiagramBiogasUnitText {
 
 export enum DiagramCompoundUnitType {
   Concentration = 'Concentration',
-  NormalVolume = 'PartialVolume',
+  NormalVolume = 'NormalVolume',
   Moles = 'Moles',
 }
 
