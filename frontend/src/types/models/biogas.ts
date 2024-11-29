@@ -632,8 +632,6 @@ export const BIOGAS: BiogasParameters = {
       tooltip: 'Densidad del sustrato en R101 al inicio',
       unit: 'g / L',
       variableString: 'Densidad del sustrato',
-      min: 200,
-      max: 2000,
       step: 10,
     },
     atomicCarbonSubstrateConcetration: {
@@ -717,8 +715,6 @@ export const BIOGAS: BiogasParameters = {
       tooltip: 'Densidad del sustrato en R102 al inicio',
       unit: 'g / L',
       variableString: 'Densidad del sustrato',
-      min: 200,
-      max: 2000,
       step: 10,
     },
     atomicCarbonSubstrateConcetration: {
@@ -802,8 +798,6 @@ export const BIOGAS: BiogasParameters = {
     tooltip: 'Densidad del sustrato',
     unit: 'g / L',
     variableString: 'Densidad',
-    min: 200,
-    max: 2000,
     step: 10,
   },
   inputElementalAnalysisCarbonContent: {

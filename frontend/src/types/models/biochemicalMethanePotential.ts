@@ -721,7 +721,6 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     unit: '%',
     variableString: 'Fracción',
     min: 0,
-    max: 100,
   },
   totalSolidsSubstrate1SideA: {
     disabled: false,
@@ -801,7 +800,6 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     unit: '%',
     variableString: 'Fracción',
     min: 0,
-    max: 100,
   },
   totalSolidsSubstrate2SideA: {
     disabled: false,
@@ -881,7 +879,6 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     unit: '%',
     variableString: 'Fracción',
     min: 0,
-    max: 100,
   },
   totalSolidsSubstrate3SideA: {
     disabled: false,
@@ -961,7 +958,6 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     unit: '%',
     variableString: 'Fracción',
     min: 0,
-    max: 100,
   },
   totalSolidsSubstrate4SideA: {
     disabled: false,
