@@ -268,7 +268,7 @@ class ThermoProperties:
          
         molT = molCH4 + molCO2 + molH2S + molO2 + molH2
 
-        if molT>0:
+        if (molT>0):
             self.xCH4 = molCH4/molT
             self.xCO2 = molCO2/molT
             self.xH2S = molH2S/molT

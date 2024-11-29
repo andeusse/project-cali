@@ -64,7 +64,7 @@ export enum DiagramBiogasUnitText {
 
 export enum DiagramCompoundUnitType {
   Concentration = 'Concentration',
-  NormalVolume = 'PartialVolume',
+  NormalVolume = 'NormalVolume',
   Moles = 'Moles',
 }
 
@@ -2081,7 +2081,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Carga Orgánica R101 ',
     variable: 'OCR101',
-    unit: '',
+    unit: '*³',
     isShown: true,
     diagramName: 'OC *³',
     fixed: 2,
@@ -2765,7 +2765,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R101',
     variable: 'accumbiogaspressureR101',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -2957,7 +2957,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno concentración R101',
     variable: 'hydrogenconcentrationR101',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
@@ -2991,9 +2991,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R101',
     variable: 'PBMR101',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -3053,7 +3053,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R102',
     variable: 'accumbiogaspressureR102',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -3279,9 +3279,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R102',
     variable: 'PBMR102',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -3341,7 +3341,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R103',
     variable: 'accumbiogaspressureR103',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -3567,9 +3567,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R103',
     variable: 'PBMR103',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -3629,7 +3629,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R104',
     variable: 'accumbiogaspressureR104',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -3785,7 +3785,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R104',
     variable: 'hydrogensulfurconcentrationR104',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -3821,7 +3821,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno concentración R104',
     variable: 'hydrogenconcentrationR104',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
@@ -3855,9 +3855,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R104',
     variable: 'PBMR104',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -3917,7 +3917,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R105',
     variable: 'accumbiogaspressureR105',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -4073,7 +4073,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R105',
     variable: 'hydrogensulfurconcentrationR105',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -4109,7 +4109,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno concentración R105',
     variable: 'hydrogenconcentrationR105',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
@@ -4143,9 +4143,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R105',
     variable: 'PBMR105',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -4175,7 +4175,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 550,
     y: 1650,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4187,7 +4187,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 550,
     y: 1800,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4199,7 +4199,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 550,
     y: 1950,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4211,7 +4211,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1115,
     y: 1650,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4223,7 +4223,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1115,
     y: 1800,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4235,7 +4235,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 1115,
     y: 1950,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4247,7 +4247,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1630,
     y: 1650,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4259,7 +4259,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1630,
     y: 1800,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4271,7 +4271,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 1630,
     y: 1950,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4283,7 +4283,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2170,
     y: 1650,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4295,7 +4295,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2170,
     y: 1800,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4307,7 +4307,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 2170,
     y: 1950,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4319,7 +4319,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2685,
     y: 1650,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4331,7 +4331,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2685,
     y: 1800,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
   {
@@ -4343,7 +4343,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 2685,
     y: 1950,
-    hasAdditionalCondition: 0,
+    hasAdditionalCondition: 25,
     isVertical: true,
   },
 
@@ -5070,7 +5070,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R106',
     variable: 'accumbiogaspressureR106',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -5226,7 +5226,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R106',
     variable: 'hydrogensulfurconcentrationR106',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -5296,9 +5296,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R106',
     variable: 'PBMR106',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -5358,7 +5358,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R107',
     variable: 'accumbiogaspressureR107',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -5514,13 +5514,13 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R107',
     variable: 'hydrogensulfurconcentrationR107',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
     x: 900,
     y: 800,
-    hasAdditionalCondition: 25,
+    hasAdditionalCondition: 24,
     isVertical: false,
   },
   {
@@ -5584,9 +5584,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R107',
     variable: 'PBMR107',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -5646,7 +5646,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R108',
     variable: 'accumbiogaspressureR108',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -5802,7 +5802,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R108',
     variable: 'hydrogensulfurconcentrationR108',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -5872,9 +5872,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R108',
     variable: 'PBMR108',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -5934,7 +5934,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R109',
     variable: 'accumbiogaspressureR109',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -6090,13 +6090,13 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R109',
     variable: 'hydrogensulfurconcentrationR109',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
     x: 2300,
     y: 800,
-    hasAdditionalCondition: 25,
+    hasAdditionalCondition: 24,
     isVertical: false,
   },
   {
@@ -6126,13 +6126,13 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Hidrógeno concentración R109',
     variable: 'hydrogenconcentrationR109',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
     x: 2300,
     y: 950,
-    hasAdditionalCondition: 25,
+    hasAdditionalCondition: 24,
     isVertical: false,
   },
   {
@@ -6160,9 +6160,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R109',
     variable: 'PBMR109',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -6222,7 +6222,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Presión biogás acumulado R110',
     variable: 'accumbiogaspressureR110',
-    unit: 'mL',
+    unit: 'psig',
     isShown: true,
     diagramName: 'Presión',
     fixed: 2,
@@ -6378,7 +6378,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Sulfuro de hidrógeno concentración R110',
     variable: 'hydrogensulfurconcentrationR110',
-    unit: '%',
+    unit: 'ppm',
     isShown: true,
     diagramName: 'H2S',
     fixed: 0,
@@ -6413,14 +6413,14 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
   },
   {
     name: 'Hidrógeno concentración R110',
-    variable: 'hydrogenconcentrationR101',
+    variable: 'hydrogenconcentrationR110',
     unit: 'ppm',
     isShown: true,
     diagramName: 'H2',
     fixed: 2,
     x: 3100,
     y: 950,
-    hasAdditionalCondition: 25,
+    hasAdditionalCondition: 24,
     isVertical: false,
   },
   {
@@ -6448,9 +6448,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     isVertical: false,
   },
   {
-    name: 'Potencial Bioquímico de Metano',
+    name: 'Potencial Bioquímico de Metano R110',
     variable: 'PBMR110',
-    unit: '',
+    unit: '*¹',
     isShown: true,
     diagramName: 'PBM *¹',
     fixed: 2,
@@ -6480,7 +6480,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 550,
     y: 1650,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6492,7 +6492,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 550,
     y: 1800,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6504,7 +6504,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 550,
     y: 1950,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6516,7 +6516,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1115,
     y: 1650,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6528,7 +6528,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1115,
     y: 1800,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6540,7 +6540,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 1115,
     y: 1950,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6552,7 +6552,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1630,
     y: 1650,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6564,7 +6564,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 1630,
     y: 1800,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6576,7 +6576,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 1630,
     y: 1950,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6588,7 +6588,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2170,
     y: 1650,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6600,7 +6600,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2170,
     y: 1800,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6612,7 +6612,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 2170,
     y: 1950,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6624,7 +6624,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2685,
     y: 1650,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6636,7 +6636,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 1,
     x: 2685,
     y: 1800,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
   {
@@ -6648,7 +6648,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     fixed: 0,
     x: 2685,
     y: 1950,
-    hasAdditionalCondition: 1,
+    hasAdditionalCondition: 26,
     isVertical: true,
   },
 ];
