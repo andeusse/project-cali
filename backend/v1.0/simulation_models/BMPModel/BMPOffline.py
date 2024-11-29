@@ -9,7 +9,7 @@ from simulation_models.Biogas import ThermoProperties as TP
 class BMPModelOffline:
     def __init__ (self, Vrxn, Vf, tp):
         self.Vrxn = Vrxn       #mL
-        self.Vf = Vf + 50      #mL El 50es el volumen libre del reactor y vf el volumen del tarro
+        self.Vf = Vf  + 50         #mL El 50es el volumen libre del reactor y vf el volumen del tarro
         self.tp = tp           #s
 
         #Thermodynamic properties for biogas
@@ -36,7 +36,7 @@ class BMPModelOffline:
         self.P_storage=0
         self.v_i = 0
         self.V_storage = 0
-        self.Vf2 = Vf           #variable to calculate the new volume when the gas is release
+        self.Vf2 = self.Vf       #variable to calculate the new volume when the gas is release
         self.vol_actual = 0     #volume before the first dischar of digestate
         
         #pool measurement
@@ -48,6 +48,7 @@ class BMPModelOffline:
         self.hpool_ini = self.h_min            #mm
         self.Vpool_ini = self.Vpool_min        #mm
         self.Vbiogas_actual = 0
+        
 
     def MixtureCalculation (self, substratesNumber, MixtureRule, WaterFraction, WaterVolume, WaterWeight,
                             Fraction1, Volume1, Weight1, TS1, VS1, rho1, Cc1, Hc1, Oc1, Nc1, Sc1,
@@ -55,7 +56,7 @@ class BMPModelOffline:
                             Fraction3 = 1, Volume3 = 1, Weight3 = 1, TS3 = 0.1, VS3 = 0.05, rho3 = 1000, Cc3 = 43, Hc3 = 5, Oc3 = 30, Nc3 = 2, Sc3 = 0.21,
                             Fraction4 = 1, Volume4 = 1, Weight4 = 1, TS4 = 0.1, VS4 = 0.05, rho4 = 1000, Cc4 = 43, Hc4 = 5, Oc4 = 30, Nc4 = 2, Sc4 = 0.21,):
         
-        if substratesNumber == 1 and MixtureRule == "Fracción":
+        if substratesNumber == 1 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 != 100:
                 Fraction1 = 100 - WaterFraction
             
@@ -70,7 +71,7 @@ class BMPModelOffline:
             self.Nc = Nc1
             self.Sc = Sc1
         
-        elif substratesNumber == 2 and MixtureRule == "Fracción":
+        elif substratesNumber == 2 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 + Fraction2 != 100:
                 Fraction2 = 100 - WaterFraction - Fraction1
             
@@ -92,7 +93,7 @@ class BMPModelOffline:
             self.Nc = (gN1 + gN2)/dryWeight
             self.Sc = (gS1 + gS2)/dryWeight
         
-        elif substratesNumber == 3 and MixtureRule == "Fracción":
+        elif substratesNumber == 3 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 + Fraction2 + Fraction3 != 100:
                 Fraction3 = 100 - WaterFraction - Fraction1 - Fraction2
             
@@ -115,7 +116,7 @@ class BMPModelOffline:
             self.Nc = (gN1 + gN2 + gN3)/dryWeight
             self.Sc = (gS1 + gS2 + gS3)/dryWeight
         
-        elif substratesNumber == 4 and MixtureRule == "Fracción":
+        elif substratesNumber == 4 and (MixtureRule == "Fracción" or MixtureRule == "Composición"):
             if WaterFraction + Fraction1 + Fraction2 + Fraction3 + Fraction4 != 100:
                 Fraction4 = 100 - WaterFraction - Fraction1 - Fraction2 - Fraction3
             
@@ -315,8 +316,9 @@ class BMPModelOffline:
             self.counterfeed = self.counterfeed + self.tp
             if self.counterfeed > Time*3600:
                 self.counterfeed = 0
+            self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
 
-        if Mode == "Injection":
+        elif Mode == "Injection":
             IntervalTimeInyection = 24/Inyections
             TimeFeed = (Volume/Q)*60
             if self.counterfeed < TimeFeed:
@@ -326,10 +328,11 @@ class BMPModelOffline:
             self.counterfeed = self.counterfeed + self.tp
             if self.counterfeed > IntervalTimeInyection*3600:
                 self.counterfeed = 0 
-
-        self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
-        if Mode == "NoDosing":
+            self.TotalVolFeed = self.TotalVolFeed + self.Qr*(self.tp/60)  
+            
+        elif Mode == "NoDosing":
             self.Qr = 0
+            self.TotalVolFeed = 0
     
     def Reactor (self, model, pH, T, K1, K2=1, K3=1):
         
@@ -360,9 +363,9 @@ class BMPModelOffline:
         def differentialEquation (C, t, Vrxn, Q, Csusi, model, pH, T, K1, K2 = 1, K3 = 1):
             R = 8.314
             pH = pH_effect(pH, model)
-            Teffect = Temperature_effect(T)
+            Teffect = Temperature_effect(T-273.15)
             Vrxn = Vrxn/1000
-            Q = (Q/1000*60)
+            Q = (Q/(1000*60))
             if model == "Arrhenius":
                 dC_dt = (Q/Vrxn)*(Csusi - C) - (C * K1 * np.exp (-(K2)/(R*T*pH)))/Vrxn
             if model == "ADM1":
@@ -410,27 +413,30 @@ class BMPModelOffline:
 
             if self.counterReactor == 0:
                 self.Csus_ini = self.Csus_ini_SV
+                
             else:
                 self.Csus_ini = float(self.Csus_res[-1])
-            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, T, K1, K2, K3))
+
+            self.Csus_res = odeint(differentialEquation, self.Csus_ini, t_sim, args = (self.Vrxn, self.Qr, self.Csus_ini_SV, model, pH, self.T+273.15, K1, K2, K3))
             self.SV = (self.Csus_ini*mixing_effect(self.MixVelocity))*self.MW_sustrato
+            
             try:
                 self.OC = self.SV/(self.counterReactor/86400)
             except ZeroDivisionError:
                 self.OC = 0
-            
+                     
             self.x = ((self.Csus_ini_SV - self.Csus_ini)/self.Csus_ini_SV)*(1+(1-mixing_effect(self.MixVelocity)))
             self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
             self.mol_CH4 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4)
             self.mol_CO2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CO2)
             self.mol_H2S = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_H2S)
             self.mol_NH3 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_NH3)
-            self.mol_O2 = self.mol_O2 + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0.02, 0.1) 
-            self.mol_H2 = self.mol_H2 + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.uniform (0, 0.00005)
-            self.mol_H2O = self.mol_H2O + abs(float(self.Csus_res[0])-float(self.Csus_res[-1])) * (self.Vrxn/1000) * np.random.normal(0.01, 0.1)
+            self.mol_O2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4*np.random.uniform(0.01, 0.05))
+            self.mol_H2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4 * np.random.uniform (0, 0.000005))
+            self.mol_H2O = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4 * np.random.normal(0.01, 0.05))
             self.biogas_mol_dry = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2
             self.biogas_mol_wet = self.mol_CH4 + self.mol_CO2 + self.mol_H2S + self.mol_NH3 + self.mol_O2 + self.mol_H2 + self.mol_H2O
-        
+                
         self.counterReactor = self.counterReactor + self.tp
 
     def CompoundsUnits (self):
@@ -463,7 +469,7 @@ class BMPModelOffline:
             self.x_H2 = 0
     
     def PressurebyBiogas (self):
-        P_std = 100000  #kPa
+        P_std = 100000  #Pa
         R = 8.314 #J/mol K
 
         if self.Vf1 <= 50:
@@ -472,18 +478,19 @@ class BMPModelOffline:
             self.vol_actual = self.TotalVolFeed
         else:
             self.Vf1 = self.Vf - (self.TotalVolFeed - self.vol_actual)
+            
 
         self.P_acum = (self.biogas_mol_dry * R * (self.T+273.15))/(self.Vf1/1000000) #Pa pressure due biogas prodcution dry
         self.P_acum = self.P_acum/6894.76
 
-        if self.P_storage >= 15:
+        if (self.P_storage >= 15):
             self.n_ii_dry = self.biogas_mol_dry      #save the last value of biogas mol before release
             self.n_ii_wet = self.biogas_mol_wet
             self.v_i = self.Vbiogas
             self.Vf2 = self.Vf1
 
         self.n_i = (P_std*(self.Vf2/1000000))/(R*(self.T+273.15))   #mol
-        self.mol_storage = (self.n_i + (self.biogas_mol_wet - self.n_ii_wet))
+        self.mol_storage = (self.n_i + abs(self.biogas_mol_wet - self.n_ii_wet))
         self.Pabs = (self.mol_storage * R * (self.T+273.15))/(self.Vf1/1000000)  #Pa  #pressure by increasing for inyection
         self.P_storage = abs(self.Pabs - P_std)/6894.76      #psi  due inyection and biogas realese 
         self.V_storage = (self.Vbiogas - self.v_i)
@@ -529,7 +536,7 @@ class BMPModelOffline:
         
         #Altura
         self.hpool_ini = self.Vpool_ini_mm/self.Apool
-        self.hpool = self.hpool_ini - 35
+        self.hpool = (self.hpool_ini - 35)/10
         
         
         

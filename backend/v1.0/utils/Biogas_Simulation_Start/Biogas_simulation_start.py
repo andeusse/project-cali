@@ -23,4 +23,20 @@ class BiogasSimulationStart:
     @staticmethod
     def reset_instance():
         BiogasSimulationStart._instance = None
+    
+    def to_dict(self):
+      # Convert the instance into a dictionary
+      data_dict = {}
+      if self._data:
+          data_dict['data'] = self._data.to_dict()  # Assuming _data has its own to_dict method
+      return data_dict
+    
+    @classmethod
+    def from_dict(cls, data_dict):
+        """Deserialize the dictionary back into the singleton instance."""
+        instance = cls()
+        # Recreate the _data attribute from the stored dictionary
+        if 'data' in data_dict:
+            instance._data = Biogas_Model_Simulation.BiogasPlantSimulation.from_dict(data_dict['data'])
+        return instance
 

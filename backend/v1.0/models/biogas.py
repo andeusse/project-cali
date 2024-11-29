@@ -1,29 +1,34 @@
 from flask import request
 from flask_restful import Resource
-import pandas as pd
 from utils import Biogas_Start
 from utils import MachineLearning_biogas_start
 from utils import Biogas_Simulation_Start
 
+biogas_instances = {}
+
 class Biogas(Resource):
+
   def post(self):
     data = request.get_json()
      
     biogas_input = {}
     biogas_output = {}
 
-    biogas_input["reset"] = data["restartFlag"]
-
-    if biogas_input["reset"] == True:                  
+    biogas_input["iteration"] = data["iteration"]
+    biogas_input["name"] = data["name"]
+    
+    if biogas_input["iteration"] == 1:
+      if biogas_input["name"] is biogas_instances:
+        del biogas_instance["name"]
+      Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
       Biogas_Start.BiogasStart.reset_instance()
       MachineLearning_biogas_start.MachineLearningStart.reset_instance()
-      Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
-    
+          
     #Operación Planta
     biogas_input["VR1"] = data["anaerobicReactorVolume1"]["value"]
     biogas_input["VR2"] = data["anaerobicReactorVolume2"]["value"]
     biogas_input["OperationMode"] = data["inputOperationMode"]
-
+    
     #Tanques de biogás
     biogas_input["VG1"] = data["biogasTankVolume1"]["value"]
     biogas_input["VG2"] = data["biogasTankVolume2"]["value"]
@@ -217,31 +222,35 @@ class Biogas(Resource):
       #Reactor R101
       biogas_output["Mix_Velocity_R101"] = Biogas_Plant.RPM_R101
       biogas_output["C_sv_R101"] = Biogas_Plant.SV_R101_gL
-      biogas_output["SV_R101"] = Biogas_Plant.SV_R101
+      biogas_output["SV_R101"] = Biogas_Plant.SV_R101_p
       biogas_output["C_st_R101"] = Biogas_Plant.ST_R101_gl
       biogas_output["ST_R101"] = Biogas_Plant.ST_R101
       biogas_output["Organic_Charge_R101"] = Biogas_Plant.organic_charge_R101
       biogas_output["pH_R101"] = Biogas_Plant.pH_R101
       biogas_output["Temp_R101"] = Biogas_Plant.Temp_R101
       biogas_output["x_R101"] = Biogas_Plant.X_R101
+      
+      
       #modelo cinético
       if biogas_input["OperationModel"] == "Arrhenius":
         biogas_output["K_R101"] = Biogas_learning.K_R101
         biogas_output["Ea_R101"] = Biogas_learning.Ea_R101
 
 
-      
-
     else:  #Modo Gemelo Off
-
-      Biogas_Plant_ini = Biogas_Simulation_Start.BiogasSimulationStart()
-      Biogas_Plant_ini.starting(VR1 = biogas_input["VR1"], VR2 = biogas_input["VR2"], VG1 = biogas_input["VG1"], VG2 = biogas_input["VG2"], VG3 = biogas_input["VG3"],
+      
+      if biogas_input["name"] not in biogas_instances:
+        biogas_instances[biogas_input["name"]] = Biogas_Simulation_Start.BiogasSimulationStart()
+      
+      biogas_instance = biogas_instances[biogas_input["name"]]
+      
+      biogas_instance.starting(VR1 = biogas_input["VR1"], VR2 = biogas_input["VR2"], VG1 = biogas_input["VG1"], VG2 = biogas_input["VG2"], VG3 = biogas_input["VG3"],
                                 tp = biogas_input["tp"], ST_R101 = biogas_input["ST_R101"], SV_R101 = biogas_input["SV_R101"], Cc_R101 = biogas_input["Cc_R101"],
                                 Ch_R101 = biogas_input["Ch_R101"], Co_R101 = biogas_input["Co_R101"], Cn_R101 = biogas_input["Cn_R101"], Cs_R101 = biogas_input["Cs_R101"], 
                                 rho_R101 = biogas_input["rho_R101"], ST_R102 = biogas_input["ST_R102"], SV_R102 = biogas_input["SV_R102"], Cc_R102 = biogas_input["Cc_R102"], 
                                 Ch_R102 = biogas_input["Ch_R102"], Co_R102 = biogas_input["Co_R102"], Cn_R102 = biogas_input["Cn_R102"], Cs_R102 = biogas_input["Cs_R102"], 
                                 rho_R102 = biogas_input["rho_R102"] , OperationMode = biogas_input["OperationMode"])
-      Biogas_Plant = Biogas_Plant_ini.data
+      Biogas_Plant = biogas_instance.data
       Biogas_Plant.Substrate_conditions(Cc = biogas_input["Cc"], Ch = biogas_input["Ch"], Co = biogas_input["Co"], Cn = biogas_input["Cn"], Cs = biogas_input["Cs"],
                                         rho = biogas_input["rho"], ST = biogas_input["ST"], SV = biogas_input["SV"])
       
@@ -310,7 +319,7 @@ class Biogas(Resource):
         biogas_output["pH_R102"] = Biogas_Plant.pH_R102
         biogas_output["Temp_R102"] = Biogas_Plant.Temp_R102
         biogas_output["C_sv_R102"] = Biogas_Plant.SV_R102_gL/100
-        biogas_output["SV_R102"] = Biogas_Plant.ST_R102
+        biogas_output["SV_R102"] = Biogas_Plant.SV_R102_p
         biogas_output["C_st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
         biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)
@@ -337,7 +346,7 @@ class Biogas(Resource):
         biogas_output["pH_R102"] = Biogas_Plant.pH_R102
         biogas_output["Temp_R102"] = Biogas_Plant.Temp_R102
         biogas_output["C_sv_R102"] = Biogas_Plant.SV_R102_gL/100
-        biogas_output["SV_R102"] = Biogas_Plant.ST_R102
+        biogas_output["SV_R102"] = Biogas_Plant.SV_R102_p
         biogas_output["C_st_R102"] = Biogas_Plant.ST_R102/100 * Biogas_Plant.rho
         biogas_output["ST_R102"] = Biogas_Plant.ST_R102
         biogas_output["Organic_Charge_R102"] = float(Biogas_Plant.Organic_charge_R102)

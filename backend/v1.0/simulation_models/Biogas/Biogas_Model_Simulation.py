@@ -47,6 +47,17 @@ class BiogasPlantSimulation:
         self.Cn_R101 = Cn_R101
         self.Cs_R101 = Cs_R101
         self.rho_R101 = rho_R101
+        
+        #Reactor 102 initial conditions
+        self.ST_R102 = ST_R102
+        self.SV_R102 = SV_R102
+        self.Cc_R102 = Cc_R102
+        self.Ch_R102 = Ch_R102
+        self.Co_R102 = Co_R102
+        self.Cn_R102 = Cn_R102
+        self.Cs_R102 = Cs_R102
+        self.rho_R102 = rho_R102
+        
         if self.ST_R101 == 0:
             self.Csus_ini_R101 = 0
             self.Csus_ini_ST_R101 = 0
@@ -321,6 +332,62 @@ class BiogasPlantSimulation:
                     , "Pacum_bio_V107"]
             
         self.Operation_Data = pd.DataFrame(columns= columns)
+    
+    @classmethod
+    def from_dict(cls, data_dict):
+        """Class method to create an instance from a dictionary."""
+        # Extract data from the dictionary and instantiate the object
+        return cls(
+            VR1=data_dict.get("VR1"),
+            VR2=data_dict.get("VR2"),
+            VG1=data_dict.get("VG1"),
+            VG2=data_dict.get("VG2"),
+            VG3=data_dict.get("VG3"),
+            tp=data_dict.get("tp"),
+            ST_R101=data_dict.get("ST_R101"),
+            SV_R101=data_dict.get("SV_R101"),
+            Cc_R101=data_dict.get("Cc_R101"),
+            Ch_R101=data_dict.get("Ch_R101"),
+            Co_R101=data_dict.get("Co_R101"),
+            Cn_R101=data_dict.get("Cn_R101"),
+            Cs_R101=data_dict.get("Cs_R101"),
+            rho_R101=data_dict.get("rho_R101"),
+            ST_R102=data_dict.get("ST_R102"),
+            SV_R102=data_dict.get("SV_R102"),
+            Cc_R102=data_dict.get("Cc_R102"),
+            Ch_R102=data_dict.get("Ch_R102"),
+            Co_R102=data_dict.get("Co_R102"),
+            Cn_R102=data_dict.get("Cn_R102"),
+            Cs_R102=data_dict.get("Cs_R102"),
+            rho_R102=data_dict.get("rho_R102"),
+            OperationMode=data_dict.get("OperationMode")
+        )
+    
+    def to_dict(self):
+        return {"VR1":self.VR1,
+                "VR2":self.VR2, 
+                "VG1": self.VG1,
+                "VG2":self.VG2,
+                "VG3":self.VG3,
+                "tp":self.tp, 
+                "ST_R101": self.ST_R101,
+                "SV_R101":self.SV_R101,
+                "Cc_R101":self.Cc_R101,
+                "Ch_R101":self.Ch_R101,
+                "Co_R101":self.Co_R101, 
+                "Cn_R101":self.Cn_R101,
+                "Cs_R101":self.Cs_R101,
+                "rho_R101":self.rho_R101,
+                "ST_R102": self.ST_R102,
+                "SV_R102":self.SV_R102,
+                "Cc_R102":self.Cc_R102,
+                "Ch_R102":self.Ch_R102,
+                "Co_R102":self.Co_R102, 
+                "Cn_R102":self.Cn_R102,
+                "Cs_R102":self.Cs_R102,
+                "rho_R102":self.rho_R102,
+                "OperationMode":self.OperationMode
+        }
 
     
     def Substrate_conditions (self, Cc, Ch, Co, Cn, Cs, rho, ST, SV):
@@ -779,7 +846,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except (ZeroDivisionError, ValueError):
                     self.Organic_charge_R102 = 0
                 
@@ -787,7 +854,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -859,7 +926,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0   #gSV/L.dia
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia 
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia 
                 except (ZeroDivisionError, ValueError) :
                     self.Organic_charge_R102 = 0
                 
@@ -867,7 +934,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -905,7 +972,7 @@ class BiogasPlantSimulation:
                 if self.GlobalTime == 0:
                     self.Organic_charge_R101 = 0
                 else:
-                    self.Organic_charge_R101 = (self.SV_R101_gL/(self.GlobalTime*86400))   #gSV/L.dia
+                    self.Organic_charge_R101 = (self.SV_R101_gL/(self.GlobalTime/86400))   #gSV/L.dia
             except (ZeroDivisionError, ValueError):
                 self.Organic_charge_R101 = 0
             
@@ -995,7 +1062,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:    
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1003,7 +1070,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1075,7 +1142,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1083,7 +1150,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1120,7 +1187,7 @@ class BiogasPlantSimulation:
                 if self.GlobalTime == 0:
                     self.Organic_charge_R101 = 0
                 else:
-                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                    self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
 
             except ZeroDivisionError:
                 self.Organic_charge_R101 = 0
@@ -1175,7 +1242,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R101 = 0
                     else:
-                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R101 = 0
                 
@@ -1225,7 +1292,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R101 = 0
                     else:
-                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R101 = 0
                 
@@ -1277,7 +1344,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1285,7 +1352,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
@@ -1329,7 +1396,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R101 = 0
                     else:
-                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R101 = self.SV_R101_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R101 = 0
                 
@@ -1381,7 +1448,7 @@ class BiogasPlantSimulation:
                     if self.GlobalTime == 0:
                         self.Organic_charge_R102 = 0
                     else:
-                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime*86400)   #gSV/L.dia
+                        self.Organic_charge_R102 = self.SV_R102_gL/(self.GlobalTime/86400)   #gSV/L.dia
                 except ZeroDivisionError:
                     self.Organic_charge_R102 = 0
                 
@@ -1389,7 +1456,7 @@ class BiogasPlantSimulation:
                     if ((self.Csus_ini_R101 * self.MW_sustrato)) / self.rho == 0:
                         self.x_R102 = 0
                     else:
-                        self.x_R102 = (self.Operation_Data.Csus_ini_R102[0] - self.Csus_ini_R102)/(self.Operation_Data.Csus_ini_R102[0])
+                        self.x_R102 = abs(self.Csus_ini_R101 - self.Csus_ini_R102)/(self.Csus_ini_R101)
                         #self.x_R102 = ((self.Csus_ini_R101 * self.MW_sustrato / self.rho) - self.SV_R102_p)/(self.Csus_ini_R101 * self.MW_sustrato / self.rho)
                 except ZeroDivisionError:
                     self.x_R102 = 0
