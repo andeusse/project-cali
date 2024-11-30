@@ -40,9 +40,9 @@ const CustomNumberField = (props: CustomTextFieldType) => {
   return (
     <FormControl fullWidth>
       <Tooltip
-        title={`${tooltip}. ${
-          variable.min !== undefined ? `Mínimo: ${variable.min}.` : ''
-        } ${variable.max !== undefined ? `Máximo: ${variable.max}.` : ''}`}
+        title={`${tooltip} ${
+          variable.min !== undefined ? `Mínimo: ${variable.min}` : ''
+        } ${variable.max !== undefined ? `Máximo: ${variable.max}` : ''}`}
         placement="right"
         arrow
       >
