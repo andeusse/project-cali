@@ -182,7 +182,7 @@ class TwinPVWF:
         self.n_hybrid = n_hybrid # Eficiencia de inversor hibrido en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
         self.sigma_bat = 9.6e-7 # Coeficiente de descarga de baterias en %/s (a 20°C)
-        self.n_batCharge = 80.0 # Eficiencia de carga y descarga de la bateria en %
+        self.n_batCharge = 98.0 # Eficiencia de carga de la bateria en %
         self.n_batDischarge = 98.0 # Eficiencia de descarga de la bateria en %
         self.chargeMatrix = [[-0.00152, 0.05509, 0.15782], 
                              [0.00165, -0.05758, -0.39049], 

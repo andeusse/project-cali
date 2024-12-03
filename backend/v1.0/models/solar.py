@@ -171,6 +171,7 @@ class Solar(Resource):
       inputPowerFactor = 1.0
       simulatedInverterState = False
     
+    if inputPowerFactor == 0.0: inputPowerFactor = 1.0
     solarWind["inputAlternCurrentLoadPower"] = inputActivePower
     solarWind["inputAlternCurrentLoadPowerFactor"] = inputPowerFactor
     solarWind["inputDirectCurrentLoadPower"] = inputDirectCurrentPower
@@ -328,13 +329,22 @@ class Solar(Resource):
       solarWind["controllerPower"] = twinResults[0]
       solarWind["inverterInputPower"] = twinResults[1]
       solarWind["batteryPower"] = twinResults[2]
-      solarWind['solarPanelVoltage'] = twinResults[3]
-      solarWind['windTurbineVoltage'] = twinResults[4]
+      if not data["inputOfflineOperation"] and PV_Voltage == 0.0:
+        solarWind['solarPanelVoltage'] = 0.0
+      else: 
+        solarWind['solarPanelVoltage'] = twinResults[3]
+      if not data["inputOfflineOperation"] and WT_Voltage == 0.0:
+        solarWind['windTurbineVoltage'] = 0.0
+      else:
+        solarWind['windTurbineVoltage'] = twinResults[4]
       solarWind['directCurrentLoadVoltage'] = twinResults[5]
       solarWind['batteryStateOfCharge'] = twinResults[6]
       solarWind['batteryVoltage'] = twinResults[7]
       solarWind['directCurrentVoltage'] = twinResults[8]
-      solarWind['inverterVoltage'] = twinResults[9]
+      if not data["inputOfflineOperation"] and inverterVoltage == 0.0:
+        solarWind['inverterVoltage'] = 0.0
+      else:
+        solarWind['inverterVoltage'] = twinResults[9]
       solarWind['inverterApparentPower'] = twinResults[10]
       solarWind['inverterActivePower'] = twinResults[11]
       solarWind['inverterReactivePower'] = twinResults[12]

@@ -92,6 +92,7 @@ class Turbine(Resource):
     else:
       inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round((values_df["Value"]['FP-001'] if values_df["Value"]['FP-001'] != 0.0 else 1.0)* (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False else 3.6
+    if inputPowerFactor == 0.0: inputPowerFactor = 1.0
     turbine["inputActivePower"] = inputActivePower
     turbine["inputPowerFactor"] = inputPowerFactor
 
@@ -211,8 +212,14 @@ class Turbine(Resource):
     turbine["controllerPower"] = results[0]
     turbine["inverterInputPower"] = results[1]
     turbine["batteryPower"] = results[2]
-    turbine["turbineVoltage"] = results[3]
-    turbine["inverterOutputVoltage"] = results[4]
+    if not data["inputOfflineOperation"] and V_t == 0.0:
+      turbine["turbineVoltage"] = 0.0
+    else: 
+      turbine["turbineVoltage"] = results[3]
+    if not data["inputOfflineOperation"] and V_CA == 0.0:
+      turbine["inverterOutputVoltage"] = 0.0
+    else: 
+      turbine["inverterOutputVoltage"] = results[4]
     turbine["batteryStateOfCharge"] = results[5]
     turbine["batteryVoltage"] = results[6]
     turbine["directCurrentVoltage"] = results[7]
