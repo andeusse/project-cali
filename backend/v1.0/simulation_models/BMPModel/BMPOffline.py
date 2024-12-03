@@ -424,8 +424,10 @@ class BMPModelOffline:
                 self.OC = self.SV/(self.counterReactor/86400)
             except ZeroDivisionError:
                 self.OC = 0
-                     
-            self.x = ((self.Csus_ini_SV - self.Csus_ini)/self.Csus_ini_SV)*(1+(1-mixing_effect(self.MixVelocity)))
+            try:         
+                self.x = ((self.Csus_ini_SV - self.Csus_ini)/self.Csus_ini_SV)*(1+(1-mixing_effect(self.MixVelocity)))
+            except ZeroDivisionError:
+                self.x = 0
             self.ST = (self.Csus_ini_ST*(1-self.x))*self.MW_sustrato
             self.mol_CH4 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CH4)
             self.mol_CO2 = (self.Csus_ini_SV*(self.Vrxn/1000))*(self.x)*(self.s_CO2)
