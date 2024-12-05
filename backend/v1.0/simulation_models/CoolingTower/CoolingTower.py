@@ -1621,7 +1621,7 @@ class coolingTowerModel:
                    H2O_8, O2_8, N2_8, Eq_H2O_8, Eq_O2_8, Eq_N2_8, Energy_8, 
         
         if self.PacketType == "Structured":
-            initial_conditions = [1, 0, 0, 0, 0.21, 0.79, 300]
+            initial_conditions = [(Fv_Lin*1000)/18, 0, 0, 0, 0.21, 0.79, 300]
             result = fsolve(systemOneStage, initial_conditions)
             self.numpySolution = [abs(x) for x in result]
 
@@ -1694,7 +1694,7 @@ class coolingTowerModel:
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
         
         elif self.PacketType == "CurvedSlats":
-            initial_conditions = [1, 0, 0, 0, 0.21, 0.79, 300]
+            initial_conditions = [(Fv_Lin*1000)/18, 0, 0, 0, 0.21, 0.79, 300]
             result = fsolve(systemOneStage, initial_conditions)
             self.numpySolution = [abs(x) for x in result]
 
@@ -1753,7 +1753,7 @@ class coolingTowerModel:
             self.solution.append(Air_0.delta_P - Water_0.delta_P)
         
         elif self.PacketType == "FlatSlats":
-            initial_conditions = [1, 0, 0, 0, 0.21, 0.79, 300]
+            initial_conditions = [(Fv_Lin*1000)/18, 0, 0, 0, 0.21, 0.79, 300]
             result = fsolve(systemOneStage, initial_conditions)
             self.numpySolution = [abs(x) for x in result]
             
