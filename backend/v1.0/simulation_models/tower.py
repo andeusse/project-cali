@@ -34,8 +34,10 @@ class TwinTower:
         return airCorrectionFactor.x[0]
     
     def twinOutput(self, PackedType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
-        if topWaterFlow <= 1.6e-6:
+        if topWaterFlow < 1.6e-6:
             topWaterFlow = 1.6e-6
+        if bottomAirFlow < 0.0067:
+            bottomAirFlow = 0.0067
         self.topWaterFlow = topWaterFlow
         self.topWaterTemperature = topWaterTemperature
         self.bottomAirFlow = bottomAirFlow
