@@ -288,8 +288,8 @@ const Biogas = () => {
                         value={system.digitalTwinState}
                         name="digitalTwinState"
                         handleChange={handleChange}
-                        trueString="Gemelo on"
-                        falseString="Gemelo off"
+                        trueString="Online"
+                        falseString="Offline"
                         disabled={system.disableParameters}
                       ></CustomToggle>
                     </Grid>
