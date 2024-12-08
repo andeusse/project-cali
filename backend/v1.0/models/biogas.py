@@ -16,13 +16,18 @@ class Biogas(Resource):
 
     biogas_input["iteration"] = data["iteration"]
     biogas_input["name"] = data["name"]
-    
+    UserKeys = []
+    UserKeys.append(biogas_input["name"])
     if biogas_input["iteration"] == 1:
-      if biogas_input["name"] is biogas_instances:
-        del biogas_instance["name"]
+      for key in UserKeys:
+        if key in biogas_instances:
+          del biogas_instances[key]
+      # if biogas_input["name"] is biogas_instances:
+      #   del biogas_instance["name"]
       Biogas_Simulation_Start.BiogasSimulationStart.reset_instance()
       Biogas_Start.BiogasStart.reset_instance()
       MachineLearning_biogas_start.MachineLearningStart.reset_instance()
+    
           
     #Operación Planta
     biogas_input["VR1"] = data["anaerobicReactorVolume1"]["value"]
