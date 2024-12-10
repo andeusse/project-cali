@@ -175,11 +175,11 @@ class TwinHydro:
             self.P_CC = self.P_bat + self.P_inv
         
         # Actualización de voltaje de CD
-        if self.P_bat > 0 and self.V_bat < V_bulk:
+        if self.P_bat > 0.1 and self.V_bat < V_bulk:
             self.V_CD = V_bulk
-        elif self.P_bat > 0 and self.V_bat >= V_bulk:
+        elif self.P_bat > 0.1 and self.V_bat >= V_bulk:
             self.V_CD = V_float
-        elif self.P_bat > 0 and self.V_bat >= V_float:
+        elif self.P_bat > 0.1 and self.V_bat >= V_float:
             self.V_CD = 12 * 2.4
         else: 
             self.V_CD = self.V_bat
