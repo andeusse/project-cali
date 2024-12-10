@@ -124,7 +124,7 @@ const Turbine = () => {
         arr.push({
           rowId: '1',
           cells: [
-            { type: 'header', text: 'Flujo [L / s]', nonEditable: true },
+            { type: 'header', text: 'Flujo [L/s]', nonEditable: true },
             ...system.inputFlowArray.map((v) => {
               const col: DefaultCellTypes = {
                 type: 'number',

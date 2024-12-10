@@ -91,12 +91,12 @@ export const setBiogas = (
     switch (newState.operationModelType) {
       case OperationModelType.Arrhenius:
         newState.exponentialFactorR101.variableString = 'K R101';
-        newState.exponentialFactorR101.unit = '[L / s]';
+        newState.exponentialFactorR101.unit = '[L/s]';
         newState.exponentialFactorR101.value = 100;
         newState.exponentialFactorR101.disabled = newState.digitalTwinState;
 
         newState.activationEnergyR101.variableString = 'Ea R101';
-        newState.activationEnergyR101.unit = '[J / mol]';
+        newState.activationEnergyR101.unit = '[J/mol]';
         newState.activationEnergyR101.value = 1000000;
         newState.activationEnergyR101.disabled = newState.digitalTwinState
           ? true
@@ -105,12 +105,12 @@ export const setBiogas = (
         newState.lambdaR101.disabled = true;
 
         newState.exponentialFactorR102.variableString = 'K R101';
-        newState.exponentialFactorR102.unit = '[L / s]';
+        newState.exponentialFactorR102.unit = '[L/s]';
         newState.exponentialFactorR102.value = 100;
         newState.exponentialFactorR102.disabled = newState.digitalTwinState;
 
         newState.activationEnergyR102.variableString = 'Ea R101';
-        newState.activationEnergyR102.unit = '[J / mol]';
+        newState.activationEnergyR102.unit = '[J/mol]';
         newState.activationEnergyR102.value = 1000000;
         newState.activationEnergyR102.disabled = newState.digitalTwinState
           ? true
@@ -120,7 +120,7 @@ export const setBiogas = (
         break;
       case OperationModelType.ADM1:
         newState.exponentialFactorR101.variableString = 'K R101';
-        newState.exponentialFactorR101.unit = '[L / s]';
+        newState.exponentialFactorR101.unit = '[L/s]';
         newState.exponentialFactorR101.value = 1e-15;
         newState.exponentialFactorR101.disabled = newState.digitalTwinState;
 
@@ -129,7 +129,7 @@ export const setBiogas = (
         newState.lambdaR101.disabled = true;
 
         newState.exponentialFactorR102.variableString = 'K R101';
-        newState.exponentialFactorR102.unit = '[L / s]';
+        newState.exponentialFactorR102.unit = '[L/s]';
         newState.exponentialFactorR102.value = 1e-15;
         newState.exponentialFactorR102.disabled = newState.digitalTwinState;
 
@@ -139,12 +139,12 @@ export const setBiogas = (
         break;
       case OperationModelType.Gompertz:
         newState.exponentialFactorR101.variableString = 'ym R101';
-        newState.exponentialFactorR101.unit = '[L / s SV]';
+        newState.exponentialFactorR101.unit = '[L/s SV]';
         newState.exponentialFactorR101.value = 0.00329;
         newState.exponentialFactorR101.disabled = newState.digitalTwinState;
 
         newState.activationEnergyR101.variableString = 'U R101';
-        newState.activationEnergyR101.unit = '[L / g SVs]';
+        newState.activationEnergyR101.unit = '[L/g SVs]';
         newState.activationEnergyR101.value = 2.59e-9;
         newState.activationEnergyR101.disabled = newState.digitalTwinState
           ? true
@@ -153,12 +153,12 @@ export const setBiogas = (
         newState.lambdaR101.disabled = newState.digitalTwinState ? true : false;
 
         newState.exponentialFactorR102.variableString = 'ym R101';
-        newState.exponentialFactorR102.unit = '[L / s SV]';
+        newState.exponentialFactorR102.unit = '[L/s SV]';
         newState.exponentialFactorR102.value = 0.00329;
         newState.exponentialFactorR102.disabled = newState.digitalTwinState;
 
         newState.activationEnergyR102.variableString = 'U R101';
-        newState.activationEnergyR102.unit = '[L / g SVs]';
+        newState.activationEnergyR102.unit = '[L/g SVs]';
         newState.activationEnergyR102.value = 2.59e-9;
         newState.activationEnergyR102.disabled = newState.digitalTwinState
           ? true
@@ -168,12 +168,12 @@ export const setBiogas = (
         break;
       default:
         newState.exponentialFactorR101.variableString = 'K R101';
-        newState.exponentialFactorR101.unit = '[L / s]';
+        newState.exponentialFactorR101.unit = '[L/s]';
         newState.exponentialFactorR101.value = 100;
         newState.exponentialFactorR101.disabled = newState.digitalTwinState;
 
         newState.activationEnergyR101.variableString = 'Ea R101';
-        newState.activationEnergyR101.unit = '[J / mol]';
+        newState.activationEnergyR101.unit = '[J/mol]';
         newState.activationEnergyR101.value = 1000000;
         newState.activationEnergyR101.disabled = newState.digitalTwinState
           ? true
@@ -182,12 +182,12 @@ export const setBiogas = (
         newState.lambdaR101.disabled = true;
 
         newState.exponentialFactorR102.variableString = 'K R101';
-        newState.exponentialFactorR102.unit = '[L / s]';
+        newState.exponentialFactorR102.unit = '[L/s]';
         newState.exponentialFactorR102.value = 100;
         newState.exponentialFactorR102.disabled = newState.digitalTwinState;
 
         newState.activationEnergyR102.variableString = 'Ea R101';
-        newState.activationEnergyR102.unit = '[J / mol]';
+        newState.activationEnergyR102.unit = '[J/mol]';
         newState.activationEnergyR102.value = 1000000;
         newState.activationEnergyR102.disabled = newState.digitalTwinState
           ? true
@@ -216,13 +216,13 @@ export const setBiogas = (
     switch (newState.operationModelType) {
       case OperationModelType.Arrhenius:
         newState.exponentialFactorR101.variableString = 'K R101';
-        newState.exponentialFactorR101.unit = '[L / s]';
+        newState.exponentialFactorR101.unit = '[L/s]';
         newState.exponentialFactorR101.value = 100;
         newState.exponentialFactorR101.tooltip =
           'Factor preexponencial para R101';
 
         newState.activationEnergyR101.variableString = 'Ea R101';
-        newState.activationEnergyR101.unit = '[J / mol]';
+        newState.activationEnergyR101.unit = '[J/mol]';
         newState.activationEnergyR101.value = 1000000;
         newState.activationEnergyR101.disabled = newState.digitalTwinState
           ? true
@@ -234,13 +234,13 @@ export const setBiogas = (
         newState.lambdaR101.tooltip = '';
 
         newState.exponentialFactorR102.variableString = 'K R102';
-        newState.exponentialFactorR102.unit = '[L / s]';
+        newState.exponentialFactorR102.unit = '[L/s]';
         newState.exponentialFactorR102.value = 100;
         newState.exponentialFactorR102.tooltip =
           'Factor preexponencial para R102';
 
         newState.activationEnergyR102.variableString = 'Ea R102';
-        newState.activationEnergyR102.unit = '[J / mol]';
+        newState.activationEnergyR102.unit = '[J/mol]';
         newState.activationEnergyR102.value = 1000000;
         newState.activationEnergyR102.disabled = newState.digitalTwinState
           ? true
@@ -253,7 +253,7 @@ export const setBiogas = (
         break;
       case OperationModelType.ADM1:
         newState.exponentialFactorR101.variableString = 'K R101';
-        newState.exponentialFactorR101.unit = '[L / s]';
+        newState.exponentialFactorR101.unit = '[L/s]';
         newState.exponentialFactorR101.value = 1e-15;
         newState.exponentialFactorR101.tooltip = 'Parámetro cinético para R101';
 
@@ -264,7 +264,7 @@ export const setBiogas = (
         newState.lambdaR101.tooltip = '';
 
         newState.exponentialFactorR102.variableString = 'K R102';
-        newState.exponentialFactorR102.unit = '[L / s]';
+        newState.exponentialFactorR102.unit = '[L/s]';
         newState.exponentialFactorR102.value = 1e-15;
         newState.exponentialFactorR102.tooltip = 'Parámetro cinético para R102';
 
@@ -276,13 +276,13 @@ export const setBiogas = (
         break;
       case OperationModelType.Gompertz:
         newState.exponentialFactorR101.variableString = 'ym R101';
-        newState.exponentialFactorR101.unit = '[L / gSV]';
+        newState.exponentialFactorR101.unit = '[L/gSV]';
         newState.exponentialFactorR101.value = 0.00329;
         newState.exponentialFactorR101.tooltip =
           'Potencial de producción de biogás para R101';
 
         newState.activationEnergyR101.variableString = 'U R101';
-        newState.activationEnergyR101.unit = '[L / gSV s]';
+        newState.activationEnergyR101.unit = '[L/gSV s]';
         newState.activationEnergyR101.value = 2.59e-9;
         newState.activationEnergyR101.disabled = newState.digitalTwinState
           ? true
@@ -296,13 +296,13 @@ export const setBiogas = (
           'Tiempo mínimo de producción de biogás para R101';
 
         newState.exponentialFactorR102.variableString = 'ym R102';
-        newState.exponentialFactorR102.unit = '[L / gSV]';
+        newState.exponentialFactorR102.unit = '[L/gSV]';
         newState.exponentialFactorR102.value = 0.00329;
         newState.exponentialFactorR102.tooltip =
           'Potencial de producción de biogás para R102';
 
         newState.activationEnergyR102.variableString = 'U R102';
-        newState.activationEnergyR102.unit = '[L / gSV s]';
+        newState.activationEnergyR102.unit = '[L/gSV s]';
         newState.activationEnergyR102.value = 2.59e-9;
         newState.activationEnergyR102.disabled = newState.digitalTwinState
           ? true

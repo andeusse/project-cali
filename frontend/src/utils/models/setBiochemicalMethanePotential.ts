@@ -29,13 +29,13 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.Arrhenius:
         newState.kineticKSideA.disabled = false;
         newState.kineticKSideA.value = 100;
-        newState.kineticKSideA.unit = '[L / s]';
+        newState.kineticKSideA.unit = '[L/s]';
         newState.kineticKSideA.variableString = 'K';
         newState.kineticKSideA.tooltip = 'Factor preexponencial para lado A';
 
         newState.kineticEaSideA.disabled = false;
         newState.kineticEaSideA.value = 1000000;
-        newState.kineticEaSideA.unit = '[J / mol]';
+        newState.kineticEaSideA.unit = '[J/mol]';
         newState.kineticEaSideA.variableString = 'Ea';
         newState.kineticEaSideA.tooltip = 'Energía de activación para lado A';
 
@@ -45,7 +45,7 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.ADM1:
         newState.kineticKSideA.disabled = false;
         newState.kineticKSideA.value = 1e-10;
-        newState.kineticKSideA.unit = '[L / s]';
+        newState.kineticKSideA.unit = '[L/s]';
         newState.kineticKSideA.variableString = 'K';
         newState.kineticKSideA.tooltip = 'Parámetro cinético para lado A';
 
@@ -58,14 +58,14 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.Gompertz:
         newState.kineticKSideA.disabled = false;
         newState.kineticKSideA.value = 0.00329;
-        newState.kineticKSideA.unit = '[L / gSV]';
+        newState.kineticKSideA.unit = '[L/gSV]';
         newState.kineticKSideA.variableString = 'ym';
         newState.kineticKSideA.tooltip =
           'Potencial de producción de biogás para lado A';
 
         newState.kineticEaSideA.disabled = false;
         newState.kineticEaSideA.value = 2.59e-9;
-        newState.kineticEaSideA.unit = '[L / gSV s]';
+        newState.kineticEaSideA.unit = '[L/gSV s]';
         newState.kineticEaSideA.variableString = 'U';
         newState.kineticEaSideA.tooltip =
           'Tasa máxima de producción de biogás para lado A';
@@ -149,13 +149,13 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.Arrhenius:
         newState.kineticKSideB.disabled = false;
         newState.kineticKSideB.value = 100;
-        newState.kineticKSideB.unit = '[L / s]';
+        newState.kineticKSideB.unit = '[L/s]';
         newState.kineticKSideB.variableString = 'K';
         newState.kineticKSideB.tooltip = 'Factor preexponencial para lado B';
 
         newState.kineticEaSideB.disabled = false;
         newState.kineticEaSideB.value = 1000000;
-        newState.kineticEaSideB.unit = '[J / mol]';
+        newState.kineticEaSideB.unit = '[J/mol]';
         newState.kineticEaSideB.variableString = 'Ea';
         newState.kineticEaSideB.tooltip = 'Energía de activación para lado B';
 
@@ -165,7 +165,7 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.ADM1:
         newState.kineticKSideB.disabled = false;
         newState.kineticKSideB.value = 1e-10;
-        newState.kineticKSideB.unit = '[L / s]';
+        newState.kineticKSideB.unit = '[L/s]';
         newState.kineticKSideB.variableString = 'K';
         newState.kineticKSideB.tooltip = 'Parámetro cinético para lado B';
 
@@ -178,14 +178,14 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.Gompertz:
         newState.kineticKSideB.disabled = false;
         newState.kineticKSideB.value = 0.00329;
-        newState.kineticKSideB.unit = '[L / gSV]';
+        newState.kineticKSideB.unit = '[L/gSV]';
         newState.kineticKSideB.variableString = 'ym';
         newState.kineticKSideB.tooltip =
           'Potencial de producción de biogás para lado B';
 
         newState.kineticEaSideB.disabled = false;
         newState.kineticEaSideB.value = 2.59e-9;
-        newState.kineticEaSideB.unit = '[L / gSV.s]';
+        newState.kineticEaSideB.unit = '[L/gSV.s]';
         newState.kineticEaSideB.variableString = 'U';
         newState.kineticEaSideB.tooltip =
           'Tasa máxima de producción de biogás para lado B';
