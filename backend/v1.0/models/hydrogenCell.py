@@ -161,13 +161,13 @@ class hydrogenCell(Resource):
     cell["cellSelfFeedingPower"] = results[10]
     cell["lightsPower"] = results[11]
 
-    cell["inputFanPercentage"] = inputFanPercentage
+    if data["inputFanPercentage"]["disabled"]: cell["inputFanPercentage"] = inputFanPercentage
     if electronicLoadMode == "Current":
-      cell["inputElectronicLoadCurrent"] = inputElectronicLoad
+      if data["inputElectronicLoadCurrent"]["disabled"]: cell["inputElectronicLoadCurrent"] = inputElectronicLoad
     elif electronicLoadMode == "Power":
-      cell["inputElectronicLoadPower"] = inputElectronicLoad
+      if data["inputElectronicLoadPower"]["disabled"]: cell["inputElectronicLoadPower"] = inputElectronicLoad
     elif electronicLoadMode == "Resistance":
-      cell["inputElectronicLoadResistance"] = inputElectronicLoad
+      if data["inputElectronicLoadPower"]["disabled"]: cell["inputElectronicLoadResistance"] = inputElectronicLoad
     cell["hydrogenPressure"] = hydrogenPressure
     cell["fanPercentage"] = inputFanPercentage
     cell["cellTemperature"] = cellTemperature

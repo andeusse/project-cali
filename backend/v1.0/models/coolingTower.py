@@ -132,11 +132,11 @@ class coolingTower(Resource):
     tower["energyAppliedToWater"] = results[6]
     tower["deltaPressure"] = results[7]
 
-    tower["topWaterFlow"] = round(topWaterFlow * 60000,2)
-    tower["topWaterTemperature"] = round(topWaterTemperature - 273.15,2)
-    tower["bottomAirFlow"] = round(bottomAirFlow * 60,2)
-    tower["bottomAirTemperature"] = round(bottomAirTemperature - 273.15,2)
-    tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
+    if data["topWaterFlow"]["disabled"]: tower["topWaterFlow"] = round(topWaterFlow * 60000,2)
+    if data["topWaterTemperature"]["disabled"]: tower["topWaterTemperature"] = round(topWaterTemperature - 273.15,2)
+    if data["bottomAirFlow"]["disabled"]: tower["bottomAirFlow"] = round(bottomAirFlow * 60,2)
+    if data["bottomAirTemperature"]["disabled"]: tower["bottomAirTemperature"] = round(bottomAirTemperature - 273.15,2)
+    if data["bottomAirHumidity"]["disabled"]: tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
     tower["atmosphericPressure"] = round(atmosphericPressure / 1000,2)
 
     return {"model": tower}

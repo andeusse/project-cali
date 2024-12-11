@@ -52,4 +52,4 @@ class Smarthome:
         elif self.operationType == 2:
             self.results_df = self.scenary.AutomaticPowerCalculation(weights)[0]
             
-        return self.results_df
+        return self.results_df.round(2)
