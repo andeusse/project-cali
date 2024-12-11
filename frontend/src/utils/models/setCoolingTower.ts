@@ -2,6 +2,7 @@ import { CellChange } from '@silevis/reactgrid';
 import { CoolingTowerParameters } from '../../types/models/coolingTower';
 import { CellChange2Array } from '../cellChange2Array';
 import Config from '../../config/config';
+import { StepUnitType } from '../../types/common';
 
 export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
   let newState = { ...oldState };
@@ -32,14 +33,27 @@ export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
     newState.bottomAirFlowArray = Array(value ? value : 1).fill(2);
     newState.bottomAirTemperatureArray = Array(value ? value : 1).fill(29);
     newState.bottomAirHumidityArray = Array(value ? value : 1).fill(65);
+
     if (value === 1) {
       newState.topWaterFlow.arrayEnabled = false;
       newState.topWaterTemperature.arrayEnabled = false;
       newState.bottomAirFlow.arrayEnabled = false;
       newState.bottomAirTemperature.arrayEnabled = false;
       newState.bottomAirHumidity.arrayEnabled = false;
+      newState.stepTime = { ...newState.stepTime, value: 1, step: 1, min: 1 };
     } else {
       newState.timeMultiplier.value = 1;
+      if (newState.stepUnit === StepUnitType.Second) {
+        newState.stepTime = { ...newState.stepTime, value: 3, step: 3, min: 3 };
+      }
+    }
+  }
+  if (e.target.name === 'stepUnit') {
+    newState.stepUnit = e.target.value;
+    if (newState.stepUnit === StepUnitType.Second) {
+      newState.stepTime = { ...newState.stepTime, value: 3, step: 3, min: 3 };
+    } else {
+      newState.stepTime = { ...newState.stepTime, value: 1, step: 1, min: 1 };
     }
   }
 

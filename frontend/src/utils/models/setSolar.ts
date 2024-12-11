@@ -116,7 +116,8 @@ export const setSolar = (
         newState.cadmiumTelluridePanel.isConnected = false;
 
         newState.isBattery2 = true;
-        
+
+        newState.offgridInverter.isConnectedDisabled = false;
         newState.hybridInverter.isConnected = false;
 
         newState.controller.chargeVoltageBulk.value = 27.2;
@@ -135,6 +136,7 @@ export const setSolar = (
 
         newState.isBattery2 = true;
 
+        newState.offgridInverter.isConnectedDisabled = false;
         newState.hybridInverter.isConnected = false;
 
         newState.controller.chargeVoltageBulk.value = 27.2;

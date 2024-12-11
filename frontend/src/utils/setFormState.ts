@@ -75,7 +75,11 @@ export const setFormState = <T extends formType>(
     }
   }
   if ('topWaterFlow' in oldState) {
-    if (name === 'inputOfflineOperation' || name === 'steps') {
+    if (
+      name === 'inputOfflineOperation' ||
+      name === 'steps' ||
+      name === 'stepUnit'
+    ) {
       return setCoolingTower(e, oldState);
     }
   }
