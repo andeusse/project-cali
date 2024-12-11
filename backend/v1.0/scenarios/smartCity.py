@@ -329,6 +329,5 @@ class SmartCity(Resource):
     results_df = results_df.reindex(sorted(results_df.columns), axis=1)
 
     response = results_df.to_json(orient='split')
-    # print(response)
 
     return response
