@@ -49,13 +49,13 @@ class coolingTower(Resource):
     if data["steps"]["value"] > 1:
       iteration = data["iteration"]
       if data["stepUnit"] == "Second":
-        repeats = data["stepTime"]["value"]
+        repeats = data["stepTime"]["value"] / 3
       elif data["stepUnit"] == "Minute":
-        repeats = 60 * data["stepTime"]["value"]
+        repeats = 60 * data["stepTime"]["value"] / 3
       elif data["stepUnit"] == "Hour":
-        repeats = 3600 * data["stepTime"]["value"]
+        repeats = 3600 * data["stepTime"]["value"] / 3
       elif data["stepUnit"] == "Day":
-        repeats = 86400 * data["stepTime"]["value"]
+        repeats = 86400 * data["stepTime"]["value"] / 3
 
     name = data["name"]
     fillType = data["fillType"]
