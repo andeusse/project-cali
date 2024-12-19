@@ -46,7 +46,7 @@ const WindTab = (props: TabProps) => {
   const getColumns = useCallback((): Column[] => {
     if (selectedSystem) {
       let arr: Column[] = [
-        { columnId: `variables`, width: 200 },
+        { columnId: `variables`, width: 250 },
         ...selectedSystem.windSpeedArray.map((v, i) => {
           const col: Column = {
             columnId: `${i}`,

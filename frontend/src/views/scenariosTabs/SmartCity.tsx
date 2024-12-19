@@ -75,6 +75,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
+import CustomToggle from '../../components/UI/CustomToggle';
 
 const tabs = [
   'solar',
@@ -449,6 +450,18 @@ const SmartCity = () => {
                   <Typography variant="h6">
                     Configuración de escenario
                   </Typography>
+                </Grid>
+                <Grid item xs={6} md={2} xl={2} alignContent={'center'}>
+                  <Typography variant="h6">Conexión a la red:</Typography>
+                </Grid>
+                <Grid item xs={6} md={2} xl={2} alignContent={'center'}>
+                  <CustomToggle
+                    name="isGridConnected"
+                    value={system.isGridConnected}
+                    handleChange={handleChange}
+                    trueString="Conectado"
+                    falseString="Desconectado"
+                  ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={4} xl={4}>
                   <CustomNumberField

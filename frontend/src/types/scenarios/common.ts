@@ -282,6 +282,7 @@ export type SortableItemParameter = {
 };
 
 export type SmartSystemParameters = CommonSystemParameter & {
+  isGridConnected: boolean;
   smartScenarioType: SmartScenarioType;
   operationMode: ScenariosModesType;
   steps: InputType;
@@ -601,6 +602,7 @@ export const COMMON_LOAD_SYSTEM: LoadSystem = {
 export const COMMON_SCENARIO: SmartSystemParameters = {
   smartScenarioType: SmartScenarioType.smartCity,
   name: 'Nombre',
+  isGridConnected: false,
   operationMode: ScenariosModesType.Manual,
   steps: {
     disabled: false,

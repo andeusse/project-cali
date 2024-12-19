@@ -220,12 +220,10 @@ const HydraulicTab = (props: TabProps) => {
               </Grid>
               <Grid item xs={12} md={6} xl={4}>
                 <FormControl fullWidth>
-                  <InputLabel id="informationMode-type">
-                    Modo de ingreso información
-                  </InputLabel>
+                  <InputLabel id="turbineType-type">Tipo de turbina</InputLabel>
                   <Select
-                    labelId="informationMode-type"
-                    label="Modo de ingreso información"
+                    labelId="turbineType-type"
+                    label="Tipo de turbina"
                     value={selectedSystem.type}
                     name="type"
                     onChange={handleChange}

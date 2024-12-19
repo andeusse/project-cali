@@ -60,6 +60,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
+import CustomToggle from '../../components/UI/CustomToggle';
 
 const tabs = ['solar', 'biogas', 'load', 'result'];
 
@@ -391,7 +392,19 @@ const SmartFactory = () => {
                     Configuración de escenario
                   </Typography>
                 </Grid>
-                <Grid item xs={12} md={4} xl={4}>
+                <Grid item xs={6} md={1.5} xl={1.5} alignContent={'center'}>
+                  <Typography variant="h6">Conexión a la red:</Typography>
+                </Grid>
+                <Grid item xs={6} md={1.5} xl={1.5} alignContent={'center'}>
+                  <CustomToggle
+                    name="isGridConnected"
+                    value={system.isGridConnected}
+                    handleChange={handleChange}
+                    trueString="Conectado"
+                    falseString="Desconectado"
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={3} xl={3}>
                   <CustomNumberField
                     variable={system.solarSystemNumber}
                     name="solarSystemNumber"
@@ -400,7 +413,7 @@ const SmartFactory = () => {
                     disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
-                <Grid item xs={12} md={4} xl={4}>
+                <Grid item xs={12} md={3} xl={3}>
                   <CustomNumberField
                     variable={system.biogasSystemNumber}
                     name="biogasSystemNumber"
@@ -409,7 +422,7 @@ const SmartFactory = () => {
                     disableKeyDown={true}
                   ></CustomNumberField>
                 </Grid>
-                <Grid item xs={12} md={4} xl={4}>
+                <Grid item xs={12} md={3} xl={3}>
                   <CustomNumberField
                     variable={system.loadSystemNumber}
                     name="loadSystemNumber"
