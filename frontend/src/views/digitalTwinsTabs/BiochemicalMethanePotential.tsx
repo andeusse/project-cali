@@ -352,22 +352,28 @@ const BiochemicalMethanePotential = (props: Props) => {
                               disabled={system.disableParameters}
                             ></CustomNumberField>
                           </Grid>
-                          <Grid item xs={12} md={6} xl={12}>
-                            <CustomNumberField
-                              variable={system.kineticEaSideA}
-                              name="kineticEaSideA"
-                              handleChange={handleChange}
-                              disabled={system.disableParameters}
-                            ></CustomNumberField>
-                          </Grid>
-                          <Grid item xs={12} md={6} xl={12}>
-                            <CustomNumberField
-                              variable={system.kineticLambdaSideA}
-                              name="kineticLambdaSideA"
-                              handleChange={handleChange}
-                              disabled={system.disableParameters}
-                            ></CustomNumberField>
-                          </Grid>
+                          {system.modelSelectionSideA !==
+                            OperationModelType.ADM1 && (
+                            <Grid item xs={12} md={6} xl={12}>
+                              <CustomNumberField
+                                variable={system.kineticEaSideA}
+                                name="kineticEaSideA"
+                                handleChange={handleChange}
+                                disabled={system.disableParameters}
+                              ></CustomNumberField>
+                            </Grid>
+                          )}
+                          {system.modelSelectionSideA ===
+                            OperationModelType.Gompertz && (
+                            <Grid item xs={12} md={6} xl={12}>
+                              <CustomNumberField
+                                variable={system.kineticLambdaSideA}
+                                name="kineticLambdaSideA"
+                                handleChange={handleChange}
+                                disabled={system.disableParameters}
+                              ></CustomNumberField>
+                            </Grid>
+                          )}
                         </Grid>
                       </Grid>
                       {!system.stateSelectionSideA && (
@@ -901,22 +907,28 @@ const BiochemicalMethanePotential = (props: Props) => {
                               disabled={system.disableParameters}
                             ></CustomNumberField>
                           </Grid>
-                          <Grid item xs={12} md={6} xl={12}>
-                            <CustomNumberField
-                              variable={system.kineticEaSideB}
-                              name="kineticEaSideB"
-                              handleChange={handleChange}
-                              disabled={system.disableParameters}
-                            ></CustomNumberField>
-                          </Grid>
-                          <Grid item xs={12} md={6} xl={12}>
-                            <CustomNumberField
-                              variable={system.kineticLambdaSideB}
-                              name="kineticLambdaSideB"
-                              handleChange={handleChange}
-                              disabled={system.disableParameters}
-                            ></CustomNumberField>
-                          </Grid>
+                          {system.modelSelectionSideB !==
+                            OperationModelType.ADM1 && (
+                            <Grid item xs={12} md={6} xl={12}>
+                              <CustomNumberField
+                                variable={system.kineticEaSideB}
+                                name="kineticEaSideB"
+                                handleChange={handleChange}
+                                disabled={system.disableParameters}
+                              ></CustomNumberField>
+                            </Grid>
+                          )}
+                          {system.modelSelectionSideB ===
+                            OperationModelType.Gompertz && (
+                            <Grid item xs={12} md={6} xl={12}>
+                              <CustomNumberField
+                                variable={system.kineticLambdaSideB}
+                                name="kineticLambdaSideB"
+                                handleChange={handleChange}
+                                disabled={system.disableParameters}
+                              ></CustomNumberField>
+                            </Grid>
+                          )}
                         </Grid>
                       </Grid>
                       {!system.stateSelectionSideB && (
@@ -1367,114 +1379,130 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate1CompositionSideA}
-                                name="substrate1CompositionSideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate1SideA}
-                                name="totalSolidsSubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate1SIdeA}
-                                name="volatileSolidsSubstrate1SIdeA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate1SideA}
-                                name="densitySubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate1SideA}
-                                name="carbonContentSubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate1SideA}
-                                name="hydrogenContentSubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate1SideA}
-                                name="oxygenContentSubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate1SideA}
-                                name="nitrogenContentSubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate1SideA}
-                                name="sulfurContentSubstrate1SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            {system.nameSubstrate1SideA !== '' && (
+                              <>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.substrate1CompositionSideA}
+                                    name="substrate1CompositionSideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.totalSolidsSubstrate1SideA}
+                                    name="totalSolidsSubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.volatileSolidsSubstrate1SIdeA
+                                    }
+                                    name="volatileSolidsSubstrate1SIdeA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.densitySubstrate1SideA}
+                                    name="densitySubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={12}
+                                  xl={12}
+                                  sx={{ height: '72px' }}
+                                >
+                                  <h4>Análisis elemental</h4>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.carbonContentSubstrate1SideA
+                                    }
+                                    name="carbonContentSubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.hydrogenContentSubstrate1SideA
+                                    }
+                                    name="hydrogenContentSubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.oxygenContentSubstrate1SideA
+                                    }
+                                    name="oxygenContentSubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.nitrogenContentSubstrate1SideA
+                                    }
+                                    name="nitrogenContentSubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.sulfurContentSubstrate1SideA
+                                    }
+                                    name="sulfurContentSubstrate1SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </Grid>
                       )}
@@ -1488,7 +1516,12 @@ const BiochemicalMethanePotential = (props: Props) => {
                               xl={12}
                               sx={{ height: '72px' }}
                             >
-                              <h3>Sustrato 2</h3>
+                              <h3>
+                                Sustrato 2
+                                {system.amountOfSubstratesSideA.value === 2
+                                  ? ' - Inóculo'
+                                  : ''}
+                              </h3>
                             </Grid>
                             <Grid item xs={12} md={12} xl={12}>
                               <FormControl fullWidth>
@@ -1502,114 +1535,130 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate2CompositionSideA}
-                                name="substrate2CompositionSideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate2SideA}
-                                name="totalSolidsSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate2SideA}
-                                name="volatileSolidsSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate2SideA}
-                                name="densitySubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate2SideA}
-                                name="carbonContentSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate2SideA}
-                                name="hydrogenContentSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate2SideA}
-                                name="oxygenContentSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate2SideA}
-                                name="nitrogenContentSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate2SideA}
-                                name="sulfurContentSubstrate2SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            {system.nameSubstrate2SideA !== '' && (
+                              <>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.substrate2CompositionSideA}
+                                    name="substrate2CompositionSideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.totalSolidsSubstrate2SideA}
+                                    name="totalSolidsSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.volatileSolidsSubstrate2SideA
+                                    }
+                                    name="volatileSolidsSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.densitySubstrate2SideA}
+                                    name="densitySubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={12}
+                                  xl={12}
+                                  sx={{ height: '72px' }}
+                                >
+                                  <h4>Análisis elemental</h4>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.carbonContentSubstrate2SideA
+                                    }
+                                    name="carbonContentSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.hydrogenContentSubstrate2SideA
+                                    }
+                                    name="hydrogenContentSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.oxygenContentSubstrate2SideA
+                                    }
+                                    name="oxygenContentSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.nitrogenContentSubstrate2SideA
+                                    }
+                                    name="nitrogenContentSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.sulfurContentSubstrate2SideA
+                                    }
+                                    name="sulfurContentSubstrate2SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate2SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </Grid>
                       )}
@@ -1623,7 +1672,12 @@ const BiochemicalMethanePotential = (props: Props) => {
                               xl={12}
                               sx={{ height: '72px' }}
                             >
-                              <h3>Sustrato 3</h3>
+                              <h3>
+                                Sustrato 3
+                                {system.amountOfSubstratesSideA.value === 3
+                                  ? ' - Inóculo'
+                                  : ''}
+                              </h3>
                             </Grid>
                             <Grid item xs={12} md={12} xl={12}>
                               <FormControl fullWidth>
@@ -1637,114 +1691,130 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate3CompositionSideA}
-                                name="substrate3CompositionSideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate3SideA}
-                                name="totalSolidsSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate3SideA}
-                                name="volatileSolidsSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate3SideA}
-                                name="densitySubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate3SideA}
-                                name="carbonContentSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate3SideA}
-                                name="hydrogenContentSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate3SideA}
-                                name="oxygenContentSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate3SideA}
-                                name="nitrogenContentSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate3SideA}
-                                name="sulfurContentSubstrate3SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            {system.nameSubstrate3SideA !== '' && (
+                              <>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.substrate3CompositionSideA}
+                                    name="substrate3CompositionSideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.totalSolidsSubstrate3SideA}
+                                    name="totalSolidsSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.volatileSolidsSubstrate3SideA
+                                    }
+                                    name="volatileSolidsSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.densitySubstrate3SideA}
+                                    name="densitySubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={12}
+                                  xl={12}
+                                  sx={{ height: '72px' }}
+                                >
+                                  <h4>Análisis elemental</h4>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.carbonContentSubstrate3SideA
+                                    }
+                                    name="carbonContentSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.hydrogenContentSubstrate3SideA
+                                    }
+                                    name="hydrogenContentSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.oxygenContentSubstrate3SideA
+                                    }
+                                    name="oxygenContentSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.nitrogenContentSubstrate3SideA
+                                    }
+                                    name="nitrogenContentSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.sulfurContentSubstrate3SideA
+                                    }
+                                    name="sulfurContentSubstrate3SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate3SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </Grid>
                       )}
@@ -1758,7 +1828,12 @@ const BiochemicalMethanePotential = (props: Props) => {
                               xl={12}
                               sx={{ height: '72px' }}
                             >
-                              <h3>Sustrato 4</h3>
+                              <h3>
+                                Sustrato 4
+                                {system.amountOfSubstratesSideA.value === 4
+                                  ? ' - Inóculo'
+                                  : ''}
+                              </h3>
                             </Grid>
                             <Grid item xs={12} md={12} xl={12}>
                               <FormControl fullWidth>
@@ -1772,114 +1847,130 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate4CompositionSideA}
-                                name="substrate4CompositionSideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate4SideA}
-                                name="totalSolidsSubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate4SIdeA}
-                                name="volatileSolidsSubstrate4SIdeA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate4SideA}
-                                name="densitySubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate4SideA}
-                                name="carbonContentSubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate4SideA}
-                                name="hydrogenContentSubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate4SideA}
-                                name="oxygenContentSubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate4SideA}
-                                name="nitrogenContentSubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate4SideA}
-                                name="sulfurContentSubstrate4SideA"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideA === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            {system.nameSubstrate4SideA !== '' && (
+                              <>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.substrate4CompositionSideA}
+                                    name="substrate4CompositionSideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.totalSolidsSubstrate4SideA}
+                                    name="totalSolidsSubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.volatileSolidsSubstrate4SIdeA
+                                    }
+                                    name="volatileSolidsSubstrate4SIdeA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.densitySubstrate4SideA}
+                                    name="densitySubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={12}
+                                  xl={12}
+                                  sx={{ height: '72px' }}
+                                >
+                                  <h4>Análisis elemental</h4>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.carbonContentSubstrate4SideA
+                                    }
+                                    name="carbonContentSubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.hydrogenContentSubstrate4SideA
+                                    }
+                                    name="hydrogenContentSubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.oxygenContentSubstrate4SideA
+                                    }
+                                    name="oxygenContentSubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.nitrogenContentSubstrate4SideA
+                                    }
+                                    name="nitrogenContentSubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.sulfurContentSubstrate4SideA
+                                    }
+                                    name="sulfurContentSubstrate4SideA"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate4SideA === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </Grid>
                       )}
@@ -1959,114 +2050,130 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate1CompositionSideB}
-                                name="substrate1CompositionSideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate1SideB}
-                                name="totalSolidsSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate1SideB}
-                                name="volatileSolidsSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate1SideB}
-                                name="densitySubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate1SideB}
-                                name="carbonContentSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate1SideB}
-                                name="hydrogenContentSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate1SideB}
-                                name="oxygenContentSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate1SideB}
-                                name="nitrogenContentSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate1SideB}
-                                name="sulfurContentSubstrate1SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate1SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            {system.nameSubstrate1SideB !== '' && (
+                              <>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.substrate1CompositionSideB}
+                                    name="substrate1CompositionSideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.totalSolidsSubstrate1SideB}
+                                    name="totalSolidsSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.volatileSolidsSubstrate1SideB
+                                    }
+                                    name="volatileSolidsSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={system.densitySubstrate1SideB}
+                                    name="densitySubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  md={12}
+                                  xl={12}
+                                  sx={{ height: '72px' }}
+                                >
+                                  <h4>Análisis elemental</h4>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.carbonContentSubstrate1SideB
+                                    }
+                                    name="carbonContentSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.hydrogenContentSubstrate1SideB
+                                    }
+                                    name="hydrogenContentSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.oxygenContentSubstrate1SideB
+                                    }
+                                    name="oxygenContentSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.nitrogenContentSubstrate1SideB
+                                    }
+                                    name="nitrogenContentSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                                <Grid item xs={12} md={12} xl={12}>
+                                  <CustomNumberField
+                                    variable={
+                                      system.sulfurContentSubstrate1SideB
+                                    }
+                                    name="sulfurContentSubstrate1SideB"
+                                    handleChange={handleChange}
+                                    disabled={
+                                      system.disableParameters ||
+                                      system.nameSubstrate1SideB === ''
+                                    }
+                                  ></CustomNumberField>
+                                </Grid>
+                              </>
+                            )}
                           </Grid>
                         </Grid>
                       )}
@@ -2080,128 +2187,155 @@ const BiochemicalMethanePotential = (props: Props) => {
                               xl={12}
                               sx={{ height: '72px' }}
                             >
-                              <h3>Sustrato 2</h3>
+                              <h3>
+                                Sustrato 2
+                                {system.amountOfSubstratesSideB.value === 2
+                                  ? ' - Inóculo'
+                                  : ''}
+                              </h3>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <FormControl fullWidth>
-                                <TextField
-                                  label="Nombre"
-                                  value={system.nameSubstrate2SideB}
-                                  name="nameSubstrate2SideB"
-                                  autoComplete="off"
-                                  onChange={handleChange}
-                                  disabled={system.disableParameters}
-                                />
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate2CompositionSideB}
-                                name="substrate2CompositionSideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate2SideB}
-                                name="totalSolidsSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate2SideB}
-                                name="volatileSolidsSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate2SideB}
-                                name="densitySubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate2SideB}
-                                name="carbonContentSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate2SideB}
-                                name="hydrogenContentSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate2SideB}
-                                name="oxygenContentSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate2SideB}
-                                name="nitrogenContentSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate2SideB}
-                                name="sulfurContentSubstrate2SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate2SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            <>
+                              <Grid item xs={12} md={12} xl={12}>
+                                <FormControl fullWidth>
+                                  <TextField
+                                    label="Nombre"
+                                    value={system.nameSubstrate2SideB}
+                                    name="nameSubstrate2SideB"
+                                    autoComplete="off"
+                                    onChange={handleChange}
+                                    disabled={system.disableParameters}
+                                  />
+                                </FormControl>
+                              </Grid>
+                              {system.nameSubstrate2SideB !== '' && (
+                                <>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.substrate2CompositionSideB
+                                      }
+                                      name="substrate2CompositionSideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.totalSolidsSubstrate2SideB
+                                      }
+                                      name="totalSolidsSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.volatileSolidsSubstrate2SideB
+                                      }
+                                      name="volatileSolidsSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={system.densitySubstrate2SideB}
+                                      name="densitySubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid
+                                    item
+                                    xs={12}
+                                    md={12}
+                                    xl={12}
+                                    sx={{ height: '72px' }}
+                                  >
+                                    <h4>Análisis elemental</h4>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.carbonContentSubstrate2SideB
+                                      }
+                                      name="carbonContentSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.hydrogenContentSubstrate2SideB
+                                      }
+                                      name="hydrogenContentSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.oxygenContentSubstrate2SideB
+                                      }
+                                      name="oxygenContentSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.nitrogenContentSubstrate2SideB
+                                      }
+                                      name="nitrogenContentSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.sulfurContentSubstrate2SideB
+                                      }
+                                      name="sulfurContentSubstrate2SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate2SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                </>
+                              )}
+                            </>
                           </Grid>
                         </Grid>
                       )}
@@ -2215,128 +2349,155 @@ const BiochemicalMethanePotential = (props: Props) => {
                               xl={12}
                               sx={{ height: '72px' }}
                             >
-                              <h3>Sustrato 3</h3>
+                              <h3>
+                                Sustrato 3
+                                {system.amountOfSubstratesSideB.value === 3
+                                  ? ' - Inóculo'
+                                  : ''}
+                              </h3>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <FormControl fullWidth>
-                                <TextField
-                                  label="Nombre"
-                                  value={system.nameSubstrate3SideB}
-                                  name="nameSubstrate3SideB"
-                                  autoComplete="off"
-                                  onChange={handleChange}
-                                  disabled={system.disableParameters}
-                                />
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate3CompositionSideB}
-                                name="substrate3CompositionSideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate3SideB}
-                                name="totalSolidsSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate3SideB}
-                                name="volatileSolidsSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate3SideB}
-                                name="densitySubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate3SideB}
-                                name="carbonContentSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate3SideB}
-                                name="hydrogenContentSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate3SideB}
-                                name="oxygenContentSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate3SideB}
-                                name="nitrogenContentSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate3SideB}
-                                name="sulfurContentSubstrate3SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate3SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            <>
+                              <Grid item xs={12} md={12} xl={12}>
+                                <FormControl fullWidth>
+                                  <TextField
+                                    label="Nombre"
+                                    value={system.nameSubstrate3SideB}
+                                    name="nameSubstrate3SideB"
+                                    autoComplete="off"
+                                    onChange={handleChange}
+                                    disabled={system.disableParameters}
+                                  />
+                                </FormControl>
+                              </Grid>
+                              {system.nameSubstrate3SideB !== '' && (
+                                <>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.substrate3CompositionSideB
+                                      }
+                                      name="substrate3CompositionSideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.totalSolidsSubstrate3SideB
+                                      }
+                                      name="totalSolidsSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.volatileSolidsSubstrate3SideB
+                                      }
+                                      name="volatileSolidsSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={system.densitySubstrate3SideB}
+                                      name="densitySubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid
+                                    item
+                                    xs={12}
+                                    md={12}
+                                    xl={12}
+                                    sx={{ height: '72px' }}
+                                  >
+                                    <h4>Análisis elemental</h4>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.carbonContentSubstrate3SideB
+                                      }
+                                      name="carbonContentSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.hydrogenContentSubstrate3SideB
+                                      }
+                                      name="hydrogenContentSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.oxygenContentSubstrate3SideB
+                                      }
+                                      name="oxygenContentSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.nitrogenContentSubstrate3SideB
+                                      }
+                                      name="nitrogenContentSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.sulfurContentSubstrate3SideB
+                                      }
+                                      name="sulfurContentSubstrate3SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate3SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                </>
+                              )}
+                            </>
                           </Grid>
                         </Grid>
                       )}
@@ -2350,128 +2511,155 @@ const BiochemicalMethanePotential = (props: Props) => {
                               xl={12}
                               sx={{ height: '72px' }}
                             >
-                              <h3>Sustrato 4</h3>
+                              <h3>
+                                Sustrato 4
+                                {system.amountOfSubstratesSideB.value === 4
+                                  ? ' - Inóculo'
+                                  : ''}
+                              </h3>
                             </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <FormControl fullWidth>
-                                <TextField
-                                  label="Nombre"
-                                  value={system.nameSubstrate4SideB}
-                                  name="nameSubstrate4SideB"
-                                  autoComplete="off"
-                                  onChange={handleChange}
-                                  disabled={system.disableParameters}
-                                />
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.substrate4CompositionSideB}
-                                name="substrate4CompositionSideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.totalSolidsSubstrate4SideB}
-                                name="totalSolidsSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.volatileSolidsSubstrate4SideB}
-                                name="volatileSolidsSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.densitySubstrate4SideB}
-                                name="densitySubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid
-                              item
-                              xs={12}
-                              md={12}
-                              xl={12}
-                              sx={{ height: '72px' }}
-                            >
-                              <h4>Análisis elemental</h4>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.carbonContentSubstrate4SideB}
-                                name="carbonContentSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.hydrogenContentSubstrate4SideB}
-                                name="hydrogenContentSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.oxygenContentSubstrate4SideB}
-                                name="oxygenContentSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.nitrogenContentSubstrate4SideB}
-                                name="nitrogenContentSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
-                            <Grid item xs={12} md={12} xl={12}>
-                              <CustomNumberField
-                                variable={system.sulfurContentSubstrate4SideB}
-                                name="sulfurContentSubstrate4SideB"
-                                handleChange={handleChange}
-                                disabled={
-                                  system.disableParameters ||
-                                  system.nameSubstrate4SideB === ''
-                                }
-                              ></CustomNumberField>
-                            </Grid>
+                            <>
+                              <Grid item xs={12} md={12} xl={12}>
+                                <FormControl fullWidth>
+                                  <TextField
+                                    label="Nombre"
+                                    value={system.nameSubstrate4SideB}
+                                    name="nameSubstrate4SideB"
+                                    autoComplete="off"
+                                    onChange={handleChange}
+                                    disabled={system.disableParameters}
+                                  />
+                                </FormControl>
+                              </Grid>
+                              {system.nameSubstrate4SideB !== '' && (
+                                <>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.substrate4CompositionSideB
+                                      }
+                                      name="substrate4CompositionSideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.totalSolidsSubstrate4SideB
+                                      }
+                                      name="totalSolidsSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.volatileSolidsSubstrate4SideB
+                                      }
+                                      name="volatileSolidsSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={system.densitySubstrate4SideB}
+                                      name="densitySubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid
+                                    item
+                                    xs={12}
+                                    md={12}
+                                    xl={12}
+                                    sx={{ height: '72px' }}
+                                  >
+                                    <h4>Análisis elemental</h4>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.carbonContentSubstrate4SideB
+                                      }
+                                      name="carbonContentSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.hydrogenContentSubstrate4SideB
+                                      }
+                                      name="hydrogenContentSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.oxygenContentSubstrate4SideB
+                                      }
+                                      name="oxygenContentSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.nitrogenContentSubstrate4SideB
+                                      }
+                                      name="nitrogenContentSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                  <Grid item xs={12} md={12} xl={12}>
+                                    <CustomNumberField
+                                      variable={
+                                        system.sulfurContentSubstrate4SideB
+                                      }
+                                      name="sulfurContentSubstrate4SideB"
+                                      handleChange={handleChange}
+                                      disabled={
+                                        system.disableParameters ||
+                                        system.nameSubstrate4SideB === ''
+                                      }
+                                    ></CustomNumberField>
+                                  </Grid>
+                                </>
+                              )}
+                            </>
                           </Grid>
                         </Grid>
                       )}

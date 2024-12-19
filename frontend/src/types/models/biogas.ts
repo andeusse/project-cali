@@ -479,9 +479,9 @@ export const BIOGAS: BiogasParameters = {
   digitalTwinForecastTime: {
     disabled: false,
     value: 1,
-    tooltip: 'Tiempo de predicción del gemelo digital',
+    tooltip: 'Tiempo de entrenamiento del gemelo digital',
     unit: 'h',
-    variableString: 'Tiempo de predicción',
+    variableString: 'Tiempo de entrenamiento',
     min: 0.1,
     max: 72,
     step: 0.1,

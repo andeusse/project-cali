@@ -417,7 +417,7 @@ const SmartHome = () => {
                 <Grid item xs={12} md={12} xl={12}>
                   <Typography variant="h6">Parámetros del sistema</Typography>
                 </Grid>
-                <Grid item xs={12} md={9} xl={9}>
+                <Grid item xs={12} md={12} xl={12}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"

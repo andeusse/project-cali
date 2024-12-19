@@ -341,49 +341,71 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.activationEnergyR101}
-                        name="activationEnergyR101"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.lambdaR101}
-                        name="lambdaR101"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Reactor 2 R102</h3>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.exponentialFactorR102}
-                        name="exponentialFactorR102"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.activationEnergyR102}
-                        name="activationEnergyR102"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
-                    <Grid item xs={12} md={12} xl={12}>
-                      <CustomNumberField
-                        variable={system.lambdaR102}
-                        name="lambdaR102"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
+                    {system.operationModelType !== OperationModelType.ADM1 && (
+                      <Grid item xs={12} md={12} xl={12}>
+                        <CustomNumberField
+                          variable={system.activationEnergyR101}
+                          name="activationEnergyR101"
+                          handleChange={handleChange}
+                          disabled={system.disableParameters}
+                        ></CustomNumberField>
+                      </Grid>
+                    )}
+                    {system.operationModelType ===
+                      OperationModelType.Gompertz && (
+                      <Grid item xs={12} md={12} xl={12}>
+                        <CustomNumberField
+                          variable={system.lambdaR101}
+                          name="lambdaR101"
+                          handleChange={handleChange}
+                          disabled={system.disableParameters}
+                        ></CustomNumberField>
+                      </Grid>
+                    )}
+                    {system.inputOperationMode !== OperationModeType.Modo1 &&
+                      system.inputOperationMode !== OperationModeType.Modo2 && (
+                        <>
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            xl={12}
+                            sx={{ height: '72px' }}
+                          >
+                            <h3>Reactor 2 R102</h3>
+                          </Grid>
+                          <Grid item xs={12} md={12} xl={12}>
+                            <CustomNumberField
+                              variable={system.exponentialFactorR102}
+                              name="exponentialFactorR102"
+                              handleChange={handleChange}
+                              disabled={system.disableParameters}
+                            ></CustomNumberField>
+                          </Grid>
+                          {system.operationModelType !==
+                            OperationModelType.ADM1 && (
+                            <Grid item xs={12} md={12} xl={12}>
+                              <CustomNumberField
+                                variable={system.activationEnergyR102}
+                                name="activationEnergyR102"
+                                handleChange={handleChange}
+                                disabled={system.disableParameters}
+                              ></CustomNumberField>
+                            </Grid>
+                          )}
+                          {system.operationModelType ===
+                            OperationModelType.Gompertz && (
+                            <Grid item xs={12} md={12} xl={12}>
+                              <CustomNumberField
+                                variable={system.lambdaR102}
+                                name="lambdaR102"
+                                handleChange={handleChange}
+                                disabled={system.disableParameters}
+                              ></CustomNumberField>
+                            </Grid>
+                          )}
+                        </>
+                      )}
                   </Grid>
                 </Grid>
                 <Grid item xs={12} md={6} xl={2.5}>
