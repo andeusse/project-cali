@@ -47,6 +47,10 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { OperationModelType } from '../../types/common';
+import { AxiosError } from 'axios';
+import { modelsAPI } from '../../api/digitalTwinsModels';
+import PasswordModal from '../../components/models/PasswordModal';
+import { loginOutput, loginInput, errorResp } from '../../types/api';
 
 const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
@@ -104,6 +108,49 @@ const Biogas = () => {
     }
   };
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordEl, setPasswordEl] = useState<any>(undefined);
+  const handleTrainingModeChange = (e: any) => {
+    if (e.target.checked) {
+      setShowPasswordModal(true);
+      setPasswordEl({
+        target: {
+          type: 'checkbox',
+          checked: e.target.checked,
+          name: e.target.name,
+        },
+      });
+    } else {
+      handleChange(e);
+    }
+  };
+
+  const handlePasswordModalClose = (
+    confirm: boolean,
+    password: string | undefined
+  ) => {
+    if (confirm && password !== undefined) {
+      modelsAPI<loginOutput, loginInput>('trainingMode', {
+        password: password,
+      })
+        .then((resp) => {
+          if (resp.data.succeed) {
+            const newState = setFormState<BiogasParameters>(passwordEl, system);
+            if (newState) {
+              setSystem(newState as BiogasParameters);
+            }
+          } else {
+            setError('Contraseña incorrecta');
+          }
+        })
+        .catch((err: AxiosError<errorResp>) => {
+          setError(err.message);
+        })
+        .finally(() => {});
+    }
+    setShowPasswordModal(false);
+  };
+
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -149,6 +196,10 @@ const Biogas = () => {
         setIsOpen={setIsOpen}
         error={error}
       ></ErrorDialog>
+      <PasswordModal
+        handleClose={handlePasswordModalClose}
+        open={showPasswordModal}
+      ></PasswordModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -291,6 +342,18 @@ const Biogas = () => {
                         trueString="Online"
                         falseString="Offline"
                         disabled={system.disableParameters}
+                      ></CustomToggle>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                      <h3>Entrenamiento</h3>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                      <CustomToggle
+                        name="trainingMode"
+                        value={system.trainingMode}
+                        handleChange={handleTrainingModeChange}
+                        trueString="On"
+                        falseString="Off"
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={6} xl={12}>

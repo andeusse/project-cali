@@ -48,6 +48,10 @@ import { OperationModelType } from '../../types/common';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import BiochemicalMethanePotentialDiagram from '../../components/models/diagram/BiochemicalMethanePotentialDiagram';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
+import { AxiosError } from 'axios';
+import { modelsAPI } from '../../api/digitalTwinsModels';
+import PasswordModal from '../../components/models/PasswordModal';
+import { loginOutput, loginInput, errorResp } from '../../types/api';
 
 type Props = {};
 
@@ -96,6 +100,53 @@ const BiochemicalMethanePotential = (props: Props) => {
     }
   };
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordEl, setPasswordEl] = useState<any>(undefined);
+  const handleTrainingModeChange = (e: any) => {
+    if (e.target.checked) {
+      setShowPasswordModal(true);
+      setPasswordEl({
+        target: {
+          type: 'checkbox',
+          checked: e.target.checked,
+          name: e.target.name,
+        },
+      });
+    } else {
+      handleChange(e);
+    }
+  };
+
+  const handlePasswordModalClose = (
+    confirm: boolean,
+    password: string | undefined
+  ) => {
+    if (confirm && password !== undefined) {
+      modelsAPI<loginOutput, loginInput>('trainingMode', {
+        password: password,
+      })
+        .then((resp) => {
+          if (resp.data.succeed) {
+            const newState =
+              setFormState<BiochemicalMethanePotentialParameters>(
+                passwordEl,
+                system
+              );
+            if (newState) {
+              setSystem(newState as BiochemicalMethanePotentialParameters);
+            }
+          } else {
+            setError('Contraseña incorrecta');
+          }
+        })
+        .catch((err: AxiosError<errorResp>) => {
+          setError(err.message);
+        })
+        .finally(() => {});
+    }
+    setShowPasswordModal(false);
+  };
+
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -141,6 +192,10 @@ const BiochemicalMethanePotential = (props: Props) => {
         setIsOpen={setIsOpen}
         error={error}
       ></ErrorDialog>
+      <PasswordModal
+        handleClose={handlePasswordModalClose}
+        open={showPasswordModal}
+      ></PasswordModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -305,6 +360,30 @@ const BiochemicalMethanePotential = (props: Props) => {
                               trueString="Offline"
                               falseString="Online"
                               disabled={system.disableParameters}
+                            ></CustomToggle>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            md={6}
+                            xl={6}
+                            sx={{ height: '72px' }}
+                          >
+                            <h3>Entrenamiento</h3>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            md={6}
+                            xl={6}
+                            alignContent={'center'}
+                          >
+                            <CustomToggle
+                              name="trainingMode"
+                              value={system.trainingMode}
+                              handleChange={handleTrainingModeChange}
+                              trueString="On"
+                              falseString="Off"
                             ></CustomToggle>
                           </Grid>
                           <Grid item xs={12} md={6} xl={12}>
@@ -860,6 +939,30 @@ const BiochemicalMethanePotential = (props: Props) => {
                               trueString="Offline"
                               falseString="Online"
                               disabled={system.disableParameters}
+                            ></CustomToggle>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            md={6}
+                            xl={6}
+                            sx={{ height: '72px' }}
+                          >
+                            <h3>Entrenamiento</h3>
+                          </Grid>
+                          <Grid
+                            item
+                            xs={12}
+                            md={6}
+                            xl={6}
+                            alignContent={'center'}
+                          >
+                            <CustomToggle
+                              name="trainingMode"
+                              value={system.trainingMode}
+                              handleChange={handleTrainingModeChange}
+                              trueString="On"
+                              falseString="Off"
                             ></CustomToggle>
                           </Grid>
                           <Grid item xs={12} md={6} xl={12}>

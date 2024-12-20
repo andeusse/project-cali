@@ -61,6 +61,10 @@ import {
   Row,
 } from '@silevis/reactgrid';
 import { setSolarTable } from '../../utils/models/setSolar';
+import { AxiosError } from 'axios';
+import { modelsAPI } from '../../api/digitalTwinsModels';
+import PasswordModal from '../../components/models/PasswordModal';
+import { loginOutput, loginInput, errorResp } from '../../types/api';
 
 const Solar = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -401,6 +405,52 @@ const Solar = () => {
     }
   };
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordEl, setPasswordEl] = useState<any>(undefined);
+  const handleTrainingModeChange = (e: any) => {
+    if (e.target.checked) {
+      setShowPasswordModal(true);
+      setPasswordEl({
+        target: {
+          type: 'checkbox',
+          checked: e.target.checked,
+          name: e.target.name,
+        },
+      });
+    } else {
+      handleChange(e);
+    }
+  };
+
+  const handlePasswordModalClose = (
+    confirm: boolean,
+    password: string | undefined
+  ) => {
+    if (confirm && password !== undefined) {
+      modelsAPI<loginOutput, loginInput>('trainingMode', {
+        password: password,
+      })
+        .then((resp) => {
+          if (resp.data.succeed) {
+            const newState = setFormState<SolarWindParameters>(
+              passwordEl,
+              system
+            );
+            if (newState) {
+              setSystem(newState as SolarWindParameters);
+            }
+          } else {
+            setError('Contraseña incorrecta');
+          }
+        })
+        .catch((err: AxiosError<errorResp>) => {
+          setError(err.message);
+        })
+        .finally(() => {});
+    }
+    setShowPasswordModal(false);
+  };
+
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -446,6 +496,10 @@ const Solar = () => {
         setIsOpen={setIsOpen}
         error={error}
       ></ErrorDialog>
+      <PasswordModal
+        handleClose={handlePasswordModalClose}
+        open={showPasswordModal}
+      ></PasswordModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -1123,6 +1177,18 @@ const Solar = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <h3>Modo de entrenamiento</h3>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                  <CustomToggle
+                    name="trainingMode"
+                    value={system.trainingMode}
+                    handleChange={handleTrainingModeChange}
+                    trueString="On"
+                    falseString="Off"
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>

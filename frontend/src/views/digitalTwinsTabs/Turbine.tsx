@@ -267,17 +267,19 @@ const Turbine = () => {
   };
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordEl, setPasswordEl] = useState<any>(undefined);
   const handleTrainingModeChange = (e: any) => {
     if (e.target.checked) {
-      setSystem({
-        ...system,
-      });
       setShowPasswordModal(true);
-    } else {
-      setSystem({
-        ...system,
-        trainingMode: false,
+      setPasswordEl({
+        target: {
+          type: 'checkbox',
+          checked: e.target.checked,
+          name: e.target.name,
+        },
       });
+    } else {
+      handleChange(e);
     }
   };
 
@@ -291,10 +293,13 @@ const Turbine = () => {
       })
         .then((resp) => {
           if (resp.data.succeed) {
-            setSystem({
-              ...system,
-              trainingMode: true,
-            });
+            const newState = setFormState<TurbineParameters>(
+              passwordEl,
+              system
+            );
+            if (newState) {
+              setSystem(newState as TurbineParameters);
+            }
           } else {
             setError('Contraseña incorrecta');
           }
