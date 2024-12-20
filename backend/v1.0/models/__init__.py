@@ -4,3 +4,4 @@ from .biogas import Biogas
 from .BMP import BMP
 from .coolingTower import coolingTower
 from .hydrogenCell import hydrogenCell
+from .trainingMode import TrainingMode
