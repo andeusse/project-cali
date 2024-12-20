@@ -262,6 +262,13 @@ const Turbine = () => {
     }
   };
 
+  const handleTrainingModeChange = (e: any) => {
+    const newState = setFormState<TurbineParameters>(e, system);
+    if (newState) {
+      setSystem(newState as TurbineParameters);
+    }
+  };
+
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -661,6 +668,18 @@ const Turbine = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <h3>Modo de entrenamiento</h3>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
+                  <CustomToggle
+                    name="trainingMode"
+                    value={system.trainingMode}
+                    handleChange={handleTrainingModeChange}
+                    trueString="On"
+                    falseString="Off"
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>

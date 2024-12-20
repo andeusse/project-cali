@@ -103,6 +103,7 @@ export type HydrogenCellOutputHistoric = CommonChartType & {
 
 export const HYDROGEN_CELL: HydrogencellParameters = {
   inputOfflineOperation: true,
+  trainingMode: false,
   name: 'Nombre',
   iteration: 1,
   steps: {

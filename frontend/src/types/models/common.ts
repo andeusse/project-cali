@@ -23,6 +23,7 @@ export type DiagramVariableType = {
 export type CommonDigitalTwinsParameter = {
   iteration: number;
   inputOfflineOperation: boolean;
+  trainingMode: boolean;
   timeMultiplier: InputType;
   queryTime: number;
   disableParameters: boolean;

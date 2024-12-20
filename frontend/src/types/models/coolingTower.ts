@@ -75,6 +75,7 @@ export type CoolingTowerOutputHistoric = {
 
 export const COOLING_TOWER: CoolingTowerParameters = {
   name: 'Nombre',
+  trainingMode: false,
   iteration: 1,
   steps: {
     disabled: false,

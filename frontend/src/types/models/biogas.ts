@@ -382,6 +382,7 @@ export type BiogasOutputHistoric = CommonChartType & {
 
 export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
+  trainingMode: false,
   iteration: 1,
   steps: {
     disabled: false,

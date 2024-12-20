@@ -593,6 +593,7 @@ export type BiochemicalMethanePotentialOutputHistoric = CommonChartType & {
 
 export const BMP: BiochemicalMethanePotentialParameters = {
   name: 'Nombre',
+  trainingMode: false,
   iteration: 1,
   steps: {
     disabled: false,
