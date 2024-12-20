@@ -3,7 +3,7 @@ import api from './api';
 import { SmartSystemParameters } from '../types/scenarios/common';
 import Config from '../config/config';
 
-export const updateScenario = (
+export const scenariosAPI = (
   scenario: string,
   body: SmartSystemParameters
 ): Promise<AxiosResponse<string>> => {

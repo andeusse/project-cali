@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 import { useState, useCallback, useEffect } from 'react';
-import { updateModel } from '../api/digitalTwinsModels';
+import { modelsAPI } from '../api/digitalTwinsModels';
 import moment from 'moment';
 import { errorResp, resp } from '../types/api';
 import { ChartValues } from '../types/graph';
@@ -24,7 +24,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   const [error, setError] = useState('');
 
   const queryApi = useCallback(() => {
-    updateModel<T, resp<G>>(url, model)
+    modelsAPI<T, resp<G>>(url, model)
       .then((resp) => {
         if (isPlaying) {
           model.iteration += 1;

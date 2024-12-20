@@ -58,7 +58,7 @@ import ResultTab from '../../components/scenarios/common/ResultTab';
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
-import { updateScenario } from '../../api/scenario';
+import { scenariosAPI } from '../../api/scenario';
 import { AxiosError } from 'axios';
 import { errorResp } from '../../types/api';
 import SortableList from '../../components/UI/SortableList';
@@ -259,7 +259,7 @@ const SmartHome = () => {
 
   const handleQueryScenario = () => {
     dispatch(setIsLoading(true));
-    updateScenario('smarthome', system)
+    scenariosAPI('smarthome', system)
       .then((resp) => {
         setData(() => {
           const newData = JSON.parse(resp.data);

@@ -56,6 +56,10 @@ import {
 } from '@silevis/reactgrid';
 import { setTurbineTable } from '../../utils/models/setTurbine';
 import Config from '../../config/config';
+import PasswordModal from '../../components/models/PasswordModal';
+import { AxiosError } from 'axios';
+import { errorResp, loginInput, loginOutput } from '../../types/api';
+import { modelsAPI } from '../../api/digitalTwinsModels';
 
 const Turbine = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -262,11 +266,45 @@ const Turbine = () => {
     }
   };
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const handleTrainingModeChange = (e: any) => {
-    const newState = setFormState<TurbineParameters>(e, system);
-    if (newState) {
-      setSystem(newState as TurbineParameters);
+    if (e.target.checked) {
+      setSystem({
+        ...system,
+      });
+      setShowPasswordModal(true);
+    } else {
+      setSystem({
+        ...system,
+        trainingMode: false,
+      });
     }
+  };
+
+  const handlePasswordModalClose = (
+    confirm: boolean,
+    password: string | undefined
+  ) => {
+    if (confirm && password !== undefined) {
+      modelsAPI<loginOutput, loginInput>('trainingMode', {
+        password: password,
+      })
+        .then((resp) => {
+          if (resp.data.succeed) {
+            setSystem({
+              ...system,
+              trainingMode: true,
+            });
+          } else {
+            setError('Contraseña incorrecta');
+          }
+        })
+        .catch((err: AxiosError<errorResp>) => {
+          setError(err.message);
+        })
+        .finally(() => {});
+    }
+    setShowPasswordModal(false);
   };
 
   const handleSaveSystem = () => {
@@ -314,6 +352,10 @@ const Turbine = () => {
         setIsOpen={setIsOpen}
         error={error}
       ></ErrorDialog>
+      <PasswordModal
+        handleClose={handlePasswordModalClose}
+        open={showPasswordModal}
+      ></PasswordModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
