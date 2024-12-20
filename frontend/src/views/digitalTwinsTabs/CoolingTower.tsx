@@ -608,6 +608,7 @@ const CoolingTower = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                    disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -620,6 +621,7 @@ const CoolingTower = () => {
                     handleChange={handleTrainingModeChange}
                     trueString="On"
                     falseString="Off"
+                    disabled={isPlaying}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -630,7 +632,9 @@ const CoolingTower = () => {
                     variable={system.topWaterFlow}
                     name="topWaterFlow"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Flujo"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -641,7 +645,9 @@ const CoolingTower = () => {
                     variable={system.topWaterTemperature}
                     name="topWaterTemperature"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Temperatura"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -655,7 +661,9 @@ const CoolingTower = () => {
                     variable={system.bottomAirFlow}
                     name="bottomAirFlow"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Flujo"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -666,7 +674,9 @@ const CoolingTower = () => {
                     variable={system.bottomAirTemperature}
                     name="bottomAirTemperature"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Temperatura"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -677,7 +687,9 @@ const CoolingTower = () => {
                     variable={system.bottomAirHumidity}
                     name="bottomAirHumidity"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Humedad"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}

@@ -272,17 +272,35 @@ export const setSolar = (
       newState.timeMultiplier.value = 1;
     }
   }
+  if (e.target.name === 'trainingMode') {
+    newState.trainingMode = e.target.checked;
+    newState.inputOfflineOperation = !newState.trainingMode;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE
+      : Config.QUERY_TIME_ONLINE;
+    newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
+    newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
+    newState.windSpeed.disabled = !newState.inputOfflineOperation;
+    newState.alternCurrentLoadPower.disabled = !newState.inputOfflineOperation;
+    newState.alternCurrentLoadPowerFactor.disabled =
+      !newState.inputOfflineOperation;
+    newState.directCurrentLoadPower.disabled = !newState.inputOfflineOperation;
+
+    newState.solarRadiation1.arrayEnabled = false;
+    newState.solarRadiation2.arrayEnabled = false;
+    newState.temperature.arrayEnabled = false;
+    newState.windSpeed.arrayEnabled = false;
+    newState.alternCurrentLoadPower.arrayEnabled = false;
+    newState.alternCurrentLoadPowerFactor.arrayEnabled = false;
+    newState.directCurrentLoadPower.arrayEnabled = false;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
+  }
   return newState;
 };
-
-// : [],
-// : [],
-// : [],
-// : [],
-// : [],
-// : [],
-// : [],
-// : [],
 
 export const setSolarTable = (
   e: CellChange[],

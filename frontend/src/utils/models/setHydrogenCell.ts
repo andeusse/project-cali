@@ -62,6 +62,35 @@ export const setHydrogenCell = (
       newState.timeMultiplier.value = 1;
     }
   }
+  if (e.target.name === 'trainingMode') {
+    newState.trainingMode = e.target.checked;
+    newState.inputOfflineOperation = !newState.trainingMode;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE
+      : Config.QUERY_TIME_ONLINE;
+    newState.inputHydrogenFlow.disabled = !newState.inputOfflineOperation;
+    newState.inputHydrogenFlow.arrayEnabled = false;
+    newState.inputHydrogenPressure.disabled = !newState.inputOfflineOperation;
+    newState.inputHydrogenPressure.arrayEnabled = false;
+    newState.inputCellTemperature.disabled = !newState.inputOfflineOperation;
+    newState.inputCellTemperature.arrayEnabled = false;
+    newState.inputElectronicLoadCurrent.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputElectronicLoadCurrent.arrayEnabled = false;
+    newState.inputElectronicLoadPower.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputElectronicLoadPower.arrayEnabled = false;
+    newState.inputElectronicLoadResistance.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputElectronicLoadResistance.arrayEnabled = false;
+    newState.inputFanPercentage.disabled = !newState.inputOfflineOperation;
+    newState.inputFanPercentage.arrayEnabled = false;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
+  }
   return newState;
 };
 

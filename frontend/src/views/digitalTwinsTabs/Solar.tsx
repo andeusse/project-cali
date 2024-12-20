@@ -1177,6 +1177,7 @@ const Solar = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                    disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1189,6 +1190,7 @@ const Solar = () => {
                     handleChange={handleTrainingModeChange}
                     trueString="On"
                     falseString="Off"
+                    disabled={isPlaying}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1203,7 +1205,9 @@ const Solar = () => {
                           variable={system.solarRadiation1}
                           name="solarRadiation1"
                           handleChange={handleChange}
-                          disabled={system.inputOfflineOperation}
+                          disabled={
+                            system.inputOfflineOperation || system.trainingMode
+                          }
                           variableName="Radiación solar 1"
                           arrayDisabled={!system.inputOfflineOperation}
                           steps={system.steps.value}
@@ -1218,7 +1222,9 @@ const Solar = () => {
                           variable={system.solarRadiation2}
                           name="solarRadiation2"
                           handleChange={handleChange}
-                          disabled={system.inputOfflineOperation}
+                          disabled={
+                            system.inputOfflineOperation || system.trainingMode
+                          }
                           variableName="Radiación solar 1"
                           arrayDisabled={!system.inputOfflineOperation}
                           steps={system.steps.value}
@@ -1247,7 +1253,9 @@ const Solar = () => {
                         variable={system.windSpeed}
                         name="windSpeed"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                         variableName="Velocidad del viento"
                         arrayDisabled={!system.inputOfflineOperation}
                         steps={system.steps.value}
@@ -1274,7 +1282,9 @@ const Solar = () => {
                           variable={system.alternCurrentLoadPower}
                           name="alternCurrentLoadPower"
                           handleChange={handleChange}
-                          disabled={system.inputOfflineOperation}
+                          disabled={
+                            system.inputOfflineOperation || system.trainingMode
+                          }
                           variableName="Potencia"
                           arrayDisabled={!system.inputOfflineOperation}
                           steps={system.steps.value}
@@ -1285,7 +1295,9 @@ const Solar = () => {
                           variable={system.alternCurrentLoadPowerFactor}
                           name="alternCurrentLoadPowerFactor"
                           handleChange={handleChange}
-                          disabled={system.inputOfflineOperation}
+                          disabled={
+                            system.inputOfflineOperation || system.trainingMode
+                          }
                           variableName="Factor de potencia"
                           arrayDisabled={!system.inputOfflineOperation}
                           steps={system.steps.value}
@@ -1308,7 +1320,9 @@ const Solar = () => {
                         variable={system.alternCurrentLoadPower}
                         name="alternCurrentLoadPower"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                         variableName="Potencia"
                         arrayDisabled={!system.inputOfflineOperation}
                         steps={system.steps.value}
@@ -1319,7 +1333,9 @@ const Solar = () => {
                         variable={system.alternCurrentLoadPowerFactor}
                         name="alternCurrentLoadPowerFactor"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                         variableName="Factor de potencia"
                         arrayDisabled={!system.inputOfflineOperation}
                         steps={system.steps.value}
@@ -1341,7 +1357,9 @@ const Solar = () => {
                           variable={system.directCurrentLoadPower}
                           name="directCurrentLoadPower"
                           handleChange={handleChange}
-                          disabled={system.inputOfflineOperation}
+                          disabled={
+                            system.inputOfflineOperation || system.trainingMode
+                          }
                           variableName="Potencia"
                           arrayDisabled={!system.inputOfflineOperation}
                           steps={system.steps.value}

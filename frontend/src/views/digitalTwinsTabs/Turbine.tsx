@@ -715,6 +715,7 @@ const Turbine = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                    disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -727,6 +728,7 @@ const Turbine = () => {
                     handleChange={handleTrainingModeChange}
                     trueString="On"
                     falseString="Off"
+                    disabled={isPlaying}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -737,7 +739,9 @@ const Turbine = () => {
                     variable={system.inputPressure}
                     name="inputPressure"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Presión"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -748,7 +752,9 @@ const Turbine = () => {
                     variable={system.inputFlow}
                     name="inputFlow"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Flujo"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -778,7 +784,9 @@ const Turbine = () => {
                     variable={system.inputActivePower}
                     name="inputActivePower"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Potencia activa"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
@@ -789,7 +797,9 @@ const Turbine = () => {
                     variable={system.inputPowerFactor}
                     name="inputPowerFactor"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Factor de potencia"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}

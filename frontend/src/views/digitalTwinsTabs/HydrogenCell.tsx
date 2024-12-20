@@ -766,6 +766,7 @@ const HydrogenCell = (props: Props) => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
+                    disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -778,55 +779,25 @@ const HydrogenCell = (props: Props) => {
                     handleChange={handleTrainingModeChange}
                     trueString="On"
                     falseString="Off"
+                    disabled={isPlaying}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Parámetros celda hidrógeno</h2>
                 </Grid>
-                {/* <Grid item xs={12} md={12} xl={12}>
-                  <ToggleArrayCustomNumberField
-                    variable={system.inputHydrogenFlow}
-                    name="inputHydrogenFlow"
-                    handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
-                    variableName="Flujo"
-                    arrayDisabled={!system.inputOfflineOperation}
-                    steps={system.steps.value}
-                  ></ToggleArrayCustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <ToggleArrayCustomNumberField
-                    variable={system.inputHydrogenPressure}
-                    name="inputHydrogenPressure"
-                    handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
-                    variableName="Presión"
-                    arrayDisabled={!system.inputOfflineOperation}
-                    steps={system.steps.value}
-                  ></ToggleArrayCustomNumberField>
-                </Grid> */}
                 <Grid item xs={12} md={12} xl={12}>
                   <ToggleArrayCustomNumberField
                     variable={system.inputFanPercentage}
                     name="inputFanPercentage"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                     variableName="Porcentaje ventilador"
                     arrayDisabled={!system.inputOfflineOperation}
                     steps={system.steps.value}
                   ></ToggleArrayCustomNumberField>
                 </Grid>
-                {/* <Grid item xs={12} md={12} xl={12}>
-                  <ToggleArrayCustomNumberField
-                    variable={system.inputCellTemperature}
-                    name="inputCellTemperature"
-                    handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
-                    variableName="Temperatura"
-                    arrayDisabled={!system.inputOfflineOperation}
-                    steps={system.steps.value}
-                  ></ToggleArrayCustomNumberField>
-                </Grid> */}
                 <Grid item xs={12} md={12} xl={7}>
                   <h4>Autoalimentación eléctrica</h4>
                 </Grid>
@@ -849,7 +820,9 @@ const HydrogenCell = (props: Props) => {
                       variable={system.inputElectronicLoadCurrent}
                       name="inputElectronicLoadCurrent"
                       handleChange={handleChange}
-                      disabled={system.inputOfflineOperation}
+                      disabled={
+                        system.inputOfflineOperation || system.trainingMode
+                      }
                       variableName="Corriente"
                       arrayDisabled={!system.inputOfflineOperation}
                       steps={system.steps.value}
@@ -862,7 +835,9 @@ const HydrogenCell = (props: Props) => {
                       variable={system.inputElectronicLoadPower}
                       name="inputElectronicLoadPower"
                       handleChange={handleChange}
-                      disabled={system.inputOfflineOperation}
+                      disabled={
+                        system.inputOfflineOperation || system.trainingMode
+                      }
                       variableName="Potencia"
                       arrayDisabled={!system.inputOfflineOperation}
                       steps={system.steps.value}
@@ -876,7 +851,9 @@ const HydrogenCell = (props: Props) => {
                       variable={system.inputElectronicLoadResistance}
                       name="inputElectronicLoadResistance"
                       handleChange={handleChange}
-                      disabled={system.inputOfflineOperation}
+                      disabled={
+                        system.inputOfflineOperation || system.trainingMode
+                      }
                       variableName="Resistencia"
                       arrayDisabled={!system.inputOfflineOperation}
                       steps={system.steps.value}

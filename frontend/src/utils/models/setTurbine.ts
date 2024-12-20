@@ -71,6 +71,26 @@ export const setTurbine = (
       newState.timeMultiplier.value = 1;
     }
   }
+  if (e.target.name === 'trainingMode') {
+    newState.trainingMode = e.target.checked;
+    newState.inputOfflineOperation = !newState.trainingMode;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE
+      : Config.QUERY_TIME_ONLINE;
+    newState.inputPressure.disabled = !newState.inputOfflineOperation;
+    newState.inputPressure.arrayEnabled = false;
+    newState.inputFlow.disabled = !newState.inputOfflineOperation;
+    newState.inputFlow.arrayEnabled = false;
+    newState.inputActivePower.disabled = !newState.inputOfflineOperation;
+    newState.inputActivePower.arrayEnabled = false;
+    newState.inputPowerFactor.disabled = !newState.inputOfflineOperation;
+    newState.inputPowerFactor.arrayEnabled = false;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
+  }
   return newState;
 };
 

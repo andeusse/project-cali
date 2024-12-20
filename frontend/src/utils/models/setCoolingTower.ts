@@ -56,7 +56,26 @@ export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
       newState.stepTime = { ...newState.stepTime, value: 1, step: 1, min: 1 };
     }
   }
+  if (e.target.name === 'trainingMode') {
+    newState.trainingMode = e.target.checked;
+    newState.inputOfflineOperation = !newState.trainingMode;
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_OFFLINE_TOWER
+      : Config.QUERY_TIME_ONLINE_TOWER;
 
+    newState.topWaterFlow.disabled = !newState.inputOfflineOperation;
+    newState.topWaterFlow.arrayEnabled = false;
+    newState.topWaterTemperature.disabled = !newState.inputOfflineOperation;
+    newState.topWaterTemperature.arrayEnabled = false;
+    newState.bottomAirFlow.disabled = !newState.inputOfflineOperation;
+    newState.bottomAirFlow.arrayEnabled = false;
+    newState.bottomAirTemperature.disabled = !newState.inputOfflineOperation;
+    newState.bottomAirTemperature.arrayEnabled = false;
+    newState.bottomAirHumidity.disabled = !newState.inputOfflineOperation;
+    newState.bottomAirHumidity.arrayEnabled = false;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+  }
   return newState;
 };
 
