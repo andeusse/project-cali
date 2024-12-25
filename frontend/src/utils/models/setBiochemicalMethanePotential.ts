@@ -250,6 +250,25 @@ export const setBiochemicalMethanePotential = (
         break;
     }
   }
+  if (e.target.name === 'trainingMode') {
+    newState.trainingMode = e.target.checked;
+    newState.stateSelectionSideA = !newState.trainingMode;
+
+    newState.testDurationSideA.disabled = !newState.stateSelectionSideA;
+    newState.TemperatureSideA.disabled = !newState.stateSelectionSideA;
+    newState.pHSideA.disabled = !newState.stateSelectionSideA;
+    newState.mixManualSideA = newState.stateSelectionSideA;
+    newState.feefManualSideA = newState.stateSelectionSideA;
+    newState.manualBiogasCompositionSideA = newState.stateSelectionSideA;
+
+    newState.stateSelectionSideB = !newState.trainingMode;
+    newState.testDurationSideB.disabled = !newState.stateSelectionSideB;
+    newState.TemperatureSideB.disabled = !newState.stateSelectionSideB;
+    newState.pHSideB.disabled = !newState.stateSelectionSideB;
+    newState.mixManualSideB = newState.stateSelectionSideB;
+    newState.feefManualSideB = newState.stateSelectionSideB;
+    newState.manualBiogasCompositionSideB = newState.stateSelectionSideB;
+  }
 
   return newState;
 };

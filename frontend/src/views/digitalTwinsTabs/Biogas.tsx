@@ -341,7 +341,9 @@ const Biogas = () => {
                         handleChange={handleChange}
                         trueString="Online"
                         falseString="Offline"
-                        disabled={system.disableParameters}
+                        disabled={
+                          system.disableParameters || system.trainingMode
+                        }
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
@@ -820,7 +822,7 @@ const Biogas = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
-                    disabled={!system.digitalTwinState}
+                    disabled={!system.digitalTwinState || system.trainingMode}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
@@ -837,7 +839,9 @@ const Biogas = () => {
                     name="inputSubstrateConditions"
                     value={system.inputSubstrateConditions}
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={6} xl={6}>
@@ -928,7 +932,9 @@ const Biogas = () => {
                     name="inputMixTK100"
                     value={system.inputMixTK100}
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -960,7 +966,9 @@ const Biogas = () => {
                     name="inputPump104"
                     value={system.inputPump104}
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -998,7 +1006,9 @@ const Biogas = () => {
                         name="inputPump101"
                         value={system.inputPump101}
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -1035,7 +1045,9 @@ const Biogas = () => {
                         name="inputPump102"
                         value={system.inputPump102}
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -1073,7 +1085,9 @@ const Biogas = () => {
                     name="inputMixR101"
                     value={system.inputMixR101}
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1102,7 +1116,9 @@ const Biogas = () => {
                     variable={system.inputPHR101}
                     name="inputPHR101"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                   ></ToggleCustomNumberField>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1110,7 +1126,9 @@ const Biogas = () => {
                     variable={system.inputTemperatureR101}
                     name="inputTemperatureR101"
                     handleChange={handleChange}
-                    disabled={system.inputOfflineOperation}
+                    disabled={
+                      system.inputOfflineOperation || system.trainingMode
+                    }
                   ></ToggleCustomNumberField>
                 </Grid>
 
@@ -1126,7 +1144,9 @@ const Biogas = () => {
                         name="inputMixR102"
                         value={system.inputMixR102}
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -1155,7 +1175,9 @@ const Biogas = () => {
                         variable={system.inputPHR102}
                         name="inputPHR102"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                       ></ToggleCustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -1163,7 +1185,9 @@ const Biogas = () => {
                         variable={system.inputTemperatureR102}
                         name="inputTemperatureR102"
                         handleChange={handleChange}
-                        disabled={system.inputOfflineOperation}
+                        disabled={
+                          system.inputOfflineOperation || system.trainingMode
+                        }
                       ></ToggleCustomNumberField>
                     </Grid>
                   </>

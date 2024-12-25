@@ -387,6 +387,79 @@ export const setBiogas = (
       newState.inputPump101StartsPerDay.disabled = false;
     }
   }
+  if (e.target.name === 'trainingMode') {
+    newState.trainingMode = e.target.checked;
+    newState.inputOfflineOperation = !newState.trainingMode;
+    newState.digitalTwinState = newState.trainingMode;
+
+    if (newState.inputOfflineOperation && !newState.digitalTwinState)
+      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
+
+    if (newState.inputOfflineOperation && newState.digitalTwinState)
+      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
+
+    if (!newState.inputOfflineOperation && !newState.digitalTwinState)
+      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
+
+    if (!newState.inputOfflineOperation && newState.digitalTwinState)
+      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+
+    newState.queryTime = newState.inputOfflineOperation
+      ? Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
+      : Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+
+    newState.inputSubstrateConditions = newState.inputOfflineOperation;
+    (newState as BiogasParameters) = setSubstrateConditions(
+      newState,
+      !newState.inputOfflineOperation
+    );
+
+    newState.inputMixTK100 = newState.inputOfflineOperation;
+    newState.inputSpeedMixTK100.disabled = !newState.inputOfflineOperation;
+    newState.inputStartsPerDayMixTK100.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputStartTimeMixTK100.disabled = !newState.inputOfflineOperation;
+
+    newState.inputPump104 = newState.inputOfflineOperation;
+    newState.inputPump104HydraulicRetentionTime.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump104StartsPerDay.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump104StartTime.disabled = !newState.inputOfflineOperation;
+
+    newState.inputPump101 = newState.inputOfflineOperation;
+    newState.inputPump101Flow.disabled = !newState.inputOfflineOperation;
+    newState.inputPump101StartsPerDay.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump101StartTime.disabled = !newState.inputOfflineOperation;
+
+    newState.inputPump102 = newState.inputOfflineOperation;
+    newState.inputPump102Flow.disabled = !newState.inputOfflineOperation;
+    newState.inputPump102StartsPerDay.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump102StartTime.disabled = !newState.inputOfflineOperation;
+
+    newState.inputMixR101 = newState.inputOfflineOperation;
+    newState.inputSpeedMixR101.disabled = !newState.inputOfflineOperation;
+    newState.inputStartsPerDayMixR101.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputStartTimeMixR101.disabled = !newState.inputOfflineOperation;
+    newState.inputPHR101.disabled = !newState.inputOfflineOperation;
+    newState.inputTemperatureR101.disabled = !newState.inputOfflineOperation;
+
+    newState.inputMixR102 = newState.inputOfflineOperation;
+    newState.inputSpeedMixR102.disabled = !newState.inputOfflineOperation;
+    newState.inputStartsPerDayMixR102.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputStartTimeMixR102.disabled = !newState.inputOfflineOperation;
+    newState.inputPHR102.disabled = !newState.inputOfflineOperation;
+    newState.inputTemperatureR102.disabled = !newState.inputOfflineOperation;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
+  }
   return newState;
 };
 
