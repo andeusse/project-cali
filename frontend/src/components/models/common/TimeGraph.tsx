@@ -11,8 +11,10 @@ import {
   Tooltip as ChartJSTooltip,
   Legend,
   ChartOptions,
+  TimeSeriesScale,
 } from 'chart.js';
 import Zoom from 'chartjs-plugin-zoom';
+import 'chartjs-adapter-moment';
 import { saveAs } from 'file-saver';
 import { Grid } from '@mui/material';
 import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
@@ -20,7 +22,6 @@ import ImageIcon from '@mui/icons-material/Image';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import GridOnIcon from '@mui/icons-material/GridOn';
-
 import { ChartType } from '../../../types/graph';
 import { CustomIconButton } from '../../UI/CustomIconButton';
 import { DiagramVariableType } from '../../../types/models/common';
@@ -43,6 +44,7 @@ const TimeGraph = (props: Props) => {
     LinearScale,
     CategoryScale,
     TimeScale,
+    TimeSeriesScale,
     PointElement,
     LineElement,
     Title,
@@ -64,6 +66,18 @@ const TimeGraph = (props: Props) => {
             variables.length === 1
               ? `${variables[0].name} (${variables[0].unit})`
               : '',
+        },
+      },
+      x: {
+        type: 'time',
+        time: {
+          unit: 'second',
+        },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 20,
         },
       },
     },

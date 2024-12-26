@@ -43,7 +43,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
               if (oldState['time'] === undefined) {
                 const newDate = moment();
                 setLastTime(newDate);
-                oldState['time'] = [newDate.format('LTS')];
+                oldState['time'] = [newDate];
               } else {
                 const newDate = moment(lastTime).add(
                   model.timeMultiplier.value *
@@ -51,7 +51,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
                   's'
                 );
                 setLastTime(newDate);
-                oldState['time'].push(newDate.format('LTS'));
+                oldState['time'].push(newDate);
               }
               return oldState;
             });
