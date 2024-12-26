@@ -51,11 +51,11 @@ class InfluxDBmodel:
     def QueryCreator(self, measurement='', device='', variable='', location='', type=0, forecastTime=0): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
         if type == 0:
             self.query = '''from(bucket: "''' + self.bucket + '''")
-            |> range(start: -1m)
+            |> range(start: 0)
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
             |> filter(fn: (r) => r["device"] == "''' + device + '''")
             |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
-            |> last() |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")'''
+            |> last()'''
         elif type == 1:
             self.query ='''from(bucket: "''' + self.bucket + '''")
             |> range(start: -1m)

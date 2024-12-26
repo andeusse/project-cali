@@ -12,7 +12,6 @@ class TwinHydro:
     def turbineType (self, type):
         # Pelton
         if type == 1:
-            self.n_t = 60.0
             self.H_min = 0.0
             self.H_max = 130.0
             self.Q_min = 0.1
@@ -22,7 +21,6 @@ class TwinHydro:
             self.V_t = 40.0
         # Turgo
         elif type == 2:
-            self.n_t = 54.0
             self.H_min = 0.0
             self.H_max = 30.0
             self.Q_min = 8.0
@@ -30,7 +28,7 @@ class TwinHydro:
             self.f_h = 0.0
             self.P_max = 1042.0
             self.V_t = 80.0
-        return self.n_t, self.H_min, self.H_max, self.Q_min, self.Q_max , self.f_h
+        return self.H_min, self.H_max, self.Q_min, self.Q_max , self.f_h
     
     # Calculo de potencia de las turbinas
     def PowerOutput (self, Pressure, Flux):
@@ -42,7 +40,8 @@ class TwinHydro:
         return self.P_h
     
     # Parametrizacion de gemelo 
-    def twinParameters (self, n_controller, n_inverter):
+    def twinParameters (self, n_t, n_controller, n_inverter):
+        self.n_t = n_t
         self.n_controller = n_controller # Eficiencia controlador en % -> se optimiza con medidas de potencia
         self.n_inverter = n_inverter # Eficiencia de inversor en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
