@@ -4,26 +4,29 @@ from tools import DBManager
 from simulation_models import TwinHydro
 import pandas as pd
 import numpy as np
-from dotenv import load_dotenv
 import os
+import time
+from datetime import datetime
+import random
 
 class Turbine(Resource):
   def post(self):
     data = request.get_json()
     turbine = {}
 
+    trainingState = False
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
+
+    influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+
     if not data["inputOfflineOperation"]:
-      load_dotenv('./v1.0/.env')
-      DB_IP = os.getenv('DB_IP')
-      DB_Port = os.getenv('DB_Port')
-      DB_Bucket = os.getenv('DB_Bucket')
-      DB_Organization = os.getenv('DB_Organization')
-      DB_Token = os.getenv('DB_Token')
-      
+      trainingState = True
+      trainingState = data["trainingMode"]
       values_df = pd.DataFrame(columns=["field", "Value"])
-
-      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
-
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
@@ -37,11 +40,11 @@ class Turbine(Resource):
           values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
+          timestamp = values_df_temp['_time'].mean()
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
         except:
-          print(f"Intento: {attempts}", flush=True)
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
@@ -113,11 +116,49 @@ class Turbine(Resource):
     controllerChargingMinimumVoltage = data["controller"]["chargingMinimumVoltage"]["value"]
     controllerSinkOnVoltage = data["controller"]["sinkOnVoltage"]["value"]
     controllerSinkOffVoltage = data["controller"]["sinkOffVoltage"]["value"]
-    # controllerEfficiency = data["controller"]["efficiency"]["value"]
+    
     if turbineType == 1:
-      controllerEfficiency = 90.0
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton", type=0)
+      queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton", type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          turbineEfficiency = influxDB.InfluxDBreader(queryTurbine)['_value'][0]
+          controllerEfficiency = influxDB.InfluxDBreader(queryController)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          turbineEfficiency = 60.0
+          controllerEfficiency = 90.0
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+
+      # controllerEfficiency = 90.0
     else:
-      controllerEfficiency = 72.0
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo", type=0)
+      queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo", type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          turbineEfficiency = influxDB.InfluxDBreader(queryTurbine)['_value']
+          controllerEfficiency = influxDB.InfluxDBreader(queryController)['_value']
+          influxDB.InfluxDBclose()
+          break
+        except:
+          turbineEfficiency = 54.0
+          controllerEfficiency = 72.0
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+
+      # controllerEfficiency = 72.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -167,8 +208,8 @@ class Turbine(Resource):
     turbine["batteryTemperature"] = T_bat
 
     twinHydro.turbineType(turbineType)
+    twinHydro.twinParameters(turbineEfficiency, controllerEfficiency, inverterEfficiency)
     P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
-    twinHydro.twinParameters(controllerEfficiency, inverterEfficiency)
     
     if not data["inputOfflineOperation"] and data["inputPressure"]["disabled"] and data["inputFlow"]["disabled"]:
       twinHydro.optimal_n_t(twinHydro.n_t, P_h_meas, inputPressure, inputFlow)
@@ -243,5 +284,28 @@ class Turbine(Resource):
       turbine["chargeCycleInitialSOC"] = turbine["batteryStateOfCharge"]
     else:
       turbine["chargeCycleInitialSOC"] = chargeCycleInitialSOC
+
+    if trainingState:
+
+      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+      connectionState = influxDB.InfluxDBconnection()
+      timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+  
+      # if turbineType == 1:
+      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton", value = twinHydro.n_t, timestamp = timestamp)
+      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton", value = twinHydro.n_controller, timestamp = timestamp)
+      # else:
+      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo", value = twinHydro.n_t, timestamp = timestamp)
+      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo", value = twinHydro.n_controller, timestamp = timestamp)
+
+      if turbineType == 1:
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton", value = random.uniform(50.0,70.0), timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton", value = random.uniform(70.0,90.0), timestamp = timestamp)
+      else:
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo", value = random.uniform(50.0,70.0), timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo", value = random.uniform(70.0,90.0), timestamp = timestamp)
+
+
+      influxDB.InfluxDBclose()
 
     return {"model": turbine}

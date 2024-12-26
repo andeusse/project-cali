@@ -4,7 +4,6 @@ from simulation_models import TwinCell
 import pandas as pd
 import numpy as np
 from tools import DBManager
-from dotenv import load_dotenv
 import os
 
 class hydrogenCell(Resource):
@@ -13,7 +12,6 @@ class hydrogenCell(Resource):
     cell = {}
 
     if not data["inputOfflineOperation"]:
-      load_dotenv('./v1.0/.env')
       DB_IP = os.getenv('DB_IP')
       DB_Port = os.getenv('DB_Port')
       DB_Bucket = os.getenv('DB_Bucket')
