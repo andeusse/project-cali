@@ -5,9 +5,6 @@ from simulation_models import TwinHydro
 import pandas as pd
 import numpy as np
 import os
-import time
-from datetime import datetime
-import random
 
 class Turbine(Resource):
   def post(self):
@@ -24,7 +21,6 @@ class Turbine(Resource):
     influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
 
     if not data["inputOfflineOperation"]:
-      trainingState = True
       trainingState = data["trainingMode"]
       values_df = pd.DataFrame(columns=["field", "Value"])
       connectionState = influxDB.InfluxDBconnection()
@@ -136,8 +132,6 @@ class Turbine(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
-
-      # controllerEfficiency = 90.0
     else:
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
@@ -157,8 +151,6 @@ class Turbine(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
-
-      # controllerEfficiency = 72.0
 
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -289,22 +281,13 @@ class Turbine(Resource):
 
       influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
       connectionState = influxDB.InfluxDBconnection()
-      timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
   
-      # if turbineType == 1:
-      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton", value = twinHydro.n_t, timestamp = timestamp)
-      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton", value = twinHydro.n_controller, timestamp = timestamp)
-      # else:
-      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo", value = twinHydro.n_t, timestamp = timestamp)
-      #   influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo", value = twinHydro.n_controller, timestamp = timestamp)
-
       if turbineType == 1:
-        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton", value = random.uniform(50.0,70.0), timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton", value = random.uniform(70.0,90.0), timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton", value = twinHydro.n_t, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton", value = twinHydro.n_controller, timestamp = timestamp)
       else:
-        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo", value = random.uniform(50.0,70.0), timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo", value = random.uniform(70.0,90.0), timestamp = timestamp)
-
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo", value = twinHydro.n_t, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo", value = twinHydro.n_controller, timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 

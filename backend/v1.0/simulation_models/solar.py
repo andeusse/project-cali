@@ -93,12 +93,12 @@ class TwinPVWF:
         return self.P_PVm, self.T_cm
     
     # Calculo de potencia del sistema
-    def WT_PowerOutput(self, offlineOperation, turbineState, ro, V_a):
+    def WT_PowerOutput(self, offlineOperation, turbineState, turbineEfficiency, ro, V_a):
         self.turbineState = turbineState
         self.ro = ro
         self.V_a = V_a
         if offlineOperation:
-            self.n_WT = 0.49
+            self.n_WT = turbineEfficiency
             self.P_WM = 200.0
             self.H_R = 1
             self.H_A = 1
@@ -344,7 +344,6 @@ class TwinPVWF:
             self.P_CC = self.P_bat + self.P_inv
         
         # Actualización de voltaje de CD
-        print(self.P_bat)
         if self.P_bat > 0.1 and self.V_bat < V_bulk:
             self.V_CD = V_bulk
         elif self.P_bat > 0.1 and self.V_bat >= V_bulk:
@@ -353,7 +352,6 @@ class TwinPVWF:
             self.V_CD = cellsNumber * 2.4
         else: 
             self.V_CD = self.V_bat
-        print(self.V_CD)
 
         if self.V_PV > 0.0:
             self.I_PV = self.P_PV / self.V_PV
