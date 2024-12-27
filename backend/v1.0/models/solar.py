@@ -5,22 +5,27 @@ import pandas as pd
 import numpy as np
 from tools import DBManager
 import os
+import time
+from datetime import datetime
+import random
 
 class Solar(Resource):
   def post(self):
     data = request.get_json()
     solarWind = {}
 
+    trainingState = True
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
+
+    influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+
     if not data["inputOfflineOperation"]:
-      DB_IP = os.getenv('DB_IP')
-      DB_Port = os.getenv('DB_Port')
-      DB_Bucket = os.getenv('DB_Bucket')
-      DB_Organization = os.getenv('DB_Organization')
-      DB_Token = os.getenv('DB_Token')
-
+      trainingState = data["trainingMode"]
       values_df = pd.DataFrame(columns=["field", "Value"])
-
-      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
 
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
@@ -35,11 +40,11 @@ class Solar(Resource):
           # values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
+          timestamp = values_df_temp['_time'].mean()
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
         except:
-          print(f"Intento: {attempts}", flush=True)
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
@@ -56,7 +61,6 @@ class Solar(Resource):
         repeats = 86400 * data["stepTime"]["value"]
 
     name = data["name"]
-    deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
     monoModuleState = data["monocrystallinePanel"]["isConnected"]
     polyModuleState = data["policrystallinePanel"]["isConnected"]
     flexiModuleState = data["flexPanel"]["isConnected"]
@@ -65,6 +69,66 @@ class Solar(Resource):
       turbineState = True
     else:
       turbineState = False
+    hybridState = data["hybridInverter"]["isConnected"]
+    inverterState = data["offgridInverter"]["isConnected"]
+    gridState = data["externalGridState"]
+    batteryState = data['isBatteryConnected']
+    
+    training_fPV_Name = "eficienciaPanel" + data["inputOperationMode"] + (monoModuleState * "_mono") + (polyModuleState * "_poli") + (flexiModuleState * "_flex") + (cdteModuleState * "_cdte") + (turbineState * "_aero") + (hybridState * "_hibrid")
+    training_nWT_Name = "eficienciaAero" + data["inputOperationMode"] + (monoModuleState * "_mono") + (polyModuleState * "_poli") + (flexiModuleState * "_flex") + (cdteModuleState * "_cdte") + (turbineState * "_aero") + (hybridState * "_hibrid")
+    training_nController_Name = "eficienciaControl" + data["inputOperationMode"] + (monoModuleState * "_mono") + (polyModuleState * "_poli") + (flexiModuleState * "_flex") + (cdteModuleState * "_cdte") + (turbineState * "_aero") + (hybridState * "_hibrid")
+
+    deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
+    turbineEfficiency = 0.49
+    controllerEfficiency = data["controller"]["efficiency"]["value"]
+    
+    if data["inputOperationMode"] in ['Mode1', 'Mode2', 'Mode3', 'Mode5']:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name, type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          deratingFactorList = [influxDB.InfluxDBreader(query)['_value'][0]] * 4
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+      
+    if data["inputOperationMode"] in ['Mode4', 'Mode5']:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name, type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          turbineEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+
+    if not hybridState:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name, type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          controllerEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
 
     batteries = 1 + int(data["isBattery2"])
     if (data["inputOperationMode"] == 'Mode1' and cdteModuleState) or data["inputOperationMode"] == 'Mode2' or data["inputOperationMode"] == 'Mode4' or data["inputOperationMode"] == 'Mode5':
@@ -72,14 +136,8 @@ class Solar(Resource):
     else:
       isParallel = True
 
-    controllerEfficiency = data["controller"]["efficiency"]["value"]
     inverterEfficiency = data["offgridInverter"]["efficiency"]["value"]
     hybridEfficiency = data["hybridInverter"]["efficiency"]["value"]
-
-    inverterState = data["offgridInverter"]["isConnected"]
-    hybridState = data["hybridInverter"]["isConnected"]
-    gridState = data["externalGridState"]
-    batteryState = data['isBatteryConnected']
 
     if data["solarRadiation1"]["arrayEnabled"]:
       solarRadiation1Array = np.repeat(np.array(data["solarRadiation1Array"]),repeats)
@@ -242,7 +300,7 @@ class Solar(Resource):
     
     twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries, isParallel)
     PV_Results = twinPVWF.arrayPowerOutput(True, deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
-    WT_Results = twinPVWF.WT_PowerOutput(True, turbineState, windDensity, windSpeed)
+    WT_Results = twinPVWF.WT_PowerOutput(True, turbineState, turbineEfficiency, windDensity, windSpeed)
     
     if monoModuleState or polyModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation1"]["disabled"]:
@@ -259,7 +317,7 @@ class Solar(Resource):
 
     if turbineState and not data["inputOfflineOperation"] and data["windSpeed"]["disabled"]:
       twinPVWF.optimal_n_WT(measuredWT_Power)
-      WT_Results = twinPVWF.WT_PowerOutput(data["inputOfflineOperation"], turbineState, windDensity, windSpeed)
+      WT_Results = twinPVWF.WT_PowerOutput(data["inputOfflineOperation"], turbineState, turbineEfficiency, windDensity, windSpeed)
       twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
     solarWind["controllerEfficiency"] = (twinPVWF.n_controller if twinPVWF.n_controller < 100.0 else controllerEfficiency)
@@ -374,5 +432,22 @@ class Solar(Resource):
       solarWind["chargeCycleInitialSOC"] = solarWind["batteryStateOfCharge"]
     else:
       solarWind["chargeCycleInitialSOC"] = chargeCycleInitialSOC
+
+    if trainingState:
+
+      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+      connectionState = influxDB.InfluxDBconnection()
+      timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
+
+      if data["inputOperationMode"] in ['Mode1', 'Mode2', 'Mode3', 'Mode5']:
+        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name, value = twinPVWF.f_PV, timestamp = timestamp)
+      
+      if data["inputOperationMode"] in ['Mode4', 'Mode5']:
+        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name, value = twinPVWF.n_WT, timestamp = timestamp)
+
+      if not hybridState:
+        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name, value = twinPVWF.n_controller, timestamp = timestamp)
+
+      influxDB.InfluxDBclose()
 
     return {"model": solarWind}
