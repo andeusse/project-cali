@@ -86,6 +86,7 @@ class hydrogenCell(Resource):
           inputElectronicLoad = float(inputElectronicLoadCurrentArray[-1])
       else:
         inputElectronicLoad = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
+      cell["inputElectronicLoadCurrent"] = inputElectronicLoad
     elif electronicLoadMode == "Power":
       if data["inputElectronicLoadPower"]["arrayEnabled"]:
         inputElectronicLoadPowerArray = np.repeat(np.array(data["inputElectronicLoadPowerArray"]),repeats)
@@ -95,6 +96,7 @@ class hydrogenCell(Resource):
           inputElectronicLoad = float(inputElectronicLoadPowerArray[-1])
       else:
         inputElectronicLoad = ((0.0 if not data["inputElectronicLoadPower"]["value"] else data["inputElectronicLoadPower"]["value"]) if not data["inputElectronicLoadPower"]["disabled"] else round(values_df["Value"]['CW'],2))
+      cell["inputElectronicLoadPower"] = inputElectronicLoad
     elif electronicLoadMode == "Resistance":
       if data["inputElectronicLoadResistance"]["arrayEnabled"]:
           inputElectronicLoadResistanceArray = np.repeat(np.array(data["inputElectronicLoadResistanceArray"]),repeats)
@@ -104,7 +106,8 @@ class hydrogenCell(Resource):
             inputElectronicLoad = float(inputElectronicLoadResistanceArray[-1])
       else:
         inputElectronicLoad = ((2.0 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],2))
-    
+      cell["inputElectronicLoadResistance"] = inputElectronicLoad
+
     cellSelfFeeding = data["cellSelfFeeding"]
     lightsConnected = data["lightsConnected"]
     previousCellVoltage = data["simulatedCellVoltage"] if "simulatedCellVoltage" in data else 16.7
@@ -158,14 +161,6 @@ class hydrogenCell(Resource):
     cell["converterEfficiency"] = results[9]
     cell["cellSelfFeedingPower"] = results[10]
     cell["lightsPower"] = results[11]
-
-    if data["inputFanPercentage"]["disabled"]: cell["inputFanPercentage"] = inputFanPercentage
-    if electronicLoadMode == "Current":
-      if data["inputElectronicLoadCurrent"]["disabled"]: cell["inputElectronicLoadCurrent"] = inputElectronicLoad
-    elif electronicLoadMode == "Power":
-      if data["inputElectronicLoadPower"]["disabled"]: cell["inputElectronicLoadPower"] = inputElectronicLoad
-    elif electronicLoadMode == "Resistance":
-      if data["inputElectronicLoadPower"]["disabled"]: cell["inputElectronicLoadResistance"] = inputElectronicLoad
     cell["hydrogenPressure"] = hydrogenPressure
     cell["fanPercentage"] = inputFanPercentage
     cell["cellTemperature"] = cellTemperature
