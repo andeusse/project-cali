@@ -381,10 +381,10 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
     name: 'Energía generada de la celda',
     variable: 'cellGeneratedEnergy',
-    unit: 'mWh',
+    unit: 'Wh',
     isShown: true,
     diagramName: 'Energía',
-    fixed: 0,
+    fixed: 2,
     x: 4000,
     y: 1800,
   },
