@@ -107,6 +107,13 @@ class coolingTower(Resource):
     atmosphericPressure = ((90.0 if not data["atmosphericPressure"]["value"] else data["atmosphericPressure"]["value"]) if not data["atmosphericPressure"]["disabled"] else round(values_df["Value"]['PT-102'],2)) * 1000 # kPa to Pa conversion
     previousEnergyApplied = data["simulatedEnergyAppliedToWater"] if "simulatedEnergyAppliedToWater" in data else 0.0
 
+    tower["topWaterFlow"] = round(topWaterFlow * 60000,2)
+    tower["topWaterTemperature"] = round(topWaterTemperature - 273.15,2)
+    tower["bottomAirFlow"] = round(bottomAirFlow * 60,2)
+    tower["bottomAirTemperature"] = round(bottomAirTemperature - 273.15,2)
+    tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
+    tower["atmosphericPressure"] = round(atmosphericPressure / 1000,2)
+    
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
     
@@ -129,12 +136,5 @@ class coolingTower(Resource):
     tower["powerAppliedToWater"] = results[5]
     tower["energyAppliedToWater"] = results[6]
     tower["deltaPressure"] = results[7]
-
-    if data["topWaterFlow"]["disabled"]: tower["topWaterFlow"] = round(topWaterFlow * 60000,2)
-    if data["topWaterTemperature"]["disabled"]: tower["topWaterTemperature"] = round(topWaterTemperature - 273.15,2)
-    if data["bottomAirFlow"]["disabled"]: tower["bottomAirFlow"] = round(bottomAirFlow * 60,2)
-    if data["bottomAirTemperature"]["disabled"]: tower["bottomAirTemperature"] = round(bottomAirTemperature - 273.15,2)
-    if data["bottomAirHumidity"]["disabled"]: tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
-    tower["atmosphericPressure"] = round(atmosphericPressure / 1000,2)
 
     return {"model": tower}

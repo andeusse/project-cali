@@ -14,7 +14,7 @@ class Solar(Resource):
     data = request.get_json()
     solarWind = {}
 
-    trainingState = True
+    trainingState = False
     DB_IP = os.getenv('DB_IP')
     DB_Port = os.getenv('DB_Port')
     DB_Bucket = os.getenv('DB_Bucket')
@@ -238,8 +238,15 @@ class Solar(Resource):
       simulatedInverterState = False
     
     if inputPowerFactor == 0.0: inputPowerFactor = 1.0
+    
+    solarWind["inputSolarRadiation1"] = solarRadiation1
+    solarWind["inputSolarRadiation2"] = solarRadiation2
+    solarWind["inputTemperature"] = temperature
+    solarWind["inputWindSpeed"] = windSpeed
     solarWind["inputDirectCurrentLoadPower"] = inputDirectCurrentPower
-
+    solarWind["inputAlternCurrentLoadPower"] = inputActivePower
+    solarWind["inputAlternCurrentLoadPowerFactor"] = inputPowerFactor
+    
     simulatedChargeCycle = data["simulatedChargeCycle"] if "simulatedChargeCycle" in data else False
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else (data["battery1"]["stateOfCharge"]["value"] + int(data["isBattery2"]) * data["battery2"]["stateOfCharge"]["value"]) / (1 + int(data["isBattery2"]))
     chargeCycleInitialSOC = data['simulatedChargeCycleInitialSOC'] if 'simulatedChargeCycleInitialSOC' in data else (data["battery1"]["stateOfCharge"]["value"] + int(data["isBattery2"]) * data["battery2"]["stateOfCharge"]["value"]) / (1 + int(data["isBattery2"]))
@@ -281,13 +288,7 @@ class Solar(Resource):
         solarWind['windTurbineRevolutions'] = round(values_df["Value"]['RPM-001'],2)
 
       solarWind["batteryTemperature"] = batteryTemperature
-      if data["solarRadiation1"]["disabled"]: solarWind["inputSolarRadiation1"] = round(values_df["Value"]['RS-001'],2)
-      if data["solarRadiation2"]["disabled"]: solarWind["inputSolarRadiation2"] = round(values_df["Value"]['RS-002'],2)
-      if data["windSpeed"]["disabled"]: solarWind["inputWindSpeed"] = round(values_df["Value"]['VV-001'],2)
-      if data["alternCurrentLoadPower"]["disabled"]:
-        solarWind["inputAlternCurrentLoadPower"] = round(values_df["Value"]['PKW-003'],2) if (data["inputOperationMode"] == 'Mode2' and hybridState) else round(values_df["Value"]['PKW-002'],2)
-      if data["alternCurrentLoadPowerFactor"]["disabled"]:
-        solarWind["inputAlternCurrentLoadPowerFactor"] = round(values_df["Value"]['FP-002'] * (1 if values_df["Value"]['PKVAR-002'] >= 0.0 else -1),2) if (data["inputOperationMode"] == 'Mode2' and hybridState) else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
+      
     else:
       batteryTemperature = 30.0
       PV_Voltage = 0.0

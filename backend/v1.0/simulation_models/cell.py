@@ -58,6 +58,6 @@ class TwinCell:
         self.electronicLoadVoltage = self.cellVoltage
         self.electronicLoadPower = self.electronicLoadCurrent * self.electronicLoadVoltage
 
-        self.cellGeneratedEnergy = (previousGeneratedEnergy + 1000 * self.cellPower * delta_t / 3600)
+        self.cellGeneratedEnergy = (previousGeneratedEnergy + self.cellPower * delta_t / 3600)
         
-        return round(self.hydrogenFlow,2), round(self.cellCurrent,2), round(self.cellVoltage,3), round(self.cellPower,2), round(self.electronicLoadVoltage,2), round(self.electronicLoadCurrent,2), round(self.electronicLoadPower,2), round(self.cellEfficiency,1), round(self.cellGeneratedEnergy,2), round(self.n_converter*100,1), round(self.cellSelfFeedingPower,2), round(self.lightsPower,2)
+        return round(self.hydrogenFlow,2), round(self.cellCurrent,2), round(self.cellVoltage,3), round(self.cellPower,2), round(self.electronicLoadVoltage,2), round(self.electronicLoadCurrent,2), round(self.electronicLoadPower,2), round(self.cellEfficiency,1), round(self.cellGeneratedEnergy,4), round(self.n_converter*100,1), round(self.cellSelfFeedingPower,2), round(self.lightsPower,2)

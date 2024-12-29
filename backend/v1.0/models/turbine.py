@@ -92,8 +92,11 @@ class Turbine(Resource):
       inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round((values_df["Value"]['FP-001'] if values_df["Value"]['FP-001'] != 0.0 else 1.0)* (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False or turbineType == 1 else 3.6
     if inputPowerFactor == 0.0: inputPowerFactor = 1.0
-    if data["inputActivePower"]["disabled"]: turbine["inputActivePower"] = inputActivePower
-    if data["inputPowerFactor"]["disabled"]: turbine["inputPowerFactor"] = inputPowerFactor
+    
+    turbine["inputPressure"] = round(inputPressure / 9.8064, 2) # kPa to mH2O conversion
+    turbine["inputFlow"] = round(inputFlow, 2)
+    turbine["inputActivePower"] = inputActivePower
+    turbine["inputPowerFactor"] = inputPowerFactor
 
     batteryState = data['isBatteryConnected']
     batteryStateOfCharge = data["simulatedBatteryStateOfCharge"] if "simulatedBatteryStateOfCharge" in data else data["battery"]["stateOfCharge"]["value"]
@@ -190,8 +193,6 @@ class Turbine(Resource):
       V_CA = round(values_df["Value"]['VAC-002'],2)
       simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
 
-      if data["inputPressure"]["disabled"]: turbine["inputPressure"] = round(inputPressure / 9.8064, 2) # kPa to mH2O conversion
-      if data["inputFlow"]["disabled"]: turbine["inputFlow"] = round(inputFlow, 2)
     else:
       T_bat = 30.0
       V_CA = 0
