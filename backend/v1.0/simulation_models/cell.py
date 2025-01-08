@@ -9,8 +9,20 @@ class TwinCell:
         self.systemName = systemName # Nombre del sistema
     
     # Parametrizacion de gemelo 
-    def twinParameters (self):
-        self.n_converter = 0.9
+    def twinParameters (self,converterEfficiency, voltageCoefficients):
+        self.n_converter = converterEfficiency
+        self.voltageCoefficients = voltageCoefficients
+    
+    def optimal_voltageCoefficients(self, cellVoltage_meas, cellCurrent_meas, inputFanPercentage):
+        def cellVoltage(voltageCoefficients, cellVoltage_meas, cellCurrent_meas, inputFanPercentage):
+            # if inputFanPercentage < 90:
+            #     return cellVoltage_meas - voltageCoefficients[0]*16.9 - voltageCoefficients[1]*13.2672427*cellCurrent + voltageCoefficients[2]*13.5756291*cellCurrent**2 - voltageCoefficients[3]*6.66323789*cellCurrent**3 + voltageCoefficients[4]*1.21415288*cellCurrent**4 - voltageCoefficients[5]*0.0005*cellCurrent**5 - voltageCoefficients[6]*0.0155*cellCurrent**6 - voltageCoefficients[7]*0.0111392658*inputFanPercentage + voltageCoefficients[8]*0.00015*inputFanPercentage**2
+            # else:
+            return cellVoltage_meas - voltageCoefficients[0]*17.2 - voltageCoefficients[1]*12.55529151*cellCurrent_meas + voltageCoefficients[2]*13.2196722*cellCurrent_meas**2 - voltageCoefficients[3]*7.84413473*cellCurrent_meas**3 + voltageCoefficients[4]*2.40358984*cellCurrent_meas**4 - voltageCoefficients[5]*0.3615*cellCurrent_meas**5 + voltageCoefficients[6]*0.02101814*cellCurrent_meas**6 - voltageCoefficients[7]*0.1*inputFanPercentage + voltageCoefficients[8]*0.001066*inputFanPercentage**2
+        voltageCoefficients_0 = (1,) * 9
+        voltageCoefficients = least_squares(cellVoltage, x0 = voltageCoefficients_0, bounds = ([-10] * 9, [10] * 9), args = (cellVoltage_meas, cellCurrent_meas, inputFanPercentage))
+        self.voltageCoefficients = voltageCoefficients.x[0]
+        return self.voltageCoefficients
 
     def optimal_n_converter(self, cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas):
         if cellSelfFeedingPower_meas + lightsPower_meas > 0:
@@ -39,10 +51,10 @@ class TwinCell:
 
         self.cellCurrent = self.electronicLoadCurrent + ((cellSelfFeedingPower + lightsPower) / self.n_converter) / previousCellVoltage
         
-        if inputFanPercentage < 90:
-            self.cellVoltage = 16.9 - 13.2672427*self.cellCurrent + 13.5756291*self.cellCurrent**2 - 6.66323789*self.cellCurrent**3 + 1.21415288*self.cellCurrent**4 - 0.0005*self.cellCurrent**5 - 0.0155*self.cellCurrent**6 - 0.0111392658*inputFanPercentage + 0.00015*inputFanPercentage**2
-        else:
-            self.cellVoltage = 17.2 - 12.55529151*self.cellCurrent + 13.2196722*self.cellCurrent**2 - 7.84413473*self.cellCurrent**3 + 2.40358984*self.cellCurrent**4 - 0.3615*self.cellCurrent**5 + 0.02101814*self.cellCurrent**6 - 0.1*inputFanPercentage + 0.001066*inputFanPercentage**2
+        # if inputFanPercentage < 90:
+        #     self.cellVoltage = 16.9 - 13.2672427*self.cellCurrent + 13.5756291*self.cellCurrent**2 - 6.66323789*self.cellCurrent**3 + 1.21415288*self.cellCurrent**4 - 0.0005*self.cellCurrent**5 - 0.0155*self.cellCurrent**6 - 0.0111392658*inputFanPercentage + 0.00015*inputFanPercentage**2
+        # else:
+        self.cellVoltage = self.voltageCoefficients[0]*17.2 - self.voltageCoefficients[1]*12.55529151*self.cellCurrent + self.voltageCoefficients[2]*13.2196722*self.cellCurrent**2 - self.voltageCoefficients[3]*7.84413473*self.cellCurrent**3 + self.voltageCoefficients[4]*2.40358984*self.cellCurrent**4 - self.voltageCoefficients[5]*0.3615*self.cellCurrent**5 + self.voltageCoefficients[6]*0.02101814*self.cellCurrent**6 - self.voltageCoefficients[7]*0.1*inputFanPercentage + self.voltageCoefficients[8]*0.001066*inputFanPercentage**2
         
         if self.cellVoltage <= 6.0:
             self.cellCurrent = 0.0

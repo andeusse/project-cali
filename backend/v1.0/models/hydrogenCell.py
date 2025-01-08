@@ -5,23 +5,29 @@ import pandas as pd
 import numpy as np
 from tools import DBManager
 import os
+import json
+import random
+
+import time
+from datetime import datetime
 
 class hydrogenCell(Resource):
   def post(self):
     data = request.get_json()
     cell = {}
 
+    trainingState = False
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
+
+    influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+
     if not data["inputOfflineOperation"]:
-      DB_IP = os.getenv('DB_IP')
-      DB_Port = os.getenv('DB_Port')
-      DB_Bucket = os.getenv('DB_Bucket')
-      DB_Organization = os.getenv('DB_Organization')
-      DB_Token = os.getenv('DB_Token')
-
+      trainingState = data["trainingMode"]
       values_df = pd.DataFrame(columns=["field", "Value"])
-
-      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
-
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
@@ -35,6 +41,7 @@ class hydrogenCell(Resource):
           values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
+          timestamp = values_df_temp['_time'].mean()
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
@@ -113,6 +120,25 @@ class hydrogenCell(Resource):
     previousCellVoltage = data["simulatedCellVoltage"] if "simulatedCellVoltage" in data else 16.7
     previousGeneratedEnergy = data["simulatedGeneratedEnergy"] if "simulatedGeneratedEnergy" in data else 0.0
 
+    connectionState = influxDB.InfluxDBconnection()
+    if not connectionState:
+      return {"message":influxDB.ERROR_MESSAGE}, 503
+    queryConverter = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "eficiencia_convertidor_DC", type=0)
+    queryCoefficients = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "coeficientes_voltaje_celda", type=0)
+    attempts = 1
+    while attempts <= 5:
+      try:
+        converterEfficiency = influxDB.InfluxDBreader(queryConverter)['_value'][0]
+        voltageCoefficients = json.loads(influxDB.InfluxDBreader(queryCoefficients)['_value'][0])
+        influxDB.InfluxDBclose()
+        break
+      except:
+        converterEfficiency = 0.9
+        voltageCoefficients = [1] * 9
+        attempts += 1
+      finally:
+        influxDB.InfluxDBclose()
+
     if not data["inputOfflineOperation"]:
       hydrogenPressure = round(values_df["Value"]['PT-101'],2)
       cellTemperature = round(values_df["Value"]['TE-101'],2)
@@ -120,6 +146,8 @@ class hydrogenCell(Resource):
         electronicLoadState = True
       else:
         electronicLoadState = False
+      cellVoltage_meas = round(values_df["Value"]['VG-101'],3)
+      cellCurrent_meas = round(values_df["Value"]['IG-101'],3)
       lightsPower = round(values_df["Value"]['PC-102'],2)
       cellSelfFeedingPower = round(values_df["Value"]['PC-101'],2)
       cellPower_meas = round(values_df["Value"]['PG-101'],2)
@@ -142,10 +170,11 @@ class hydrogenCell(Resource):
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     twinCell = TwinCell(name)
-    if not data["inputOfflineOperation"]:
+    twinCell.twinParameters(converterEfficiency, voltageCoefficients)
+    
+    if not data["inputOfflineOperation"] and data["inputFanPercentage"]["disabled"] and data["inputElectronicLoadCurrent"]["disabled"]:
+      twinCell.optimal_voltageCoefficients(cellVoltage_meas, cellCurrent_meas, inputFanPercentage)
       twinCell.optimal_n_converter(cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
-    else:
-      twinCell.twinParameters()
 
     results = twinCell.twinOutput(previousCellVoltage, inputFanPercentage, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
 
@@ -165,5 +194,15 @@ class hydrogenCell(Resource):
     cell["fanPercentage"] = inputFanPercentage
     cell["cellTemperature"] = cellTemperature
     cell["electronicLoadMode"] = electronicLoadMode
+
+    if trainingState:
+
+      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+      connectionState = influxDB.InfluxDBconnection()
+      
+      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "eficiencia_convertidor_DC", value = converterEfficiency, timestamp = timestamp)
+      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "coeficientes_voltaje_celda", value = str(voltageCoefficients), timestamp = timestamp)
+
+      influxDB.InfluxDBclose()
 
     return {"model": cell}
