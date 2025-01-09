@@ -9,11 +9,14 @@ class TwinTower:
         self.systemName = systemName # Nombre del sistema
     
     # Parametrizacion de gemelo 
-    def twinParameters (self):
+    def twinParameters (self, waterCorrectionFactor, airCorrectionFactor, humidityCorrectionFactor):
+        self.waterCorrectionFactor = waterCorrectionFactor
+        self.airCorrectionFactor = airCorrectionFactor
+        self.humidityCorrectionFactor = humidityCorrectionFactor
         self.towerArea = 0.0225 # Area transversal de la torre en metros cuadrados
         self.towerHeight = 0.580 # Altura de la torre en metros
-        self.waterCorrectionFactor = 1.0
-        self.airCorrectionFactor = 1.0
+        # self.waterCorrectionFactor = 1.0
+        # self.airCorrectionFactor = 1.0
     
     def optimal_waterOutput(self, bottomWaterTemperature_meas):
         def optimal_waterTemperatureOutput(waterCorrectionFactor, bottomWaterTemperature_meas):
@@ -33,6 +36,15 @@ class TwinTower:
         self.airCorrectionFactor = airCorrectionFactor.x[0]*random.uniform(0.98,1.02)
         return airCorrectionFactor.x[0]
     
+    def optimal_humidityOutput(self, topAirHumidity_meas):
+        def optimal_airHumidityOutput(humidityCorrectionFactor, topAirHumidity_meas):
+            self.humidityCorrectionFactor = humidityCorrectionFactor[0]
+            return self.humidityCorrectionFactor * self.topAirHumidity - topAirHumidity_meas
+        humidityCorrectionFactor_0 = 1.0
+        humidityCorrectionFactor = least_squares(optimal_airHumidityOutput, x0 = humidityCorrectionFactor_0, bounds = (0.1, 2.0), args = [topAirHumidity_meas])
+        self.humidityCorrectionFactor = humidityCorrectionFactor.x[0]*random.uniform(0.98,1.02)
+        return humidityCorrectionFactor.x[0]
+    
     def twinOutput(self, PackedType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
         if topWaterFlow <= 1.6e-6:
             topWaterFlow = 1.6e-6
@@ -49,7 +61,7 @@ class TwinTower:
 
         self.bottomWaterTemperature = self.waterCorrectionFactor * (towerResults[5] - 273.15) + 273.15
         self.topAirTemperature = self.airCorrectionFactor * (towerResults[6] - 273.15) + 273.15
-        self.topAirHumidity = towerResults[7] * 100
+        self.topAirHumidity = self.humidityCorrectionFactor * (towerResults[7] * 100)
         self.powerAppliedToWater = towerResults[8] / 1000
         self.deltaPressure = towerResults[9]
         self.energyAppliedToWater = previousEnergyApplied + self.powerAppliedToWater * delta_t / 3600

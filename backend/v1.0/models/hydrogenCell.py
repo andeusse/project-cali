@@ -6,10 +6,6 @@ import numpy as np
 from tools import DBManager
 import os
 import json
-import random
-
-import time
-from datetime import datetime
 
 class hydrogenCell(Resource):
   def post(self):

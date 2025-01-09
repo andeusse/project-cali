@@ -11,17 +11,18 @@ class coolingTower(Resource):
     data = request.get_json()
     tower = {}
 
+    trainingState = False
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
+
+    influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+
     if not data["inputOfflineOperation"]:
-      DB_IP = os.getenv('DB_IP')
-      DB_Port = os.getenv('DB_Port')
-      DB_Bucket = os.getenv('DB_Bucket')
-      DB_Organization = os.getenv('DB_Organization')
-      DB_Token = os.getenv('DB_Token')
-
+      trainingState = data["trainingMode"]
       values_df = pd.DataFrame(columns=["field", "Value"])
-
-      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
-
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
@@ -35,11 +36,11 @@ class coolingTower(Resource):
           values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
+          timestamp = values_df_temp['_time'].mean()
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
         except:
-          print(f"Intento: {attempts}", flush=True)
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
@@ -113,19 +114,43 @@ class coolingTower(Resource):
     tower["bottomAirTemperature"] = round(bottomAirTemperature - 273.15,2)
     tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
     tower["atmosphericPressure"] = round(atmosphericPressure / 1000,2)
+
+    connectionState = influxDB.InfluxDBconnection()
+    if not connectionState:
+      return {"message":influxDB.ERROR_MESSAGE}, 503
+    queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua", type=0)
+    queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire", type=0)
+    queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire", type=0)
+    attempts = 1
+    while attempts <= 5:
+      try:
+        waterCorrectionFactor = influxDB.InfluxDBreader(queryWater)['_value'][0]
+        airCorrectionFactor = influxDB.InfluxDBreader(queryAir)['_value'][0]
+        humidityCorrectionFactor = influxDB.InfluxDBreader(queryHumidity)['_value'][0]
+        influxDB.InfluxDBclose()
+        break
+      except:
+        waterCorrectionFactor = 1.0
+        airCorrectionFactor = 1.0
+        humidityCorrectionFactor = 1.0
+        attempts += 1
+      finally:
+        influxDB.InfluxDBclose()
     
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
     
     twinTower = TwinTower(name)
-    twinTower.twinParameters()
+    twinTower.twinParameters(waterCorrectionFactor, airCorrectionFactor, humidityCorrectionFactor)
     results = twinTower.twinOutput(fillType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
     
     if not data["inputOfflineOperation"] and data["topWaterFlow"]["disabled"] and data["topWaterTemperature"]["disabled"] and data["bottomAirFlow"] and data["bottomAirTemperature"] and data["bottomAirHumidity"]:
       measuredBottomWaterTemperature = round(values_df["Value"]['TE-102'],2)
       measuredTopAirTemperature = round(values_df["Value"]['TE-103'],2)
+      measuredTopAIrHumidity = round(values_df["Value"]['AT-102'],2)
       twinTower.optimal_waterOutput(measuredBottomWaterTemperature)
       twinTower.optimal_airOutput(measuredTopAirTemperature)
+      twinTower.optimal_airOutput(measuredTopAIrHumidity)
       results = twinTower.twinOutput(fillType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
 
     tower["bottomWaterTemperature"] = results[0] - 273.15
@@ -136,5 +161,16 @@ class coolingTower(Resource):
     tower["powerAppliedToWater"] = results[5]
     tower["energyAppliedToWater"] = results[6]
     tower["deltaPressure"] = results[7]
+
+    if trainingState:
+
+      influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+      connectionState = influxDB.InfluxDBconnection()
+
+      influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua", value = waterCorrectionFactor, timestamp = timestamp)
+      influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire", value = airCorrectionFactor, timestamp = timestamp)
+      influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire", value = humidityCorrectionFactor, timestamp = timestamp)
+
+      influxDB.InfluxDBclose()
 
     return {"model": tower}
