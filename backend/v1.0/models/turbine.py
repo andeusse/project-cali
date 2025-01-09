@@ -144,8 +144,8 @@ class Turbine(Resource):
       attempts = 1
       while attempts <= 5:
         try:
-          turbineEfficiency = influxDB.InfluxDBreader(queryTurbine)['_value']
-          controllerEfficiency = influxDB.InfluxDBreader(queryController)['_value']
+          turbineEfficiency = influxDB.InfluxDBreader(queryTurbine)['_value'][0]
+          controllerEfficiency = influxDB.InfluxDBreader(queryController)['_value'][0]
           influxDB.InfluxDBclose()
           break
         except:
@@ -215,7 +215,7 @@ class Turbine(Resource):
     if "simulatedDirectCurrentVoltage" in data:
       simulatedDirectCurrentVoltage = data["simulatedDirectCurrentVoltage"]
     else:
-      P_CC = (P_h * twinHydro.n_controller / 100) - inputDirectCurrentPower
+      P_CC = (P_h * controllerEfficiency / 100) - inputDirectCurrentPower
       P_inv = (inputActivePower / abs(inputPowerFactor)) / (twinHydro.n_inverter / 100)
       P_bat = P_CC - P_inv
       if P_bat < 0.0:
