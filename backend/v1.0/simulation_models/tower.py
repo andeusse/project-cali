@@ -21,28 +21,28 @@ class TwinTower:
     def optimal_waterOutput(self, bottomWaterTemperature_meas):
         def optimal_waterTemperatureOutput(waterCorrectionFactor, bottomWaterTemperature_meas):
             self.waterCorrectionFactor = waterCorrectionFactor[0]
-            return self.waterCorrectionFactor * (self.bottomWaterTemperature - 273.15) - bottomWaterTemperature_meas
+            return self.waterCorrectionFactor * (self.towerResults[5] - 273.15) - bottomWaterTemperature_meas
         waterCorrectionFactor_0 = 1.0
         waterCorrectionFactor = least_squares(optimal_waterTemperatureOutput, x0 = waterCorrectionFactor_0, bounds = (0.1, 2.0), args = [bottomWaterTemperature_meas])
-        self.waterCorrectionFactor = waterCorrectionFactor.x[0]*random.uniform(0.98,1.02)
+        self.waterCorrectionFactor = waterCorrectionFactor.x[0]*random.uniform(0.99,1.01)
         return waterCorrectionFactor.x[0]
     
     def optimal_airOutput(self, topAirTemperature_meas):
         def optimal_airTemperatureOutput(airCorrectionFactor, topAirTemperature_meas):
             self.airCorrectionFactor = airCorrectionFactor[0]
-            return self.airCorrectionFactor * (self.topAirTemperature - 273.15) - topAirTemperature_meas
+            return self.airCorrectionFactor * (self.towerResults[6] - 273.15) - topAirTemperature_meas
         airCorrectionFactor_0 = 1.0
         airCorrectionFactor = least_squares(optimal_airTemperatureOutput, x0 = airCorrectionFactor_0, bounds = (0.1, 2.0), args = [topAirTemperature_meas])
-        self.airCorrectionFactor = airCorrectionFactor.x[0]*random.uniform(0.98,1.02)
+        self.airCorrectionFactor = airCorrectionFactor.x[0]*random.uniform(0.99,1.01)
         return airCorrectionFactor.x[0]
     
     def optimal_humidityOutput(self, topAirHumidity_meas):
         def optimal_airHumidityOutput(humidityCorrectionFactor, topAirHumidity_meas):
             self.humidityCorrectionFactor = humidityCorrectionFactor[0]
-            return self.humidityCorrectionFactor * self.topAirHumidity - topAirHumidity_meas
+            return self.humidityCorrectionFactor * (self.towerResults[7]*100) - topAirHumidity_meas
         humidityCorrectionFactor_0 = 1.0
         humidityCorrectionFactor = least_squares(optimal_airHumidityOutput, x0 = humidityCorrectionFactor_0, bounds = (0.1, 2.0), args = [topAirHumidity_meas])
-        self.humidityCorrectionFactor = humidityCorrectionFactor.x[0]*random.uniform(0.98,1.02)
+        self.humidityCorrectionFactor = humidityCorrectionFactor.x[0]*random.uniform(0.99,1.01)
         return humidityCorrectionFactor.x[0]
     
     def twinOutput(self, PackedType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t):
@@ -59,13 +59,13 @@ class TwinTower:
 
         towerModel = CoolingTower.coolingTowerModel(PackedType =  PackedType, L = self.towerHeight, A = self.towerArea)
         towerModel.towerBalance(self.topWaterTemperature, self.atmosphericPressure, self.topWaterFlow, self.bottomAirTemperature, self.bottomAirFlow, self.bottomAirHumidity)
-        towerResults = towerModel.solution
+        self.towerResults = towerModel.solution
 
-        self.bottomWaterTemperature = self.waterCorrectionFactor * (towerResults[5] - 273.15) + 273.15
-        self.topAirTemperature = self.airCorrectionFactor * (towerResults[6] - 273.15) + 273.15
-        self.topAirHumidity = self.humidityCorrectionFactor * (towerResults[7] * 100)
-        self.powerAppliedToWater = towerResults[8] / 1000
-        self.deltaPressure = towerResults[9]
+        self.bottomWaterTemperature = self.waterCorrectionFactor * (self.towerResults[5] - 273.15) + 273.15
+        self.topAirTemperature = self.airCorrectionFactor * (self.towerResults[6] - 273.15) + 273.15
+        self.topAirHumidity = self.humidityCorrectionFactor * (self.towerResults[7] * 100)
+        self.powerAppliedToWater = self.towerResults[8] / 1000
+        self.deltaPressure = self.towerResults[9]
         self.energyAppliedToWater = previousEnergyApplied + self.powerAppliedToWater * delta_t / 3600
 
         self.waterTemperatureReduction = self.bottomWaterTemperature - self.topWaterTemperature
