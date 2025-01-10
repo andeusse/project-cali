@@ -115,27 +115,72 @@ class coolingTower(Resource):
     tower["bottomAirHumidity"] = round(bottomAirHumidity,2)
     tower["atmosphericPressure"] = round(atmosphericPressure / 1000,2)
 
-    connectionState = influxDB.InfluxDBconnection()
-    if not connectionState:
-      return {"message":influxDB.ERROR_MESSAGE}, 503
-    queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua", type=0)
-    queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire", type=0)
-    queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire", type=0)
-    attempts = 1
-    while attempts <= 5:
-      try:
-        waterCorrectionFactor = influxDB.InfluxDBreader(queryWater)['_value'][0]
-        airCorrectionFactor = influxDB.InfluxDBreader(queryAir)['_value'][0]
-        humidityCorrectionFactor = influxDB.InfluxDBreader(queryHumidity)['_value'][0]
-        influxDB.InfluxDBclose()
-        break
-      except:
-        waterCorrectionFactor = 1.0
-        airCorrectionFactor = 1.0
-        humidityCorrectionFactor = 1.0
-        attempts += 1
-      finally:
-        influxDB.InfluxDBclose()
+    if fillType == "Structured":
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc", type=0)
+      queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc", type=0)
+      queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Estruc", type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          waterCorrectionFactor = influxDB.InfluxDBreader(queryWater)['_value'][0]
+          airCorrectionFactor = influxDB.InfluxDBreader(queryAir)['_value'][0]
+          humidityCorrectionFactor = influxDB.InfluxDBreader(queryHumidity)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          waterCorrectionFactor = 1.0
+          airCorrectionFactor = 1.0
+          humidityCorrectionFactor = 1.0
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+    elif fillType == "CurvedSlats":
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos", type=0)
+      queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos", type=0)
+      queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Curvos", type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          waterCorrectionFactor = influxDB.InfluxDBreader(queryWater)['_value'][0]
+          airCorrectionFactor = influxDB.InfluxDBreader(queryAir)['_value'][0]
+          humidityCorrectionFactor = influxDB.InfluxDBreader(queryHumidity)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          waterCorrectionFactor = 1.0
+          airCorrectionFactor = 1.0
+          humidityCorrectionFactor = 1.0
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()  
+    elif fillType == "FlatSlats":
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Planos", type=0)
+      queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Planos", type=0)
+      queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Planos", type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          waterCorrectionFactor = influxDB.InfluxDBreader(queryWater)['_value'][0]
+          airCorrectionFactor = influxDB.InfluxDBreader(queryAir)['_value'][0]
+          humidityCorrectionFactor = influxDB.InfluxDBreader(queryHumidity)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          waterCorrectionFactor = 1.0
+          airCorrectionFactor = 1.0
+          humidityCorrectionFactor = 1.0
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
     
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
@@ -150,7 +195,7 @@ class coolingTower(Resource):
       measuredTopAIrHumidity = round(values_df["Value"]['AT-102'],2)
       twinTower.optimal_waterOutput(measuredBottomWaterTemperature)
       twinTower.optimal_airOutput(measuredTopAirTemperature)
-      twinTower.optimal_airOutput(measuredTopAIrHumidity)
+      twinTower.optimal_humidityOutput(measuredTopAIrHumidity)
       results = twinTower.twinOutput(fillType, topWaterFlow, topWaterTemperature, bottomAirFlow, bottomAirTemperature, bottomAirHumidity, atmosphericPressure, previousEnergyApplied, delta_t * timeMultiplier)
 
     tower["bottomWaterTemperature"] = results[0] - 273.15
@@ -167,10 +212,19 @@ class coolingTower(Resource):
       influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
       connectionState = influxDB.InfluxDBconnection()
 
-      influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua", value = waterCorrectionFactor, timestamp = timestamp)
-      influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire", value = airCorrectionFactor, timestamp = timestamp)
-      influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire", value = humidityCorrectionFactor, timestamp = timestamp)
-
+      if fillType == "Structured":
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Estruc", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+      elif fillType == "CurvedSlats":
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Curvos", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+      elif fillType == "FlatSlats":
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Planos", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Planos", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Planos", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+      
       influxDB.InfluxDBclose()
 
     return {"model": tower}

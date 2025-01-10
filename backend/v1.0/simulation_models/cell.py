@@ -32,9 +32,6 @@ class TwinCell:
             n_converter = least_squares(converterPower, x0 = n_converter_0, bounds = (0, 1.2), args = (cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas))
             self.n_converter = n_converter.x[0]
             return n_converter.x[0]
-        else:
-            self.n_converter = 0.9
-            return self.n_converter
         
     def twinOutput(self, previousCellVoltage, inputFanPercentage, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t):
         
@@ -56,9 +53,9 @@ class TwinCell:
         # else:
         self.cellVoltage = self.voltageCoefficients[0]*17.2 - self.voltageCoefficients[1]*12.55529151*self.cellCurrent + self.voltageCoefficients[2]*13.2196722*self.cellCurrent**2 - self.voltageCoefficients[3]*7.84413473*self.cellCurrent**3 + self.voltageCoefficients[4]*2.40358984*self.cellCurrent**4 - self.voltageCoefficients[5]*0.3615*self.cellCurrent**5 + self.voltageCoefficients[6]*0.02101814*self.cellCurrent**6 - self.voltageCoefficients[7]*0.1*inputFanPercentage + self.voltageCoefficients[8]*0.001066*inputFanPercentage**2
         
-        if self.cellVoltage <= 6.0:
+        if self.cellVoltage <= 5.5:
             self.cellCurrent = 0.0
-            self.cellVoltage = 6.0
+            self.cellVoltage = 5.5
             self.electronicLoadCurrent = 0.0
             self.cellSelfFeedingPower = 0.0
             self.lightsPower = 0.0

@@ -196,8 +196,8 @@ class hydrogenCell(Resource):
       influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
       connectionState = influxDB.InfluxDBconnection()
       
-      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "eficiencia_convertidor_DC", value = converterEfficiency, timestamp = timestamp)
-      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "coeficientes_voltaje_celda", value = str(voltageCoefficients), timestamp = timestamp)
+      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "eficiencia_convertidor_DC", value = twinCell.n_converter, timestamp = timestamp)
+      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "coeficientes_voltaje_celda", value = str(twinCell.voltageCoefficients), timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 
