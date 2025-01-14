@@ -48,7 +48,7 @@ class InfluxDBmodel:
         self.influxDBclient.close()
 
     # %% InfluxDB query creator
-    def QueryCreator(self, measurement='', device='', variable='', location='', type=0, forecastTime=0): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
+    def QueryCreator(self, measurement='', device='', variable='', location='', type=0, forecastTime=0, train_time = 0): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
         if type == 0:
             self.query = '''from(bucket: "''' + self.bucket + '''")
             |> range(start: 0)
@@ -74,6 +74,11 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["_field"] == "''' + measurement + '''")
             |> filter(fn: (r) => r["location"] == "''' + location + '''")
             |> filter(fn: (r) => r["period"] == "0")'''
+        elif type == 4:
+            self.query ='''from(bucket: "''' + self.bucket + '''")
+            |> range(start: -'''+train_time+'''m)
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            |> last()'''
         else:
             self.query = "Tipo de query inválido"
         return self.query
