@@ -41,6 +41,7 @@ class Solar(Resource):
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
           timestamp = values_df_temp['_time'].mean()
+          solarWind['timestamp'] = timestamp
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
