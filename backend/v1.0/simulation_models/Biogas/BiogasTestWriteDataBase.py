@@ -19,7 +19,7 @@ Biogas_plant = Biogas_Model_Simulation.BiogasPlantSimulation(VR1=30, VR2=70, VG1
 Biogas_plant.Substrate_conditions(Cc = 40.48, Ch = 5.29, Co = 29.66, Cn = 1.37, Cs = 0.211, rho=1000, ST = 10, SV = 5)   
 DB = DBManager.InfluxDBmodel(server="http://localhost:8086", org = "UCO", bucket="BiogasPlantSimulator",token="ZdklaIEjLhq4q9BlkkyS2HkJbN8DGKLV2HUjnRtOPGqvoelgQxEqk9r-x9sXUyiYgF1a29a510FzMqwLT2KBWQ==")
 DB.InfluxDBconnection()
-begin_date = time.time()
+timestamp1 = int(time.time())
 
 pump104_state=0
 mixR101_state = 0
@@ -46,7 +46,7 @@ while True:
     iteration = iteration + 1
     # write biogas data influx test
     if iteration == 1:
-        timestamp1 = int(begin_date.timestamp())
+        #timestamp1 = int(begin_date.timestamp())
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MTRH", value = Biogas_plant.TRH, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MFTP104", value = Biogas_plant.FT_P104, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MTTOP104", value = Biogas_plant.TTO_P104, timestamp = timestamp1)
@@ -100,7 +100,7 @@ while True:
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MTTOP102", value = 10, timestamp = timestamp1)
                                     
     else:   
-        timestamp1 = timestamp1 + 300
+        timestamp1 = timestamp1 + tp
     
     if (Biogas_plant.GlobalTime/5) % 5 == 0:
 
@@ -166,7 +166,7 @@ while True:
             DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "SE-108", value = Biogas_plant.RPM_R101, timestamp = timestamp1)
                
     
-    time.sleep(1)
+    time.sleep(tp)
     
         
             

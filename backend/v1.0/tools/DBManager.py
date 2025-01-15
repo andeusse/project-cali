@@ -79,6 +79,12 @@ class InfluxDBmodel:
             |> range(start: -'''+train_time+'''m)
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
             |> last()'''
+        elif type == 5:
+            self.query ='''from(bucket: "''' + self.bucket + '''")
+            |> range(start: 0)
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            |> filter(fn: (r) => r["device"] == "''' + device + '''")
+            |> last()'''
         else:
             self.query = "Tipo de query inválido"
         return self.query
