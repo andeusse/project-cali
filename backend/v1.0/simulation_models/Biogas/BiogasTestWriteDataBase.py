@@ -98,7 +98,66 @@ while True:
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MQP102", value = 2.4, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MFTP102", value = 5, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MTTOP102", value = 10, timestamp = timestamp1)
-                                    
+        
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-101A", value = 35, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-101B", value = 36, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "AT-101", value = 7, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-R101", value = (35+36)/2, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "PT-101", value = Biogas_plant.Pstorage_bio_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "LT-101", value = 30, timestamp = timestamp1)
+        
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "AT-103A-CH4", value = Biogas_plant.x_CH4_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "AT-103A-CO2", value = Biogas_plant.x_CO2_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "AT-103A-H2S", value = Biogas_plant.x_H2S_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "AT-103A-O2", value = Biogas_plant.x_O2_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "AT-103A-H2", value = Biogas_plant.x_H2_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "AT-103B", value = Biogas_plant.RH_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "PT-103", value = Biogas_plant.Pstorage_bio_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V101", variable = "TT-103", value = Biogas_plant.Temperature, timestamp = timestamp1)
+        
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "TE-102A", value = 35, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "TE-102B", value = 36, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "AT-102", value = 7, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "TE-R102", value = (35+36)/2, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "PT-102", value = Biogas_plant.Pstorage_bio_V101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "LT-102", value = 30, timestamp = timestamp1)
+        
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "AT-104A-CH4", value = Biogas_plant.x_CH4_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "AT-104A-CO2", value = Biogas_plant.x_CO2_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "AT-104A-H2S", value = Biogas_plant.x_H2S_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "AT-104A-O2", value = Biogas_plant.x_O2_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "AT-104A-H2", value = Biogas_plant.x_H2_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "AT-104B", value = Biogas_plant.RH_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "PT-104", value = Biogas_plant.Pstorage_bio_V102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V102", variable = "TT-104", value = Biogas_plant.Temperature, timestamp = timestamp1)
+        
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "AT-105A-CH4", value = Biogas_plant.x_CH4_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "AT-105A-CO2", value = Biogas_plant.x_CO2_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "AT-105A-H2S", value = Biogas_plant.x_H2S_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "AT-105A-O2", value = Biogas_plant.x_O2_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "AT-105A-H2", value = Biogas_plant.x_H2_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "AT-105B", value = Biogas_plant.RH_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "PT-105", value = Biogas_plant.Pstorage_bio_V107, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "V107", variable = "TT-105", value = Biogas_plant.Temperature, timestamp = timestamp1)
+        
+        if pump104_state != Biogas_plant.Q_P104:
+            pump104_state = Biogas_plant.Q_P104
+            DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "P104", variable = "FE-104", value = Biogas_plant.Q_P104, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "P104", variable = "MP104TIME", value = Biogas_plant.TimeCounterPump_P104, timestamp = timestamp1)
+        if pump101_state != Biogas_plant.Q_P101:
+            pump101_state = Biogas_plant.Q_P101
+            DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "P101", variable = "P-101", value = Biogas_plant.Q_P101, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "P101", variable = "MP101TIME", value = Biogas_plant.TimeCounterPump_P101, timestamp = timestamp1)    
+        if pump102_state != Biogas_plant.Q_P102:
+            pump102_state = Biogas_plant.Q_P102
+            DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "P102", variable = "P-102", value = Biogas_plant.Q_P102, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "P102", variable = "MP102TIME", value = Biogas_plant.TimeCounterPump_P102, timestamp = timestamp1)    
+        if mixR101_state != Biogas_plant.RPM_R101:
+            mixR101_state = Biogas_plant.RPM_R101
+            DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "SE-108", value = Biogas_plant.RPM_R101, timestamp = timestamp1)
+        if mixR102_state != Biogas_plant.RPM_R102:
+            mixR102_state = Biogas_plant.RPM_R102
+            DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R102", variable = "SE-108", value = Biogas_plant.RPM_R101, timestamp = timestamp1)                        
     else:   
         timestamp1 = timestamp1 + tp
     
