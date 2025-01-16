@@ -239,7 +239,7 @@ const ResultTab = (props: Props) => {
               onClick={handleAddGraph}
               disabled={selectedVariables.length === 0}
             >
-              Add
+              Agregar
             </Button>
           </Grid>
           <Grid item xs={12} md={12} xl={9}>
