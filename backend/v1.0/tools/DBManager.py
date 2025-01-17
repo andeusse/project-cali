@@ -76,9 +76,10 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["period"] == "0")'''
         elif type == 4:
             self.query ='''from(bucket: "''' + self.bucket + '''")
-            |> range(start: -'''+train_time+'''m)
+            |> range(start: -'''+train_time+'''m, stop: now())
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
-            |> last()'''
+            |> filter(fn: (r) => r["device"] == "P104" or r["device"] == "P101" or r["device"] == "P102" or r["device"] == "R101" or r["device"] == "R102" or r["device"] == "V101" or r["device"] == "V102" or r["device"] == "V107")
+            '''
         elif type == 5:
             self.query ='''from(bucket: "''' + self.bucket + '''")
             |> range(start: 0)

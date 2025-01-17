@@ -279,7 +279,13 @@ class BMPModelOffline:
         denominators = [Fraction(num).limit_denominator(10).denominator for num in numbers]
         common_denominator = reduce(lcm, denominators)
         self.subindex = [int(num * common_denominator) for num in numbers]
-
+        
+        n = self.subindex[0]
+        a = self.subindex[1]
+        b = self.subindex[2]
+        c = self.subindex[3]
+        d = self.subindex[4]
+        
         self.s_H2O = n-(a/4)-(b/2)+(3/4)*c+(d/2)
         self.s_CH4 = (n/2)+(a/8)-(b/4)-(3/8)*c-(d/4)
         self.s_CO2 = (n/2)-(a/8)+(b/4)+(3/8)*c-(d/4)
