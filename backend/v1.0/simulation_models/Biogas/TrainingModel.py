@@ -2,11 +2,13 @@ import os
 import sys
 
 current_directory = os.getcwd()
-current_directory = os.path.join(current_directory, "V1.0")
+current_directory = os.path.join(current_directory, 'v1.0')
+print(current_directory)
 sys.path.append(current_directory)
 
 from tools import DBManager
 import pandas as pd
+import numpy as np
 from fractions import Fraction
 from functools import reduce
 from math import gcd
@@ -46,9 +48,218 @@ class TrainingBiogasPlant:
         
         #Get Asynchronous and synchronous Data
         self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(self.t_train), type=4)
-        self.DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
-        self.DataPlant.set_index("_field", inplace = True)
-                   
+        DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
+        DataPlant.set_index("_field", inplace = True)
+        
+        self.Operation_mode = self.Datainterfaz["_value"]["ciclo"]
+        
+        #function to verify the lenght of synchronous vector
+        def SameDimension(V1, V2):   #V1 is always pressure in the tank 
+            try:
+                if len(V1) != len(V2):
+                    print("lengths not equal... normalice the variables")
+                    if len(V2)>len(V1):
+                        V2 = V2[:len(V1)]
+                        return V2
+                    else:
+                        V2 = V2 + [np.nan] * (len(V1)-len(V2))
+                        return V2
+                else:
+                    return V2
+            except TypeError as e:
+                return V2
+            
+        
+        #Function for asynchronous data align with the synchronous Data
+        def AlignAsynchronous (variable, SyncDBRaw, SyncDB,  current_time):
+            if isinstance(current_time, pd.Series):
+                current_time = current_time.iloc[-1]
+            else:
+                current_time = current_time
+            if f"{variable}" in SyncDBRaw.index:
+                Var = SyncDBRaw["_value"][f"{variable}"]
+                time_Var = SyncDBRaw["_time"][f'{variable}']
+            else:
+                Var = 0
+                time_Var = current_time
+            #Verify if there is a singular variable in DB
+            if np.isscalar(Var):
+                AsyncDB = pd.DataFrame({
+                    "time_var":[time_Var],
+                    f"{variable}": [Var]
+                })
+            else:
+                AsyncDB = pd.DataFrame({
+                    "time_var":time_Var,
+                    f"{variable}": Var
+                })      
+            SyncDB["format_time"] = pd.to_datetime(SyncDB["format_time"])
+            
+            SyncDB = pd.merge_asof(SyncDB.sort_values('format_time'), 
+                            AsyncDB.sort_values('time_var'),
+                            left_on='format_time', 
+                            right_on='time_var', 
+                            direction='forward')
+            SyncDB[f"{variable}"] = SyncDB[f"{variable}"].ffill()
+            SyncDB = SyncDB.drop(columns=["time_var"])
+            return SyncDB
+        
+        def normaliceTime (time):
+            #check the lenght of the vector
+            try: 
+                if len(time) > 1:
+                    time_norm = []
+                    for i in range (len(time)):
+                        time_diff = time.iloc[i] - time.iloc[0]
+                        time_diff = time_diff.total_seconds()/60
+                        time_norm.append(time_diff)
+                else: 
+                    time_norm = []
+                    time_norm.append(0)
+            except TypeError as e:
+                time_norm = []
+                time_norm.append(0)
+            return time_norm
+        
+        #Organice data with the same lenght according with operation Mode
+        if self.Operation_mode == 1:
+            # ----- Synchronous Data
+            #V101
+            time = DataPlant["_time"]["PT-103"]
+            time = pd.to_datetime(time)
+            P_V101 = DataPlant["_value"]["PT-103"]
+            T_V101 = DataPlant["_value"]["TT-103"]
+            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
+            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
+            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
+            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
+            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
+            
+            #R101
+            PH_R101 = DataPlant["_value"]["AT-101"]        
+            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            P_R101 = DataPlant["_value"]["PT-101"]
+            T1_R101 =  DataPlant["_value"]["TE-101A"]
+            T2_R101 = DataPlant["_value"]["TE-101B"]
+            Tprom_R101 = DataPlant["_value"]["TE-R101"]  
+            
+            
+            time_norm = normaliceTime(time = time)
+            
+            #Variable for V101
+            TT_V101 = SameDimension(P_V101, T_V101)
+            rh_V101 = SameDimension(P_V101, rh_V101)
+            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
+            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
+            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
+            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
+            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
+            
+            #Variables for R101
+            T1_R101 = SameDimension(P_V101, T1_R101)
+            T2_R101 = SameDimension(P_V101, T2_R101)
+            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
+            PH_R101 = SameDimension(P_V101, PH_R101)
+            L_R101 = SameDimension(P_V101, L_R101)
+            P_R101 = SameDimension(P_V101, P_R101)   
+                                         
+            self.DataPlant = pd.DataFrame({
+                "format_time":time,
+                "time": time_norm,
+                "P_V101":P_V101.tolist(),
+                "T_V101":TT_V101.tolist(),
+                "rh_V101": rh_V101.tolist(),
+                "x_CH4_V101": x_CH4_V101.tolist(),
+                "x_CO2_V101": x_CO2_V101.tolist(),
+                "x_O2_V101": x_O2_V101.tolist(),
+                "x_H2S_V101": x_H2S_V101.tolist(),
+                "x_H2_V101": x_H2_V101.tolist(),
+                "T1_R101": T1_R101.tolist(),
+                "T2_R101": T2_R101.tolist(),
+                "Tprom_R101": Tprom_R101.tolist(),
+                "PH_R101": PH_R101.tolist(),
+                "L_R101": L_R101.tolist(),
+                "P_R101": P_R101.tolist()             
+            })
+        
+            #### ----Asynchronous Data
+            # Pump 104
+            self.DataPlant = AlignAsynchronous(variable = "FE-104", SyncDBRaw =  DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Mixing R101
+            self.DataPlant = AlignAsynchronous(variable = "SE-108", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+        
+        elif self.Operation_mode == 2:
+            # ----- Synchronous Data
+            #V101
+            time = DataPlant["_time"]["PT-103"]
+            time = pd.to_datetime(time)
+            P_V101 = DataPlant["_value"]["PT-103"]
+            T_V101 = DataPlant["_value"]["TT-103"]
+            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
+            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
+            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
+            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
+            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
+            
+            #R101
+            PH_R101 = DataPlant["_value"]["AT-101"]        
+            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            P_R101 = DataPlant["_value"]["PT-101"]
+            T1_R101 =  DataPlant["_value"]["TE-101A"]
+            T2_R101 = DataPlant["_value"]["TE-101B"]
+            Tprom_R101 = DataPlant["_value"]["TE-R101"] 
+            
+            time_norm = normaliceTime(time = time)
+            
+            #Variable for V101
+            TT_V101 = SameDimension(P_V101, T_V101)
+            rh_V101 = SameDimension(P_V101, rh_V101)
+            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
+            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
+            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
+            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
+            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
+            
+            #Variables for R101
+            T1_R101 = SameDimension(P_V101, T1_R101)
+            T2_R101 = SameDimension(P_V101, T2_R101)
+            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
+            PH_R101 = SameDimension(P_V101, PH_R101)
+            L_R101 = SameDimension(P_V101, L_R101)
+            P_R101 = SameDimension(P_V101, P_R101)   
+                                         
+            self.DataPlant = pd.DataFrame({
+                "format_time":time,
+                "time": time_norm,
+                "P_V101":P_V101.tolist(),
+                "T_V101":TT_V101.tolist(),
+                "rh_V101": rh_V101.tolist(),
+                "x_CH4_V101": x_CH4_V101.tolist(),
+                "x_CO2_V101": x_CO2_V101.tolist(),
+                "x_O2_V101": x_O2_V101.tolist(),
+                "x_H2S_V101": x_H2S_V101.tolist(),
+                "x_H2_V101": x_H2_V101.tolist(),
+                "T1_R101": T1_R101.tolist(),
+                "T2_R101": T2_R101.tolist(),
+                "Tprom_R101": Tprom_R101.tolist(),
+                "PH_R101": PH_R101.tolist(),
+                "L_R101": L_R101.tolist(),
+                "P_R101": P_R101.tolist()             
+            })
+        
+            #### ----Asynchronous Data
+            # Pump 104
+            self.DataPlant = AlignAsynchronous(variable = "FE-104", SyncDBRaw =  DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Mixing R101
+            self.DataPlant = AlignAsynchronous(variable = "SE-108", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Pump 101
+            self.DataPlant = AlignAsynchronous(variable = "P-101", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            
+            
+            
+        
     def LimitReagentCalculation(self):
         self.SN = self.Datainterfaz["_value"]["MNS"]    #SN: substrate number
         #Water proportion
@@ -287,28 +498,18 @@ class TrainingBiogasPlant:
         self.Cst_sus = (self.rho*(self.ST/100))/self.MW_sustrato
         self.Csv_sus = (self.rho*(self.SV/100))/self.MW_sustrato
     
-    def StochoimetricExpenditure(self):
-        # Get Sychronous data to get produce methane
-        P_V101 = self.DataPlant["_value"]["PT-103"]
-        T_V101 = self.DataPlant["_value"]["TT-103"]
-        
-        if len(P_V101) == len (T_V101):
-            n_biogas = []
-            for i in range(len(P_V101)):
-                n = (P_V101.iloc[i]*(self.V_V101/1000))/(8.314*T_V101.iloc[i])
-                n_biogas.append(n)
-            
-            print(n_biogas)
-        
-        
-        
-               
-           
+    # def StochoimetricExpenditure(self):
+    #     
+    #     print(time)
+              
 #This will be the way to call method from API
 Training = TrainingBiogasPlant(ST_ini = 2, SV_ini = 1.5, t_train=60, V_V101=15)
 Training.getData()
 Training.LimitReagentCalculation()
-Training.StochoimetricExpenditure()
+print(Training.DataPlant)
+
+
+
 
 
 
