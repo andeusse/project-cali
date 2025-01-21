@@ -37,7 +37,7 @@ class Turbine(Resource):
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
           timestamp = values_df_temp['_time'].mean()
-          turbine['timestamp'] = timestamp
+          turbine['timestamp'] = str(timestamp)
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
@@ -121,13 +121,13 @@ class Turbine(Resource):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      if inputFlow <= 2:
+      if inputFlow <= 2.1:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", type=0)
         queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", type=0)
-      elif inputFlow <= 3:
+      elif inputFlow <= 3.1:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R2", type=0)
         queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R2", type=0)
-      elif inputFlow <= 4:
+      elif inputFlow <= 4.1:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R3", type=0)
         queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R3", type=0)
       else:
@@ -152,15 +152,21 @@ class Turbine(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
       
-      if inputFlow <= 6:
+      if inputFlow <= 4.1:
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R0", type=0)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R0", type=0)
+      elif inputFlow <= 6.1:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R1", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R1", type=0)
-      elif inputFlow <= 11:
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R1", type=0)
+      elif inputFlow <= 9.1:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R2", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R2", type=0)
-      else:
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R2", type=0)
+      elif inputFlow <= 11.1:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R3", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R3", type=0)      
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R3", type=0) 
+      else:
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R4", type=0)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R4", type=0)     
       
       attempts = 1
       while attempts <= 5:
@@ -305,28 +311,34 @@ class Turbine(Resource):
       connectionState = influxDB.InfluxDBconnection()
   
       if turbineType == 1:
-        if inputFlow <= 2:
+        if inputFlow <= 2.1:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", value = twinHydro.n_controller, timestamp = timestamp)
-        elif inputFlow <= 3:
+        elif inputFlow <= 3.1:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R2", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R2", value = twinHydro.n_controller, timestamp = timestamp)
-        elif inputFlow <= 4:
+        elif inputFlow <= 4.1:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R3", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R3", value = twinHydro.n_controller, timestamp = timestamp)
         else:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R4", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R4", value = twinHydro.n_controller, timestamp = timestamp)
       else:
-        if inputFlow <= 6:
+        if inputFlow <= 4.1:
+          influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R0", value = twinHydro.n_t, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R0", value = twinHydro.n_controller, timestamp = timestamp)
+        elif inputFlow <= 6.1:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R1", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R1", value = twinHydro.n_controller, timestamp = timestamp)
-        elif inputFlow <= 11:
+        elif inputFlow <= 9.1:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R2", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R2", value = twinHydro.n_controller, timestamp = timestamp)
-        else:
+        elif inputFlow <= 11.1:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R3", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R3", value = twinHydro.n_controller, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R4", value = twinHydro.n_t, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R4", value = twinHydro.n_controller, timestamp = timestamp)
 
 
       influxDB.InfluxDBclose()

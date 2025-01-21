@@ -41,7 +41,8 @@ class Solar(Resource):
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
           timestamp = values_df_temp['_time'].mean()
-          solarWind['timestamp'] = timestamp
+          solarWind['timestamp'] = str(timestamp)
+
           values_df.set_index('field', inplace=True)
           influxDB.InfluxDBclose()
           break
@@ -82,54 +83,6 @@ class Solar(Resource):
     deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
     turbineEfficiency = 0.49
     controllerEfficiency = data["controller"]["efficiency"]["value"]
-    
-    if data["inputOperationMode"] in ['Mode1', 'Mode2', 'Mode3', 'Mode5']:
-      connectionState = influxDB.InfluxDBconnection()
-      if not connectionState:
-        return {"message":influxDB.ERROR_MESSAGE}, 503
-      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name, type=0)
-      attempts = 1
-      while attempts <= 5:
-        try:
-          deratingFactorList = [influxDB.InfluxDBreader(query)['_value'][0]] * 4
-          influxDB.InfluxDBclose()
-          break
-        except:
-          attempts += 1
-        finally:
-          influxDB.InfluxDBclose()
-      
-    if data["inputOperationMode"] in ['Mode4', 'Mode5']:
-      connectionState = influxDB.InfluxDBconnection()
-      if not connectionState:
-        return {"message":influxDB.ERROR_MESSAGE}, 503
-      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name, type=0)
-      attempts = 1
-      while attempts <= 5:
-        try:
-          turbineEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
-          influxDB.InfluxDBclose()
-          break
-        except:
-          attempts += 1
-        finally:
-          influxDB.InfluxDBclose()
-
-    if not hybridState:
-      connectionState = influxDB.InfluxDBconnection()
-      if not connectionState:
-        return {"message":influxDB.ERROR_MESSAGE}, 503
-      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name, type=0)
-      attempts = 1
-      while attempts <= 5:
-        try:
-          controllerEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
-          influxDB.InfluxDBclose()
-          break
-        except:
-          attempts += 1
-        finally:
-          influxDB.InfluxDBclose()
 
     batteries = 1 + int(data["isBattery2"])
     if (data["inputOperationMode"] == 'Mode1' and cdteModuleState) or data["inputOperationMode"] == 'Mode2' or data["inputOperationMode"] == 'Mode4' or data["inputOperationMode"] == 'Mode5':
@@ -259,6 +212,46 @@ class Solar(Resource):
     hybridChargeVoltageFloat = data["hybridInverter"]["chargeVoltageFloat"]["value"]
     hybridChargingMinimumVoltage = data["hybridInverter"]["chargingMinimumVoltage"]["value"]
 
+    if data["inputOperationMode"] in ['Mode1', 'Mode2', 'Mode3', 'Mode5']:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name, type=0)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          deratingFactorList = [influxDB.InfluxDBreader(query)['_value'][0]] * 4
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+      
+    if data["inputOperationMode"] in ['Mode4', 'Mode5']:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      if windSpeed <= 4.8:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R1", type=0)
+      elif windSpeed <= 7.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R2", type=0)
+      elif windSpeed <= 10.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R3", type=0)
+      else:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R4", type=0)
+      
+      attempts = 1
+      while attempts <= 5:
+        try:
+          turbineEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+
     timeMultiplier = data["timeMultiplier"]["value"]
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
@@ -278,9 +271,9 @@ class Solar(Resource):
       else:
         batteryTemperature = 30.0
         simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
-        measuredPV_Power = round(values_df["Value"]['PC-001'],2)
-        measuredWT_Power = round(values_df["Value"]['PC-002'],2)
-        measuredControllerDC_Power = round(values_df["Value"]['PC-001']+values_df["Value"]['PC-002'],2)
+        measuredPV_Power = round(values_df["Value"]['PG-001'],2)
+        measuredWT_Power = round(values_df["Value"]['PG-002'],2)
+        measuredControllerDC_Power = round(values_df["Value"]['PC-001'],2)
         PV_Voltage = round(values_df["Value"]['VG-001'],2)
         WT_Voltage = round(values_df["Value"]['VG-002'],2)
         directCurrentVoltage = round(values_df["Value"]['VCH-001'],2)
@@ -300,10 +293,33 @@ class Solar(Resource):
       hybridInverterVoltage = 0.0
       solarWind['windTurbineRevolutions'] = 0.0
     
-    twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries, isParallel)
     PV_Results = twinPVWF.arrayPowerOutput(True, deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
     WT_Results = twinPVWF.WT_PowerOutput(True, turbineState, turbineEfficiency, windDensity, windSpeed)
     
+    if not hybridState:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      if PV_Results[0] + WT_Results <= 10.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R1", type=0)
+      elif PV_Results[0] + WT_Results <= 20.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R2", type=0)
+      else:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R3", type=0)
+      
+      attempts = 1
+      while attempts <= 5:
+        try:
+          controllerEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+        finally:
+          influxDB.InfluxDBclose()
+
+    twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries, isParallel)
+
     if monoModuleState or polyModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation1"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
@@ -445,10 +461,22 @@ class Solar(Resource):
         influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name, value = twinPVWF.f_PV, timestamp = timestamp)
       
       if data["inputOperationMode"] in ['Mode4', 'Mode5']:
-        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name, value = twinPVWF.n_WT, timestamp = timestamp)
+        if windSpeed <= 4.8:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R1", value = twinPVWF.n_WT, timestamp = timestamp)
+        elif windSpeed <= 7.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R2", value = twinPVWF.n_WT, timestamp = timestamp)
+        elif windSpeed <= 10.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R3", value = twinPVWF.n_WT, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R4", value = twinPVWF.n_WT, timestamp = timestamp)
 
       if not hybridState:
-        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name, value = twinPVWF.n_controller, timestamp = timestamp)
+        if PV_Results[0] + WT_Results <= 10.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R1", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 20.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R2", value = twinPVWF.n_controller, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R3", value = twinPVWF.n_controller, timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 

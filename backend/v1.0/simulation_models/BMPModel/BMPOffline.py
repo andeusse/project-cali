@@ -82,11 +82,11 @@ class BMPModelOffline:
             self.VSini = Fraction1 * VS1 + Fraction2 * VS2
             self.rho = rho1 * Fraction1 + rho2 * Fraction2 + 1000 * WaterFraction
             dryWeight = (Fraction1 * 100)*(TS1/100) + (Fraction2 * 100)*(TS2/100)
-            gC1 = (Fraction1 * 100) * Cc1; gC2 = (Fraction2 * 100) * Cc2
-            gH1 = (Fraction1 * 100) * Hc1; gH2 = (Fraction2 * 100) * Hc2
-            gO1 = (Fraction1 * 100) * Oc1; gO2 = (Fraction2 * 100) * Oc2
-            gN1 = (Fraction1 * 100) * Nc1; gN2 = (Fraction2 * 100) * Nc2
-            gS1 = (Fraction1 * 100) * Sc1; gS2 = (Fraction2 * 100) * Sc2
+            gC1 = (Fraction1 * 100) * Cc1 * (TS1/100); gC2 = (Fraction2 * 100) * Cc2 * (TS2/100)
+            gH1 = (Fraction1 * 100) * Hc1 * (TS1/100); gH2 = (Fraction2 * 100) * Hc2 * (TS2/100)
+            gO1 = (Fraction1 * 100) * Oc1 * (TS1/100); gO2 = (Fraction2 * 100) * Oc2 * (TS2/100)
+            gN1 = (Fraction1 * 100) * Nc1 * (TS1/100); gN2 = (Fraction2 * 100) * Nc2 * (TS2/100)
+            gS1 = (Fraction1 * 100) * Sc1 * (TS1/100); gS2 = (Fraction2 * 100) * Sc2 * (TS2/100)
             self.Cc = (gC1 + gC2)/dryWeight
             self.Hc = (gH1 + gH2)/dryWeight
             self.Oc = (gO1 + gO2)/dryWeight
@@ -105,11 +105,11 @@ class BMPModelOffline:
             self.VSini = Fraction1 * VS1 + Fraction2 * VS2 * Fraction3 * VS3
             self.rho = rho1 * Fraction1 + rho2 * Fraction2 + rho3 * Fraction3 + 1000 * WaterFraction
             dryWeight = (Fraction1 * 100)*(TS1/100) + (Fraction2 * 100)*(TS2/100) + (Fraction3 * 100)*(TS3/100)
-            gC1 = (Fraction1 * 100) * Cc1; gC2 = (Fraction2 * 100) * Cc2; gC3 = (Fraction3 * 100) * Cc3
-            gH1 = (Fraction1 * 100) * Hc1; gH2 = (Fraction2 * 100) * Hc2; gH3 = (Fraction3 * 100) * Hc3
-            gO1 = (Fraction1 * 100) * Oc1; gO2 = (Fraction2 * 100) * Oc2; gO3 = (Fraction3 * 100) * Oc3
-            gN1 = (Fraction1 * 100) * Nc1; gN2 = (Fraction2 * 100) * Nc2; gN3 = (Fraction3 * 100) * Nc3
-            gS1 = (Fraction1 * 100) * Sc1; gS2 = (Fraction2 * 100) * Sc2; gS3 = (Fraction3 * 100) * Sc3
+            gC1 = (Fraction1 * 100) * Cc1 * (TS1/100); gC2 = (Fraction2 * 100) * Cc2 * (TS2/100); gC3 = (Fraction3 * 100) * Cc3 * (TS3/100)
+            gH1 = (Fraction1 * 100) * Hc1 * (TS1/100); gH2 = (Fraction2 * 100) * Hc2 * (TS2/100); gH3 = (Fraction3 * 100) * Hc3 * (TS3/100)
+            gO1 = (Fraction1 * 100) * Oc1 * (TS1/100); gO2 = (Fraction2 * 100) * Oc2 * (TS2/100); gO3 = (Fraction3 * 100) * Oc3 * (TS3/100)
+            gN1 = (Fraction1 * 100) * Nc1 * (TS1/100); gN2 = (Fraction2 * 100) * Nc2 * (TS2/100); gN3 = (Fraction3 * 100) * Nc3 * (TS3/100)
+            gS1 = (Fraction1 * 100) * Sc1 * (TS1/100); gS2 = (Fraction2 * 100) * Sc2 * (TS2/100); gS3 = (Fraction3 * 100) * Sc3 * (TS3/100)
             self.Cc = (gC1 + gC2 + gC3)/dryWeight
             self.Hc = (gH1 + gH2 + gH3)/dryWeight
             self.Oc = (gO1 + gO2 + gO3)/dryWeight
@@ -129,11 +129,11 @@ class BMPModelOffline:
             self.VSini = Fraction1 * VS1 + Fraction2 * VS2 * Fraction3 * VS3 * Fraction4 * VS4
             self.rho = rho1 * Fraction1 + rho2 * Fraction2 + rho3 * Fraction3 + rho4 * Fraction4 + 1000 * WaterFraction
             dryWeight = (Fraction1 * 100)*(TS1/100) + (Fraction2 * 100)*(TS2/100) + (Fraction3 * 100)*(TS3/100) + (Fraction4 * 100)*(TS4/100)
-            gC1 = (Fraction1 * 100) * Cc1; gC2 = (Fraction2 * 100) * Cc2; gC3 = (Fraction3 * 100) * Cc3; gC4 = (Fraction4 * 100) * Cc4
-            gH1 = (Fraction1 * 100) * Hc1; gH2 = (Fraction2 * 100) * Hc2; gH3 = (Fraction3 * 100) * Hc3; gH4 = (Fraction4 * 100) * Hc4
-            gO1 = (Fraction1 * 100) * Oc1; gO2 = (Fraction2 * 100) * Oc2; gO3 = (Fraction3 * 100) * Oc3; gO4 = (Fraction4 * 100) * Oc4
-            gN1 = (Fraction1 * 100) * Nc1; gN2 = (Fraction2 * 100) * Nc2; gN3 = (Fraction3 * 100) * Nc3; gN4 = (Fraction4 * 100) * Nc4
-            gS1 = (Fraction1 * 100) * Sc1; gS2 = (Fraction2 * 100) * Sc2; gS3 = (Fraction3 * 100) * Sc3; gS4 = (Fraction4 * 100) * Sc4
+            gC1 = (Fraction1 * 100) * Cc1 * (TS1/100); gC2 = (Fraction2 * 100) * Cc2 * (TS2/100); gC3 = (Fraction3 * 100) * Cc3 * (TS3/100); gC4 = (Fraction4 * 100) * Cc4 * (TS4/100)
+            gH1 = (Fraction1 * 100) * Hc1 * (TS1/100); gH2 = (Fraction2 * 100) * Hc2 * (TS2/100); gH3 = (Fraction3 * 100) * Hc3 * (TS3/100); gH4 = (Fraction4 * 100) * Hc4 * (TS4/100)
+            gO1 = (Fraction1 * 100) * Oc1 * (TS1/100); gO2 = (Fraction2 * 100) * Oc2 * (TS2/100); gO3 = (Fraction3 * 100) * Oc3 * (TS3/100); gO4 = (Fraction4 * 100) * Oc4 * (TS4/100)
+            gN1 = (Fraction1 * 100) * Nc1 * (TS1/100); gN2 = (Fraction2 * 100) * Nc2 * (TS2/100); gN3 = (Fraction3 * 100) * Nc3 * (TS3/100); gN4 = (Fraction4 * 100) * Nc4 * (TS4/100)
+            gS1 = (Fraction1 * 100) * Sc1 * (TS1/100); gS2 = (Fraction2 * 100) * Sc2 * (TS2/100); gS3 = (Fraction3 * 100) * Sc3 * (TS3/100); gS4 = (Fraction4 * 100) * Sc4 * (TS4/100)
             self.Cc = (gC1 + gC2 + gC3 + gC4)/dryWeight
             self.Hc = (gH1 + gH2 + gH3 + gH4)/dryWeight
             self.Oc = (gO1 + gO2 + gO3 + gO4)/dryWeight
@@ -180,11 +180,11 @@ class BMPModelOffline:
             self.VSini = Fraction1 * VS1 + Fraction2 * VS2
             self.rho = rho1 * Fraction1 + rho2 * Fraction2 + 1000 * WaterFraction
             dryWeight = (Fraction1 * 100)*(TS1/100) + (Fraction2 * 100)*(TS2/100)
-            gC1 = (Fraction1 * 100) * Cc1; gC2 = (Fraction2 * 100) * Cc2
-            gH1 = (Fraction1 * 100) * Hc1; gH2 = (Fraction2 * 100) * Hc2
-            gO1 = (Fraction1 * 100) * Oc1; gO2 = (Fraction2 * 100) * Oc2
-            gN1 = (Fraction1 * 100) * Nc1; gN2 = (Fraction2 * 100) * Nc2
-            gS1 = (Fraction1 * 100) * Sc1; gS2 = (Fraction2 * 100) * Sc2
+            gC1 = (Fraction1 * 100) * Cc1 * (TS1/100); gC2 = (Fraction2 * 100) * Cc2 * (TS2/100)
+            gH1 = (Fraction1 * 100) * Hc1 * (TS1/100); gH2 = (Fraction2 * 100) * Hc2 * (TS2/100)
+            gO1 = (Fraction1 * 100) * Oc1 * (TS1/100); gO2 = (Fraction2 * 100) * Oc2 * (TS2/100)
+            gN1 = (Fraction1 * 100) * Nc1 * (TS1/100); gN2 = (Fraction2 * 100) * Nc2 * (TS2/100)
+            gS1 = (Fraction1 * 100) * Sc1 * (TS1/100); gS2 = (Fraction2 * 100) * Sc2 * (TS2/100)
             self.Cc = (gC1 + gC2)/dryWeight
             self.Hc = (gH1 + gH2)/dryWeight
             self.Oc = (gO1 + gO2)/dryWeight
@@ -213,11 +213,11 @@ class BMPModelOffline:
             self.VSini = Fraction1 * VS1 + Fraction2 * VS2 * Fraction3 * VS3
             self.rho = rho1 * Fraction1 + rho2 * Fraction2 + rho3 * Fraction3 + 1000 * WaterFraction
             dryWeight = (Fraction1 * 100)*(TS1/100) + (Fraction2 * 100)*(TS2/100) + (Fraction3 * 100)*(TS3/100)
-            gC1 = (Fraction1 * 100) * Cc1; gC2 = (Fraction2 * 100) * Cc2; gC3 = (Fraction3 * 100) * Cc3
-            gH1 = (Fraction1 * 100) * Hc1; gH2 = (Fraction2 * 100) * Hc2; gH3 = (Fraction3 * 100) * Hc3
-            gO1 = (Fraction1 * 100) * Oc1; gO2 = (Fraction2 * 100) * Oc2; gO3 = (Fraction3 * 100) * Oc3
-            gN1 = (Fraction1 * 100) * Nc1; gN2 = (Fraction2 * 100) * Nc2; gN3 = (Fraction3 * 100) * Nc3
-            gS1 = (Fraction1 * 100) * Sc1; gS2 = (Fraction2 * 100) * Sc2; gS3 = (Fraction3 * 100) * Sc3
+            gC1 = (Fraction1 * 100) * Cc1 * (TS1/100); gC2 = (Fraction2 * 100) * Cc2 * (TS2/100); gC3 = (Fraction3 * 100) * Cc3 * (TS3/100)
+            gH1 = (Fraction1 * 100) * Hc1 * (TS1/100); gH2 = (Fraction2 * 100) * Hc2 * (TS2/100); gH3 = (Fraction3 * 100) * Hc3 * (TS3/100)
+            gO1 = (Fraction1 * 100) * Oc1 * (TS1/100); gO2 = (Fraction2 * 100) * Oc2 * (TS2/100); gO3 = (Fraction3 * 100) * Oc3 * (TS3/100)
+            gN1 = (Fraction1 * 100) * Nc1 * (TS1/100); gN2 = (Fraction2 * 100) * Nc2 * (TS2/100); gN3 = (Fraction3 * 100) * Nc3 * (TS3/100)
+            gS1 = (Fraction1 * 100) * Sc1 * (TS1/100); gS2 = (Fraction2 * 100) * Sc2 * (TS2/100); gS3 = (Fraction3 * 100) * Sc3 * (TS3/100)
             self.Cc = (gC1 + gC2 + gC3)/dryWeight
             self.Hc = (gH1 + gH2 + gH3)/dryWeight
             self.Oc = (gO1 + gO2 + gO3)/dryWeight
@@ -249,11 +249,11 @@ class BMPModelOffline:
             self.VSini = Fraction1 * VS1 + Fraction2 * VS2 * Fraction3 * VS3 * Fraction4 * VS4
             self.rho = rho1 * Fraction1 + rho2 * Fraction2 + rho3 * Fraction3 + rho4 * Fraction4 + 1000 * WaterFraction
             dryWeight = (Fraction1 * 100)*(TS1/100) + (Fraction2 * 100)*(TS2/100) + (Fraction3 * 100)*(TS3/100) + (Fraction4 * 100)*(TS4/100)
-            gC1 = (Fraction1 * 100) * Cc1; gC2 = (Fraction2 * 100) * Cc2; gC3 = (Fraction3 * 100) * Cc3; gC4 = (Fraction4 * 100) * Cc4
-            gH1 = (Fraction1 * 100) * Hc1; gH2 = (Fraction2 * 100) * Hc2; gH3 = (Fraction3 * 100) * Hc3; gH4 = (Fraction4 * 100) * Hc4
-            gO1 = (Fraction1 * 100) * Oc1; gO2 = (Fraction2 * 100) * Oc2; gO3 = (Fraction3 * 100) * Oc3; gO4 = (Fraction4 * 100) * Oc4
-            gN1 = (Fraction1 * 100) * Nc1; gN2 = (Fraction2 * 100) * Nc2; gN3 = (Fraction3 * 100) * Nc3; gN4 = (Fraction4 * 100) * Nc4
-            gS1 = (Fraction1 * 100) * Sc1; gS2 = (Fraction2 * 100) * Sc2; gS3 = (Fraction3 * 100) * Sc3; gS4 = (Fraction4 * 100) * Sc4
+            gC1 = (Fraction1 * 100) * Cc1 * (TS1/100); gC2 = (Fraction2 * 100) * Cc2 * (TS2/100); gC3 = (Fraction3 * 100) * Cc3 * (TS3/100); gC4 = (Fraction4 * 100) * Cc4 * (TS4/100)
+            gH1 = (Fraction1 * 100) * Hc1 * (TS1/100); gH2 = (Fraction2 * 100) * Hc2 * (TS2/100); gH3 = (Fraction3 * 100) * Hc3 * (TS3/100); gH4 = (Fraction4 * 100) * Hc4 * (TS4/100)
+            gO1 = (Fraction1 * 100) * Oc1 * (TS1/100); gO2 = (Fraction2 * 100) * Oc2 * (TS2/100); gO3 = (Fraction3 * 100) * Oc3 * (TS3/100); gO4 = (Fraction4 * 100) * Oc4 * (TS4/100)
+            gN1 = (Fraction1 * 100) * Nc1 * (TS1/100); gN2 = (Fraction2 * 100) * Nc2 * (TS2/100); gN3 = (Fraction3 * 100) * Nc3 * (TS3/100); gN4 = (Fraction4 * 100) * Nc4 * (TS4/100)
+            gS1 = (Fraction1 * 100) * Sc1 * (TS1/100); gS2 = (Fraction2 * 100) * Sc2 * (TS2/100); gS3 = (Fraction3 * 100) * Sc3 * (TS3/100); gS4 = (Fraction4 * 100) * Sc4 * (TS4/100)
             self.Cc = (gC1 + gC2 + gC3 + gC4)/dryWeight
             self.Hc = (gH1 + gH2 + gH3 + gH4)/dryWeight
             self.Oc = (gO1 + gO2 + gO3 + gO4)/dryWeight
@@ -279,7 +279,13 @@ class BMPModelOffline:
         denominators = [Fraction(num).limit_denominator(10).denominator for num in numbers]
         common_denominator = reduce(lcm, denominators)
         self.subindex = [int(num * common_denominator) for num in numbers]
-
+        
+        n = self.subindex[0]
+        a = self.subindex[1]
+        b = self.subindex[2]
+        c = self.subindex[3]
+        d = self.subindex[4]
+        
         self.s_H2O = n-(a/4)-(b/2)+(3/4)*c+(d/2)
         self.s_CH4 = (n/2)+(a/8)-(b/4)-(3/8)*c-(d/4)
         self.s_CO2 = (n/2)-(a/8)+(b/4)+(3/8)*c-(d/4)
