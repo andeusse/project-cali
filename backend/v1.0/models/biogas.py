@@ -3,14 +3,62 @@ from flask_restful import Resource
 from utils import Biogas_Start
 from utils import MachineLearning_biogas_start
 from utils import Biogas_Simulation_Start
+from tools import DBManager
+import os
+import json
 
 biogas_instances = {}
 
 class Biogas(Resource):
 
+  def get(self):
+    mode = request.args.get('mode')
+    model = request.args.get('model')
+    measurement='Planta_Biogas'
+
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
+
+    influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
+
+    connectionState = influxDB.InfluxDBconnection()
+    if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+
+    query = '''import "strings"
+    from(bucket: "Laboratorio_Energias")
+    |> range(start: 0)
+    |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+    |> filter(fn: (r) => r["device"] == "entrenamiento")
+    |> filter(fn: (r) => strings.containsStr(v: r._field, substr: "''' + mode + '''"))
+    |> filter(fn: (r) => strings.containsStr(v: r._field, substr: "''' + model + '''"))
+    |> last()'''
+    
+    attempts = 1
+    while attempts <= 5:
+      try:
+        values_df_temp = influxDB.InfluxDBreader(query)
+        values_df_temp['name'] = values_df_temp['_field'].str.split('?').str[-1]
+        values_df_temp['var'] = values_df_temp['_field'].str.split('?').str[-2]
+
+        values = values_df_temp.pivot(index='name', columns='var', values='_value').to_dict(orient='index')
+        trainingData = json.dumps({'names': list(values.keys()), 'values': values}, indent=1)
+        
+        influxDB.InfluxDBclose()
+        break
+      except:
+        attempts += 1
+      finally:
+        influxDB.InfluxDBclose()
+
+    return trainingData
+
   def post(self):
     data = request.get_json()
-     
+    
     biogas_input = {}
     biogas_output = {}
 

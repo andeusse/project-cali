@@ -222,7 +222,7 @@ class TwinPVWF:
     def optimal_n_WT(self, P_WT_meas):
         def optimal_WT_PowerOutput(n_WT, P_WT_meas):
             self.n_WT = n_WT[0]
-            return self.WT_PowerOutput(False, self.turbineState, self.ro, self.V_a) - P_WT_meas
+            return self.WT_PowerOutput(False, self.turbineState, self.n_WT, self.ro, self.V_a) - P_WT_meas
         n_WT_0 = 0.36
         n_WT = least_squares(optimal_WT_PowerOutput, x0 = n_WT_0, bounds = (0.1, 3.0), args = [P_WT_meas])
         self.n_WT = n_WT.x[0]*random.uniform(0.98,1.02)
@@ -233,7 +233,7 @@ class TwinPVWF:
             self.n_controller = n_controller[0]
             return ((self.P_PV + self.P_WT) * self.n_controller / 100) - (P_CD / (self.n_controller / 100)) - P_CC_meas
         n_controller_0 = self.n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (40.0, 120.0), args = (P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (10.0, 120.0), args = (P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]
         return n_controller.x[0]
     
