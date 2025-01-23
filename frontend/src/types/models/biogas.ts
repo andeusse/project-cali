@@ -1253,7 +1253,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: true,
   },
   {
-    name: 'pH R101',
+    name: 'PH R101',
     variable: 'pH_R101',
     unit: '',
     isShown: true,
@@ -1418,7 +1418,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de metano almacenada en tanque V101',
+    name: 'Moles demetano almacenada en tanque V101',
     variable: 'StorageCH4_V101moles',
     unit: 'mol',
     isShown: true,
@@ -1454,7 +1454,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de dióxido de carbono almacenada en tanque V101',
+    name: 'Moles dedióxido de carbono almacenada en tanque V101',
     variable: 'StorageCO2_V101moles',
     unit: 'mol',
     isShown: true,
@@ -1490,7 +1490,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de sulfuro de hidrógeno almacenada en tanque V101',
+    name: 'Moles desulfuro de hidrógeno almacenada en tanque V101',
     variable: 'StorageH2S_V101moles',
     unit: 'mol',
     isShown: true,
@@ -1526,7 +1526,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de oxígeno almacenada en tanque V101',
+    name: 'Moles deoxígeno almacenada en tanque V101',
     variable: 'StorageO2_V101moles',
     unit: 'mol',
     isShown: true,
@@ -1562,7 +1562,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de hidrógeno almacenada en tanque V101',
+    name: 'Moles dehidrógeno almacenada en tanque V101',
     variable: 'StorageH2_V101moles',
     unit: 'mol',
     isShown: true,
@@ -1598,7 +1598,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de amonio almacenada en tanque V101',
+    name: 'Moles deamonio almacenada en tanque V101',
     variable: 'StorageNH3_V101moles',
     unit: 'mol',
     isShown: true,
@@ -1610,7 +1610,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 11,
   },
   {
-    name: 'moles de agua en V101',
+    name: 'Moles deagua en V101',
     variable: 'moles_humidity_V101',
     unit: 'mol',
     isShown: true,
@@ -1717,7 +1717,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de metano almacenada en tanque V102',
+    name: 'Moles demetano almacenada en tanque V102',
     variable: 'StorageCH4_V102moles',
     unit: 'mol',
     isShown: true,
@@ -1753,7 +1753,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de dióxido de carbono almacenada en tanque V102',
+    name: 'Moles dedióxido de carbono almacenada en tanque V102',
     variable: 'StorageCO2_V102moles',
     unit: 'mol',
     isShown: true,
@@ -1789,7 +1789,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de sulfuro de hidrógeno almacenada en tanque V102',
+    name: 'Moles desulfuro de hidrógeno almacenada en tanque V102',
     variable: 'StorageH2S_V102moles',
     unit: 'mol',
     isShown: true,
@@ -1825,7 +1825,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de oxígeno almacenada en tanque V102',
+    name: 'Moles deoxígeno almacenada en tanque V102',
     variable: 'StorageO2_V102moles',
     unit: 'mol',
     isShown: true,
@@ -1861,7 +1861,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de hidrógeno almacenada en tanque V102',
+    name: 'Moles dehidrógeno almacenada en tanque V102',
     variable: 'StorageH2_V102moles',
     unit: 'mol',
     isShown: true,
@@ -1897,7 +1897,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de amonio almacenada en tanque V102',
+    name: 'Moles deamonio almacenada en tanque V102',
     variable: 'StorageNH3_V102moles',
     unit: 'mol',
     isShown: true,
@@ -1909,7 +1909,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 11,
   },
   {
-    name: 'moles de agua en V102',
+    name: 'Moles deagua en V102',
     variable: 'moles_humidity_V102',
     unit: 'mol',
     isShown: true,
@@ -1944,7 +1944,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'moles de amoniaco adsorbidas torre de adsorción',
+    name: 'Moles deamoniaco adsorbidas torre de adsorción',
     variable: 'ads_NH3_bt',
     unit: 'mol',
     isShown: true,
@@ -1955,7 +1955,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'moles de sulfuro de hidrógeno torre de adsorción',
+    name: 'Moles desulfuro de hidrógeno torre de adsorción',
     variable: 'ads_H2S_bt',
     unit: 'mol',
     isShown: true,
@@ -1966,7 +1966,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'moles de agua torre de adsorción',
+    name: 'Moles deagua torre de adsorción',
     variable: 'ads_H2O_bt',
     unit: 'mol',
     isShown: true,
@@ -2060,7 +2060,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de metano almacenada en tanque V107',
+    name: 'Moles demetano almacenada en tanque V107',
     variable: 'StorageCH4_V107moles',
     unit: 'mol',
     isShown: true,
@@ -2096,7 +2096,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de dióxido de carbono almacenada en tanque V107',
+    name: 'Moles dedióxido de carbono almacenada en tanque V107',
     variable: 'StorageCO2_V107moles',
     unit: 'mol',
     isShown: true,
@@ -2132,7 +2132,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de sulfuro de hidrógeno almacenada en tanque V107',
+    name: 'Moles desulfuro de hidrógeno almacenada en tanque V107',
     variable: 'StorageH2S_V107moles',
     unit: 'mol',
     isShown: true,
@@ -2168,7 +2168,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de oxígeno almacenada en tanque V107',
+    name: 'Moles deoxígeno almacenada en tanque V107',
     variable: 'StorageO2_V107moles',
     unit: 'mol',
     isShown: true,
@@ -2204,7 +2204,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de hidrógeno almacenada en tanque V107',
+    name: 'Moles dehidrógeno almacenada en tanque V107',
     variable: 'StorageH2_V107moles',
     unit: 'mol',
     isShown: true,
@@ -2240,7 +2240,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 10,
   },
   {
-    name: 'moles de amonio almacenada en tanque V107',
+    name: 'Moles deamonio almacenada en tanque V107',
     variable: 'StorageNH3_V107moles',
     unit: 'mol',
     isShown: true,
@@ -2252,7 +2252,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     hasAdditionalCondition: 11,
   },
   {
-    name: 'moles de agua en V107',
+    name: 'Moles deagua en V107',
     variable: 'moles_humidity_V107',
     unit: 'mol',
     isShown: true,
@@ -2317,7 +2317,7 @@ export const BIOGAS_MODE3: DiagramVariableType[] = [
     scientificNotation: false,
   },
   {
-    name: 'pH R102',
+    name: 'PH R102',
     variable: 'pH_R102',
     unit: '',
     isShown: true,

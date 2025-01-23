@@ -569,7 +569,53 @@ export const SOLAR_WIND: SolarWindParameters = {
   directCurrentLoadPowerArray: [],
 };
 
+const COMMON_VARIABLES: DiagramVariableType[] = [
+  {
+    name: 'Radiación solar 1',
+    variable: 'inputSolarRadiation1',
+    unit: 'W / m²',
+    isShown: false,
+  },
+  {
+    name: 'Radiación solar 2',
+    variable: 'inputSolarRadiation2',
+    unit: 'W / m²',
+    isShown: false,
+  },
+  {
+    name: 'Temperatura',
+    variable: 'inputTemperature',
+    unit: '°C',
+    isShown: false,
+  },
+  {
+    name: 'Velocidad del viento',
+    variable: 'inputWindSpeed',
+    unit: 'm / s',
+    isShown: false,
+  },
+  {
+    name: 'Potencia carga CD',
+    variable: 'inputDirectCurrentLoadPower',
+    unit: 'W',
+    isShown: false,
+  },
+  {
+    name: 'Potencia carga CA',
+    variable: 'inputAlternCurrentLoadPower',
+    unit: 'W',
+    isShown: false,
+  },
+  {
+    name: 'Factor de potencia carga CA',
+    variable: 'inputAlternCurrentLoadPowerFactor',
+    unit: '',
+    isShown: false,
+  },
+];
+
 export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Potencia carga CA',
     variable: 'inputAlternCurrentLoadPower',
@@ -877,6 +923,7 @@ export const MODE_1_CADMIO_MODE_2: DiagramVariableType[] = [
 ];
 
 export const MODE_1_MODE_3: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Estado de carga baterías',
     variable: 'batteryStateOfCharge',
@@ -1074,6 +1121,7 @@ export const MODE_1_MODE_3: DiagramVariableType[] = [
 ];
 
 export const MODE_2_HYBRID: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Potencia carga CA',
     variable: 'inputAlternCurrentLoadPower',
@@ -1331,6 +1379,7 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
 ];
 
 export const MODE_4: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Estado de carga baterías',
     variable: 'batteryStateOfCharge',
@@ -1495,6 +1544,7 @@ export const MODE_4: DiagramVariableType[] = [
 ];
 
 export const MODE_4_INVERTER: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Estado de carga baterías',
     variable: 'batteryStateOfCharge',
@@ -1769,6 +1819,7 @@ export const MODE_4_INVERTER: DiagramVariableType[] = [
 ];
 
 export const MODE_5: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Estado de carga baterías',
     variable: 'batteryStateOfCharge',
@@ -2007,6 +2058,7 @@ export const MODE_5: DiagramVariableType[] = [
 ];
 
 export const MODE_5_INVERTER: DiagramVariableType[] = [
+  ...COMMON_VARIABLES,
   {
     name: 'Estado de carga baterías',
     variable: 'batteryStateOfCharge',

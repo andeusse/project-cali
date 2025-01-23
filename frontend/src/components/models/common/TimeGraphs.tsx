@@ -169,26 +169,18 @@ const TimeGraphs = (props: Props) => {
                   {variables
                     .sort((a, b) => compareStrings(a.name, b.name))
                     .map((v, index) => {
-                      if (v.isShown) {
-                        return (
-                          <MenuItem
-                            key={`${index}${v.name}`}
-                            value={v.variable}
-                          >
-                            <Checkbox
-                              checked={
-                                selectedVariables.indexOf(v.variable) > -1
-                              }
-                            />
-                            <ListItemText
-                              primary={`${v.name} ${
-                                v.unit !== '' ? `[${v.unit}]` : ''
-                              }`}
-                            />
-                          </MenuItem>
-                        );
-                      }
-                      return null;
+                      return (
+                        <MenuItem key={`${index}${v.name}`} value={v.variable}>
+                          <Checkbox
+                            checked={selectedVariables.indexOf(v.variable) > -1}
+                          />
+                          <ListItemText
+                            primary={`${v.name} ${
+                              v.unit !== '' ? `[${v.unit}]` : ''
+                            }`}
+                          />
+                        </MenuItem>
+                      );
                     })}
                 </Select>
               </FormControl>

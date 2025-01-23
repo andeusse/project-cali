@@ -458,4 +458,22 @@ export const HYDROGEN_CELL_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     x: 2000,
     y: 3450,
   },
+  {
+    name: 'Entrada corriente carga electrónica',
+    variable: 'inputElectronicLoadCurrent',
+    unit: 'A',
+    isShown: false,
+  },
+  {
+    name: 'Entrada potencia carga electrónica',
+    variable: 'inputElectronicLoadPower',
+    unit: 'W',
+    isShown: false,
+  },
+  {
+    name: 'Entrada resistencia carga electrónica',
+    variable: 'inputElectronicLoadResistance',
+    unit: 'Ohm',
+    isShown: false,
+  },
 ];
