@@ -45,9 +45,12 @@ class Turbine(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
+    
+    timeMultiplier = data["timeMultiplier"]["value"]
+    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     if data["steps"]["value"] > 1:
-      iteration = data["iteration"]
+      iteration = data["iteration"] * timeMultiplier
       if data["stepUnit"] == "Second":
         repeats = data["stepTime"]["value"]
       elif data["stepUnit"] == "Minute":
@@ -61,10 +64,7 @@ class Turbine(Resource):
     turbineType = 1 if data["turbineType"] == "Pelton" else 2
     if data["inputPressure"]["arrayEnabled"]:
       inputPressureArray = np.repeat(np.array(data["inputPressureArray"]),repeats)
-      if iteration <= len(inputPressureArray):
-        inputPressure = float(inputPressureArray[iteration-1] * 9.8064) # mH2O to kPa conversion
-      else:
-        inputPressure = float(inputPressureArray[-1] * 9.8064) # mH2O to kPa conversion
+      inputPressure = float(inputPressureArray[(iteration-1)-len(inputPressureArray)*((iteration - 1)//len(inputPressureArray))] * 9.8064) # mH2O to kPa conversion
     else:
       inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
     if data["inputFlow"]["arrayEnabled"]:
@@ -182,9 +182,6 @@ class Turbine(Resource):
         finally:
           influxDB.InfluxDBclose()
 
-    timeMultiplier = data["timeMultiplier"]["value"]
-    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
-
     inverterEfficiency = data["inverterEfficiency"]["value"]
 
     twinHydro = TwinHydro(name)
@@ -226,7 +223,7 @@ class Turbine(Resource):
       V_t = 0
     
     turbine["batteryTemperature"] = T_bat
-
+    
     twinHydro.turbineType(turbineType)
     twinHydro.twinParameters(turbineEfficiency, controllerEfficiency, inverterEfficiency)
     P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
