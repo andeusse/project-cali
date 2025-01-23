@@ -272,7 +272,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 label="Proceso"
                                 value={system.plantOperation}
                                 name="plantOperation"
-                                disabled={system.disableParameters}
                                 onChange={(e: any) => handleChange(e)}
                               >
                                 {Object.values(PlantOperationType).map(
@@ -854,7 +853,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 label="Proceso"
                                 value={system.plantOperation}
                                 name="plantOperation"
-                                disabled={system.disableParameters}
                                 onChange={(e: any) => handleChange(e)}
                               >
                                 {Object.values(PlantOperationType).map(
