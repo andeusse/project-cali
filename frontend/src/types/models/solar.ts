@@ -150,7 +150,7 @@ const BATTERY: Battery = {
   },
   capacity: {
     disabled: true,
-    value: 50,
+    value: 110,
     tooltip: 'Capacidad',
     unit: 'Ah',
     variableString: 'Capacidad',
