@@ -98,7 +98,7 @@ while True:
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MQP102", value = 2.4, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MFTP102", value = 5, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MTTOP102", value = 10, timestamp = timestamp1)
-        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "ciclo", value = 1, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "ciclo", value = 4, timestamp = timestamp1)
         
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-101A", value = 35, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-101B", value = 36, timestamp = timestamp1)

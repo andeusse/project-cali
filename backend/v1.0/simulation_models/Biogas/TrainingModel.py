@@ -142,11 +142,32 @@ class TrainingBiogasPlant:
             P_R101 = DataPlant["_value"]["PT-101"]
             T1_R101 =  DataPlant["_value"]["TE-101A"]
             T2_R101 = DataPlant["_value"]["TE-101B"]
-            Tprom_R101 = DataPlant["_value"]["TE-R101"]  
+            Tprom_R101 = DataPlant["_value"]["TE-R101"]
             
+            #V102
+            P_V102 = DataPlant["_value"]["PT-104"]
+            T_V102 = DataPlant["_value"]["TT-104"]
+            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
+            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
+            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
+            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
+            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
             
+            #V107
+            P_V107 = DataPlant["_value"]["PT-105"]
+            T_V107 = DataPlant["_value"]["TT-105"]
+            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
+            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
+            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
+            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
+            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
+            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]  
+            
+            #Normalize the time for differential equation
             time_norm = normaliceTime(time = time)
             
+            #Sizing synchronous vectors (same lenght for Model)
             #Variable for V101
             TT_V101 = SameDimension(P_V101, T_V101)
             rh_V101 = SameDimension(P_V101, rh_V101)
@@ -162,8 +183,27 @@ class TrainingBiogasPlant:
             Tprom_R101 = SameDimension(P_V101, Tprom_R101)
             PH_R101 = SameDimension(P_V101, PH_R101)
             L_R101 = SameDimension(P_V101, L_R101)
-            P_R101 = SameDimension(P_V101, P_R101)   
-                                         
+            P_R101 = SameDimension(P_V101, P_R101) 
+            
+            #Variable for V102
+            TT_V102 = SameDimension(P_V101, T_V102)
+            rh_V102 = SameDimension(P_V101, rh_V102)
+            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
+            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
+            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
+            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
+            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
+            
+            #Variable for V107
+            TT_V107 = SameDimension(P_V101, T_V107)
+            rh_V107 = SameDimension(P_V101, rh_V107)
+            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
+            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
+            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
+            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
+            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
+            
+            #Create DataFrame with Synchronous Data                                   
             self.DataPlant = pd.DataFrame({
                 "format_time":time,
                 "time": time_norm,
@@ -180,10 +220,26 @@ class TrainingBiogasPlant:
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
                 "L_R101": L_R101.tolist(),
-                "P_R101": P_R101.tolist()             
+                "P_R101": P_R101.tolist(),
+                "P_V102":P_V102.tolist(),
+                "T_V102":TT_V102.tolist(),
+                "rh_V102": rh_V102.tolist(),
+                "x_CH4_V102": x_CH4_V102.tolist(),
+                "x_CO2_V102": x_CO2_V102.tolist(),
+                "x_O2_V102": x_O2_V102.tolist(),
+                "x_H2S_V102": x_H2S_V102.tolist(),
+                "x_H2_V102": x_H2_V102.tolist(),
+                "P_V107":P_V107.tolist(),
+                "T_V107":TT_V107.tolist(),
+                "rh_V107": rh_V107.tolist(),
+                "x_CH4_V107": x_CH4_V107.tolist(),
+                "x_CO2_V107": x_CO2_V107.tolist(),
+                "x_O2_V107": x_O2_V107.tolist(),
+                "x_H2S_V107": x_H2S_V107.tolist(),
+                "x_H2_V107": x_H2_V107.tolist()               
             })
         
-            #### ----Asynchronous Data
+            #### ----add Asynchronous Data
             # Pump 104
             self.DataPlant = AlignAsynchronous(variable = "FE-104", SyncDBRaw =  DataPlant, SyncDB = self.DataPlant, current_time = time)
             # Mixing R101
@@ -211,8 +267,48 @@ class TrainingBiogasPlant:
             T2_R101 = DataPlant["_value"]["TE-101B"]
             Tprom_R101 = DataPlant["_value"]["TE-R101"] 
             
+            #V102
+            P_V102 = DataPlant["_value"]["PT-104"]
+            T_V102 = DataPlant["_value"]["TT-104"]
+            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
+            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
+            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
+            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
+            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
+            
+            #V107
+            P_V107 = DataPlant["_value"]["PT-105"]
+            T_V107 = DataPlant["_value"]["TT-105"]
+            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
+            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
+            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
+            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
+            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
+            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]  
+             
+            #Normalize the time for differential equation
             time_norm = normaliceTime(time = time)
             
+            #Sizing synchronous vectors (same lenght for Model)
+            #Variable for V102
+            TT_V102 = SameDimension(P_V101, T_V102)
+            rh_V102 = SameDimension(P_V101, rh_V102)
+            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
+            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
+            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
+            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
+            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
+            
+            #Variable for V107
+            TT_V107 = SameDimension(P_V101, T_V107)
+            rh_V107 = SameDimension(P_V101, rh_V107)
+            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
+            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
+            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
+            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
+            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
+                        
             #Variable for V101
             TT_V101 = SameDimension(P_V101, T_V101)
             rh_V101 = SameDimension(P_V101, rh_V101)
@@ -229,7 +325,8 @@ class TrainingBiogasPlant:
             PH_R101 = SameDimension(P_V101, PH_R101)
             L_R101 = SameDimension(P_V101, L_R101)
             P_R101 = SameDimension(P_V101, P_R101)   
-                                         
+            
+            #Create DataFrame with Synchronous Data                             
             self.DataPlant = pd.DataFrame({
                 "format_time":time,
                 "time": time_norm,
@@ -246,7 +343,23 @@ class TrainingBiogasPlant:
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
                 "L_R101": L_R101.tolist(),
-                "P_R101": P_R101.tolist()             
+                "P_R101": P_R101.tolist(),
+                "P_V102":P_V102.tolist(),
+                "T_V102":TT_V102.tolist(),
+                "rh_V102": rh_V102.tolist(),
+                "x_CH4_V102": x_CH4_V102.tolist(),
+                "x_CO2_V102": x_CO2_V102.tolist(),
+                "x_O2_V102": x_O2_V102.tolist(),
+                "x_H2S_V102": x_H2S_V102.tolist(),
+                "x_H2_V102": x_H2_V102.tolist(),
+                "P_V107":P_V107.tolist(),
+                "T_V107":TT_V107.tolist(),
+                "rh_V107": rh_V107.tolist(),
+                "x_CH4_V107": x_CH4_V107.tolist(),
+                "x_CO2_V107": x_CO2_V107.tolist(),
+                "x_O2_V107": x_O2_V107.tolist(),
+                "x_H2S_V107": x_H2S_V107.tolist(),
+                "x_H2_V107": x_H2_V107.tolist(),              
             })
         
             #### ----Asynchronous Data
@@ -256,10 +369,306 @@ class TrainingBiogasPlant:
             self.DataPlant = AlignAsynchronous(variable = "SE-108", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
             # Pump 101
             self.DataPlant = AlignAsynchronous(variable = "P-101", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
-            
-            
-            
         
+        elif self.Operation_mode == 3:
+            # ----- Synchronous Data
+            #V101
+            time = DataPlant["_time"]["PT-103"]
+            time = pd.to_datetime(time)
+            P_V101 = DataPlant["_value"]["PT-103"]
+            T_V101 = DataPlant["_value"]["TT-103"]
+            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
+            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
+            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
+            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
+            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
+                        
+            #R101
+            PH_R101 = DataPlant["_value"]["AT-101"]        
+            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            P_R101 = DataPlant["_value"]["PT-101"]
+            T1_R101 =  DataPlant["_value"]["TE-101A"]
+            T2_R101 = DataPlant["_value"]["TE-101B"]
+            Tprom_R101 = DataPlant["_value"]["TE-R101"]
+             
+            #V102
+            P_V102 = DataPlant["_value"]["PT-104"]
+            T_V102 = DataPlant["_value"]["TT-104"]
+            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
+            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
+            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
+            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
+            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
+            
+            #R102
+            PH_R102 = DataPlant["_value"]["AT-102"]        
+            L_R102 = DataPlant["_value"]["LT-102"]       #L: level
+            P_R102 = DataPlant["_value"]["PT-102"]
+            T1_R102 =  DataPlant["_value"]["TE-102A"]
+            T2_R102 = DataPlant["_value"]["TE-102B"]
+            Tprom_R102 = DataPlant["_value"]["TE-R102"]
+            
+            #V107
+            P_V107 = DataPlant["_value"]["PT-105"]
+            T_V107 = DataPlant["_value"]["TT-105"]
+            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
+            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
+            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
+            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
+            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
+            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]  
+            
+            #Normalize the time for differential equation 
+            time_norm = normaliceTime(time = time)
+            
+            #Sizing synchronous vectors (same lenght for Model)
+            #Variable for V101
+            TT_V101 = SameDimension(P_V101, T_V101)
+            rh_V101 = SameDimension(P_V101, rh_V101)
+            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
+            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
+            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
+            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
+            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
+            
+            #Variables for R101
+            T1_R101 = SameDimension(P_V101, T1_R101)
+            T2_R101 = SameDimension(P_V101, T2_R101)
+            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
+            PH_R101 = SameDimension(P_V101, PH_R101)
+            L_R101 = SameDimension(P_V101, L_R101)
+            P_R101 = SameDimension(P_V101, P_R101)  
+            
+            #Variables for V102
+            TT_V102 = SameDimension(P_V101, T_V102)
+            rh_V102 = SameDimension(P_V101, rh_V102)
+            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
+            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
+            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
+            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
+            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
+            
+            #Variables for R102
+            T1_R102 = SameDimension(P_V101, T1_R102)
+            T2_R102 = SameDimension(P_V101, T2_R102)
+            Tprom_R102 = SameDimension(P_V101, Tprom_R102)
+            PH_R102 = SameDimension(P_V101, PH_R102)
+            L_R102 = SameDimension(P_V101, L_R102)
+            P_R102 = SameDimension(P_V101, P_R102)
+            
+            #Variable for V107
+            TT_V107 = SameDimension(P_V101, T_V107)
+            rh_V107 = SameDimension(P_V101, rh_V107)
+            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
+            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
+            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
+            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
+            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
+                                      
+            self.DataPlant = pd.DataFrame({
+                "format_time":time,
+                "time": time_norm,
+                "P_V101":P_V101.tolist(),
+                "T_V101":TT_V101.tolist(),
+                "rh_V101": rh_V101.tolist(),
+                "x_CH4_V101": x_CH4_V101.tolist(),
+                "x_CO2_V101": x_CO2_V101.tolist(),
+                "x_O2_V101": x_O2_V101.tolist(),
+                "x_H2S_V101": x_H2S_V101.tolist(),
+                "x_H2_V101": x_H2_V101.tolist(),
+                "T1_R101": T1_R101.tolist(),
+                "T2_R101": T2_R101.tolist(),
+                "Tprom_R101": Tprom_R101.tolist(),
+                "PH_R101": PH_R101.tolist(),
+                "L_R101": L_R101.tolist(),
+                "P_R101": P_R101.tolist(),
+                "P_V102":P_V102.tolist(),
+                "T_V102":TT_V102.tolist(),
+                "rh_V102": rh_V102.tolist(),
+                "x_CH4_V102": x_CH4_V102.tolist(),
+                "x_CO2_V102": x_CO2_V102.tolist(),
+                "x_O2_V102": x_O2_V102.tolist(),
+                "x_H2S_V102": x_H2S_V102.tolist(),
+                "x_H2_V102": x_H2_V102.tolist(),
+                "T1_R102": T1_R102.tolist(),
+                "T2_R102": T2_R102.tolist(),
+                "Tprom_R102": Tprom_R102.tolist(),
+                "PH_R102": PH_R102.tolist(),
+                "L_R102": L_R102.tolist(),
+                "P_R102": P_R102.tolist(),
+                "P_V107":P_V107.tolist(),
+                "T_V107":TT_V107.tolist(),
+                "rh_V107": rh_V107.tolist(),
+                "x_CH4_V107": x_CH4_V107.tolist(),
+                "x_CO2_V107": x_CO2_V107.tolist(),
+                "x_O2_V107": x_O2_V107.tolist(),
+                "x_H2S_V107": x_H2S_V107.tolist(),
+                "x_H2_V107": x_H2_V107.tolist(),               
+            })
+        
+            #### ----Asynchronous Data
+            # Pump 104
+            self.DataPlant = AlignAsynchronous(variable = "FE-104", SyncDBRaw =  DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Mixing R101
+            self.DataPlant = AlignAsynchronous(variable = "SE-108", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Pump 101
+            self.DataPlant = AlignAsynchronous(variable = "P-101", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            #Mixing R102 
+            self.DataPlant = AlignAsynchronous(variable = "SE-109", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+        
+        elif self.Operation_mode == 4 or self.Operation_mode == 5:
+            # ----- Synchronous Data
+            #V101
+            time = DataPlant["_time"]["PT-103"]
+            time = pd.to_datetime(time)
+            P_V101 = DataPlant["_value"]["PT-103"]
+            T_V101 = DataPlant["_value"]["TT-103"]
+            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
+            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
+            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
+            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
+            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
+                        
+            #R101
+            PH_R101 = DataPlant["_value"]["AT-101"]        
+            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            P_R101 = DataPlant["_value"]["PT-101"]
+            T1_R101 =  DataPlant["_value"]["TE-101A"]
+            T2_R101 = DataPlant["_value"]["TE-101B"]
+            Tprom_R101 = DataPlant["_value"]["TE-R101"]
+             
+            #V102
+            P_V102 = DataPlant["_value"]["PT-104"]
+            T_V102 = DataPlant["_value"]["TT-104"]
+            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
+            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
+            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
+            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
+            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
+            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
+            
+            #R102
+            PH_R102 = DataPlant["_value"]["AT-102"]        
+            L_R102 = DataPlant["_value"]["LT-102"]       #L: level
+            P_R102 = DataPlant["_value"]["PT-102"]
+            T1_R102 =  DataPlant["_value"]["TE-102A"]
+            T2_R102 = DataPlant["_value"]["TE-102B"]
+            Tprom_R102 = DataPlant["_value"]["TE-R102"]
+            
+            #V107
+            P_V107 = DataPlant["_value"]["PT-105"]
+            T_V107 = DataPlant["_value"]["TT-105"]
+            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
+            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
+            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
+            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
+            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
+            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]
+             
+            #Normalize the time for differential equation 
+            time_norm = normaliceTime(time = time)
+            
+            #Sizing synchronous vectors (same lenght for Model)
+            #Variable for V101
+            TT_V101 = SameDimension(P_V101, T_V101)
+            rh_V101 = SameDimension(P_V101, rh_V101)
+            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
+            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
+            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
+            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
+            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
+            
+            #Variables for R101
+            T1_R101 = SameDimension(P_V101, T1_R101)
+            T2_R101 = SameDimension(P_V101, T2_R101)
+            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
+            PH_R101 = SameDimension(P_V101, PH_R101)
+            L_R101 = SameDimension(P_V101, L_R101)
+            P_R101 = SameDimension(P_V101, P_R101)  
+            
+            #Variables for V102
+            TT_V102 = SameDimension(P_V101, T_V102)
+            rh_V102 = SameDimension(P_V101, rh_V102)
+            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
+            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
+            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
+            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
+            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
+            
+            #Variables for R102
+            T1_R102 = SameDimension(P_V101, T1_R102)
+            T2_R102 = SameDimension(P_V101, T2_R102)
+            Tprom_R102 = SameDimension(P_V101, Tprom_R102)
+            PH_R102 = SameDimension(P_V101, PH_R102)
+            L_R102 = SameDimension(P_V101, L_R102)
+            P_R102 = SameDimension(P_V101, P_R102)
+            
+            #Variable for V107
+            TT_V107 = SameDimension(P_V101, T_V107)
+            rh_V107 = SameDimension(P_V101, rh_V107)
+            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
+            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
+            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
+            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
+            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
+                                      
+            self.DataPlant = pd.DataFrame({
+                "format_time":time,
+                "time": time_norm,
+                "P_V101":P_V101.tolist(),
+                "T_V101":TT_V101.tolist(),
+                "rh_V101": rh_V101.tolist(),
+                "x_CH4_V101": x_CH4_V101.tolist(),
+                "x_CO2_V101": x_CO2_V101.tolist(),
+                "x_O2_V101": x_O2_V101.tolist(),
+                "x_H2S_V101": x_H2S_V101.tolist(),
+                "x_H2_V101": x_H2_V101.tolist(),
+                "T1_R101": T1_R101.tolist(),
+                "T2_R101": T2_R101.tolist(),
+                "Tprom_R101": Tprom_R101.tolist(),
+                "PH_R101": PH_R101.tolist(),
+                "L_R101": L_R101.tolist(),
+                "P_R101": P_R101.tolist(),
+                "P_V102":P_V102.tolist(),
+                "T_V102":TT_V102.tolist(),
+                "rh_V102": rh_V102.tolist(),
+                "x_CH4_V102": x_CH4_V102.tolist(),
+                "x_CO2_V102": x_CO2_V102.tolist(),
+                "x_O2_V102": x_O2_V102.tolist(),
+                "x_H2S_V102": x_H2S_V102.tolist(),
+                "x_H2_V102": x_H2_V102.tolist(),
+                "T1_R102": T1_R102.tolist(),
+                "T2_R102": T2_R102.tolist(),
+                "Tprom_R102": Tprom_R102.tolist(),
+                "PH_R102": PH_R102.tolist(),
+                "L_R102": L_R102.tolist(),
+                "P_R102": P_R102.tolist(),
+                "P_V107":P_V107.tolist(),
+                "T_V107":TT_V107.tolist(),
+                "rh_V107": rh_V107.tolist(),
+                "x_CH4_V107": x_CH4_V107.tolist(),
+                "x_CO2_V107": x_CO2_V107.tolist(),
+                "x_O2_V107": x_O2_V107.tolist(),
+                "x_H2S_V107": x_H2S_V107.tolist(),
+                "x_H2_V107": x_H2_V107.tolist(),                 
+            })
+        
+            #### ----Asynchronous Data
+            # Pump 104
+            self.DataPlant = AlignAsynchronous(variable = "FE-104", SyncDBRaw =  DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Mixing R101
+            self.DataPlant = AlignAsynchronous(variable = "SE-108", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            # Pump 101
+            self.DataPlant = AlignAsynchronous(variable = "P-101", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            #Mixing R102 
+            self.DataPlant = AlignAsynchronous(variable = "SE-109", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+            #Pump 102
+            self.DataPlant = AlignAsynchronous(variable = "P-102", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+    
+    
     def LimitReagentCalculation(self):
         self.SN = self.Datainterfaz["_value"]["MNS"]    #SN: substrate number
         #Water proportion
