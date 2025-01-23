@@ -43,7 +43,6 @@ const TimeGraphs = (props: Props) => {
     variables,
     playerControl,
     isPlaying,
-    timeMultiplierAdditionalCondition = false,
   } = props;
 
   const [availableGraphs, setAvailableGraphs] = useState([...charts.variables]);
@@ -138,9 +137,7 @@ const TimeGraphs = (props: Props) => {
                 marks={marks}
                 min={timeMultiplier.min}
                 max={timeMultiplier.max}
-                disabled={
-                  timeMultiplier.disabled || timeMultiplierAdditionalCondition
-                }
+                disabled={timeMultiplier.disabled}
                 onChange={handleChange}
               />
             </Grid>
@@ -149,7 +146,6 @@ const TimeGraphs = (props: Props) => {
                 variable={timeMultiplier}
                 name="timeMultiplier"
                 handleChange={handleChange}
-                disabled={timeMultiplierAdditionalCondition}
               ></CustomNumberField>
             </Grid>
             <Grid item xs={12} md={12} xl={12}>
