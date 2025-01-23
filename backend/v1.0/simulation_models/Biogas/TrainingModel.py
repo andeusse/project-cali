@@ -667,8 +667,7 @@ class TrainingBiogasPlant:
             self.DataPlant = AlignAsynchronous(variable = "SE-109", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
             #Pump 102
             self.DataPlant = AlignAsynchronous(variable = "P-102", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
-    
-    
+
     def LimitReagentCalculation(self):
         self.SN = self.Datainterfaz["_value"]["MNS"]    #SN: substrate number
         #Water proportion
@@ -907,9 +906,19 @@ class TrainingBiogasPlant:
         self.Cst_sus = (self.rho*(self.ST/100))/self.MW_sustrato
         self.Csv_sus = (self.rho*(self.SV/100))/self.MW_sustrato
     
-    # def StochoimetricExpenditure(self):
-    #     
-    #     print(time)
+    def StochoimetricExpenditure(self):
+        
+        if self.Operation_mode == 1:
+            '''
+            quantify the methane produced : Note: If the training execution starts significantly later than the plant's operation
+            (exceeding the training time), it will not be possible to quantify the methane produced by the plant before the training begins.
+            Example: If the training time is 60 minutes but the plant starts operating 70 minutes earlier, there will be 10 minutes of methane 
+            production that cannot be quantified.
+            
+            ''' 
+            pass
+        
+        
               
 #This will be the way to call method from API
 Training = TrainingBiogasPlant(ST_ini = 2, SV_ini = 1.5, t_train=60, V_V101=15)
