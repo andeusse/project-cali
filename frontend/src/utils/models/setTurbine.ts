@@ -8,6 +8,7 @@ import {
 } from '../../types/models/turbine';
 import { getKeyByValue } from '../getKeyByValue';
 import { CellChange2Array } from '../cellChange2Array';
+import { StepUnitType } from '../../types/common';
 
 export const setTurbine = (
   e: any,
@@ -89,6 +90,14 @@ export const setTurbine = (
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
+    }
+  }
+  if (e.target.name === 'inputProfileEnable') {
+    newState.inputProfileEnable = e.target.checked;
+    if (!newState.inputProfileEnable) {
+      newState.steps.value = 1;
+      newState.stepTime.value = 1;
+      newState.stepUnit = StepUnitType.Second;
     }
   }
   return newState;

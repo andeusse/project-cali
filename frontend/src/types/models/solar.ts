@@ -427,6 +427,7 @@ export const SOLAR_WIND: SolarWindParameters = {
   name: 'Nombre',
   trainingMode: false,
   iteration: 1,
+  inputProfileEnable: false,
   steps: {
     disabled: false,
     value: 1,

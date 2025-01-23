@@ -76,6 +76,14 @@ export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
 
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
   }
+  if (e.target.name === 'inputProfileEnable') {
+    newState.inputProfileEnable = e.target.checked;
+    if (!newState.inputProfileEnable) {
+      newState.steps.value = 1;
+      newState.stepTime.value = 1;
+      newState.stepUnit = StepUnitType.Second;
+    }
+  }
   return newState;
 };
 

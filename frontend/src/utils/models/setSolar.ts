@@ -7,6 +7,7 @@ import { getKeyByValue } from '../getKeyByValue';
 import Config from '../../config/config';
 import { CellChange } from '@silevis/reactgrid';
 import { CellChange2Array } from '../cellChange2Array';
+import { StepUnitType } from '../../types/common';
 
 export const setSolar = (
   e: any,
@@ -297,6 +298,14 @@ export const setSolar = (
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
+    }
+  }
+  if (e.target.name === 'inputProfileEnable') {
+    newState.inputProfileEnable = e.target.checked;
+    if (!newState.inputProfileEnable) {
+      newState.steps.value = 1;
+      newState.stepTime.value = 1;
+      newState.stepUnit = StepUnitType.Second;
     }
   }
   return newState;

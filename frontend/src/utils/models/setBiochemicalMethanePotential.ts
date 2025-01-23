@@ -1,4 +1,4 @@
-import { OperationModelType } from '../../types/common';
+import { OperationModelType, StepUnitType } from '../../types/common';
 import {
   BiochemicalMethanePotentialParameters,
   MixRuleType,
@@ -268,6 +268,14 @@ export const setBiochemicalMethanePotential = (
     newState.mixManualSideB = newState.stateSelectionSideB;
     newState.feefManualSideB = newState.stateSelectionSideB;
     newState.manualBiogasCompositionSideB = newState.stateSelectionSideB;
+  }
+  if (e.target.name === 'inputProfileEnable') {
+    newState.inputProfileEnable = e.target.checked;
+    if (!newState.inputProfileEnable) {
+      newState.steps.value = 1;
+      newState.stepTime.value = 1;
+      newState.stepUnit = StepUnitType.Second;
+    }
   }
 
   return newState;

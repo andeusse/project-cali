@@ -106,6 +106,7 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
   trainingMode: false,
   name: 'Nombre',
   iteration: 1,
+  inputProfileEnable: false,
   steps: {
     disabled: false,
     value: 1,

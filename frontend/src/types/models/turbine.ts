@@ -289,6 +289,7 @@ export const TURBINE: TurbineParameters = {
   name: 'Nombre',
   trainingMode: false,
   iteration: 1,
+  inputProfileEnable: false,
   steps: {
     disabled: false,
     value: 1,

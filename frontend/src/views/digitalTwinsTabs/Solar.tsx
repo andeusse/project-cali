@@ -609,7 +609,7 @@ const Solar = () => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6} xl={3}>
+                <Grid item xs={12} md={6} xl={12}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
@@ -619,39 +619,6 @@ const Solar = () => {
                       onChange={handleChange}
                       disabled={system.disableParameters}
                     />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} md={3} xl={3}>
-                  <CustomNumberField
-                    variable={system.steps}
-                    name="steps"
-                    handleChange={handleChange}
-                    isInteger={true}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={3} xl={3}>
-                  <CustomNumberField
-                    variable={system.stepTime}
-                    name="stepTime"
-                    handleChange={handleChange}
-                  ></CustomNumberField>
-                </Grid>
-                <Grid item xs={12} md={3} xl={3}>
-                  <FormControl fullWidth>
-                    <InputLabel id="step-unit-type">Unidad</InputLabel>
-                    <Select
-                      labelId="step-unit-type"
-                      label="Unidad"
-                      value={system.stepUnit}
-                      name="stepUnit"
-                      onChange={(e: any) => handleChange(e)}
-                    >
-                      {Object.keys(StepUnitType).map((key) => (
-                        <MenuItem key={key} value={key}>
-                          {getValueByKey(StepUnitText, key)}
-                        </MenuItem>
-                      ))}
-                    </Select>
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} md={6} xl={12}>
@@ -1074,6 +1041,75 @@ const Solar = () => {
                         ></Battery>
                       </Grid>
                     )}
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={12} xl={12}>
+                  <h3>Perfiles de entrada</h3>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6} xl={3}>
+                      <Grid container spacing={2}>
+                        <Grid
+                          item
+                          xs={12}
+                          md={6}
+                          xl={6}
+                          alignContent={'center'}
+                        >
+                          <h3>Habilitar perfil:</h3>
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          md={6}
+                          xl={6}
+                          alignContent={'center'}
+                        >
+                          <CustomToggle
+                            name="inputProfileEnable"
+                            value={system.inputProfileEnable}
+                            handleChange={handleChange}
+                            trueString="Habilitado"
+                            falseString="Deshabilitado"
+                          ></CustomToggle>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={3}>
+                      <CustomNumberField
+                        variable={system.steps}
+                        name="steps"
+                        handleChange={handleChange}
+                        isInteger={true}
+                        disabled={!system.inputProfileEnable}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={3}>
+                      <CustomNumberField
+                        variable={system.stepTime}
+                        name="stepTime"
+                        handleChange={handleChange}
+                        disabled={!system.inputProfileEnable}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={6} xl={3}>
+                      <FormControl fullWidth>
+                        <InputLabel id="step-unit-type">Unidad</InputLabel>
+                        <Select
+                          labelId="step-unit-type"
+                          label="Unidad"
+                          value={system.stepUnit}
+                          name="stepUnit"
+                          disabled={!system.inputProfileEnable}
+                          onChange={(e: any) => handleChange(e)}
+                        >
+                          {Object.keys(StepUnitType).map((key) => (
+                            <MenuItem key={key} value={key}>
+                              {getValueByKey(StepUnitText, key)}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>

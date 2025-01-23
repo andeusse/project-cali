@@ -5,6 +5,7 @@ import {
 } from '../../types/models/hydrogenCell';
 import { CellChange2Array } from '../cellChange2Array';
 import Config from '../../config/config';
+import { StepUnitType } from '../../types/common';
 
 export const setHydrogenCell = (
   e: any,
@@ -89,6 +90,14 @@ export const setHydrogenCell = (
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
+    }
+  }
+  if (e.target.name === 'inputProfileEnable') {
+    newState.inputProfileEnable = e.target.checked;
+    if (!newState.inputProfileEnable) {
+      newState.steps.value = 1;
+      newState.stepTime.value = 1;
+      newState.stepUnit = StepUnitType.Second;
     }
   }
   return newState;

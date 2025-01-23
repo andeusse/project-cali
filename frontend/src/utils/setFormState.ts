@@ -41,7 +41,8 @@ export const setFormState = <T extends formType>(
       name === 'controller.customize' ||
       name === 'inputOfflineOperation' ||
       name === 'steps' ||
-      name === 'trainingMode'
+      name === 'trainingMode' ||
+      name === 'inputProfileEnable'
     ) {
       return setTurbine(e, oldState);
     }
@@ -54,7 +55,8 @@ export const setFormState = <T extends formType>(
       e.target.name === 'inputOperationMode' ||
       (splitName.length !== 1 && splitName[1] === 'isConnected') ||
       name === 'steps' ||
-      name === 'trainingMode'
+      name === 'trainingMode' ||
+      name === 'inputProfileEnable'
     ) {
       return setSolar(e, oldState);
     }
@@ -72,7 +74,8 @@ export const setFormState = <T extends formType>(
       name === 'inputMixR102' ||
       name === 'inputOperationMode' ||
       name === 'operationModelType' ||
-      name === 'trainingMode'
+      name === 'trainingMode' ||
+      name === 'inputProfileEnable'
     ) {
       return setBiogas(e, oldState);
     }
@@ -82,7 +85,8 @@ export const setFormState = <T extends formType>(
       name === 'inputOfflineOperation' ||
       name === 'steps' ||
       name === 'stepUnit' ||
-      name === 'trainingMode'
+      name === 'trainingMode' ||
+      name === 'inputProfileEnable'
     ) {
       return setCoolingTower(e, oldState);
     }
@@ -91,7 +95,8 @@ export const setFormState = <T extends formType>(
     if (
       name === 'inputOfflineOperation' ||
       name === 'steps' ||
-      name === 'trainingMode'
+      name === 'trainingMode' ||
+      name === 'inputProfileEnable'
     ) {
       return setHydrogenCell(e, oldState);
     }
@@ -104,7 +109,8 @@ export const setFormState = <T extends formType>(
       name === 'stateSelectionSideB' ||
       name === 'modelSelectionSideB' ||
       name === 'mixRuleSideB' ||
-      name === 'trainingMode'
+      name === 'trainingMode' ||
+      name === 'inputProfileEnable'
     ) {
       return setBiochemicalMethanePotential(e, oldState);
     }

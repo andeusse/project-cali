@@ -384,6 +384,7 @@ export const BIOGAS: BiogasParameters = {
   name: 'Nombre',
   trainingMode: false,
   iteration: 1,
+  inputProfileEnable: false,
   steps: {
     disabled: false,
     value: 24,

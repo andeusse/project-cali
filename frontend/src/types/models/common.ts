@@ -27,6 +27,7 @@ export type CommonDigitalTwinsParameter = {
   timeMultiplier: InputType;
   queryTime: number;
   disableParameters: boolean;
+  inputProfileEnable: boolean;
   steps: InputType;
   stepTime: InputType;
   stepUnit: StepUnitType;

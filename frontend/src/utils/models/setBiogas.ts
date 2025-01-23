@@ -1,5 +1,5 @@
 import Config from '../../config/config';
-import { OperationModelType } from '../../types/common';
+import { OperationModelType, StepUnitType } from '../../types/common';
 import { BiogasParameters, OperationModeType } from '../../types/models/biogas';
 import { getKeyByValue } from '../getKeyByValue';
 
@@ -458,6 +458,14 @@ export const setBiogas = (
     newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
     if (!newState.inputOfflineOperation) {
       newState.timeMultiplier.value = 1;
+    }
+  }
+  if (e.target.name === 'inputProfileEnable') {
+    newState.inputProfileEnable = e.target.checked;
+    if (!newState.inputProfileEnable) {
+      newState.steps.value = 1;
+      newState.stepTime.value = 1;
+      newState.stepUnit = StepUnitType.Second;
     }
   }
   return newState;
