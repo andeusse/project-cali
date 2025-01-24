@@ -1,5 +1,6 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
+import { useEffect, useState } from 'react';
 
 const CustomNumberField = (props: CustomTextFieldType) => {
   const {
@@ -13,29 +14,67 @@ const CustomNumberField = (props: CustomTextFieldType) => {
   const { disabled, value, tooltip, unit, variableString, variableSubString } =
     variable;
 
+  const [numberFieldValue, setNumberFieldValue] = useState(value.toString());
+
+  const useDebounce = (cb: any, delay: number) => {
+    const [debounceValue, setDebounceValue] = useState(cb);
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebounceValue(cb);
+      }, delay);
+      return () => {
+        clearTimeout(handler);
+      };
+    }, [cb, delay]);
+    return debounceValue;
+  };
+
+  const debounceValue = useDebounce(numberFieldValue, 500);
+
+  useEffect(() => {
+    if (name !== undefined) {
+      var variableTemp = {
+        target: {
+          type: 'text',
+          name: name,
+          value: 0,
+        },
+      };
+      if (debounceValue !== '') {
+        let newValue = parseFloat(debounceValue);
+        variableTemp.target.value = newValue;
+        if (isInteger) {
+          variableTemp.target.value = Math.round(newValue);
+        }
+        if (variable.min !== undefined && newValue < variable.min) {
+          variableTemp.target.value = variable.min;
+        }
+        if (variable.max !== undefined && newValue > variable.max) {
+          variableTemp.target.value = variable.max;
+        }
+      } else {
+        if (variable.min !== undefined) {
+          variableTemp.target.value = variable.min;
+        } else {
+          variableTemp.target.value = 0;
+        }
+      }
+      if (handleChange) {
+        setNumberFieldValue(variableTemp.target.value.toString());
+        handleChange(variableTemp);
+      }
+    }
+  }, [debounceValue]);
+
+  const handleValueChange = (e: any) => {
+    setNumberFieldValue(e.target.value);
+  };
+
   const onWheel = (e: any) => {
     e.target.blur();
   };
 
-  const onBlur = (e: any) => {
-    if (e.target.value !== '') {
-      let newValue = parseFloat(e.target.value);
-      if (isInteger) {
-        e.target.value = Math.round(newValue);
-      }
-      if (variable.min !== undefined && newValue < variable.min) {
-        e.target.value = variable.min;
-      }
-      if (variable.max !== undefined && newValue > variable.max) {
-        e.target.value = variable.max;
-      }
-    } else {
-      e.target.value = variable.min;
-    }
-    if (handleChange) {
-      handleChange(e);
-    }
-  };
+  const onBlur = (e: any) => {};
 
   return (
     <FormControl fullWidth>
@@ -54,9 +93,9 @@ const CustomNumberField = (props: CustomTextFieldType) => {
             </>
           }
           disabled={disabled || disabledProp}
-          value={value}
+          value={numberFieldValue}
           name={name}
-          onChange={handleChange}
+          onChange={handleValueChange}
           onWheel={onWheel}
           onBlur={(event) => (!disableKeyDown ? onBlur(event) : undefined)}
           onKeyDown={(event) =>
