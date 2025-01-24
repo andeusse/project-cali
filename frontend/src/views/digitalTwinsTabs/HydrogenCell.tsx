@@ -581,7 +581,6 @@ const HydrogenCell = (props: Props) => {
                       <CustomStringField
                         variable={system.cellRatedVoltage}
                         name="cellRatedVoltage"
-                        handleChange={handleChange}
                       ></CustomStringField>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6}>
@@ -595,7 +594,6 @@ const HydrogenCell = (props: Props) => {
                       <CustomStringField
                         variable={system.cellRatedHydrogenPressure}
                         name="cellRatedHydrogenPressure"
-                        handleChange={handleChange}
                       ></CustomStringField>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6}>

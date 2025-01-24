@@ -2,7 +2,7 @@ import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
 
 const CustomStringField = (props: CustomTextFieldType) => {
-  const { variable, name, handleChange, disabled: disabledProp } = props;
+  const { variable, name, disabled: disabledProp } = props;
   const {
     disabled,
     stringValue,
@@ -31,7 +31,6 @@ const CustomStringField = (props: CustomTextFieldType) => {
           disabled={disabled || disabledProp}
           value={stringValue}
           name={name}
-          onChange={handleChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">{unit}</InputAdornment>
