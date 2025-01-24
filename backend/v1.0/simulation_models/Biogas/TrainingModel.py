@@ -14,7 +14,7 @@ from functools import reduce
 from math import gcd
 
 class TrainingBiogasPlant:
-    def __init__(self, t_train, ST_ini, SV_ini, V_V101):
+    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101):
         # DB_IP = os.getenv('DB_IP')
         # DB_Port = os.getenv('DB_Port')
         # DB_Bucket = os.getenv('DB_Bucket')
@@ -30,16 +30,18 @@ class TrainingBiogasPlant:
         self.influxDB.InfluxDBconnection()
         self.t_train = t_train
         
-        self.ST_ini = ST_ini    #Initial condition for reactor
-        self.SV_ini = SV_ini    #Initial condition for reactor
+        #------Initial conditions for R101
+        self.ST_ini_R101 = ST_ini_R101    #Initial condition for reactor
+        self.SV_ini_R101 = SV_ini_R101         #Initial condition for reactor
         #initial concentration inside reactor
-        self.Csus_ini_ST = (1000*(self.ST_ini/100))/18.0     #18: molecular weight of water, this is for inoculum
-        self.Csus_ini_SV = (1000*(self.SV_ini/100))/18.0     #1000: Standar density of water   
-        self.Csus_ini_fixed = self.Csus_ini_ST - self.Csus_ini_SV
-       
-        #constructive condition for storage biogás 
-        self.V_V101 = V_V101
-       
+        self.Csus_ini_ST_R101 = (1000*(self.ST_ini_R101/100))/18.0     #18: molecular weight of water, this is for inoculum Units: mol/L
+        self.Csus_ini_SV_R101 = (1000*(self.SV_ini_R101/100))/18.0     #1000: Standar density of water   Units: mol/L - kmol/m3
+        self.Csus_ini_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_SV_R101
+                   
+        #initial and constructive conditions for V101
+        self.Pi_V101 = 0          #Is the biggest pressure in V101 before pressure in V101 drop
+        self.Volume_V101 = Volume_V101     #Volume of the tank in Liters
+        
     def getData (self):
         #Get data from User input plant plant
         self.query1 = self.influxDB.QueryCreator(measurement="Planta_Biogas", device="interfaz", type=5)
@@ -182,8 +184,8 @@ class TrainingBiogasPlant:
             T2_R101 = SameDimension(P_V101, T2_R101)
             Tprom_R101 = SameDimension(P_V101, Tprom_R101)
             PH_R101 = SameDimension(P_V101, PH_R101)
-            L_R101 = SameDimension(P_V101, L_R101)
-            P_R101 = SameDimension(P_V101, P_R101) 
+            V_R101 = SameDimension(P_V101, L_R101)
+            P_R101 = SameDimension(P_V101, P_R101)
             
             #Variable for V102
             TT_V102 = SameDimension(P_V101, T_V102)
@@ -219,7 +221,7 @@ class TrainingBiogasPlant:
                 "T2_R101": T2_R101.tolist(),
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
-                "L_R101": L_R101.tolist(),
+                "V_R101": V_R101.tolist(),
                 "P_R101": P_R101.tolist(),
                 "P_V102":P_V102.tolist(),
                 "T_V102":TT_V102.tolist(),
@@ -323,7 +325,7 @@ class TrainingBiogasPlant:
             T2_R101 = SameDimension(P_V101, T2_R101)
             Tprom_R101 = SameDimension(P_V101, Tprom_R101)
             PH_R101 = SameDimension(P_V101, PH_R101)
-            L_R101 = SameDimension(P_V101, L_R101)
+            V_R101 = SameDimension(P_V101, L_R101)
             P_R101 = SameDimension(P_V101, P_R101)   
             
             #Create DataFrame with Synchronous Data                             
@@ -342,7 +344,7 @@ class TrainingBiogasPlant:
                 "T2_R101": T2_R101.tolist(),
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
-                "L_R101": L_R101.tolist(),
+                "V_R101": V_R101.tolist(),
                 "P_R101": P_R101.tolist(),
                 "P_V102":P_V102.tolist(),
                 "T_V102":TT_V102.tolist(),
@@ -386,7 +388,7 @@ class TrainingBiogasPlant:
                         
             #R101
             PH_R101 = DataPlant["_value"]["AT-101"]        
-            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            V_R101 = DataPlant["_value"]["LT-101"]       #L: level
             P_R101 = DataPlant["_value"]["PT-101"]
             T1_R101 =  DataPlant["_value"]["TE-101A"]
             T2_R101 = DataPlant["_value"]["TE-101B"]
@@ -404,7 +406,7 @@ class TrainingBiogasPlant:
             
             #R102
             PH_R102 = DataPlant["_value"]["AT-102"]        
-            L_R102 = DataPlant["_value"]["LT-102"]       #L: level
+            V_R102 = DataPlant["_value"]["LT-102"]       #L: level
             P_R102 = DataPlant["_value"]["PT-102"]
             T1_R102 =  DataPlant["_value"]["TE-102A"]
             T2_R102 = DataPlant["_value"]["TE-102B"]
@@ -438,7 +440,7 @@ class TrainingBiogasPlant:
             T2_R101 = SameDimension(P_V101, T2_R101)
             Tprom_R101 = SameDimension(P_V101, Tprom_R101)
             PH_R101 = SameDimension(P_V101, PH_R101)
-            L_R101 = SameDimension(P_V101, L_R101)
+            V_R101 = SameDimension(P_V101, L_R101)
             P_R101 = SameDimension(P_V101, P_R101)  
             
             #Variables for V102
@@ -482,7 +484,7 @@ class TrainingBiogasPlant:
                 "T2_R101": T2_R101.tolist(),
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
-                "L_R101": L_R101.tolist(),
+                "V_R101": V_R101.tolist(),
                 "P_R101": P_R101.tolist(),
                 "P_V102":P_V102.tolist(),
                 "T_V102":TT_V102.tolist(),
@@ -496,7 +498,7 @@ class TrainingBiogasPlant:
                 "T2_R102": T2_R102.tolist(),
                 "Tprom_R102": Tprom_R102.tolist(),
                 "PH_R102": PH_R102.tolist(),
-                "L_R102": L_R102.tolist(),
+                "V_R102": V_R102.tolist(),
                 "P_R102": P_R102.tolist(),
                 "P_V107":P_V107.tolist(),
                 "T_V107":TT_V107.tolist(),
@@ -534,7 +536,7 @@ class TrainingBiogasPlant:
                         
             #R101
             PH_R101 = DataPlant["_value"]["AT-101"]        
-            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            V_R101 = DataPlant["_value"]["LT-101"]       #L: level
             P_R101 = DataPlant["_value"]["PT-101"]
             T1_R101 =  DataPlant["_value"]["TE-101A"]
             T2_R101 = DataPlant["_value"]["TE-101B"]
@@ -603,7 +605,7 @@ class TrainingBiogasPlant:
             T2_R102 = SameDimension(P_V101, T2_R102)
             Tprom_R102 = SameDimension(P_V101, Tprom_R102)
             PH_R102 = SameDimension(P_V101, PH_R102)
-            L_R102 = SameDimension(P_V101, L_R102)
+            V_R102 = SameDimension(P_V101, L_R102)
             P_R102 = SameDimension(P_V101, P_R102)
             
             #Variable for V107
@@ -630,7 +632,7 @@ class TrainingBiogasPlant:
                 "T2_R101": T2_R101.tolist(),
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
-                "L_R101": L_R101.tolist(),
+                "V_R101": L_R101.tolist(),
                 "P_R101": P_R101.tolist(),
                 "P_V102":P_V102.tolist(),
                 "T_V102":TT_V102.tolist(),
@@ -644,7 +646,7 @@ class TrainingBiogasPlant:
                 "T2_R102": T2_R102.tolist(),
                 "Tprom_R102": Tprom_R102.tolist(),
                 "PH_R102": PH_R102.tolist(),
-                "L_R102": L_R102.tolist(),
+                "V_R102": L_R102.tolist(),
                 "P_R102": P_R102.tolist(),
                 "P_V107":P_V107.tolist(),
                 "T_V107":TT_V107.tolist(),
@@ -913,18 +915,95 @@ class TrainingBiogasPlant:
             quantify the methane produced : Note: If the training execution starts significantly later than the plant's operation
             (exceeding the training time), it will not be possible to quantify the methane produced by the plant before the training begins.
             Example: If the training time is 60 minutes but the plant starts operating 70 minutes earlier, there will be 10 minutes of methane 
-            production that cannot be quantified.
-            
+            production that cannot be quantified.   
             ''' 
-            pass
-        
-        
-              
+            # Methane produce by R101 using V101 storage
+            #Set initial value from previuos layer
+            try:
+                if self.TrainMode1.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                else:
+                    self.Csus_ini_SV_R101 = self.TrainMode1["Csus_exp"].iloc[0]       
+            except AttributeError:
+                    print("The DataFrame does not exist.")
+            # Create list for TrainModel Dataframe            
+            C_in_sus = []
+            V = []
+            Csus = []
+            Q_P104v = []
+            timev = []
+            for i in range (len(self.DataPlant)):
+                self.P_V101 = self.DataPlant["P_V101"][i]
+                
+                #conditions when the pressure inside V101 drop
+                if i > 0:
+                    if (i + 1) in self.DataPlant.index and i in self.DataPlant.index:
+                        tp = self.DataPlant["time"][i+1] - self.DataPlant["time"][i]
+                    else:
+                        tp = 0
+                    Q_P104 = self.DataPlant["FE-104"][i-1]
+                    if self.P_V101 < (self.DataPlant["P_V101"][i-1] * 1.05):         
+                        self.Pi_V101 = self.P_V101          #P_ini is the actual pressure in V101
+                else:
+                    tp = 0
+                    Q_P104 = 0  #Flow of pump at the beginning
+                    
+                #Estimate the accumulated pressure
+                self.Pacum_V101 = + self.Pi_V101 + self.P_V101
+                
+                #Estimate the Storage and accumulated mol of biogas
+                # Storage biogas mol
+                self.n_biogas_sto_V101 = (((self.P_V101*6.899476) * (self.Volume_V101/1000))/
+                                          (8.314 * (self.DataPlant["T_V101"][i] + 273.15)))           #kmol
+                # Accumulated biogas mol
+                self.n_biogas_acum_V101 = (((self.Pacum_V101*6.899476) * (self.Volume_V101/1000))/
+                                          (8.314 * (self.DataPlant["T_V101"][i] + 273.15)))           #kmol
+                
+                #Estimate the storage and accumulated mol for component in biogas
+                #Storage compounds
+                self.mol_sto_CH4_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CH4_V101"][i]      #kmol
+                self.mol_sto_CO2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CO2_V101"][i]      #kmol
+                self.mol_sto_O2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_O2_V101"][i]        #kmol
+                self.mol_sto_H2S_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_H2S_V101"][i]      #kmol
+                self.mol_sto_H2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_H2_V101"][i]        #kmol
+            
+                #Accumulated compounds
+                self.mol_acum_CH4_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CH4_V101"][i]      #kmol
+                self.mol_acum_CO2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CO2_V101"][i]      #kmol
+                self.mol_acum_O2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_O2_V101"][i]        #kmol
+                self.mol_acum_H2S_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_H2S_V101"][i]      #kmol
+                self.mol_acum_H2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_H2_V101"][i]        #kmol
+                
+                #Stochoimetric expenditure
+                #mol organic compound
+                mol_ini = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
+                mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
+                mol_expended = self.mol_acum_CH4_V101 * (1/self.s_CH4)
+                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i]/1000)
+                                
+                print(self.Csus_ini_SV_R101)                
+                timev.append(self.DataPlant["time"][i])
+                V.append(self.DataPlant["V_R101"][i])
+                Q_P104v.append(Q_P104)
+                C_in_sus.append(self.Csv_sus)
+                Csus.append(self.Csus_ini_SV_R101)
+            
+            self.TrainMode1 = pd.DataFrame({"time": timev,
+                                            "Vol": V,
+                                            "Q_P104": self.DataPlant["FE-104"].tolist(),
+                                            "Csus_exp":Csus 
+                                            })
+                
+                
 #This will be the way to call method from API
-Training = TrainingBiogasPlant(ST_ini = 2, SV_ini = 1.5, t_train=60, V_V101=15)
+Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=120, Volume_V101 = 15) 
 Training.getData()
 Training.LimitReagentCalculation()
-print(Training.DataPlant)
+for i in range (2):
+    Training.StochoimetricExpenditure()
+    print(Training.TrainMode1)
+
 
 
 

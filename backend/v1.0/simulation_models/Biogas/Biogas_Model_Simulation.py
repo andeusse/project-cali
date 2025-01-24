@@ -473,7 +473,7 @@ class BiogasPlantSimulation:
     def Pump101 (self, FT_P101=5, TTO_P101=10, Q_P101 = 2.4):
         
         if self.OperationMode == "Modo1":
-            pass
+            self.Q_P101 = 0
 
         elif self.OperationMode == "Modo2":
             self.FT_P101= FT_P101
@@ -510,7 +510,7 @@ class BiogasPlantSimulation:
     def Pump102 (self, FT_P102=5, TTO_P102=10, Q_P102 = 2.4):
         
         if self.OperationMode == "Modo1" or self.OperationMode == "Modo2" or self.OperationMode == "Modo3":
-            pass
+            self.Q_P102 = 0
 
         elif self.OperationMode == "Modo4" or self.OperationMode == "Modo5":
             self.FT_P102= FT_P102
@@ -569,7 +569,7 @@ class BiogasPlantSimulation:
     
     def Mixing_R102 (self, FT_mixin_R102=5, TTO_mixing_R102 = 10, RPM_R102 = 50):
         if self.OperationMode in ["Modo1", "Modo2"]:
-            pass
+            self.RPM_R102 = 0
         else:
             self.FT_mixing_R102 = FT_mixin_R102
             self.TTO_mixing_R102 = TTO_mixing_R102
