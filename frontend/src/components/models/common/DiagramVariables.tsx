@@ -27,7 +27,9 @@ const DiagramVariables = <T,>(props: Props<T>) => {
         let printValue: string = '-';
         const value = data ? data[v.variable as keyof T] : null;
         if (data && typeof value === 'number' && !v.scientificNotation) {
-          printValue = (value as number).toFixed(v.fixed);
+          printValue = (value as number).toLocaleString(undefined, {
+            maximumFractionDigits: v.fixed,
+          });
         } else if (data && typeof value === 'number' && v.scientificNotation) {
           printValue = (value as number).toExponential(v.fixed);
         } else if (data && typeof value === 'boolean') {
