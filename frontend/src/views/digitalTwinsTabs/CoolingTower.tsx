@@ -51,6 +51,7 @@ import { AxiosError } from 'axios';
 import { modelsAPI } from '../../api/digitalTwinsModels';
 import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
+import ConfimationModal from '../../components/UI/ConfimationModal';
 
 const CoolingTower = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -295,19 +296,21 @@ const CoolingTower = () => {
   };
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showConfimationModal, setShowConfimationModal] = useState(false);
   const [passwordEl, setPasswordEl] = useState<any>(undefined);
+
   const handleTrainingModeChange = (e: any) => {
+    setPasswordEl({
+      target: {
+        type: 'checkbox',
+        checked: e.target.checked,
+        name: e.target.name,
+      },
+    });
     if (e.target.checked) {
       setShowPasswordModal(true);
-      setPasswordEl({
-        target: {
-          type: 'checkbox',
-          checked: e.target.checked,
-          name: e.target.name,
-        },
-      });
     } else {
-      handleChange(e);
+      setShowConfimationModal(true);
     }
   };
 
@@ -338,6 +341,16 @@ const CoolingTower = () => {
         .finally(() => {});
     }
     setShowPasswordModal(false);
+  };
+
+  const handleConfirmationModalClose = (confirm: boolean) => {
+    if (confirm) {
+      const newState = setFormState<CoolingTowerParameters>(passwordEl, system);
+      if (newState) {
+        setSystem(newState as CoolingTowerParameters);
+      }
+    }
+    setShowConfimationModal(false);
   };
 
   const handleSaveSystem = () => {
@@ -391,6 +404,10 @@ const CoolingTower = () => {
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}
       ></PasswordModal>
+      <ConfimationModal
+        open={showConfimationModal}
+        handleClose={handleConfirmationModalClose}
+      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion

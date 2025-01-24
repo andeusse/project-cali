@@ -55,6 +55,7 @@ import { AxiosError } from 'axios';
 import { modelsAPI } from '../../api/digitalTwinsModels';
 import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
+import ConfimationModal from '../../components/UI/ConfimationModal';
 
 type Props = {};
 
@@ -359,19 +360,21 @@ const HydrogenCell = (props: Props) => {
   };
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showConfimationModal, setShowConfimationModal] = useState(false);
   const [passwordEl, setPasswordEl] = useState<any>(undefined);
+
   const handleTrainingModeChange = (e: any) => {
+    setPasswordEl({
+      target: {
+        type: 'checkbox',
+        checked: e.target.checked,
+        name: e.target.name,
+      },
+    });
     if (e.target.checked) {
       setShowPasswordModal(true);
-      setPasswordEl({
-        target: {
-          type: 'checkbox',
-          checked: e.target.checked,
-          name: e.target.name,
-        },
-      });
     } else {
-      handleChange(e);
+      setShowConfimationModal(true);
     }
   };
 
@@ -402,6 +405,16 @@ const HydrogenCell = (props: Props) => {
         .finally(() => {});
     }
     setShowPasswordModal(false);
+  };
+
+  const handleConfirmationModalClose = (confirm: boolean) => {
+    if (confirm) {
+      const newState = setFormState<HydrogencellParameters>(passwordEl, system);
+      if (newState) {
+        setSystem(newState as HydrogencellParameters);
+      }
+    }
+    setShowConfimationModal(false);
   };
 
   const handleSaveSystem = () => {
@@ -455,6 +468,10 @@ const HydrogenCell = (props: Props) => {
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}
       ></PasswordModal>
+      <ConfimationModal
+        open={showConfimationModal}
+        handleClose={handleConfirmationModalClose}
+      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
