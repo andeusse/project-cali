@@ -15,8 +15,6 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
 
   const [historicData, setHistoricData] = useState<any>({});
 
-  const [lastTime, setLastTime] = useState<moment.Moment | null>();
-
   const [charts, setCharts] = useState<ChartValues>();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -42,15 +40,15 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
             setHistoricData((oldState: any) => {
               if (oldState['time'] === undefined) {
                 const newDate = moment();
-                setLastTime(newDate);
                 oldState['time'] = [newDate];
               } else {
-                const newDate = moment(lastTime).add(
+                const newDate = moment(
+                  oldState['time'][oldState['time'].length - 1]
+                ).add(
                   model.timeMultiplier.value *
                     Math.floor(model.queryTime / 1000),
                   's'
                 );
-                setLastTime(newDate);
                 oldState['time'].push(newDate);
               }
               return oldState;
@@ -72,11 +70,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         );
       })
       .finally(() => {});
-  }, [historicData, isPlaying, model, url, lastTime]);
-
-  useEffect(() => {
-    setLastTime(moment());
-  }, [isPlaying]);
+  }, [historicData, isPlaying, model, url]);
 
   useEffect(() => {
     const interval: NodeJS.Timer = setInterval(() => {
