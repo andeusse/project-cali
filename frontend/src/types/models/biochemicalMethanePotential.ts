@@ -188,6 +188,7 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
     dosificationVolumeSideA: InputType;
     dailyInyectionsByTimeSideA: InputType;
     dailyInyectionsSideA: InputType;
+    pressureSetPointSideA: InputType;
 
     rxnVolumeSideB: InputType;
     freeVolumeSideB: InputType;
@@ -275,6 +276,7 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
     dosificationVolumeSideB: InputType;
     dailyInyectionsByTimeSideB: InputType;
     dailyInyectionsSideB: InputType;
+    pressureSetPointSideB: InputType;
   };
 
 export type BiochemicalMethanePotentialOutput = {
@@ -1346,6 +1348,15 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     min: 4,
     max: 12,
   },
+  pressureSetPointSideA: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Set point presión',
+    unit: '',
+    variableString: 'Set point presión',
+    min: 5,
+    max: 15,
+  },
   rxnVolumeSideB: {
     disabled: false,
     value: 750,
@@ -2036,6 +2047,15 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     variableString: 'Inyecciones diarias',
     min: 4,
     max: 12,
+  },
+  pressureSetPointSideB: {
+    disabled: false,
+    value: 10,
+    tooltip: 'Set point presión',
+    unit: '',
+    variableString: 'Set point presión',
+    min: 5,
+    max: 15,
   },
 };
 

@@ -3137,6 +3137,23 @@ const BiochemicalMethanePotential = (props: Props) => {
                 {system.plantOperation === PlantOperationType.SideA && (
                   <Grid item xs={12} md={12} xl={12}>
                     <Grid container spacing={2}>
+                      <Grid item xs={12} md={6} xl={3}>
+                        <FormControl fullWidth>
+                          <InputLabel>Componentes</InputLabel>
+                          <Select
+                            label="Componentes"
+                            value={system.biogasCompoundsSideA}
+                            name="biogasCompoundsSideA"
+                            onChange={(e: any) => handleChange(e)}
+                          >
+                            {Object.keys(DiagramCompoundUnitType).map((key) => (
+                              <MenuItem key={key} value={key}>
+                                {getValueByKey(DiagramCompoundUnitText, key)}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
                       {system.measurementMethodSideA ===
                         DiagramBiogasMeasurementMethodType.Pressure && (
                         <>
@@ -3179,15 +3196,29 @@ const BiochemicalMethanePotential = (props: Props) => {
                               </Select>
                             </FormControl>
                           </Grid>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <CustomNumberField
+                              variable={system.pressureSetPointSideA}
+                              name="pressureSetPointSideA"
+                              handleChange={handleChange}
+                              disabled={!system.feefManualSideA}
+                            ></CustomNumberField>
+                          </Grid>
                         </>
                       )}
+                    </Grid>
+                  </Grid>
+                )}
+                {system.plantOperation === PlantOperationType.SideB && (
+                  <Grid item xs={12} md={12} xl={12}>
+                    <Grid container spacing={2}>
                       <Grid item xs={12} md={6} xl={3}>
                         <FormControl fullWidth>
                           <InputLabel>Componentes</InputLabel>
                           <Select
                             label="Componentes"
-                            value={system.biogasCompoundsSideA}
-                            name="biogasCompoundsSideA"
+                            value={system.biogasCompoundsSideB}
+                            name="biogasCompoundsSideB"
                             onChange={(e: any) => handleChange(e)}
                           >
                             {Object.keys(DiagramCompoundUnitType).map((key) => (
@@ -3198,12 +3229,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                           </Select>
                         </FormControl>
                       </Grid>
-                    </Grid>
-                  </Grid>
-                )}
-                {system.plantOperation === PlantOperationType.SideB && (
-                  <Grid item xs={12} md={12} xl={12}>
-                    <Grid container spacing={2}>
                       {system.measurementMethodSideB ===
                         DiagramBiogasMeasurementMethodType.Pressure && (
                         <>
@@ -3246,25 +3271,16 @@ const BiochemicalMethanePotential = (props: Props) => {
                               </Select>
                             </FormControl>
                           </Grid>
+                          <Grid item xs={12} md={6} xl={3}>
+                            <CustomNumberField
+                              variable={system.pressureSetPointSideB}
+                              name="pressureSetPointSideB"
+                              handleChange={handleChange}
+                              disabled={!system.feefManualSideB}
+                            ></CustomNumberField>
+                          </Grid>
                         </>
                       )}
-                      <Grid item xs={12} md={6} xl={3}>
-                        <FormControl fullWidth>
-                          <InputLabel>Componentes</InputLabel>
-                          <Select
-                            label="Componentes"
-                            value={system.biogasCompoundsSideB}
-                            name="biogasCompoundsSideB"
-                            onChange={(e: any) => handleChange(e)}
-                          >
-                            {Object.keys(DiagramCompoundUnitType).map((key) => (
-                              <MenuItem key={key} value={key}>
-                                {getValueByKey(DiagramCompoundUnitText, key)}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
                     </Grid>
                   </Grid>
                 )}
