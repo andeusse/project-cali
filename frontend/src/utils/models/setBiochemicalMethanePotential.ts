@@ -2,6 +2,7 @@ import { OperationModelType, StepUnitType } from '../../types/common';
 import {
   BiochemicalMethanePotentialParameters,
   MixRuleType,
+  PlantOperationType,
 } from '../../types/models/biochemicalMethanePotential';
 import { getKeyByValue } from '../getKeyByValue';
 
@@ -275,6 +276,26 @@ export const setBiochemicalMethanePotential = (
       newState.steps.value = 1;
       newState.stepTime.value = 1;
       newState.stepUnit = StepUnitType.Second;
+    }
+  }
+  if (e.target.name === 'isSideAOn') {
+    newState.isSideAOn = e.target.checked;
+    if (!newState.isSideAOn && !newState.isSideBOn) {
+      newState.isSideBOn = true;
+      newState.plantOperation = PlantOperationType.SideB;
+    }
+    if (!newState.isSideAOn) {
+      newState.plantOperation = PlantOperationType.SideB;
+    }
+  }
+  if (e.target.name === 'isSideBOn') {
+    newState.isSideBOn = e.target.checked;
+    if (!newState.isSideAOn && !newState.isSideBOn) {
+      newState.isSideAOn = true;
+      newState.plantOperation = PlantOperationType.SideA;
+    }
+    if (!newState.isSideBOn) {
+      newState.plantOperation = PlantOperationType.SideA;
     }
   }
 

@@ -259,7 +259,45 @@ const BiochemicalMethanePotential = (props: Props) => {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={12} xl={12}>
+                <Grid item xs={12} md={6} xl={1.5} sx={{ height: '72px' }}>
+                  <h3>Lado A</h3>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  xl={1.5}
+                  sx={{ alignContent: 'center' }}
+                >
+                  <CustomToggle
+                    value={system.isSideAOn}
+                    name="isSideAOn"
+                    handleChange={handleChange}
+                    trueString="On"
+                    falseString="Off"
+                    disabled={system.disableParameters || system.trainingMode}
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={6} xl={1.5} sx={{ height: '72px' }}>
+                  <h3>Lado B</h3>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={6}
+                  xl={1.5}
+                  sx={{ alignContent: 'center' }}
+                >
+                  <CustomToggle
+                    value={system.isSideBOn}
+                    name="isSideBOn"
+                    handleChange={handleChange}
+                    trueString="On"
+                    falseString="Off"
+                    disabled={system.disableParameters || system.trainingMode}
+                  ></CustomToggle>
+                </Grid>
+                <Grid item xs={12} md={12} xl={6}>
                   <FormControl fullWidth>
                     <TextField
                       label="Nombre"
@@ -295,11 +333,24 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 onChange={(e: any) => handleChange(e)}
                               >
                                 {Object.values(PlantOperationType).map(
-                                  (key) => (
-                                    <MenuItem key={key} value={key}>
-                                      {getValueByKey(PlantOperationText, key)}
-                                    </MenuItem>
-                                  )
+                                  (key) => {
+                                    if (
+                                      (key === PlantOperationType.SideA &&
+                                        system.isSideAOn) ||
+                                      (key === PlantOperationType.SideB &&
+                                        system.isSideBOn)
+                                    ) {
+                                      return (
+                                        <MenuItem key={key} value={key}>
+                                          {getValueByKey(
+                                            PlantOperationText,
+                                            key
+                                          )}
+                                        </MenuItem>
+                                      );
+                                    }
+                                    return null;
+                                  }
                                 )}
                               </Select>
                             </FormControl>
@@ -876,11 +927,24 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 onChange={(e: any) => handleChange(e)}
                               >
                                 {Object.values(PlantOperationType).map(
-                                  (key) => (
-                                    <MenuItem key={key} value={key}>
-                                      {getValueByKey(PlantOperationText, key)}
-                                    </MenuItem>
-                                  )
+                                  (key) => {
+                                    if (
+                                      (key === PlantOperationType.SideA &&
+                                        system.isSideAOn) ||
+                                      (key === PlantOperationType.SideB &&
+                                        system.isSideBOn)
+                                    ) {
+                                      return (
+                                        <MenuItem key={key} value={key}>
+                                          {getValueByKey(
+                                            PlantOperationText,
+                                            key
+                                          )}
+                                        </MenuItem>
+                                      );
+                                    }
+                                    return null;
+                                  }
                                 )}
                               </Select>
                             </FormControl>

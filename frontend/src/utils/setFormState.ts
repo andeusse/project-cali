@@ -110,7 +110,9 @@ export const setFormState = <T extends formType>(
       name === 'modelSelectionSideB' ||
       name === 'mixRuleSideB' ||
       name === 'trainingMode' ||
-      name === 'inputProfileEnable'
+      name === 'inputProfileEnable' ||
+      name === 'isSideAOn' ||
+      name === 'isSideBOn'
     ) {
       return setBiochemicalMethanePotential(e, oldState);
     }

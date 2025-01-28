@@ -101,6 +101,8 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
     biogasVisualizationSideB: DiagramBiogasType;
     biogasVisualizationUnitsSideB: DiagramBiogasUnitType;
     biogasCompoundsSideB: DiagramCompoundUnitType;
+    isSideAOn: boolean;
+    isSideBOn: boolean;
 
     rxnVolumeSideA: InputType;
     freeVolumeSideA: InputType;
@@ -629,6 +631,8 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     min: 1,
     max: 10,
   },
+  isSideAOn: true,
+  isSideBOn: true,
   inputOfflineOperation: true,
   plantOperation: PlantOperationType.SideA,
   measurementMethodSideA: DiagramBiogasMeasurementMethodType.Pressure,
