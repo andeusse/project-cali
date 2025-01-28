@@ -67,25 +67,30 @@ class Turbine(Resource):
       inputPressure = float(inputPressureArray[(iteration-1)-len(inputPressureArray)*((iteration - 1)//len(inputPressureArray))] * 9.8064) # mH2O to kPa conversion
     else:
       inputPressure = ((0.0 if not data["inputPressure"]["value"] else data["inputPressure"]["value"]) if not data["inputPressure"]["disabled"] else round(values_df["Value"]['PT-001'],2)) * 9.8064 # mH2O to kPa conversion
-    
     if data["inputFlow"]["arrayEnabled"]:
       inputFlowArray = np.repeat(np.array(data["inputFlowArray"]),repeats)
-      inputFlow = float(inputFlowArray[(iteration-1)-len(inputFlowArray)*((iteration - 1)//len(inputFlowArray))])
+      if iteration <= len(inputFlowArray):
+        inputFlow = float(inputFlowArray[iteration-1])
+      else:
+        inputFlow = float(inputFlowArray[-1])
     else:
       inputFlow = (0.0 if not data["inputFlow"]["value"] else data["inputFlow"]["value"]) if not data["inputFlow"]["disabled"] else round(values_df["Value"]['FT-001'],2)
-    
     if data["inputActivePower"]["arrayEnabled"]:
       inputActivePowerArray = np.repeat(np.array(data["inputActivePowerArray"]),repeats)
-      inputActivePower = float(inputActivePowerArray[(iteration-1)-len(inputActivePowerArray)*((iteration - 1)//len(inputActivePowerArray))])
+      if iteration <= len(inputActivePowerArray):
+        inputActivePower = float(inputActivePowerArray[iteration-1])
+      else:
+        inputActivePower = float(inputActivePowerArray[-1])
     else:
       inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
-    
     if data["inputPowerFactor"]["arrayEnabled"]:
       inputPowerFactorArray = np.repeat(np.array(data["inputPowerFactorArray"]),repeats)
-      inputPowerFactor = float(inputPowerFactorArray[(iteration-1)-len(inputPowerFactorArray)*((iteration - 1)//len(inputPowerFactorArray))])
+      if iteration <= len(inputPowerFactorArray):
+        inputPowerFactor = float(inputPowerFactorArray[iteration-1])
+      else:
+        inputPowerFactor = float(inputPowerFactorArray[-1])
     else:
       inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round((values_df["Value"]['FP-001'] if values_df["Value"]['FP-001'] != 0.0 else 1.0)* (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
-    
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False or turbineType == 1 else 3.6
     if inputPowerFactor == 0.0: inputPowerFactor = 1.0
     

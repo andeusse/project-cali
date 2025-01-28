@@ -50,12 +50,9 @@ class Solar(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
-    
-    timeMultiplier = data["timeMultiplier"]["value"]
-    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     if data["steps"]["value"] > 1:
-      iteration = data["iteration"] * timeMultiplier
+      iteration = data["iteration"]
       if data["stepUnit"] == "Second":
         repeats = data["stepTime"]["value"]
       elif data["stepUnit"] == "Minute":
@@ -98,7 +95,10 @@ class Solar(Resource):
 
     if data["solarRadiation1"]["arrayEnabled"]:
       solarRadiation1Array = np.repeat(np.array(data["solarRadiation1Array"]),repeats)
-      solarRadiation1 = float(solarRadiation1Array[(iteration-1)-len(solarRadiation1Array)*((iteration - 1)//len(solarRadiation1Array))])
+      if iteration <= len(solarRadiation1Array):
+        solarRadiation1 = float(solarRadiation1Array[iteration-1])
+      else:
+        solarRadiation1 = float(solarRadiation1Array[-1])
     elif (data["inputOperationMode"] == 'Mode1' and (monoModuleState or polyModuleState)) or (data["inputOperationMode"] == 'Mode2' and (monoModuleState or polyModuleState)) or (data["inputOperationMode"] == 'Mode3' and (monoModuleState or polyModuleState)) or (data["inputOperationMode"] == 'Mode5' and (monoModuleState or polyModuleState)):
       solarRadiation1 = (0.0 if not data["solarRadiation1"]["value"] else data["solarRadiation1"]["value"]) if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS-001'],2)
     else:
@@ -106,7 +106,10 @@ class Solar(Resource):
     
     if data["solarRadiation2"]["arrayEnabled"]:
       solarRadiation2Array = np.repeat(np.array(data["solarRadiation2Array"]),repeats)
-      solarRadiation2 = float(solarRadiation2Array[(iteration-1)-len(solarRadiation2Array)*((iteration - 1)//len(solarRadiation2Array))])
+      if iteration <= len(solarRadiation2Array):
+        solarRadiation2 = float(solarRadiation2Array[iteration-1])
+      else:
+        solarRadiation2 = float(solarRadiation2Array[-1])
     elif (data["inputOperationMode"] == 'Mode1' and (flexiModuleState or cdteModuleState)) or (data["inputOperationMode"] == 'Mode2' and (flexiModuleState or cdteModuleState)) or (data["inputOperationMode"] == 'Mode3' and (flexiModuleState or cdteModuleState)) or (data["inputOperationMode"] == 'Mode5' and (flexiModuleState or cdteModuleState)):
       solarRadiation2 = (0.0 if not data["solarRadiation2"]["value"] else data["solarRadiation2"]["value"]) if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS-002'],2)
     else:
@@ -114,13 +117,19 @@ class Solar(Resource):
     
     if data["temperature"]["arrayEnabled"]:
       temperatureArray = np.repeat(np.array(data["temperatureArray"]),repeats)
-      temperature = float(temperatureArray[(iteration-1)-len(temperatureArray)*((iteration - 1)//len(temperatureArray))])
+      if iteration <= len(temperatureArray):
+        temperature = float(temperatureArray[iteration-1])
+      else:
+        temperature = float(temperatureArray[-1])
     else:
       temperature = 0.0 if not data["temperature"]["value"] else data["temperature"]["value"]
     
     if data["windSpeed"]["arrayEnabled"]:
       windSpeedArray = np.repeat(np.array(data["windSpeedArray"]),repeats)
-      windSpeed = float(windSpeedArray[(iteration-1)-len(windSpeedArray)*((iteration - 1)//len(windSpeedArray))])
+      if iteration <= len(windSpeedArray):
+        windSpeed = float(windSpeedArray[iteration-1])
+      else:
+        windSpeed = float(windSpeedArray[-1])
     elif turbineState:
       windSpeed = (0.0 if not data["windSpeed"]["value"] else data["windSpeed"]["value"]) if not data["windSpeed"]["disabled"] else round(values_df["Value"]['VV-001'],2)
     else:
@@ -129,7 +138,10 @@ class Solar(Resource):
     if data["inputOfflineOperation"]:
       if data["directCurrentLoadPower"]["arrayEnabled"]:
         directCurrentLoadPowerArray = np.repeat(np.array(data["directCurrentLoadPowerArray"]),repeats)
-        inputDirectCurrentPower = float(directCurrentLoadPowerArray[(iteration-1)-len(directCurrentLoadPowerArray)*((iteration - 1)//len(directCurrentLoadPowerArray))])
+        if iteration <= len(directCurrentLoadPowerArray):
+          inputDirectCurrentPower = float(directCurrentLoadPowerArray[iteration-1])
+        else:
+          inputDirectCurrentPower = float(directCurrentLoadPowerArray[-1])
       else:
         inputDirectCurrentPower = 0.0 if not data["directCurrentLoadPower"]["value"] else data["directCurrentLoadPower"]["value"]
     else:
@@ -140,24 +152,36 @@ class Solar(Resource):
     # if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState)) and inverterState:
       if data["alternCurrentLoadPower"]["arrayEnabled"]:
         alternCurrentLoadPowerArray = np.repeat(np.array(data["alternCurrentLoadPowerArray"]),repeats)
-        inputActivePower = float(alternCurrentLoadPowerArray[(iteration-1)-len(alternCurrentLoadPowerArray)*((iteration - 1)//len(alternCurrentLoadPowerArray))])
+        if iteration <= len(alternCurrentLoadPowerArray):
+          inputActivePower = float(alternCurrentLoadPowerArray[iteration-1])
+        else:
+          inputActivePower = float(alternCurrentLoadPowerArray[-1])
       else:
         inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-002'],2)
       if data["alternCurrentLoadPowerFactor"]["arrayEnabled"]:
         alternCurrentLoadPowerFactorArray = np.repeat(np.array(data["alternCurrentLoadPowerFactorArray"]),repeats)
-        inputPowerFactor = float(alternCurrentLoadPowerFactorArray[(iteration-1)-len(alternCurrentLoadPowerFactorArray)*((iteration - 1)//len(alternCurrentLoadPowerFactorArray))])
+        if iteration <= len(alternCurrentLoadPowerFactorArray):
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[iteration-1])
+        else:
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[-1])
       else: 
         inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] and data["alternCurrentLoadPowerFactor"]["value"]!=0 else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-001'] * (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),2)
       simulatedInverterState = data["simulatedInverterState"] if "simulatedInverterState" in data else inverterState
     elif data["inputOperationMode"] == 'Mode2' and hybridState:
       if data["alternCurrentLoadPower"]["arrayEnabled"]:
         alternCurrentLoadPowerArray = np.repeat(np.array(data["alternCurrentLoadPowerArray"]),repeats)
-        inputActivePower = float(alternCurrentLoadPowerArray[(iteration-1)-len(alternCurrentLoadPowerArray)*((iteration - 1)//len(alternCurrentLoadPowerArray))])
+        if iteration <= len(alternCurrentLoadPowerArray):
+          inputActivePower = float(alternCurrentLoadPowerArray[iteration-1])
+        else:
+          inputActivePower = float(alternCurrentLoadPowerArray[-1])
       else:
         inputActivePower = (0.0 if not data["alternCurrentLoadPower"]["value"] else data["alternCurrentLoadPower"]["value"]) if not data["alternCurrentLoadPower"]["disabled"] else round(values_df["Value"]['PKW-003'],2)
       if data["alternCurrentLoadPowerFactor"]["arrayEnabled"]:
         alternCurrentLoadPowerFactorArray = np.repeat(np.array(data["alternCurrentLoadPowerFactorArray"]),repeats)
-        inputPowerFactor = float(alternCurrentLoadPowerFactorArray[(iteration-1)-len(alternCurrentLoadPowerFactorArray)*((iteration - 1)//len(alternCurrentLoadPowerFactorArray))])
+        if iteration <= len(alternCurrentLoadPowerFactorArray):
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[iteration-1])
+        else:
+          inputPowerFactor = float(alternCurrentLoadPowerFactorArray[-1])
       else:
         inputPowerFactor = (1.0 if not data["alternCurrentLoadPowerFactor"]["value"] and data["alternCurrentLoadPowerFactor"]["value"]!=0 else data["alternCurrentLoadPowerFactor"]["value"]) if not data["alternCurrentLoadPowerFactor"]["disabled"] else round(values_df["Value"]['FP-002'] * (1 if values_df["Value"]['PKVAR-002'] >= 0.0 else -1),2)
       inputDirectCurrentPower = 0.0
@@ -227,6 +251,9 @@ class Solar(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
+
+    timeMultiplier = data["timeMultiplier"]["value"]
+    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     twinPVWF = TwinPVWF(name)
 
