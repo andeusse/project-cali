@@ -195,20 +195,20 @@ class TwinPVWF:
                                 [-0.00021, -0.00306, 1.93286]]
         if self.parallel:
             if batteries == 1:
-                self.cap_bat = 50.0 # Capacidad de las baterias en Ah
-                self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
-                self.CA_Current = 50.0 # Corriente de arranque en Amperios
-                self.maxBatteryChargeCurrent = 12.5 # Corriente máxima de carga en amperios
-            else:
-                self.cap_bat = 100.0 # Capacidad de las baterias en Ah
+                self.cap_bat = 110.0 # Capacidad de las baterias en Ah
                 self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
                 self.CA_Current = 100.0 # Corriente de arranque en Amperios
                 self.maxBatteryChargeCurrent = 25.0 # Corriente máxima de carga en amperios
+            else:
+                self.cap_bat = 220.0 # Capacidad de las baterias en Ah
+                self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
+                self.CA_Current = 200.0 # Corriente de arranque en Amperios
+                self.maxBatteryChargeCurrent = 50.0 # Corriente máxima de carga en amperios
         else:
-            self.cap_bat = 100.0 # Capacidad de las baterias en Ah
+            self.cap_bat = 220.0 # Capacidad de las baterias en Ah
             self.delta_V = -0.03 # Coeficiente de compensación de temperatura V/°C
-            self.CA_Current = 50.0 # Corriente de arranque en Amperios
-            self.maxBatteryChargeCurrent = 12.5 # Corriente máxima de carga en amperios
+            self.CA_Current = 100.0 # Corriente de arranque en Amperios
+            self.maxBatteryChargeCurrent = 25.0 # Corriente máxima de carga en amperios
 
     def optimal_f_PV(self, P_PV_meas):
         def optimal_PV_PowerOutput(f_PV, P_PV_meas):
@@ -337,8 +337,8 @@ class TwinPVWF:
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.1:
-            self.SOC = 1.1
+        elif self.SOC > 1.0:
+            self.SOC = 1.0
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
             self.P_CC = self.P_bat + self.P_inv
@@ -476,8 +476,8 @@ class TwinPVWF:
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.1:
-            self.SOC = 1.1
+        elif self.SOC > 1.0:
+            self.SOC = 1.0
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
         
