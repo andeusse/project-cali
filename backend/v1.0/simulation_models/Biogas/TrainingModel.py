@@ -909,14 +909,13 @@ class TrainingBiogasPlant:
         self.Csv_sus = (self.rho*(self.SV/100))/self.MW_sustrato
     
     def StochoimetricExpenditure(self):
-        
-        if self.Operation_mode == 1:
-            '''
+        '''
             quantify the methane produced : Note: If the training execution starts significantly later than the plant's operation
             (exceeding the training time), it will not be possible to quantify the methane produced by the plant before the training begins.
             Example: If the training time is 60 minutes but the plant starts operating 70 minutes earlier, there will be 10 minutes of methane 
-            production that cannot be quantified.   
+            production that cannot be quantified by the digital twin.   
             ''' 
+        if self.Operation_mode == 1:
             # Methane produce by R101 using V101 storage
             #Set initial value from previuos layer
             try:
@@ -994,7 +993,19 @@ class TrainingBiogasPlant:
                                             "Q_P104": self.DataPlant["FE-104"].tolist(),
                                             "Csus_exp":Csus 
                                             })
-                
+            
+        if self.Operation_mode == 2:
+            # Methane produce by R101 using V101 storage
+            #Set initial value from previuos layer
+            try:
+                if self.TrainMode1.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                else:
+                    self.Csus_ini_SV_R101 = self.TrainMode1["Csus_exp"].iloc[0]       
+            except AttributeError:
+                    print("The DataFrame does not exist.")
+            # Create list for TrainModel Dataframe       
                 
 #This will be the way to call method from API
 Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=120, Volume_V101 = 15) 
@@ -1003,13 +1014,4 @@ Training.LimitReagentCalculation()
 for i in range (2):
     Training.StochoimetricExpenditure()
     print(Training.TrainMode1)
-
-
-
-
-
-
-
-
-
-        
+      
