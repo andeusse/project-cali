@@ -272,7 +272,11 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
     unit: 'W',
     variableString: 'Potencia',
     min: 0,
+<<<<<<< Updated upstream
     max: 60,
+=======
+    max: 400,
+>>>>>>> Stashed changes
     step: 1,
     arrayEnabled: false,
   },
