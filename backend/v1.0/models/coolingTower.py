@@ -46,8 +46,11 @@ class coolingTower(Resource):
         finally:
           influxDB.InfluxDBclose()
 
+    timeMultiplier = data["timeMultiplier"]["value"]
+    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
+    
     if data["steps"]["value"] > 1:
-      iteration = data["iteration"]
+      iteration = data["iteration"] * timeMultiplier
       if data["stepUnit"] == "Second":
         repeats = data["stepTime"]["value"] / 3
       elif data["stepUnit"] == "Minute":
@@ -68,44 +71,34 @@ class coolingTower(Resource):
 
     if data["topWaterFlow"]["arrayEnabled"]:
       topWaterFlowArray = np.repeat(np.array(data["topWaterFlowArray"]),repeats)
-      if iteration <= len(topWaterFlowArray):
-        topWaterFlow = float(topWaterFlowArray[iteration-1] / 60000) # L/min to m3/s conversion
-      else:
-        topWaterFlow = float(topWaterFlowArray[-1] / 60000) # L/min to m3/s conversion
+      topWaterFlow = float(topWaterFlowArray[(iteration-1)-len(topWaterFlowArray)*((iteration - 1)//len(topWaterFlowArray))] / 60000) # L/min to m3/s conversion
     else:
       topWaterFlow = ((1.0 if not data["topWaterFlow"]["value"] and data["topWaterFlow"]["value"]!=0 else data["topWaterFlow"]["value"]) if not data["topWaterFlow"]["disabled"] else round(values_df["Value"]['FT-102'],2)) / 60000 # L/min to m3/s conversion
+    
     if data["topWaterTemperature"]["arrayEnabled"]:
       topWaterTemperatureArray = np.repeat(np.array(data["topWaterTemperatureArray"]),repeats)
-      if iteration <= len(topWaterTemperatureArray):
-        topWaterTemperature = float(topWaterTemperatureArray[iteration-1] + 273.15) # °C to kelvin conversion
-      else:
-        topWaterTemperature = float(topWaterTemperatureArray[-1] + 273.15) # °C to kelvin conversion
+      topWaterTemperature = float(topWaterTemperatureArray[(iteration-1)-len(topWaterTemperatureArray)*((iteration - 1)//len(topWaterTemperatureArray))] + 273.15) # °C to kelvin conversion
     else:
       topWaterTemperature = ((35.0 if not data["topWaterTemperature"]["value"] and data["topWaterTemperature"]["value"]!=0 else data["topWaterTemperature"]["value"]) if not data["topWaterTemperature"]["disabled"] else round(values_df["Value"]['TE-104'],2)) + 273.15# °C to kelvin conversion
+    
     if data["bottomAirFlow"]["arrayEnabled"]:
       bottomAirFlowArray = np.repeat(np.array(data["bottomAirFlowArray"]),repeats)
-      if iteration <= len(bottomAirFlowArray):
-        bottomAirFlow = float(bottomAirFlowArray[iteration-1] / 60) # m3/min to m3/s conversion
-      else:
-        bottomAirFlow = float(bottomAirFlowArray[-1] / 60) # m3/min to m3/s conversion
+      bottomAirFlow = float(bottomAirFlowArray[(iteration-1)-len(bottomAirFlowArray)*((iteration - 1)//len(bottomAirFlowArray))] / 60) # m3/min to m3/s conversion
     else:
       bottomAirFlow = ((2.0 if not data["bottomAirFlow"]["value"] and data["bottomAirFlow"]["value"]!=0 else data["bottomAirFlow"]["value"]) if not data["bottomAirFlow"]["disabled"] else round(values_df["Value"]['FT-101'],2)) / 60 # m3/min to m3/s conversion
+    
     if data["bottomAirTemperature"]["arrayEnabled"]:
       bottomAirTemperatureArray = np.repeat(np.array(data["bottomAirTemperatureArray"]),repeats)
-      if iteration <= len(bottomAirTemperatureArray):
-        bottomAirTemperature = float(bottomAirTemperatureArray[iteration-1] + 273.15) # °C to kelvin conversion
-      else:
-        bottomAirTemperature = float(bottomAirTemperatureArray[-1] + 273.15) # °C to kelvin conversion
+      bottomAirTemperature = float(bottomAirTemperatureArray[(iteration-1)-len(bottomAirTemperatureArray)*((iteration - 1)//len(bottomAirTemperatureArray))] + 273.15) # °C to kelvin conversion
     else:
       bottomAirTemperature = ((25.0 if not data["bottomAirTemperature"]["value"] and data["bottomAirTemperature"]["value"]!=0 else data["bottomAirTemperature"]["value"]) if not data["bottomAirTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2)) + 273.15 # °C to kelvin conversion
+    
     if data["bottomAirHumidity"]["arrayEnabled"]:
       bottomAirHumidityArray = np.repeat(np.array(data["bottomAirHumidityArray"]),repeats)
-      if iteration <= len(bottomAirHumidityArray):
-        bottomAirHumidity = float(bottomAirHumidityArray[iteration-1])
-      else:
-        bottomAirHumidity = float(bottomAirHumidityArray[-1])
+      bottomAirHumidity = float(bottomAirHumidityArray[(iteration-1)-len(bottomAirHumidityArray)*((iteration - 1)//len(bottomAirHumidityArray))])
     else:
       bottomAirHumidity = ((80.0 if not data["bottomAirHumidity"]["value"] and data["bottomAirHumidity"]["value"]!=0 else data["bottomAirHumidity"]["value"]) if not data["bottomAirHumidity"]["disabled"] else round(values_df["Value"]['AT-101'],2))
+    
     atmosphericPressure = ((90.0 if not data["atmosphericPressure"]["value"] else data["atmosphericPressure"]["value"]) if not data["atmosphericPressure"]["disabled"] else round(values_df["Value"]['PT-102'],2)) * 1000 # kPa to Pa conversion
     previousEnergyApplied = data["simulatedEnergyAppliedToWater"] if "simulatedEnergyAppliedToWater" in data else 0.0
 
@@ -182,9 +175,6 @@ class coolingTower(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
-    
-    timeMultiplier = data["timeMultiplier"]["value"]
-    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
     
     twinTower = TwinTower(name)
     twinTower.twinParameters(waterCorrectionFactor, airCorrectionFactor, humidityCorrectionFactor)

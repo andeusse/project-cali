@@ -499,7 +499,7 @@ class BMPModelOffline:
 
         self.n_i = (P_std*(self.Vf2/1000000))/(R*(self.T+273.15))   #mol
         self.mol_storage = (self.n_i + abs(self.biogas_mol_wet - self.n_ii_wet))
-        self.Pabs = (self.mol_storage * R * (self.T+273.15))/(self.Vf1/1000000)  #Pa  #pressure by increasing for inyection
+        self.Pabs = (self.mol_storage * R * (self.T+273.15))/(self.Vf1/1000000)  #Pa  #pressure by increasing for inyection (This pressure in bigger for inyections)
         self.P_storage = abs(self.Pabs - P_std)/6894.76      #psi  due inyection and biogas realese 
         self.V_storage = (self.Vbiogas - self.v_i)
     
@@ -545,43 +545,3 @@ class BMPModelOffline:
         #Altura
         self.hpool_ini = self.Vpool_ini_mm/self.Apool
         self.hpool = (self.hpool_ini - 35)/10
-        
-        
-        
-          
-        
-
-        
-        
-        
-    
-
-
-            
-        
-
-        
-        
-
-
-        
-
-
-
-
-        
-        
-
-
-
-
-
-        
-
-
-            
-
-
-          
-        
-
