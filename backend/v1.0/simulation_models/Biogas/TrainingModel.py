@@ -14,6 +14,7 @@ from functools import reduce
 from math import gcd
 from scipy.integrate import odeint
 from scipy.optimize import minimize
+import statistics as st
 
 class TrainingBiogasPlant:
     def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101 = 15, ST_ini_R102 = 2, SV_ini_R102 = 1.5, Volume_V102 = 35):
@@ -992,12 +993,11 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure
                 #mol organic compound
-                mol_ini = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
-                mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
-                mol_expended = self.mol_acum_CH4_V101 * (1/self.s_CH4)
-                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i]/1000)
-                                
-                print(self.Csus_ini_SV_R101)                
+                mol_ini = self.Csus_ini_SV_R101 * (self.DataPlant["V_R101"][i]/1000)                  #Kmol
+                mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus                                           #Kmol 
+                mol_expended = (self.mol_acum_CH4_V101) * (1/self.s_CH4)                              #Kmol    
+                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i]/1000)    #kmol/m3 = mol/L
+                                             
                 timev.append(self.DataPlant["time"][i])
                 V.append(self.DataPlant["V_R101"][i])
                 Q_P104v.append(Q_P104)
@@ -1330,14 +1330,15 @@ class TrainingBiogasPlant:
             # Define the objective function to minimize
             def objective(params):
                 K, Ea = params
+                t_train = t
 
                 #interpol the vectors according to experimental time
-                T_func = lambda t: np.interp(t, self.t_train, temperatures)
-                Q_func1 = lambda t: np.interp(t, self.t_train, Qi1)
-                Q_func2 = lambda t: np.interp(t, self.t_train, Qi2)
-                VR_func = lambda t: np.interp(t, self.t_train, VR)
-                Csus_in1 = lambda t: np.interp(t, self.t_train, Csus_in_i1)
-                Csus_in2 = lambda t: np.interp(t, self.t_train, Csus_in_i2)
+                T_func = lambda t: np.interp(t, t_train, temperatures)
+                Q_func1 = lambda t: np.interp(t, t_train, Qi1)
+                Q_func2 = lambda t: np.interp(t, t_train, Qi2)
+                VR_func = lambda t: np.interp(t, t_train, VR)
+                Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
+                Csus_in2 = lambda t: np.interp(t, t_train, Csus_in_i2)
                 
                 C_model = odeint(model_Arrhenius, y0, t, args = (K, Ea, VR_func, T_func, Q_func1, Q_func2, Csus_in1, Csus_in2, Operation)).flatten()
 
@@ -1348,12 +1349,14 @@ class TrainingBiogasPlant:
             return result
         
         if self.Operation_mode == 1:
-            t_exp = self.TrainMode1["time"].tolist()
-            C_exp = self.TrainMode1["Csus_exp"].tolist()
-            VR_exp = self.TrainMode1["Vol"].tolist()
-            Csus_in = self.TrainMode1["Csus_in"].to_list()
-            T_R101 = self.TrainMode1["T_R101"].tolist()
-            Q_P104 = self.TrainMode1["Q_P104"].tolist()
+            t_exp = (self.TrainMode1["time"]*60).tolist()   #seconds
+            C_exp = self.TrainMode1["Csus_exp"].tolist()    #Kmol/m3 = mol/L
+            VR_exp = self.TrainMode1["Vol"].tolist()        #L 
+            Csus_in = self.TrainMode1["Csus_in"].to_list()  #mol/L
+            T_R101 = (self.TrainMode1["T_R101"]+273.15).tolist()  #K     
+            Q_P104 = (self.TrainMode1["Q_P104"]/3600).tolist()    #L/s 
+            K = []
+            Ea = []
             for i in range (len(t_exp)):
                 t_exp_opt = t_exp[i : i+resolution]
                 C_exp_opt = C_exp[i : i+resolution]
@@ -1362,8 +1365,13 @@ class TrainingBiogasPlant:
                 Q_P104_opt = Q_P104[i : i+resolution]
                 Csus_in_opt = Csus_in[i : i + resolution]
                 Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
-                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt)
-                
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                K.append(Opt_kinetic_params.x[0])
+                Ea.append(Opt_kinetic_params.x[1])
+            
+            self.K_mean = st.mean(K)
+            self.Ea_mean = st.mean(Ea)
             
                         # self.TrainMode1 = pd.DataFrame({"time": timev,
                         #                         "Vol": V,
@@ -1378,5 +1386,8 @@ Training.getData()
 Training.LimitReagentCalculation()
 for i in range (2):
     Training.StochoimetricExpenditure()
+    Training.OptimizationArrhenius(resolution=2)
     print(Training.TrainMode1)
+    print(Training.K_mean)
+    print(Training.Ea_mean)
       
