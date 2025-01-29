@@ -48,12 +48,18 @@ import saveAs from 'file-saver';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { OperationModelType } from '../../types/common';
 import { AxiosError } from 'axios';
-import { modelsAPI } from '../../api/digitalTwinsModels';
+import { modelsAPI, trainingDataAPIMock } from '../../api/digitalTwinsModels';
 import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
+import { TrainingDataType } from '../../types/trainingData';
+import moment from 'moment';
+import { setIsLoading } from '../../redux/slices/isLoadingSlice';
+import { useAppDispatch } from '../../redux/reduxHooks';
 
 const Biogas = () => {
+  const dispatch = useAppDispatch();
+
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
@@ -101,6 +107,88 @@ const Biogas = () => {
       setIsOpen(true);
     }
   }, [error]);
+
+  const [trainingData, settrainingData] = useState<TrainingDataType>({
+    names: [],
+    values: {},
+  });
+
+  const [selectedTrainingData, setSelectedTrainingData] = useState<
+    string | undefined
+  >(undefined);
+
+  useEffect(() => {
+    dispatch(setIsLoading(true));
+    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+      'biogas1',
+      system.inputOperationMode,
+      system.operationModelType
+    )
+      .then((resp) => {
+        settrainingData(resp);
+        if (resp !== undefined && resp.names.length !== 0) {
+          setSelectedTrainingData(resp.names[0]);
+        }
+      })
+      .catch((err: AxiosError<errorResp>) => {
+        setError(
+          `Error al realizar la consulta de los parámetros de entrenamiento: ${
+            err.response?.status
+          } y con mensaje de error: ${
+            err.response?.data.message
+          } y fecha ${moment()}`
+        );
+      })
+      .finally(() => {
+        dispatch(setIsLoading(false));
+      });
+  }, [
+    dispatch,
+    setError,
+    system.inputOperationMode,
+    system.operationModelType,
+  ]);
+
+  useEffect(() => {
+    // setSystem((old) => {
+    //   if (selectedTrainingData !== undefined) {
+    //     const newState = { ...old };
+    //     newState.activationEnergyR101.value =
+    //       trainingData.values[selectedTrainingData].activationEnergyR101 ??
+    //       newState.activationEnergyR101.value;
+    //     newState.activationEnergyR102.value =
+    //       trainingData.values[selectedTrainingData].activationEnergyR102 ??
+    //       newState.activationEnergyR102.value;
+    //     newState.exponentialFactorR101.value =
+    //       trainingData.values[selectedTrainingData].exponentialFactorR101 ??
+    //       newState.exponentialFactorR101.value;
+    //     newState.exponentialFactorR102.value =
+    //       trainingData.values[selectedTrainingData].exponentialFactorR102 ??
+    //       newState.exponentialFactorR102.value;
+    //     newState.lambdaR101.value =
+    //       trainingData.values[selectedTrainingData].lambdaR101 ??
+    //       newState.lambdaR101.value;
+    //     newState.lambdaR102.value =
+    //       trainingData.values[selectedTrainingData].lambdaR102 ??
+    //       newState.lambdaR102.value;
+    //   }
+    //   return old;
+    // });
+    // setSystem({
+    //   ...system,
+    //   activationEnergyR101: { ...system.activationEnergyR101, value: 0 },
+    // });
+    handleChange({
+      target: {
+        name: 'activationEnergyR101',
+        value: 0,
+      },
+    });
+  }, [selectedTrainingData]);
+
+  const handleTrainingDataChange = (e: any) => {
+    setSelectedTrainingData(e.target.value);
+  };
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiogasParameters>(e, system, variableName);
@@ -412,6 +500,27 @@ const Biogas = () => {
                         </Select>
                       </FormControl>
                     </Grid>
+                    {trainingData !== undefined &&
+                      trainingData.names.length !== 0 && (
+                        <Grid item xs={12} md={12} xl={12}>
+                          <FormControl fullWidth>
+                            <InputLabel>Parámetros de entrenamiento</InputLabel>
+                            <Select
+                              label="Parámetros de entrenamiento"
+                              value={selectedTrainingData}
+                              name="selectedTrainingData"
+                              disabled={system.disableParameters}
+                              onChange={(e: any) => handleTrainingDataChange(e)}
+                            >
+                              {trainingData.names.map((key) => (
+                                <MenuItem key={key} value={key}>
+                                  {key}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </Grid>
+                      )}
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
                       <h3>Reactor 1 R101</h3>
                     </Grid>
