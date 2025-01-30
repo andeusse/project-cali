@@ -12,9 +12,12 @@ import numpy as np
 from fractions import Fraction
 from functools import reduce
 from math import gcd
+from scipy.integrate import odeint
+from scipy.optimize import minimize
+import statistics as st
 
 class TrainingBiogasPlant:
-    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101):
+    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101 = 15, ST_ini_R102 = 2, SV_ini_R102 = 1.5, Volume_V102 = 35):
         # DB_IP = os.getenv('DB_IP')
         # DB_Port = os.getenv('DB_Port')
         # DB_Bucket = os.getenv('DB_Bucket')
@@ -33,7 +36,7 @@ class TrainingBiogasPlant:
         #------Initial conditions for R101
         self.ST_ini_R101 = ST_ini_R101    #Initial condition for reactor
         self.SV_ini_R101 = SV_ini_R101         #Initial condition for reactor
-        #initial concentration inside reactor
+        #initial concentration inside reactor 101
         self.Csus_ini_ST_R101 = (1000*(self.ST_ini_R101/100))/18.0     #18: molecular weight of water, this is for inoculum Units: mol/L
         self.Csus_ini_SV_R101 = (1000*(self.SV_ini_R101/100))/18.0     #1000: Standar density of water   Units: mol/L - kmol/m3
         self.Csus_ini_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_SV_R101
@@ -41,6 +44,18 @@ class TrainingBiogasPlant:
         #initial and constructive conditions for V101
         self.Pi_V101 = 0          #Is the biggest pressure in V101 before pressure in V101 drop
         self.Volume_V101 = Volume_V101     #Volume of the tank in Liters
+        
+        #-------Initial conditions for R102
+        self.ST_ini_R102 = ST_ini_R102    #Initial condition for reactor
+        self.SV_ini_R102 = SV_ini_R102
+        #initial concentration inside reactor 102
+        self.Csus_ini_ST_R102 = (1000*(self.ST_ini_R102/100))/18.0     ##18: molecular weight of water, this is for inoculum Units: mol/L
+        self.Csus_ini_SV_R102 = (1000*(self.SV_ini_R102/100))/18.0     #1000: Standar density of water   Units: mol/L - kmol/m3
+        self.Csus_ini_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_SV_R102
+        
+        #initial and constructive conditions for V102
+        self.Pi_V102 = 0          #Is the biggest pressure in V101 before pressure in V101 drop
+        self.Volume_V102 = Volume_V102     #Volume of the tank in Liters
         
     def getData (self):
         #Get data from User input plant plant
@@ -909,14 +924,15 @@ class TrainingBiogasPlant:
         self.Csv_sus = (self.rho*(self.SV/100))/self.MW_sustrato
     
     def StochoimetricExpenditure(self):
-        
-        if self.Operation_mode == 1:
-            '''
+        '''
             quantify the methane produced : Note: If the training execution starts significantly later than the plant's operation
             (exceeding the training time), it will not be possible to quantify the methane produced by the plant before the training begins.
             Example: If the training time is 60 minutes but the plant starts operating 70 minutes earlier, there will be 10 minutes of methane 
-            production that cannot be quantified.   
+            production that cannot be quantified by the digital twin.   
             ''' 
+        #---------------------------------------------
+        #--------- Variables to train Operation Mode 1 and 2
+        if self.Operation_mode == 1 or self.Operation_mode == 2:
             # Methane produce by R101 using V101 storage
             #Set initial value from previuos layer
             try:
@@ -950,7 +966,7 @@ class TrainingBiogasPlant:
                     Q_P104 = 0  #Flow of pump at the beginning
                     
                 #Estimate the accumulated pressure
-                self.Pacum_V101 = + self.Pi_V101 + self.P_V101
+                self.Pacum_V101 = self.Pi_V101 + self.P_V101
                 
                 #Estimate the Storage and accumulated mol of biogas
                 # Storage biogas mol
@@ -977,39 +993,401 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure
                 #mol organic compound
-                mol_ini = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
-                mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
-                mol_expended = self.mol_acum_CH4_V101 * (1/self.s_CH4)
-                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i]/1000)
-                                
-                print(self.Csus_ini_SV_R101)                
+                mol_ini = self.Csus_ini_SV_R101 * (self.DataPlant["V_R101"][i]/1000)                  #Kmol
+                mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus                                           #Kmol 
+                mol_expended = (self.mol_acum_CH4_V101) * (1/self.s_CH4)                              #Kmol    
+                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i]/1000)    #kmol/m3 = mol/L
+                                             
                 timev.append(self.DataPlant["time"][i])
                 V.append(self.DataPlant["V_R101"][i])
                 Q_P104v.append(Q_P104)
                 C_in_sus.append(self.Csv_sus)
                 Csus.append(self.Csus_ini_SV_R101)
+                
+            if self.Operation_mode == 1:
+                self.TrainMode1 = pd.DataFrame({"time": timev,
+                                                "Vol": V,
+                                                "Q_P104": self.DataPlant["FE-104"].tolist(),
+                                                "Csus_in": C_in_sus,
+                                                "Csus_exp":Csus,
+                                                "T_R101": self.DataPlant["Tprom_R101"] 
+                                                })
+            else:
+                self.TrainMode2 = pd.DataFrame({"time": timev,
+                                                "Vol": V,
+                                                "Q_P104": self.DataPlant["FE-104"].tolist(),
+                                                "Csus_in": C_in_sus,
+                                                "Csus_exp":Csus,
+                                                "T_R101": self.DataPlant["Tprom_R101"],
+                                                "Q_P101": self.DataPlant["P-101"].tolist()  
+                                                })
+        
+        #---------------------------------------------
+        #--------- Variables to train Operation Mode 3 or 5
+        if self.Operation_mode == 3:
+            # Methane produce by R101 using V101 storage
+            #Set initial value from previuos layer
+            try:
+                if self.TrainMode1.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                else:
+                    self.Csus_ini_SV_R101 = self.TrainMode3["Csus_exp"].iloc[0]
+                    self.Csus_ini_SV_R102 = self.TrainMode3["Csus_exp"].iloc[0]       
+            except AttributeError:
+                    print("The DataFrame does not exist.")
+            # Create list for TrainModel Dataframe            
+            C_in_sus_R101 = []
+            C_in_sus_R102 = []
+            V_R101 = []
+            V_R102 = []
+            Csus_R101 = []
+            Csus_R102 = []
+            Q_P104v = []
+            Q_P101v = []
+            timev = []
+            for i in range (len(self.DataPlant)):
+                self.P_V101 = self.DataPlant["P_V101"][i]
+                self.P_V102 = self.DataPlant["P_V102"][i]
+
+                #conditions when the pressure inside V101 drop
+                if i > 0:
+                    if (i + 1) in self.DataPlant.index and i in self.DataPlant.index:
+                        tp = self.DataPlant["time"][i+1] - self.DataPlant["time"][i]
+                    else:
+                        tp = 0
+                    Q_P104 = self.DataPlant["FE-104"][i-1]
+                    Q_P101 = self.DataPlant["P-101"][i-1]
+                    if self.P_V101 < (self.DataPlant["P_V101"][i-1] * 1.05):         
+                        self.Pi_V101 = self.P_V101          #P_ini is the actual pressure in V101
+                    if self.P_V102 < (self.DataPlant["P_V102"][i-1] * 1.05):         
+                        self.Pi_V102 = self.P_V102          #P_ini is the actual pressure in V102
+                else:
+                    tp = 0
+                    Q_P104 = 0  #Flow of pump at the beginning
+                    Q_P101 = 0
+                    Q_P102 = 0
+                    
+                #Estimate the accumulated pressure in V101
+                self.Pacum_V101 = self.Pi_V101 + self.P_V101
+                
+                #Estimate the accumulated pressure in V102
+                self.Pacum_V102 = self.Pi_V102 + self.P_V102
+                
+                #Estimate the Storage and accumulated mol of biogas in V101
+                # Storage biogas mol in V101
+                self.n_biogas_sto_V101 = (((self.P_V101*6.899476) * (self.Volume_V101/1000))/
+                                          (8.314 * (self.DataPlant["T_V101"][i] + 273.15)))           #kmol
+                # Accumulated biogas mol in V101
+                self.n_biogas_acum_V101 = (((self.Pacum_V101*6.899476) * (self.Volume_V101/1000))/
+                                          (8.314 * (self.DataPlant["T_V101"][i] + 273.15)))           #kmol
+                
+                #Estimate the Storage and accumulated mol of biogas in V102
+                # Storage biogas mol in V102
+                self.n_biogas_sto_V102 = (((self.P_V102*6.899476) * (self.Volume_V102/1000))/
+                                          (8.314 * (self.DataPlant["T_V102"][i] + 273.15)))           #kmol
+                # Accumulated biogas mol in V102
+                self.n_biogas_acum_V102 = (((self.Pacum_V102*6.899476) * (self.Volume_V102/1000))/
+                                          (8.314 * (self.DataPlant["T_V102"][i] + 273.15)))           #kmol
+                
+                #------- Mass balance in R101 according with biogas produced
+                #Estimate the storage and accumulated mol for component in biogas in V101
+                #Storage compounds in V101
+                self.mol_sto_CH4_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CH4_V101"][i]      #kmol
+                self.mol_sto_CO2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CO2_V101"][i]      #kmol
+                self.mol_sto_O2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_O2_V101"][i]        #kmol
+                self.mol_sto_H2S_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_H2S_V101"][i]      #kmol
+                self.mol_sto_H2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_H2_V101"][i]        #kmol
+                #Accumulated compounds in V101
+                self.mol_acum_CH4_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CH4_V101"][i]      #kmol
+                self.mol_acum_CO2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CO2_V101"][i]      #kmol
+                self.mol_acum_O2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_O2_V101"][i]        #kmol
+                self.mol_acum_H2S_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_H2S_V101"][i]      #kmol
+                self.mol_acum_H2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_H2_V101"][i]        #kmol
+                
+                #Stochoimetric expenditure in R101
+                #mol organic compound
+                mol_ini_R101 = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
+                mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
+                mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
+                self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i]/1000)
+                                              
+                timev.append(self.DataPlant["time"][i])
+                V_R101.append(self.DataPlant["V_R101"][i])
+                Q_P104v.append(Q_P104)
+                C_in_sus_R101.append(self.Csv_sus)
+                Csus_R101.append(self.Csus_ini_SV_R101)
+                
+                #Estimate the storage and accumulated mol for component in biogas in V102
+                #Storage compounds in V102
+                self.mol_sto_CH4_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_CH4_V102"][i]      #kmol
+                self.mol_sto_CO2_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_CO2_V102"][i]      #kmol
+                self.mol_sto_O2_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_O2_V102"][i]        #kmol
+                self.mol_sto_H2S_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_H2S_V102"][i]      #kmol
+                self.mol_sto_H2_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_H2_V102"][i]        #kmol
+                #Accumulated compounds in V102
+                self.mol_acum_CH4_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_CH4_V102"][i]      #kmol
+                self.mol_acum_CO2_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_CO2_V102"][i]      #kmol
+                self.mol_acum_O2_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_O2_V102"][i]        #kmol
+                self.mol_acum_H2S_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_H2S_V102"][i]      #kmol
+                self.mol_acum_H2_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_H2_V102"][i]        #kmol
+                
+                #Stochoimetric expenditure in R102
+                #mol organic compound
+                mol_ini_R102 = self.Csus_ini_SV_R102 * self.DataPlant["V_R102"][i]/1000
+                mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
+                mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
+                self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i]/1000)
+                                              
+                V_R102.append(self.DataPlant["V_R102"][i])
+                Q_P101v.append(Q_P101)
+                C_in_sus_R102.append(self.Csv_sus)
+                Csus_R102.append(self.Csus_ini_SV_R102)
+                
+            if self.Operation_mode == 3:
+                self.TrainMode3 = pd.DataFrame({"time": timev,
+                                                "Vol_R101": V_R101,
+                                                "Q_P104": self.DataPlant["FE-104"].tolist(),
+                                                "Csus_exp_R101":Csus_R101,
+                                                "T_R101": self.DataPlant["Tprom_R101"],
+                                                "Vol_R102": V_R102,
+                                                "Q_P101": self.DataPlant["P-101"].tolist(), 
+                                                "Csus_exp_R102":Csus_R102,
+                                                "T_R102": self.DataPlant["Tprom_R102"]                                                
+                                                })
+            else:
+                self.TrainMode5 = pd.DataFrame({"time": timev,
+                                                "Vol_R101": V_R101,
+                                                "Q_P104": self.DataPlant["FE-104"].tolist(),
+                                                "Csus_exp_R101":Csus_R101,
+                                                "T_R101": self.DataPlant["Tprom_R101"],
+                                                "Vol_R102": V_R102,
+                                                "Q_P101": self.DataPlant["P-101"].tolist(), 
+                                                "Csus_exp_R102":Csus_R102,
+                                                "T_R102": self.DataPlant["Tprom_R102"],
+                                                "Q_P102": self.DataPlant["P-102"].tolist(),                                                
+                                                })
+        
+        #---------------------------------------------
+        #--------- Variables to train Operation Mode 4
+        if self.Operation_mode == 4:
+            # Methane produce by R101 using V101 storage
+            #Set initial value from previuos layer
+            try:
+                if self.TrainMode1.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                else:
+                    self.Csus_ini_SV_R101 = self.TrainMode3["Csus_exp"].iloc[0]
+                    self.Csus_ini_SV_R102 = self.TrainMode3["Csus_exp"].iloc[0]       
+            except AttributeError:
+                    print("The DataFrame does not exist.")
+            # Create list for TrainModel Dataframe            
+            C_in_sus_R101 = []
+            C_in_sus_R102 = []
+            V_R101 = []
+            V_R102 = []
+            Csus_R101 = []
+            Csus_R102 = []
+            Q_P104v = []
+            Q_P101v = []
+            Q_P102v = []
+            timev = []
+            for i in range (len(self.DataPlant)):
+                self.P_V101 = self.DataPlant["P_V101"][i]
+                self.P_V102 = self.DataPlant["P_V102"][i]
+
+                #conditions when the pressure inside V101 drop
+                if i > 0:
+                    if (i + 1) in self.DataPlant.index and i in self.DataPlant.index:
+                        tp = self.DataPlant["time"][i+1] - self.DataPlant["time"][i]
+                    else:
+                        tp = 0
+                    Q_P104 = self.DataPlant["FE-104"][i-1]
+                    Q_P101 = self.DataPlant["P-101"][i-1]
+                    Q_P102 = self.DataPlant["P-102"][i-1]
+                    if self.P_V101 < (self.DataPlant["P_V101"][i-1] * 1.05):         
+                        self.Pi_V101 = self.P_V101          #P_ini is the actual pressure in V101
+                    if self.P_V102 < (self.DataPlant["P_V102"][i-1] * 1.05):         
+                        self.Pi_V102 = self.P_V102          #P_ini is the actual pressure in V102
+                else:
+                    tp = 0
+                    Q_P104 = 0  #Flow of pump at the beginning
+                    Q_P101 = 0
+                    Q_P102 = 0
+                    
+                #Estimate the accumulated pressure in V101
+                self.Pacum_V101 = self.Pi_V101 + self.P_V101
+                
+                #Estimate the accumulated pressure in V102
+                self.Pacum_V102 = self.Pi_V102 + self.P_V102
+                
+                #Estimate the Storage and accumulated mol of biogas in V101
+                # Storage biogas mol in V101
+                self.n_biogas_sto_V101 = (((self.P_V101*6.899476) * (self.Volume_V101/1000))/
+                                          (8.314 * (self.DataPlant["T_V101"][i] + 273.15)))           #kmol
+                # Accumulated biogas mol in V101
+                self.n_biogas_acum_V101 = (((self.Pacum_V101*6.899476) * (self.Volume_V101/1000))/
+                                          (8.314 * (self.DataPlant["T_V101"][i] + 273.15)))           #kmol
+                
+                #Estimate the Storage and accumulated mol of biogas in V102
+                # Storage biogas mol in V102
+                self.n_biogas_sto_V102 = (((self.P_V102*6.899476) * (self.Volume_V102/1000))/
+                                          (8.314 * (self.DataPlant["T_V102"][i] + 273.15)))           #kmol
+                # Accumulated biogas mol in V102
+                self.n_biogas_acum_V102 = (((self.Pacum_V102*6.899476) * (self.Volume_V102/1000))/
+                                          (8.314 * (self.DataPlant["T_V102"][i] + 273.15)))           #kmol
+                
+                #------- Mass balance in R101 according with biogas produced
+                #Estimate the storage and accumulated mol for component in biogas in V101
+                #Storage compounds in V101
+                self.mol_sto_CH4_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CH4_V101"][i]      #kmol
+                self.mol_sto_CO2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CO2_V101"][i]      #kmol
+                self.mol_sto_O2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_O2_V101"][i]        #kmol
+                self.mol_sto_H2S_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_H2S_V101"][i]      #kmol
+                self.mol_sto_H2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_H2_V101"][i]        #kmol
+                #Accumulated compounds in V101
+                self.mol_acum_CH4_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CH4_V101"][i]      #kmol
+                self.mol_acum_CO2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CO2_V101"][i]      #kmol
+                self.mol_acum_O2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_O2_V101"][i]        #kmol
+                self.mol_acum_H2S_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_H2S_V101"][i]      #kmol
+                self.mol_acum_H2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_H2_V101"][i]        #kmol
+                
+                #Stochoimetric expenditure in R101
+                #mol organic compound
+                mol_ini_R101 = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
+                mol_in_R101 = (Q_P104 * tp/60 * self.Csv_sus) + (Q_P102 * tp/60 * self.Csus_ini_SV_R102)
+                mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
+                self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i]/1000)
+                                              
+                timev.append(self.DataPlant["time"][i])
+                V_R101.append(self.DataPlant["V_R101"][i])
+                Q_P104v.append(Q_P104)
+                C_in_sus_R101.append(self.Csv_sus)
+                Csus_R101.append(self.Csus_ini_SV_R101)
+                
+                #Estimate the storage and accumulated mol for component in biogas in V102
+                #Storage compounds in V102
+                self.mol_sto_CH4_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_CH4_V102"][i]      #kmol
+                self.mol_sto_CO2_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_CO2_V102"][i]      #kmol
+                self.mol_sto_O2_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_O2_V102"][i]        #kmol
+                self.mol_sto_H2S_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_H2S_V102"][i]      #kmol
+                self.mol_sto_H2_V102 = self.n_biogas_sto_V102 *  self.DataPlant["x_H2_V102"][i]        #kmol
+                #Accumulated compounds in V102
+                self.mol_acum_CH4_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_CH4_V102"][i]      #kmol
+                self.mol_acum_CO2_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_CO2_V102"][i]      #kmol
+                self.mol_acum_O2_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_O2_V102"][i]        #kmol
+                self.mol_acum_H2S_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_H2S_V102"][i]      #kmol
+                self.mol_acum_H2_V102 = self.n_biogas_acum_V102 *  self.DataPlant["x_H2_V102"][i]        #kmol
+                
+                #Stochoimetric expenditure in R102
+                #mol organic compound
+                mol_ini_R102 = self.Csus_ini_SV_R102 * self.DataPlant["V_R102"][i]/1000
+                mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
+                mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
+                self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i]/1000)
+                                              
+                V_R102.append(self.DataPlant["V_R102"][i])
+                Q_P101v.append(Q_P101)
+                C_in_sus_R102.append(self.Csv_sus)
+                Csus_R102.append(self.Csus_ini_SV_R102)
+                
             
-            self.TrainMode1 = pd.DataFrame({"time": timev,
-                                            "Vol": V,
+            self.TrainMode4 = pd.DataFrame({"time": timev,
+                                            "Vol_R101": V_R101,
                                             "Q_P104": self.DataPlant["FE-104"].tolist(),
-                                            "Csus_exp":Csus 
+                                            "Csus_exp_R101":Csus_R101,
+                                            "T_R101": self.DataPlant["Tprom_R101"],
+                                            "Vol_R102": V_R102,
+                                            "Q_P101": self.DataPlant["P-101"].tolist(), 
+                                            "Csus_exp_R102":Csus_R102,
+                                            "T_R102": self.DataPlant["Tprom_R102"],
+                                            "Q_P102": self.DataPlant["P-102"].tolist()                                               
                                             })
+    
+    def OptimizationArrhenius (self, resolution):
+        
+        def model_Arrhenius(C, t, K, Ea, VR_in_func, T_func, Q_func_1, Q_func_2, Csus_in_func_1, Csus_in_func_2, Operation):
+            R = 8.314
+            T=T_func(t)
+            Q_1=Q_func_1(t)
+            Q_2=Q_func_2(t)
+            Csus_in_1 = Csus_in_func_1(t)
+            Csus_in_2 = Csus_in_func_2(t)
+            VR = VR_in_func(t)               #Volume change in the time by the control
+            if Operation == 1:         #With
+                dCsus_dt = ((Q_1 / VR) * (Csus_in_1 - C)) - (C * K * np.exp(-(Ea)/(R*T))) / VR
+            elif Operation == 2:       #dos entradas 
+                dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * Csus_in_2)/VR - ((Q_1+Q_2)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
+            elif Operation == 3:       #Recirculación interna
+                dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * C)/VR - ((Q_1)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
+            return dCsus_dt
+        
+        # Optimization function t: vector of experimental time, C_exp: sustrate experimental concentration, y0: Initial value, 
+        def Optimization(t, C_exp, y0, VR, temperatures, Qi1, Csus_in_i1, Qi2, Csus_in_i2, Operation, K=1, Ea=1): 
+            # Define the objective function to minimize
+            def objective(params):
+                K, Ea = params
+                t_train = t
+
+                #interpol the vectors according to experimental time
+                T_func = lambda t: np.interp(t, t_train, temperatures)
+                Q_func1 = lambda t: np.interp(t, t_train, Qi1)
+                Q_func2 = lambda t: np.interp(t, t_train, Qi2)
+                VR_func = lambda t: np.interp(t, t_train, VR)
+                Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
+                Csus_in2 = lambda t: np.interp(t, t_train, Csus_in_i2)
                 
-                
+                C_model = odeint(model_Arrhenius, y0, t, args = (K, Ea, VR_func, T_func, Q_func1, Q_func2, Csus_in1, Csus_in2, Operation)).flatten()
+
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                return squared_diff
+            
+            result = minimize(objective, [K, Ea], method = 'Nelder-Mead')
+            return result
+        
+        if self.Operation_mode == 1:
+            t_exp = (self.TrainMode1["time"]*60).tolist()   #seconds
+            C_exp = self.TrainMode1["Csus_exp"].tolist()    #Kmol/m3 = mol/L
+            VR_exp = self.TrainMode1["Vol"].tolist()        #L 
+            Csus_in = self.TrainMode1["Csus_in"].to_list()  #mol/L
+            T_R101 = (self.TrainMode1["T_R101"]+273.15).tolist()  #K     
+            Q_P104 = (self.TrainMode1["Q_P104"]/3600).tolist()    #L/s 
+            K = []
+            Ea = []
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                C_exp_opt = C_exp[i : i+resolution]
+                VR_exp_opt = VR_exp[i : i+resolution]
+                T_R101_opt = T_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                Csus_in_opt = Csus_in[i : i + resolution]
+                Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                K.append(Opt_kinetic_params.x[0])
+                Ea.append(Opt_kinetic_params.x[1])
+            
+            self.K_mean = st.mean(K)
+            self.Ea_mean = st.mean(Ea)
+            
+                        # self.TrainMode1 = pd.DataFrame({"time": timev,
+                        #                         "Vol": V,
+                        #                         "Q_P104": self.DataPlant["FE-104"].tolist(),
+                        #                         "Csus_exp":Csus 
+                        #                         }) 
+        
+                              
 #This will be the way to call method from API
-Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=120, Volume_V101 = 15) 
+Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=60, Volume_V101 = 15) 
 Training.getData()
 Training.LimitReagentCalculation()
 for i in range (2):
     Training.StochoimetricExpenditure()
+    Training.OptimizationArrhenius(resolution=2)
     print(Training.TrainMode1)
-
-
-
-
-
-
-
-
-
-        
+    print(Training.K_mean)
+    print(Training.Ea_mean)
+      

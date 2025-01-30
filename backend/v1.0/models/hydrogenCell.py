@@ -48,11 +48,8 @@ class hydrogenCell(Resource):
         finally:
           influxDB.InfluxDBclose()
 
-    timeMultiplier = data["timeMultiplier"]["value"]
-    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
-    
     if data["steps"]["value"] > 1:
-      iteration = data["iteration"] * timeMultiplier
+      iteration = data["iteration"]
       if data["stepUnit"] == "Second":
         repeats = data["stepTime"]["value"]
       elif data["stepUnit"] == "Minute":
@@ -77,28 +74,40 @@ class hydrogenCell(Resource):
     
     if data["inputFanPercentage"]["arrayEnabled"]:
       inputFanPercentageArray = np.repeat(np.array(data["inputFanPercentageArray"]),repeats)
-      inputFanPercentage = float(inputFanPercentageArray[(iteration-1)-len(inputFanPercentageArray)*((iteration - 1)//len(inputFanPercentageArray))])
+      if iteration <= len(inputFanPercentageArray):
+        inputFanPercentage = float(inputFanPercentageArray[iteration-1])
+      else:
+        inputFanPercentage = float(inputFanPercentageArray[-1])
     else:
       inputFanPercentage = ((50.0 if not data["inputFanPercentage"]["value"] else data["inputFanPercentage"]["value"]) if not data["inputFanPercentage"]["disabled"] else round(values_df["Value"]['F-101'],2))
 
     if electronicLoadMode == "Current":
       if data["inputElectronicLoadCurrent"]["arrayEnabled"]:
         inputElectronicLoadCurrentArray = np.repeat(np.array(data["inputElectronicLoadCurrentArray"]),repeats)
-        inputElectronicLoad = float(inputElectronicLoadCurrentArray[(iteration-1)-len(inputElectronicLoadCurrentArray)*((iteration - 1)//len(inputElectronicLoadCurrentArray))])
+        if iteration <= len(inputElectronicLoadCurrentArray):
+          inputElectronicLoad = float(inputElectronicLoadCurrentArray[iteration-1])
+        else:
+          inputElectronicLoad = float(inputElectronicLoadCurrentArray[-1])
       else:
         inputElectronicLoad = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
       cell["inputElectronicLoadCurrent"] = inputElectronicLoad
     elif electronicLoadMode == "Power":
       if data["inputElectronicLoadPower"]["arrayEnabled"]:
         inputElectronicLoadPowerArray = np.repeat(np.array(data["inputElectronicLoadPowerArray"]),repeats)
-        inputElectronicLoad = float(inputElectronicLoadPowerArray[(iteration-1)-len(inputElectronicLoadPowerArray)*((iteration - 1)//len(inputElectronicLoadPowerArray))])
+        if iteration <= len(inputElectronicLoadPowerArray):
+          inputElectronicLoad = float(inputElectronicLoadPowerArray[iteration-1])
+        else:
+          inputElectronicLoad = float(inputElectronicLoadPowerArray[-1])
       else:
         inputElectronicLoad = ((0.0 if not data["inputElectronicLoadPower"]["value"] else data["inputElectronicLoadPower"]["value"]) if not data["inputElectronicLoadPower"]["disabled"] else round(values_df["Value"]['CW'],2))
       cell["inputElectronicLoadPower"] = inputElectronicLoad
     elif electronicLoadMode == "Resistance":
       if data["inputElectronicLoadResistance"]["arrayEnabled"]:
           inputElectronicLoadResistanceArray = np.repeat(np.array(data["inputElectronicLoadResistanceArray"]),repeats)
-          inputElectronicLoad = float(inputElectronicLoadResistanceArray[(iteration-1)-len(inputElectronicLoadResistanceArray)*((iteration - 1)//len(inputElectronicLoadResistanceArray))])
+          if iteration <= len(inputElectronicLoadResistanceArray):
+            inputElectronicLoad = float(inputElectronicLoadResistanceArray[iteration-1])
+          else:
+            inputElectronicLoad = float(inputElectronicLoadResistanceArray[-1])
       else:
         inputElectronicLoad = ((2.0 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],2))
       cell["inputElectronicLoadResistance"] = inputElectronicLoad
@@ -153,6 +162,9 @@ class hydrogenCell(Resource):
     inputElectronicLoad = inputElectronicLoad * electronicLoadState
     lightsPower = lightsPower * lightsConnected
     cellSelfFeedingPower = cellSelfFeedingPower * cellSelfFeeding
+
+    timeMultiplier = data["timeMultiplier"]["value"]
+    delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     twinCell = TwinCell(name)
     twinCell.twinParameters(converterEfficiency, voltageCoefficients)
