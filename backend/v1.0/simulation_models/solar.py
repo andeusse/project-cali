@@ -23,9 +23,9 @@ class TwinPVWF:
         if type == 1:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.27
+                self.n_PV = 1.0
             else:
-                self.n_PV = 0.24
+                self.n_PV = 1.0
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -39,9 +39,9 @@ class TwinPVWF:
         elif type == 2:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.30
+                self.n_PV = 1.0
             else:
-                self.n_PV = 0.27
+                self.n_PV = 1.0
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.39
@@ -55,9 +55,9 @@ class TwinPVWF:
         elif type == 3:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.34
+                self.n_PV = 1.0
             else:
-                self.n_PV = 0.3
+                self.n_PV = 1.0
             self.P_PM = 100.0
             self.G_0 = 1000
             self.u_PM = -0.42
@@ -71,9 +71,9 @@ class TwinPVWF:
         elif type == 4:
             if offlineOperation:
                 self.f_PV = deratingFactor
-                self.n_PV = 0.24
+                self.n_PV = 1.0
             else:
-                self.n_PV = 0.19
+                self.n_PV = 1.0
             self.P_PM = 77.5
             self.G_0 = 1000
             self.u_PM = -0.25

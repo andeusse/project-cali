@@ -36,8 +36,8 @@ class Solar(Resource):
       attempts = 1
       while attempts <= 5:
         try:
-          values_df_temp = influxDB.InfluxDBreader(query)
-          # values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
+          # values_df_temp = influxDB.InfluxDBreader(query)
+          values_df_temp = pd.concat(influxDB.InfluxDBreader(query))
           values_df['field'] = values_df_temp['_field']
           values_df['Value'] = values_df_temp['_value']
           timestamp = values_df_temp['_time'].mean()
@@ -103,6 +103,7 @@ class Solar(Resource):
       solarRadiation1 = (0.0 if not data["solarRadiation1"]["value"] else data["solarRadiation1"]["value"]) if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS-001'],2)
     else:
       solarRadiation1 = 0.0
+    print(solarRadiation1, flush=True)
     
     if data["solarRadiation2"]["arrayEnabled"]:
       solarRadiation2Array = np.repeat(np.array(data["solarRadiation2Array"]),repeats)
@@ -114,6 +115,7 @@ class Solar(Resource):
       solarRadiation2 = (0.0 if not data["solarRadiation2"]["value"] else data["solarRadiation2"]["value"]) if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS-002'],2)
     else:
       solarRadiation2 = 0.0
+    print(solarRadiation2, flush=True)
     
     if data["temperature"]["arrayEnabled"]:
       temperatureArray = np.repeat(np.array(data["temperatureArray"]),repeats)
@@ -145,7 +147,7 @@ class Solar(Resource):
       else:
         inputDirectCurrentPower = 0.0 if not data["directCurrentLoadPower"]["value"] else data["directCurrentLoadPower"]["value"]
     else:
-      inputDirectCurrentPower = 6.0 if data["directCurrentLoadConnected"] else 0.0
+      inputDirectCurrentPower = 2.4 if data["directCurrentLoadConnected"] else 0.0
     windDensity = 0.0 if not data["windDensity"]["value"] else data["windDensity"]["value"]
 
     if (data["inputOperationMode"] == 'Mode2' or (data["inputOperationMode"] == 'Mode1' and cdteModuleState) or data["inputOperationMode"] == 'Mode4' or data["inputOperationMode"] == 'Mode5') and inverterState:
@@ -260,9 +262,9 @@ class Solar(Resource):
     if not data["inputOfflineOperation"]:
       if data["inputOperationMode"] == 'Mode2' and hybridState:
         batteryTemperature = 30.0
-        measuredPV_Power = round(values_df["Value"]['PC-003'],2)
+        measuredPV_Power = round(values_df["Value"]['PG-003'],2)
         measuredWT_Power = 0.0
-        measuredHybridDC_Power = round(values_df["Value"]['PC-003'],2)
+        measuredHybridDC_Power = round(values_df["Value"]['PC-002'],2)
         PV_Voltage = round(values_df["Value"]['VG-003'],2)
         gridVoltage = round(values_df["Value"]['VAC-004'],2)
         WT_Voltage = 0.0
