@@ -235,38 +235,35 @@ const CoolingTower = () => {
         topWaterTemperature: {
           ...o.topWaterTemperature,
           value:
-            data.topWaterTemperature !== undefined &&
-            o.topWaterTemperature.disabled
+            data.topWaterTemperature && o.topWaterTemperature.disabled
               ? data.topWaterTemperature
               : o.topWaterTemperature.value,
         },
         bottomAirFlow: {
           ...o.bottomAirFlow,
           value:
-            data.bottomAirFlow !== undefined && o.bottomAirFlow.disabled
+            data.bottomAirFlow && o.bottomAirFlow.disabled
               ? data.bottomAirFlow
               : o.bottomAirFlow.value,
         },
         bottomAirTemperature: {
           ...o.bottomAirTemperature,
           value:
-            data.bottomAirTemperature !== undefined &&
-            o.bottomAirTemperature.disabled
+            data.bottomAirTemperature && o.bottomAirTemperature.disabled
               ? data.bottomAirTemperature
               : o.bottomAirTemperature.value,
         },
         bottomAirHumidity: {
           ...o.bottomAirHumidity,
           value:
-            data.bottomAirHumidity !== undefined && o.bottomAirHumidity.disabled
+            data.bottomAirHumidity && o.bottomAirHumidity.disabled
               ? data.bottomAirHumidity
               : o.bottomAirHumidity.value,
         },
         atmosphericPressure: {
           ...o.atmosphericPressure,
           value:
-            data.atmosphericPressure !== undefined &&
-            o.atmosphericPressure.disabled
+            data.atmosphericPressure && o.atmosphericPressure.disabled
               ? data.atmosphericPressure
               : o.atmosphericPressure.value,
         },

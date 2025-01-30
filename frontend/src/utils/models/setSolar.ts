@@ -360,6 +360,7 @@ export const setSolarTable = (
     newState.alternCurrentLoadPowerFactorArray = newArrays[6].map((v) => {
       v = v < 1 ? v : 1;
       v = v > -1 ? v : -1;
+      v = v === 0 ? 1 : v;
       return v;
     });
   if (newState.directCurrentLoadPower.arrayEnabled)

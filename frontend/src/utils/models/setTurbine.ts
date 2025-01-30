@@ -137,6 +137,7 @@ export const setTurbineTable = (
     newState.inputPowerFactorArray = newArrays[3].map((v) => {
       v = v < 1 ? v : 1;
       v = v > -1 ? v : -1;
+      v = v === 0 ? 1 : v;
       return v;
     });
   return newState;

@@ -56,6 +56,14 @@ const CustomNumberField = (props: CustomTextFieldType) => {
         if (variable.max !== undefined && newValue > variable.max) {
           variableTemp.target.value = variable.max;
         }
+        if (
+          name
+            .toLocaleLowerCase()
+            .includes('PowerFactor'.toLocaleLowerCase()) &&
+          newValue === 0
+        ) {
+          variableTemp.target.value = 1;
+        }
       } else {
         if (variable.min !== undefined) {
           variableTemp.target.value = variable.min;

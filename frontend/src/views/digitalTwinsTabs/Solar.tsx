@@ -338,16 +338,14 @@ const Solar = () => {
         solarRadiation1: {
           ...o.solarRadiation1,
           value:
-            data.inputSolarRadiation1 !== undefined &&
-            o.solarRadiation1.disabled
+            data.inputSolarRadiation1 && o.solarRadiation1.disabled
               ? data.inputSolarRadiation1
               : o.solarRadiation1.value,
         },
         solarRadiation2: {
           ...o.solarRadiation2,
           value:
-            data.inputSolarRadiation2 !== undefined &&
-            o.solarRadiation2.disabled
+            data.inputSolarRadiation2 && o.solarRadiation2.disabled
               ? data.inputSolarRadiation2
               : o.solarRadiation2.value,
         },
@@ -361,7 +359,7 @@ const Solar = () => {
         alternCurrentLoadPower: {
           ...o.alternCurrentLoadPower,
           value:
-            data.inputAlternCurrentLoadPower !== undefined &&
+            data.inputAlternCurrentLoadPower &&
             o.alternCurrentLoadPower.disabled
               ? data.inputAlternCurrentLoadPower
               : o.alternCurrentLoadPower.value,
@@ -369,7 +367,7 @@ const Solar = () => {
         alternCurrentLoadPowerFactor: {
           ...o.alternCurrentLoadPowerFactor,
           value:
-            data.inputAlternCurrentLoadPowerFactor !== undefined &&
+            data.inputAlternCurrentLoadPowerFactor &&
             o.alternCurrentLoadPowerFactor.disabled
               ? data.inputAlternCurrentLoadPowerFactor
               : o.alternCurrentLoadPowerFactor.value,
@@ -377,7 +375,7 @@ const Solar = () => {
         directCurrentLoadPower: {
           ...o.directCurrentLoadPower,
           value:
-            data.inputDirectCurrentLoadPower !== undefined &&
+            data.inputDirectCurrentLoadPower &&
             o.directCurrentLoadPower.disabled
               ? data.inputDirectCurrentLoadPower
               : o.directCurrentLoadPower.value,

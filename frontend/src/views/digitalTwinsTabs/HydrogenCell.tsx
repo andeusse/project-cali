@@ -273,30 +273,28 @@ const HydrogenCell = (props: Props) => {
         inputHydrogenFlow: {
           ...o.inputHydrogenFlow,
           value:
-            data.hydrogenFlow !== undefined && o.inputHydrogenFlow.disabled
+            data.hydrogenFlow && o.inputHydrogenFlow.disabled
               ? data.hydrogenFlow
               : o.inputHydrogenFlow.value,
         },
         inputHydrogenPressure: {
           ...o.inputHydrogenPressure,
           value:
-            data.hydrogenPressure !== undefined &&
-            o.inputHydrogenPressure.disabled
+            data.hydrogenPressure && o.inputHydrogenPressure.disabled
               ? data.hydrogenPressure
               : o.inputHydrogenPressure.value,
         },
         inputCellTemperature: {
           ...o.inputCellTemperature,
           value:
-            data.cellTemperature !== undefined &&
-            o.inputCellTemperature.disabled
+            data.cellTemperature && o.inputCellTemperature.disabled
               ? data.cellTemperature
               : o.inputCellTemperature.value,
         },
         inputElectronicLoadCurrent: {
           ...o.inputElectronicLoadCurrent,
           value:
-            data.inputElectronicLoadCurrent !== undefined &&
+            data.inputElectronicLoadCurrent &&
             o.inputElectronicLoadCurrent.disabled
               ? data.inputElectronicLoadCurrent
               : o.inputElectronicLoadCurrent.value,
@@ -304,15 +302,14 @@ const HydrogenCell = (props: Props) => {
         inputElectronicLoadPower: {
           ...o.inputElectronicLoadPower,
           value:
-            data.inputElectronicLoadPower !== undefined &&
-            o.inputElectronicLoadPower.disabled
+            data.inputElectronicLoadPower && o.inputElectronicLoadPower.disabled
               ? data.inputElectronicLoadPower
               : o.inputElectronicLoadPower.value,
         },
         inputElectronicLoadResistance: {
           ...o.inputElectronicLoadResistance,
           value:
-            data.inputElectronicLoadResistance !== undefined &&
+            data.inputElectronicLoadResistance &&
             o.inputElectronicLoadResistance.disabled
               ? data.inputElectronicLoadResistance
               : o.inputElectronicLoadResistance.value,
@@ -320,7 +317,7 @@ const HydrogenCell = (props: Props) => {
         inputFanPercentage: {
           ...o.inputFanPercentage,
           value:
-            data.fanPercentage !== undefined && o.inputFanPercentage.disabled
+            data.fanPercentage && o.inputFanPercentage.disabled
               ? data.fanPercentage
               : o.inputFanPercentage.value,
         },
