@@ -292,6 +292,7 @@ export const setBiogas = (
 
         newState.lambdaR101.disabled = newState.digitalTwinState ? true : false;
         newState.lambdaR101.unit = 's';
+        newState.lambdaR101.value = -44928;
         newState.lambdaR101.tooltip =
           'Tiempo mínimo de producción de biogás para R101';
 
@@ -312,6 +313,7 @@ export const setBiogas = (
 
         newState.lambdaR102.disabled = newState.digitalTwinState ? true : false;
         newState.lambdaR102.unit = 's';
+        newState.lambdaR102.value = -44928;
         newState.lambdaR102.tooltip =
           'Tiempo mínimo de producción de biogás para R102';
         break;

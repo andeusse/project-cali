@@ -16,6 +16,10 @@ const CustomNumberField = (props: CustomTextFieldType) => {
 
   const [numberFieldValue, setNumberFieldValue] = useState(value.toString());
 
+  useEffect(() => {
+    setNumberFieldValue(value.toString());
+  }, [value]);
+
   const useDebounce = (cb: any, delay: number) => {
     const [debounceValue, setDebounceValue] = useState(cb);
     useEffect(() => {
@@ -29,7 +33,7 @@ const CustomNumberField = (props: CustomTextFieldType) => {
     return debounceValue;
   };
 
-  const debounceValue = useDebounce(numberFieldValue, 500);
+  const debounceValue = useDebounce(numberFieldValue, 750);
 
   useEffect(() => {
     if (name !== undefined) {
@@ -59,12 +63,12 @@ const CustomNumberField = (props: CustomTextFieldType) => {
           variableTemp.target.value = 0;
         }
       }
-      if (handleChange) {
+      if (handleChange !== undefined) {
         setNumberFieldValue(variableTemp.target.value.toString());
         handleChange(variableTemp);
       }
     }
-  }, [debounceValue]);
+  }, [debounceValue, isInteger, name, variable.max, variable.min]);
 
   const handleValueChange = (e: any) => {
     setNumberFieldValue(e.target.value);

@@ -113,9 +113,8 @@ const Biogas = () => {
     values: {},
   });
 
-  const [selectedTrainingData, setSelectedTrainingData] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedTrainingData, setSelectedTrainingData] =
+    useState<string>('Default');
 
   useEffect(() => {
     dispatch(setIsLoading(true));
@@ -125,10 +124,8 @@ const Biogas = () => {
       system.operationModelType
     )
       .then((resp) => {
+        setSelectedTrainingData('Default');
         settrainingData(resp);
-        if (resp !== undefined && resp.names.length !== 0) {
-          setSelectedTrainingData(resp.names[0]);
-        }
       })
       .catch((err: AxiosError<errorResp>) => {
         setError(
@@ -150,41 +147,54 @@ const Biogas = () => {
   ]);
 
   useEffect(() => {
-    // setSystem((old) => {
-    //   if (selectedTrainingData !== undefined) {
-    //     const newState = { ...old };
-    //     newState.activationEnergyR101.value =
-    //       trainingData.values[selectedTrainingData].activationEnergyR101 ??
-    //       newState.activationEnergyR101.value;
-    //     newState.activationEnergyR102.value =
-    //       trainingData.values[selectedTrainingData].activationEnergyR102 ??
-    //       newState.activationEnergyR102.value;
-    //     newState.exponentialFactorR101.value =
-    //       trainingData.values[selectedTrainingData].exponentialFactorR101 ??
-    //       newState.exponentialFactorR101.value;
-    //     newState.exponentialFactorR102.value =
-    //       trainingData.values[selectedTrainingData].exponentialFactorR102 ??
-    //       newState.exponentialFactorR102.value;
-    //     newState.lambdaR101.value =
-    //       trainingData.values[selectedTrainingData].lambdaR101 ??
-    //       newState.lambdaR101.value;
-    //     newState.lambdaR102.value =
-    //       trainingData.values[selectedTrainingData].lambdaR102 ??
-    //       newState.lambdaR102.value;
-    //   }
-    //   return old;
-    // });
-    // setSystem({
-    //   ...system,
-    //   activationEnergyR101: { ...system.activationEnergyR101, value: 0 },
-    // });
-    handleChange({
-      target: {
-        name: 'activationEnergyR101',
-        value: 0,
-      },
+    setSystem((old) => {
+      if (selectedTrainingData !== 'Default') {
+        const newState = { ...old };
+        newState.activationEnergyR101.value =
+          trainingData.values[selectedTrainingData].activationEnergyR101 ??
+          newState.activationEnergyR101.value;
+        newState.activationEnergyR102.value =
+          trainingData.values[selectedTrainingData].activationEnergyR102 ??
+          newState.activationEnergyR102.value;
+        newState.exponentialFactorR101.value =
+          trainingData.values[selectedTrainingData].exponentialFactorR101 ??
+          newState.exponentialFactorR101.value;
+        newState.exponentialFactorR102.value =
+          trainingData.values[selectedTrainingData].exponentialFactorR102 ??
+          newState.exponentialFactorR102.value;
+        newState.lambdaR101.value =
+          trainingData.values[selectedTrainingData].lambdaR101 ??
+          newState.lambdaR101.value;
+        newState.lambdaR102.value =
+          trainingData.values[selectedTrainingData].lambdaR102 ??
+          newState.lambdaR102.value;
+        return newState;
+      } else {
+        const newState = { ...old };
+        switch (newState.operationModelType) {
+          case OperationModelType.Arrhenius:
+            newState.activationEnergyR101.value = 1000000;
+            newState.activationEnergyR102.value = 1000000;
+            newState.exponentialFactorR101.value = 100;
+            newState.exponentialFactorR102.value = 100;
+            break;
+          case OperationModelType.ADM1:
+            newState.exponentialFactorR101.value = 1e-15;
+            newState.exponentialFactorR102.value = 1e-15;
+            break;
+          case OperationModelType.Gompertz:
+            newState.activationEnergyR101.value = 2.59e-9;
+            newState.activationEnergyR102.value = 2.59e-9;
+            newState.exponentialFactorR101.value = 0.00329;
+            newState.exponentialFactorR102.value = 0.00329;
+            newState.lambdaR101.value = -44928;
+            newState.lambdaR102.value = -44928;
+            break;
+        }
+        return newState;
+      }
     });
-  }, [selectedTrainingData]);
+  }, [selectedTrainingData, trainingData.values]);
 
   const handleTrainingDataChange = (e: any) => {
     setSelectedTrainingData(e.target.value);
@@ -512,6 +522,9 @@ const Biogas = () => {
                               disabled={system.disableParameters}
                               onChange={(e: any) => handleTrainingDataChange(e)}
                             >
+                              <MenuItem key={'Default'} value={'Default'}>
+                                {'Valores por defecto'}
+                              </MenuItem>
                               {trainingData.names.map((key) => (
                                 <MenuItem key={key} value={key}>
                                   {key}
