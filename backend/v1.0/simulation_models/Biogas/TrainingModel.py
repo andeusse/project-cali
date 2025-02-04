@@ -26,7 +26,7 @@ class TrainingBiogasPlant:
         DB_IP = "localhost"
         DB_Port = "8086"
         DB_Organization = "UCO"
-        DB_Token = "koJGMnzyGyMV1cI70BKs9TDKP1gEL7OjtcDS96rwSssoGqi-eaUeM6IxY4_eOufdoC8jJlS8IinYhIRhnnxrLg=="
+        DB_Token = "H2ppwa50IDSKVY1wtjhC0j2QCZWaTYpzD9mhrY3clL62IuJTLAwXPzfDVxACwUsTRW2Xy_QVRHmCwXprDmG3fg=="
         DB_Bucket = "BiogasPlantSimulator"
         
         self.influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
@@ -403,7 +403,7 @@ class TrainingBiogasPlant:
                         
             #R101
             PH_R101 = DataPlant["_value"]["AT-101"]        
-            V_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
             P_R101 = DataPlant["_value"]["PT-101"]
             T1_R101 =  DataPlant["_value"]["TE-101A"]
             T2_R101 = DataPlant["_value"]["TE-101B"]
@@ -421,7 +421,7 @@ class TrainingBiogasPlant:
             
             #R102
             PH_R102 = DataPlant["_value"]["AT-102"]        
-            V_R102 = DataPlant["_value"]["LT-102"]       #L: level
+            L_R102 = DataPlant["_value"]["LT-102"]       #L: level
             P_R102 = DataPlant["_value"]["PT-102"]
             T1_R102 =  DataPlant["_value"]["TE-102A"]
             T2_R102 = DataPlant["_value"]["TE-102B"]
@@ -472,7 +472,7 @@ class TrainingBiogasPlant:
             T2_R102 = SameDimension(P_V101, T2_R102)
             Tprom_R102 = SameDimension(P_V101, Tprom_R102)
             PH_R102 = SameDimension(P_V101, PH_R102)
-            L_R102 = SameDimension(P_V101, L_R102)
+            V_R102 = SameDimension(P_V101, L_R102)
             P_R102 = SameDimension(P_V101, P_R102)
             
             #Variable for V107
@@ -1150,6 +1150,7 @@ class TrainingBiogasPlant:
                                                 "Vol_R101": V_R101,
                                                 "Q_P104": self.DataPlant["FE-104"].tolist(),
                                                 "Csus_exp_R101":Csus_R101,
+                                                "Csus_in_R101": C_in_sus_R101,
                                                 "T_R101": self.DataPlant["Tprom_R101"],
                                                 "Vol_R102": V_R102,
                                                 "Q_P101": self.DataPlant["P-101"].tolist(), 
@@ -1317,11 +1318,11 @@ class TrainingBiogasPlant:
             Csus_in_1 = Csus_in_func_1(t)
             Csus_in_2 = Csus_in_func_2(t)
             VR = VR_in_func(t)               #Volume change in the time by the control
-            if Operation == 1:         #With
+            if Operation == 1:         #One entrance without recirculation
                 dCsus_dt = ((Q_1 / VR) * (Csus_in_1 - C)) - (C * K * np.exp(-(Ea)/(R*T))) / VR
-            elif Operation == 2:       #dos entradas 
+            elif Operation == 2:       #Two entrances with differents concentrations
                 dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * Csus_in_2)/VR - ((Q_1+Q_2)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
-            elif Operation == 3:       #Recirculación interna
+            elif Operation == 3:       #One entrance with recirculation
                 dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * C)/VR - ((Q_1)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
             return dCsus_dt
         
@@ -1370,8 +1371,99 @@ class TrainingBiogasPlant:
                 K.append(Opt_kinetic_params.x[0])
                 Ea.append(Opt_kinetic_params.x[1])
             
-            self.K_mean = st.mean(K)
-            self.Ea_mean = st.mean(Ea)
+            self.K_mean_R101 = st.mean(K)
+            self.Ea_mean_R101 = st.mean(Ea)
+        
+        elif self.Operation_mode == 2:
+            t_exp = (self.TrainMode2["time"]*60).tolist()   #seconds
+            C_exp = self.TrainMode2["Csus_exp"].tolist()    #Kmol/m3 = mol/L
+            VR_exp = self.TrainMode2["Vol"].tolist()        #L 
+            Csus_in = self.TrainMode2["Csus_in"].to_list()  #mol/L
+            T_R101 = (self.TrainMode2["T_R101"]+273.15).tolist()  #K     
+            Q_P104 = (self.TrainMode2["Q_P104"]/3600).tolist()    #L/s 
+            K = []
+            Ea = []
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                C_exp_opt = C_exp[i : i+resolution]
+                VR_exp_opt = VR_exp[i : i+resolution]
+                T_R101_opt = T_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                Csus_in_opt = Csus_in[i : i + resolution]
+                Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                K.append(Opt_kinetic_params.x[0])
+                Ea.append(Opt_kinetic_params.x[1])
+            
+            self.K_mean_R101 = st.mean(K)
+            self.Ea_mean_R101 = st.mean(Ea)
+        
+        elif self.Operation_mode == 3:
+            #Optimization variables for R101
+            t_exp = (self.TrainMode3["time"]*60).tolist()               #seconds
+            C_exp_R101 = self.TrainMode3["Csus_exp_R101"].tolist()      #Kmol/m3 = mol/L
+            Q_P104 = (self.TrainMode3["Q_P104"]/3600).tolist()          #L/s
+            VR_exp_R101 = self.TrainMode3["Vol_R101"].tolist()            #L
+            T_R101 = (self.TrainMode3["T_R101"] + 273.15).tolist()      #K
+            Csus_in_R101 = (self.TrainMode3["Csus_in_R101"]).tolist()   #kmol/m3 = mol/L
+            K_R101 = []
+            Ea_R101 = []
+
+            #Optimization variables R102
+            C_exp_R102 = self.TrainMode3["Csus_exp_R102"].tolist()    #Kmol/m3 = mol/L
+            Q_P101 = (self.TrainMode3["Q_P101"]/3600).tolist()        #L/s
+            VR_exp_R102 = self.TrainMode3["Vol_R102"].tolist()          #L
+            T_R102 = (self.TrainMode3["T_R102"]).tolist()             #K
+            Csus_in_R102 = self.TrainMode3["Csus_exp_R101"].tolist()  #Kmol/m3 = mol/L
+            K_R102 = []
+            Ea_R102 = []
+
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                #Variables for R101
+                C_exp_R101_opt = C_exp_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                VR_exp_R101_opt = VR_exp_R101[i : i+resolution]
+                T_R101_opt = T_R101[i : i+resolution]
+                Csus_in_R101_opt = Csus_in_R101[i : i+resolution]
+
+                #Variables for R102
+                C_exp_R102_opt = C_exp_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+                VR_exp_R102_opt = VR_exp_R102[i : i+resolution]
+                T_R102_opt = T_R102[i : i+resolution]
+
+                #Optimization for R101
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
+                
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Ea_R101.append(Opt_kinetic_params_R101.x[1])
+
+                #Optimization for R102
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
+                                                  temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Ea_R102.append(Opt_kinetic_params_R102.x[1])
+
+            #Kinetics for R101
+            self.K_mean_R101 = st.mean(K_R101)
+            self.Ea_mean_R101 = st.mean(Ea_R101)
+
+            #Kinetics for R102
+            self.K_mean_R102 = st.mean(K_R102)
+            self.Ea_mean_R102 = st.mean(Ea_R102)
+                
+
+
+
+
+
+
             
                         # self.TrainMode1 = pd.DataFrame({"time": timev,
                         #                         "Vol": V,
@@ -1387,7 +1479,7 @@ Training.LimitReagentCalculation()
 for i in range (2):
     Training.StochoimetricExpenditure()
     Training.OptimizationArrhenius(resolution=2)
-    print(Training.TrainMode1)
-    print(Training.K_mean)
-    print(Training.Ea_mean)
+    # print(Training.TrainMode1)
+    print(Training.K_mean_R101)
+    print(Training.Ea_mean_R101)
       
