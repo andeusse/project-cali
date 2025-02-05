@@ -122,17 +122,17 @@ class Turbine(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
       if inputFlow <= 2.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", type=6)
       elif inputFlow <= 3.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R2", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R2", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R2", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R2", type=6)
       elif inputFlow <= 4.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R3", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R3", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R3", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R3", type=6)
       else:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R4", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R4", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R4", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R4", type=6)
       
       attempts = 1
       while attempts <= 5:
@@ -153,20 +153,20 @@ class Turbine(Resource):
         return {"message":influxDB.ERROR_MESSAGE}, 503
       
       if inputFlow <= 4.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R0", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R0", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R0", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R0", type=6)
       elif inputFlow <= 6.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R1", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R1", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R1", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R1", type=6)
       elif inputFlow <= 9.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R2", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R2", type=0)
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R2", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R2", type=6)
       elif inputFlow <= 11.1:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R3", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R3", type=0) 
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R3", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R3", type=6) 
       else:
-        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R4", type=0)
-        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R4", type=0)     
+        queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R4", type=6)
+        queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R4", type=6)     
       
       attempts = 1
       while attempts <= 5:
@@ -177,7 +177,7 @@ class Turbine(Resource):
           break
         except:
           turbineEfficiency = 54.0
-          controllerEfficiency = 72.0
+          controllerEfficiency = 90.0
           attempts += 1
         finally:
           influxDB.InfluxDBclose()

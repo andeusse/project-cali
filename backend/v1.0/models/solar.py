@@ -7,7 +7,6 @@ from tools import DBManager
 import os
 import time
 from datetime import datetime
-import random
 
 class Solar(Resource):
   def post(self):
@@ -218,7 +217,7 @@ class Solar(Resource):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name, type=0)
+      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name, type=6)
       attempts = 1
       while attempts <= 5:
         try:
@@ -235,13 +234,13 @@ class Solar(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
       if windSpeed <= 4.8:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R1", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R1", type=6)
       elif windSpeed <= 7.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R2", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R2", type=6)
       elif windSpeed <= 10.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R3", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R3", type=6)
       else:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R4", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nWT_Name + "_R4", type=6)
       
       attempts = 1
       while attempts <= 5:
@@ -303,11 +302,11 @@ class Solar(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
       if PV_Results[0] + WT_Results <= 10.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R1", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R1", type=6)
       elif PV_Results[0] + WT_Results <= 20.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R2", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R2", type=6)
       else:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R3", type=0)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R3", type=6)
       
       attempts = 1
       while attempts <= 5:

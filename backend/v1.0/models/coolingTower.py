@@ -120,9 +120,23 @@ class coolingTower(Resource):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc", type=0)
-      queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc", type=0)
-      queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Estruc", type=0)
+      if tower["topWaterTemperature"] <= 28.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R1", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R1", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R1", type=6)
+      elif tower["topWaterTemperature"] <= 30.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R2", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R2", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R2", type=6)
+      elif tower["topWaterTemperature"] <= 34.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R3", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R3", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R3", type=6)
+      else:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R4", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R4", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R4", type=6)
+      
       attempts = 1
       while attempts <= 5:
         try:
@@ -138,13 +152,28 @@ class coolingTower(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
+    
     elif fillType == "CurvedSlats":
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos", type=0)
-      queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos", type=0)
-      queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Curvos", type=0)
+      if tower["topWaterTemperature"] <= 28.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R1", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R1", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R1", type=6)
+      elif tower["topWaterTemperature"] <= 30.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R2", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R2", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R2", type=6)
+      elif tower["topWaterTemperature"] <= 34.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R3", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R3", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R3", type=6)
+      else:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R4", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R4", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R4", type=6)
+      
       attempts = 1
       while attempts <= 5:
         try:
@@ -160,13 +189,28 @@ class coolingTower(Resource):
           attempts += 1
         finally:
           influxDB.InfluxDBclose()  
+    
     elif fillType == "FlatSlats":
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Planos", type=0)
-      queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Planos", type=0)
-      queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Planos", type=0)
+      if tower["topWaterTemperature"] <= 28.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R1", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R1", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R1", type=6)
+      elif tower["topWaterTemperature"] <= 30.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R2", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R2", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R2", type=6)
+      elif tower["topWaterTemperature"] <= 34.1:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R3", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R3", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R3", type=6)
+      else:
+        queryWater = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R4", type=6)
+        queryAir = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R4", type=6)
+        queryHumidity = influxDB.QueryCreator(measurement='Planta_Torre_Enfriamiento', device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R4", type=6)
+      
       attempts = 1
       while attempts <= 5:
         try:
@@ -214,18 +258,59 @@ class coolingTower(Resource):
       connectionState = influxDB.InfluxDBconnection()
 
       if fillType == "Structured":
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc", value = twinTower.airCorrectionFactor, timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Estruc", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        if tower["topWaterTemperature"] <= 28.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R1", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R1", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R1", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        elif tower["topWaterTemperature"] <= 30.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R2", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R2", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R2", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        elif tower["topWaterTemperature"] <= 34.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R3", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R3", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R3", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Estruc_R4", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Estruc_R4", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Estruc_R4", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+
       elif fillType == "CurvedSlats":
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos", value = twinTower.airCorrectionFactor, timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Curvos", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        if tower["topWaterTemperature"] <= 28.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R1", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R1", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R1", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        elif tower["topWaterTemperature"] <= 30.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R2", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R2", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R2", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        elif tower["topWaterTemperature"] <= 34.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R3", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R3", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R3", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Curvos_R4", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Curvos_R4", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Curvos_R4", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+
       elif fillType == "FlatSlats":
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Planos", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Planos", value = twinTower.airCorrectionFactor, timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Planos", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
-      
+        if tower["topWaterTemperature"] <= 28.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R1", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R1", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R1", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        elif tower["topWaterTemperature"] <= 30.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R2", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R2", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R2", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        elif tower["topWaterTemperature"] <= 34.1:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R3", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R3", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R3", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_agua_Planos_R4", value = twinTower.waterCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_temperatura_aire_Planos_R4", value = twinTower.airCorrectionFactor, timestamp = timestamp)
+          influxDB.InfluxDBwriter( measurement = "Planta_Torre_Enfriamiento", device = "entrenamiento", variable = "correccion_humedad_aire_Planos_R4", value = twinTower.humidityCorrectionFactor, timestamp = timestamp)
+
       influxDB.InfluxDBclose()
 
     return {"model": tower}
