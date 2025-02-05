@@ -86,6 +86,14 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
             |> filter(fn: (r) => r["device"] == "''' + device + '''")
             |> last()'''
+        elif type == 6:
+            self.query = '''from(bucket: "''' + self.bucket + '''")
+            |> range(start: 0)
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            |> filter(fn: (r) => r["device"] == "''' + device + '''")
+            |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
+            |> aggregateWindow(every: 2m, fn: mean, createEmpty: false)
+            |> last()'''
         else:
             self.query = "Tipo de query inválido"
         return self.query

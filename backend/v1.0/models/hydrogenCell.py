@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 from tools import DBManager
 import os
-import json
 
 class hydrogenCell(Resource):
   def post(self):
@@ -120,13 +119,17 @@ class hydrogenCell(Resource):
     connectionState = influxDB.InfluxDBconnection()
     if not connectionState:
       return {"message":influxDB.ERROR_MESSAGE}, 503
-    queryConverter = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "eficiencia_convertidor_DC", type=0)
-    queryCoefficients = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "coeficientes_voltaje_celda", type=0)
+    queryConverter = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "eficiencia_convertidor_DC", type=6)
+    queryCoefficients = []
+    for i in range(9):
+      queryCoefficients.append(influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "voltaje_celda_C" + str(i), type=6))
     attempts = 1
     while attempts <= 5:
       try:
         converterEfficiency = influxDB.InfluxDBreader(queryConverter)['_value'][0]
-        voltageCoefficients = json.loads(influxDB.InfluxDBreader(queryCoefficients)['_value'][0])
+        voltageCoefficients = []
+        for i in range(9):
+          voltageCoefficients.append(influxDB.InfluxDBreader(queryCoefficients[i])['_value'][0])
         influxDB.InfluxDBclose()
         break
       except:
@@ -198,7 +201,9 @@ class hydrogenCell(Resource):
       connectionState = influxDB.InfluxDBconnection()
       
       influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "eficiencia_convertidor_DC", value = twinCell.n_converter, timestamp = timestamp)
-      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "coeficientes_voltaje_celda", value = str(twinCell.voltageCoefficients), timestamp = timestamp)
+      
+      for c,value in enumerate(twinCell.voltageCoefficients):
+        influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "voltaje_celda_C" + str(c), value = value, timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 
