@@ -1630,6 +1630,29 @@ class TrainingBiogasPlant:
             elif Operation == 3:       #Auto-recirculation
                 dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * C)/VR - ((Q_1 + Q_2)*C)/VR - (C * K) / VR
             return dCsus_dt
+        
+        # Optimization function t: vector of experimental time, C_exp: sustrate experimental concentration, y0: Initial value, 
+        def Optimization(t, C_exp, y0, VR, temperatures, Qi1, Csus_in_i1, Qi2, Csus_in_i2, Operation, K=1): 
+            # Define the objective function to minimize
+            def objective(params):
+                K = params
+                t_train = t
+
+                #interpol the vectors according to experimental time
+                T_func = lambda t: np.interp(t, t_train, temperatures)
+                Q_func1 = lambda t: np.interp(t, t_train, Qi1)
+                Q_func2 = lambda t: np.interp(t, t_train, Qi2)
+                VR_func = lambda t: np.interp(t, t_train, VR)
+                Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
+                Csus_in2 = lambda t: np.interp(t, t_train, Csus_in_i2)
+                
+                C_model = odeint(model_ADM1, y0, t, args = (K, VR_func, T_func, Q_func1, Q_func2, Csus_in1, Csus_in2, Operation)).flatten()
+
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                return squared_diff
+            
+            result = minimize(objective, [K, Ea], method = 'Nelder-Mead')
+            return result
                  
                               
 #This will be the way to call method from API
