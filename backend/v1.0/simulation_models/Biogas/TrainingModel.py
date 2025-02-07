@@ -707,6 +707,8 @@ class TrainingBiogasPlant:
             #Pump 102
             self.DataPlant = AlignAsynchronous(variable = "P-102", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
 
+        self.DataPlant.fillna(0, inplace = True)
+
     def LimitReagentCalculation(self):
         self.SN = self.Datainterfaz["_value"]["MNS"]    #SN: substrate number
         #Water proportion
@@ -1636,9 +1638,13 @@ Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=60, V
 #Loop calling
 for i in range (4):
     Training.getData()
+    print("-------- Datos de interfaz")
+    print(Training.Datainterfaz)
+    print("------------Datos de planta")
+    print(Training.DataPlant)
     Training.LimitReagentCalculation()
     Training.StochoimetricExpenditure()
-    print(Training.TrainMode4)
+    # print(Training.TrainMode4)
     Training.OptimizationArrhenius(resolution=2)
     # print(Training.K_mean_R101)
     # print(Training.Ea_mean_R101)
