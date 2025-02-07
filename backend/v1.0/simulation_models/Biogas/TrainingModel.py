@@ -1457,19 +1457,54 @@ class TrainingBiogasPlant:
             #Kinetics for R102
             self.K_mean_R102 = st.mean(K_R102)
             self.Ea_mean_R102 = st.mean(Ea_R102)
+        
+        elif self.Operation_mode == 4:
+            #Optimization variables for R101
+            t_exp = (self.TrainMode4["time"]*60).tolist()               #seconds
+            C_exp_R101 = self.TrainMode4["Csus_exp_R101"].tolist()      #Kmol/m3 = mol/L
+            Q_P104 = (self.TrainMode4["Q_P104"]/3600).tolist()          #L/s
+            VR_exp_R101 = self.TrainMode4["Vol_R101"].tolist()          #L
+            T_R101 = (self.TrainMode4["T_R101"] + 273.15).tolist()      #K
+            Csus_in_R101 = (self.TrainMode4["Csus_in_R101"]).tolist()   #kmol/m3 = mol/L
+            Q_P102 = (self.TrainMode4["Q_P102"]).tolist()
+            K_R101 = []
+            Ea_R101 = []
+            
+            #Optimization variables for R102
+            C_exp_R102 = self.TrainMode4["Csus_exp_R102"].tolist()    #Kmol/m3 = mol/L
+            Q_P101 = (self.TrainMode4["Q_P101"]/3600).tolist()        #L/s
+            VR_exp_R102 = self.TrainMode4["Vol_R102"].tolist()          #L
+            T_R102 = (self.TrainMode4["T_R102"]).tolist()             #K
+            Csus_in_R102 = self.TrainMode4["Csus_exp_R101"].tolist()  #Kmol/m3 = mol/L
+            K_R102 = []
+            Ea_R102 = []
+        
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                #Variables for R101
+                C_exp_R101_opt = C_exp_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                VR_exp_R101_opt = VR_exp_R101[i : i+resolution]
+                T_R101_opt = T_R101[i : i+resolution]
+                Csus_in_R101_opt = Csus_in_R101[i : i+resolution]
+                Q_P102_opt = Q_P102[i : i+resolution]
+                
+                #Variables for R102
+                C_exp_R102_opt = C_exp_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+                VR_exp_R102_opt = VR_exp_R102[i : i+resolution]
+                T_R102_opt = T_R102[i : i+resolution]
+                
+                #optimization R101
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
                 
 
 
-
-
-
-
             
-                        # self.TrainMode1 = pd.DataFrame({"time": timev,
-                        #                         "Vol": V,
-                        #                         "Q_P104": self.DataPlant["FE-104"].tolist(),
-                        #                         "Csus_exp":Csus 
-                        #                         }) 
+            
+                   
         
                               
 #This will be the way to call method from API
