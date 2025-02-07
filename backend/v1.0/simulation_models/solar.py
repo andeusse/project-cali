@@ -363,7 +363,7 @@ class TwinPVWF:
         self.I_CA = (self.S_CA / self.V_CA if self.V_CA != 0.0 else 0.0)
         self.I_inv = self.P_inv / self.V_CD
         
-        return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_PV,2), round(self.V_WT,2), round(self.V_CDload,2), round(self.SOC*100,4), round(self.V_bat,4), round(self.V_CD,2), round(self.V_CA,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), round(self.P_CD,2), self.inverterState, round(self.I_PV,2), round(self.I_WT,2), round(self.I_CD,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2)
+        return self.P_CC, self.P_inv, self.P_bat, self.V_PV, self.V_WT, self.V_CDload, self.SOC*100, self.V_bat, self.V_CD, self.V_CA, self.S_CA, self.P_CA, self.Q_CA, self.P_CD, self.inverterState, self.I_PV, self.I_WT, self.I_CD, self.I_CC, self.I_bat, self.I_CA, self.I_inv
     
     
     def ongridTwinOutput(self, offlineMode, chargeSOC_0, batteryState, gridState, P_CA, PF, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, chargeCycle, V_PV, V_grid, V_CA, delta_t):
@@ -498,5 +498,5 @@ class TwinPVWF:
         self.I_grid = self.P_grid / self.V_grid
         self.I_CA = (self.S_CA / self.V_CA if self.V_CA != 0.0 else 0.0)
         
-        return round(self.P_grid,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_grid,2), round(self.V_PV,2), round(self.SOC*100,4), round(self.V_bat,4), round(self.V_CD,2), round(self.V_CA,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.gridState, chargeCycle, round(self.I_PV,2), round(self.I_bat,2), round(self.I_grid,2), round(self.I_CA,2)
+        return self.P_grid, self.P_inv, self.P_bat, self.V_grid, self.V_PV, self.SOC*100, self.V_bat, self.V_CD, self.V_CA, self.S_CA, self.P_CA, self.Q_CA, self.gridState, chargeCycle, self.I_PV, self.I_bat, self.I_grid, self.I_CA
     

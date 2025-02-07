@@ -1,10 +1,26 @@
 import os
 import sys
 
-current_directory = os.getcwd()
-current_directory = os.path.join(current_directory, 'v1.0')
-print(current_directory)
-sys.path.append(current_directory)
+# Get the absolute path of the script
+script_dir = os.path.dirname(os.path.abspath(__file__))  
+
+# Set the working directory to the correct folder
+project_root = os.path.abspath(os.path.join(script_dir, "../../.."))  # Adjust based on folder structure
+v1_0_path = os.path.join(project_root, "v1.0")
+
+# Change working directory
+os.chdir(v1_0_path)  
+sys.path.insert(0, v1_0_path)  # Ensure it is the first in sys.path
+
+print(f"Running script in: {os.getcwd()}")
+print(f"Python path: {sys.path}")
+
+# current_directory = os.getcwd()
+# current_directory = os.path.join(current_directory, "v1.0")
+# print(current_directory)
+# sys.path.append(current_directory)
+
+# print(f"Current Working Directory: {os.getcwd()}")
 
 from tools import DBManager
 import pandas as pd
@@ -23,11 +39,16 @@ class TrainingBiogasPlant:
         # DB_Bucket = os.getenv('DB_Bucket')
         # DB_Organization = os.getenv('DB_Organization')
         # DB_Token = os.getenv('DB_Token')
-        DB_IP = "localhost"
-        DB_Port = "8086"
-        DB_Organization = "UCO"
-        DB_Token = "H2ppwa50IDSKVY1wtjhC0j2QCZWaTYpzD9mhrY3clL62IuJTLAwXPzfDVxACwUsTRW2Xy_QVRHmCwXprDmG3fg=="
-        DB_Bucket = "BiogasPlantSimulator"
+        # DB_IP = "localhost"
+        # DB_Port = "8086"
+        # DB_Organization = "UCO"
+        # DB_Token = "H2ppwa50IDSKVY1wtjhC0j2QCZWaTYpzD9mhrY3clL62IuJTLAwXPzfDVxACwUsTRW2Xy_QVRHmCwXprDmG3fg=="
+        # DB_Bucket = "BiogasPlantSimulator"
+        DB_IP = 'localhost'
+        DB_Port = '8086'
+        DB_Bucket = 'Laboratorio_Energias'
+        DB_Organization = 'USC'
+        DB_Token = '4pJB_298afu0WKjKBtPESjnUxvpJV0PODWBNMGzeeU_ahg1P4H3Bg5KOfwI2A9LXm2BQwaQR_un792HXy3bsvg=='
         
         self.influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
         self.influxDB.InfluxDBconnection()
@@ -60,6 +81,7 @@ class TrainingBiogasPlant:
     def getData (self):
         #Get data from User input plant plant
         self.query1 = self.influxDB.QueryCreator(measurement="Planta_Biogas", device="interfaz", type=5)
+        print(self.query1)
         self.Datainterfaz = pd.concat(self.influxDB.InfluxDBreader(query = self.query1), ignore_index=True)
         self.Datainterfaz.set_index("_field", inplace = True)
         
@@ -1510,11 +1532,12 @@ class TrainingBiogasPlant:
 #This will be the way to call method from API
 Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=60, Volume_V101 = 15) 
 Training.getData()
-Training.LimitReagentCalculation()
-for i in range (2):
-    Training.StochoimetricExpenditure()
-    Training.OptimizationArrhenius(resolution=2)
-    # print(Training.TrainMode1)
-    print(Training.K_mean_R101)
-    print(Training.Ea_mean_R101)
+# print(Training.DataPlant)
+# Training.LimitReagentCalculation()
+# for i in range (2):
+#     Training.StochoimetricExpenditure()
+#     Training.OptimizationArrhenius(resolution=2)
+#     # print(Training.TrainMode1)
+#     print(Training.K_mean_R101)
+#     print(Training.Ea_mean_R101)
       
