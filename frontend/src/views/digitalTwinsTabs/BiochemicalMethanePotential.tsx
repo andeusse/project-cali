@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   BiochemicalMethanePotentialOutput,
   BiochemicalMethanePotentialParameters,
@@ -49,14 +49,20 @@ import TimeGraphs from '../../components/models/common/TimeGraphs';
 import BiochemicalMethanePotentialDiagram from '../../components/models/diagram/BiochemicalMethanePotentialDiagram';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import { AxiosError } from 'axios';
-import { modelsAPI } from '../../api/digitalTwinsModels';
+import { modelsAPI, trainingDataAPIMock } from '../../api/digitalTwinsModels';
 import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
+import { TrainingDataType } from '../../types/trainingData';
+import { setIsLoading } from '../../redux/slices/isLoadingSlice';
+import moment from 'moment';
+import { useAppDispatch } from '../../redux/reduxHooks';
 
 type Props = {};
 
 const BiochemicalMethanePotential = (props: Props) => {
+  const dispatch = useAppDispatch();
+
   const [system, setSystem] = useState<BiochemicalMethanePotentialParameters>({
     ...BMP,
   });
@@ -89,6 +95,176 @@ const BiochemicalMethanePotential = (props: Props) => {
       setIsOpen(true);
     }
   }, [error]);
+
+  const [trainingDataA, settrainingDataA] = useState<TrainingDataType>({
+    names: [],
+    values: {},
+  });
+
+  const [selectedTrainingDataA, setSelectedTrainingDataA] =
+    useState<string>('Default');
+
+  const [trainingDataB, settrainingDataB] = useState<TrainingDataType>({
+    names: [],
+    values: {},
+  });
+
+  const [selectedTrainingDataB, setSelectedTrainingDataB] =
+    useState<string>('Default');
+
+  const setDataA = useCallback(
+    (
+      old: BiochemicalMethanePotentialParameters
+    ): BiochemicalMethanePotentialParameters => {
+      if (selectedTrainingDataA !== 'Default') {
+        const newState = { ...old };
+        newState.kineticKSideA.value =
+          trainingDataA.values[selectedTrainingDataA].activationEnergyR101 ??
+          newState.kineticKSideA.value;
+        newState.kineticEaSideA.value =
+          trainingDataA.values[selectedTrainingDataA].exponentialFactorR101 ??
+          newState.kineticEaSideA.value;
+        newState.kineticLambdaSideA.value =
+          trainingDataA.values[selectedTrainingDataA].lambdaR101 ??
+          newState.kineticLambdaSideA.value;
+        return newState;
+      } else {
+        const newState = { ...old };
+        switch (newState.modelSelectionSideA) {
+          case OperationModelType.Arrhenius:
+            newState.kineticEaSideA.value = 1000000;
+            newState.kineticKSideA.value = 100;
+            break;
+          case OperationModelType.ADM1:
+            newState.kineticKSideA.value = 1e-15;
+            break;
+          case OperationModelType.Gompertz:
+            newState.kineticEaSideA.value = 2.59e-9;
+            newState.kineticKSideA.value = 0.00329;
+            newState.kineticLambdaSideA.value = -44928;
+            break;
+        }
+        return newState;
+      }
+    },
+    [selectedTrainingDataA, trainingDataA.values]
+  );
+
+  const setDataB = useCallback(
+    (
+      old: BiochemicalMethanePotentialParameters
+    ): BiochemicalMethanePotentialParameters => {
+      if (selectedTrainingDataB !== 'Default') {
+        const newState = { ...old };
+        newState.kineticKSideB.value =
+          trainingDataB.values[selectedTrainingDataB].activationEnergyR101 ??
+          newState.kineticKSideB.value;
+        newState.kineticEaSideB.value =
+          trainingDataB.values[selectedTrainingDataB].exponentialFactorR101 ??
+          newState.kineticEaSideB.value;
+        newState.kineticLambdaSideB.value =
+          trainingDataB.values[selectedTrainingDataB].lambdaR101 ??
+          newState.kineticLambdaSideB.value;
+        return newState;
+      } else {
+        const newState = { ...old };
+        switch (newState.modelSelectionSideB) {
+          case OperationModelType.Arrhenius:
+            newState.kineticEaSideB.value = 1000000;
+            newState.kineticKSideB.value = 100;
+            break;
+          case OperationModelType.ADM1:
+            newState.kineticKSideB.value = 1e-15;
+            break;
+          case OperationModelType.Gompertz:
+            newState.kineticEaSideB.value = 2.59e-9;
+            newState.kineticKSideB.value = 0.00329;
+            newState.kineticLambdaSideB.value = -44928;
+            break;
+        }
+        return newState;
+      }
+    },
+    [selectedTrainingDataB, trainingDataB.values]
+  );
+
+  useEffect(() => {
+    dispatch(setIsLoading(true));
+    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+      'bmp',
+      system.measurementMethodSideA,
+      system.modelSelectionSideA,
+      false
+    )
+      .then((resp) => {
+        if (!resp.names.includes(selectedTrainingDataA)) {
+          setSelectedTrainingDataA('Default');
+        }
+        settrainingDataA(resp);
+        setSystem((old) => setDataA(old));
+      })
+      .catch((err: AxiosError<errorResp>) => {
+        setError(
+          `Error al realizar la consulta de los parámetros de entrenamiento: ${
+            err.response?.status
+          } y con mensaje de error: ${
+            err.response?.data.message
+          } y fecha ${moment()}`
+        );
+      })
+      .finally(() => {
+        dispatch(setIsLoading(false));
+      });
+  }, [system.measurementMethodSideA, system.modelSelectionSideA]);
+
+  useEffect(() => {
+    dispatch(setIsLoading(true));
+    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+      'bmp',
+      system.measurementMethodSideB,
+      system.modelSelectionSideB,
+      false
+    )
+      .then((resp) => {
+        if (!resp.names.includes(selectedTrainingDataB)) {
+          setSelectedTrainingDataB('Default');
+        }
+        settrainingDataB(resp);
+        setSystem((old) => setDataB(old));
+      })
+      .catch((err: AxiosError<errorResp>) => {
+        setError(
+          `Error al realizar la consulta de los parámetros de entrenamiento: ${
+            err.response?.status
+          } y con mensaje de error: ${
+            err.response?.data.message
+          } y fecha ${moment()}`
+        );
+      })
+      .finally(() => {
+        dispatch(setIsLoading(false));
+      });
+  }, [system.measurementMethodSideB, system.modelSelectionSideB]);
+
+  useEffect(() => {
+    setSystem((old) => {
+      return setDataA(old);
+    });
+  }, [selectedTrainingDataA, setDataA, trainingDataA.values]);
+
+  useEffect(() => {
+    setSystem((old) => {
+      return setDataB(old);
+    });
+  }, [selectedTrainingDataB, setDataB, trainingDataB.values]);
+
+  const handleTrainingDataAChange = (e: any) => {
+    setSelectedTrainingDataA(e.target.value);
+  };
+
+  const handleTrainingDataBChange = (e: any) => {
+    setSelectedTrainingDataB(e.target.value);
+  };
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiochemicalMethanePotentialParameters>(
@@ -495,6 +671,34 @@ const BiochemicalMethanePotential = (props: Props) => {
                               </Select>
                             </FormControl>
                           </Grid>
+                          {trainingDataA !== undefined &&
+                            trainingDataA.names.length !== 0 && (
+                              <Grid item xs={12} md={12} xl={12}>
+                                <FormControl fullWidth>
+                                  <InputLabel>
+                                    Parámetros de entrenamiento
+                                  </InputLabel>
+                                  <Select
+                                    label="Parámetros de entrenamiento"
+                                    value={selectedTrainingDataA}
+                                    name="selectedTrainingData"
+                                    disabled={system.disableParameters}
+                                    onChange={(e: any) =>
+                                      handleTrainingDataAChange(e)
+                                    }
+                                  >
+                                    <MenuItem key={'Default'} value={'Default'}>
+                                      {'Valores por defecto'}
+                                    </MenuItem>
+                                    {trainingDataA.names.map((key) => (
+                                      <MenuItem key={key} value={key}>
+                                        {key}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            )}
                           <Grid item xs={12} md={6} xl={12}>
                             <CustomNumberField
                               variable={system.kineticKSideA}
@@ -1087,6 +1291,34 @@ const BiochemicalMethanePotential = (props: Props) => {
                               </Select>
                             </FormControl>
                           </Grid>
+                          {trainingDataB !== undefined &&
+                            trainingDataB.names.length !== 0 && (
+                              <Grid item xs={12} md={12} xl={12}>
+                                <FormControl fullWidth>
+                                  <InputLabel>
+                                    Parámetros de entrenamiento
+                                  </InputLabel>
+                                  <Select
+                                    label="Parámetros de entrenamiento"
+                                    value={selectedTrainingDataB}
+                                    name="selectedTrainingData"
+                                    disabled={system.disableParameters}
+                                    onChange={(e: any) =>
+                                      handleTrainingDataBChange(e)
+                                    }
+                                  >
+                                    <MenuItem key={'Default'} value={'Default'}>
+                                      {'Valores por defecto'}
+                                    </MenuItem>
+                                    {trainingDataB.names.map((key) => (
+                                      <MenuItem key={key} value={key}>
+                                        {key}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            )}
                           <Grid item xs={12} md={6} xl={12}>
                             <CustomNumberField
                               variable={system.kineticKSideB}

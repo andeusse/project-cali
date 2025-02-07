@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   BIOGAS,
@@ -116,38 +116,8 @@ const Biogas = () => {
   const [selectedTrainingData, setSelectedTrainingData] =
     useState<string>('Default');
 
-  useEffect(() => {
-    dispatch(setIsLoading(true));
-    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
-      'biogas1',
-      system.inputOperationMode,
-      system.operationModelType
-    )
-      .then((resp) => {
-        setSelectedTrainingData('Default');
-        settrainingData(resp);
-      })
-      .catch((err: AxiosError<errorResp>) => {
-        setError(
-          `Error al realizar la consulta de los parámetros de entrenamiento: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
-        );
-      })
-      .finally(() => {
-        dispatch(setIsLoading(false));
-      });
-  }, [
-    dispatch,
-    setError,
-    system.inputOperationMode,
-    system.operationModelType,
-  ]);
-
-  useEffect(() => {
-    setSystem((old) => {
+  const setData = useCallback(
+    (old: BiogasParameters): BiogasParameters => {
       if (selectedTrainingData !== 'Default') {
         const newState = { ...old };
         newState.activationEnergyR101.value =
@@ -193,8 +163,43 @@ const Biogas = () => {
         }
         return newState;
       }
+    },
+    [selectedTrainingData, trainingData.values]
+  );
+
+  useEffect(() => {
+    dispatch(setIsLoading(true));
+    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+      'biogas',
+      system.inputOperationMode,
+      system.operationModelType
+    )
+      .then((resp) => {
+        if (!resp.names.includes(selectedTrainingData)) {
+          setSelectedTrainingData('Default');
+        }
+        settrainingData(resp);
+        setSystem((old) => setData(old));
+      })
+      .catch((err: AxiosError<errorResp>) => {
+        setError(
+          `Error al realizar la consulta de los parámetros de entrenamiento: ${
+            err.response?.status
+          } y con mensaje de error: ${
+            err.response?.data.message
+          } y fecha ${moment()}`
+        );
+      })
+      .finally(() => {
+        dispatch(setIsLoading(false));
+      });
+  }, [system.inputOperationMode, system.operationModelType]);
+
+  useEffect(() => {
+    setSystem((old) => {
+      return setData(old);
     });
-  }, [selectedTrainingData, trainingData.values]);
+  }, [selectedTrainingData, setData, trainingData.values]);
 
   const handleTrainingDataChange = (e: any) => {
     setSelectedTrainingData(e.target.value);
@@ -490,7 +495,7 @@ const Biogas = () => {
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Parámetro cinético</h3>
+                      <h3>Parámetros cinéticos</h3>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
                       <FormControl fullWidth>

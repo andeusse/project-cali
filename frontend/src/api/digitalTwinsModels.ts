@@ -38,19 +38,22 @@ export const modelsAPI = <T, R, S = AxiosResponse<R>>(
 export const trainingDataAPI = <R, S = AxiosResponse<R>>(
   model: string,
   queryMode: string,
-  queryModel: string
+  queryModel: string,
+  isBiogas: boolean = true
 ): Promise<S> => {
+  const queryParameterName = isBiogas ? 'mode' : 'method';
   return api.get(
     `${
       Config.getInstance().params.apiUrl
-    }/models/${model}?mode=${queryMode}&model=${queryModel}`
+    }/models/${model}?${queryParameterName}=${queryMode}&model=${queryModel}`
   );
 };
 
 export const trainingDataAPIMock = <R, S = AxiosResponse<R>>(
   model: string,
   queryMode: string,
-  queryModel: string
+  queryModel: string,
+  isBiogas: boolean = true
 ): Promise<S> => {
   return new Promise<S>((res, rej) => {
     setTimeout(() => {
