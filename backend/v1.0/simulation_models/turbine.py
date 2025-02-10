@@ -9,7 +9,7 @@ class TwinHydro:
         self.systemName = systemName # Nombre del sistema
 
     # Parametrizacion de turbinas de acuerdo a tipo
-    def turbineType (self, type):
+    def turbineType (self, type, inputFlow):
         # Pelton
         if type == 1:
             self.H_min = 0.0
@@ -18,7 +18,7 @@ class TwinHydro:
             self.Q_max = 10.0
             self.f_h = 0.0
             self.P_max = 623.0
-            self.V_t = 40.0
+            self.V_t = 0.128*(inputFlow**5) - 2.842*(inputFlow**4) + 23.756*(inputFlow**3) - 92.933*(inputFlow**2) + 176.44*inputFlow - 105.41
         # Turgo
         elif type == 2:
             self.H_min = 0.0
@@ -78,7 +78,7 @@ class TwinHydro:
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
         return n_controller.x[0]
     
-    def twinOutput(self, chargeSOC_0, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkLoadMode, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA):
+    def twinOutput(self, chargeSOC_0, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkLoadMode, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA, iteration):
         
         self.inverterState = inverterState
         if sinkLoadMode == 'On':
@@ -183,8 +183,11 @@ class TwinHydro:
         else: 
             self.V_CD = self.V_bat
         
+        print(iteration, flush=True)
+        print(self.V_bat, flush=True)
+        print(self.V_sink_on, flush=True)
         # Lógica de la disipación
-        if sinkLoadMode == 'Auto':
+        if sinkLoadMode == 'Auto' and iteration > 2:
             if self.V_bat > self.V_sink_on: # Cambiar por condición de voltaje
                 self.sinkState = True 
             elif self.V_bat < self.V_sink_off:
@@ -196,4 +199,4 @@ class TwinHydro:
         self.I_inv = self.P_inv / self.V_CD
         I_CDload = (P_CD / V_CDload if V_CDload != 0.0 else 0.0)
         
-        return round(self.P_CC,2), round(self.P_inv,2), round(self.P_bat,2), round(self.V_t,2), round(self.V_CA,2), round(self.SOC*100,4), round(self.V_bat,4), round(self.V_CD,2), self.sinkState, round(self.P_sink,2), round(self.S_CA,2), round(self.P_CA,2), round(self.Q_CA,2), self.inverterState,  round(self.I_t,2), round(self.I_CC,2), round(self.I_bat,2), round(self.I_CA,2), round(self.I_inv,2), round(P_CD,2), round(V_CDload,2), I_CDload
+        return self.P_CC, self.P_inv, self.P_bat, self.V_t, self.V_CA, self.SOC*100, self.V_bat, self.V_CD, self.sinkState, self.P_sink, self.S_CA, self.P_CA, self.Q_CA, self.inverterState, self.I_t, self.I_CC, self.I_bat, self.I_CA, self.I_inv, P_CD, V_CDload, I_CDload

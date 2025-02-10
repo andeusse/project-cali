@@ -69,7 +69,7 @@ class hydrogenCell(Resource):
     #   else:
     #     inputCellTemperature = float(inputCellTemperatureArray[-1])
     # else:
-    #   inputCellTemperature = ((35.0 if not data["inputCellTemperature"]["value"] else data["inputCellTemperature"]["value"]) if not data["inputCellTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],2))
+    #   inputCellTemperature = ((35.0 if not data["inputCellTemperature"]["value"] else data["inputCellTemperature"]["value"]) if not data["inputCellTemperature"]["disabled"] else round(values_df["Value"]['TE-101'],3))
     
     if data["inputFanPercentage"]["arrayEnabled"]:
       inputFanPercentageArray = np.repeat(np.array(data["inputFanPercentageArray"]),repeats)
@@ -78,7 +78,7 @@ class hydrogenCell(Resource):
       else:
         inputFanPercentage = float(inputFanPercentageArray[-1])
     else:
-      inputFanPercentage = ((50.0 if not data["inputFanPercentage"]["value"] else data["inputFanPercentage"]["value"]) if not data["inputFanPercentage"]["disabled"] else round(values_df["Value"]['F-101'],2))
+      inputFanPercentage = ((50.0 if not data["inputFanPercentage"]["value"] else data["inputFanPercentage"]["value"]) if not data["inputFanPercentage"]["disabled"] else round(values_df["Value"]['F-101'],3))
 
     if electronicLoadMode == "Current":
       if data["inputElectronicLoadCurrent"]["arrayEnabled"]:
@@ -88,7 +88,7 @@ class hydrogenCell(Resource):
         else:
           inputElectronicLoad = float(inputElectronicLoadCurrentArray[-1])
       else:
-        inputElectronicLoad = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],2))
+        inputElectronicLoad = ((0.0 if not data["inputElectronicLoadCurrent"]["value"] else data["inputElectronicLoadCurrent"]["value"]) if not data["inputElectronicLoadCurrent"]["disabled"] else round(values_df["Value"]['IM'],3))
       cell["inputElectronicLoadCurrent"] = inputElectronicLoad
     elif electronicLoadMode == "Power":
       if data["inputElectronicLoadPower"]["arrayEnabled"]:
@@ -98,7 +98,7 @@ class hydrogenCell(Resource):
         else:
           inputElectronicLoad = float(inputElectronicLoadPowerArray[-1])
       else:
-        inputElectronicLoad = ((0.0 if not data["inputElectronicLoadPower"]["value"] else data["inputElectronicLoadPower"]["value"]) if not data["inputElectronicLoadPower"]["disabled"] else round(values_df["Value"]['CW'],2))
+        inputElectronicLoad = ((0.0 if not data["inputElectronicLoadPower"]["value"] else data["inputElectronicLoadPower"]["value"]) if not data["inputElectronicLoadPower"]["disabled"] else round(values_df["Value"]['CW'],3))
       cell["inputElectronicLoadPower"] = inputElectronicLoad
     elif electronicLoadMode == "Resistance":
       if data["inputElectronicLoadResistance"]["arrayEnabled"]:
@@ -108,7 +108,7 @@ class hydrogenCell(Resource):
           else:
             inputElectronicLoad = float(inputElectronicLoadResistanceArray[-1])
       else:
-        inputElectronicLoad = ((2.0 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],2))
+        inputElectronicLoad = ((2.0 if not data["inputElectronicLoadResistance"]["value"] else data["inputElectronicLoadResistance"]["value"]) if not data["inputElectronicLoadResistance"]["disabled"] else round(values_df["Value"]['CR'],3))
       cell["inputElectronicLoadResistance"] = inputElectronicLoad
 
     cellSelfFeeding = data["cellSelfFeeding"]
@@ -140,18 +140,18 @@ class hydrogenCell(Resource):
         influxDB.InfluxDBclose()
 
     if not data["inputOfflineOperation"]:
-      hydrogenPressure = round(values_df["Value"]['PT-101'],2)
-      cellTemperature = round(values_df["Value"]['TE-101'],2)
+      hydrogenPressure = round(values_df["Value"]['PT-101'],3)
+      cellTemperature = round(values_df["Value"]['TE-101'],3)
       if values_df["Value"]['LONOFF']:
         electronicLoadState = True
       else:
         electronicLoadState = False
       cellVoltage_meas = round(values_df["Value"]['VG-101'],3)
       cellCurrent_meas = round(values_df["Value"]['IG-101'],3)
-      lightsPower = round(values_df["Value"]['PC-102'],2)
-      cellSelfFeedingPower = round(values_df["Value"]['PC-101'],2)
-      cellPower_meas = round(values_df["Value"]['PG-101'],2)
-      electronicLoadPower_meas = round(values_df["Value"]['VM'],2) * round(values_df["Value"]['IM'])
+      lightsPower = round(values_df["Value"]['PC-102'],3)
+      cellSelfFeedingPower = round(values_df["Value"]['PC-101'],3)
+      cellPower_meas = round(values_df["Value"]['PG-101'],3)
+      electronicLoadPower_meas = round(values_df["Value"]['VM'],3) * round(values_df["Value"]['IM'],3)
     else:
       hydrogenPressure = 5.0
       cellTemperature = 40.0

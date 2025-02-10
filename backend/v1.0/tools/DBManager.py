@@ -42,6 +42,17 @@ class InfluxDBmodel:
             
         except:
             return 'An error ocurred writing the InfluxDB Database'
+        
+    # %%  InfluxDB Writer         
+    def InfluxDBwriterBiogasTraining(self, measurement, device, mode, model, timestamp):
+        write_api = self.influxDBclient.write_api(write_options=SYNCHRONOUS)
+        payload = influxdb_client.Point(measurement).tag('device',device).field('mode', mode).field('model', model).time(timestamp, write_precision=WritePrecision.S)
+        
+        try:
+            write_api.write(self.bucket, self.org, payload)
+            
+        except:
+            return 'An error ocurred writing the InfluxDB Database'
 
     # %% InfluxDB close connection
     def InfluxDBclose(self):

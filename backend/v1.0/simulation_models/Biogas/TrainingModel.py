@@ -1,10 +1,26 @@
 import os
 import sys
 
+# # Get the absolute path of the script
+# script_dir = os.path.dirname(os.path.abspath(__file__))  
+
+# # Set the working directory to the correct folder
+# project_root = os.path.abspath(os.path.join(script_dir, "../../.."))  # Adjust based on folder structure
+# v1_0_path = os.path.join(project_root, "v1.0")
+
+# # Change working directory
+# os.chdir(v1_0_path)  
+# sys.path.insert(0, v1_0_path)  # Ensure it is the first in sys.path
+
+# print(f"Running script in: {os.getcwd()}")
+# print(f"Python path: {sys.path}")
+
 current_directory = os.getcwd()
-current_directory = os.path.join(current_directory, 'v1.0')
+current_directory = os.path.join(current_directory, "v1.0")
 print(current_directory)
 sys.path.append(current_directory)
+
+# print(f"Current Working Directory: {os.getcwd()}")
 
 from tools import DBManager
 import pandas as pd
@@ -23,11 +39,16 @@ class TrainingBiogasPlant:
         # DB_Bucket = os.getenv('DB_Bucket')
         # DB_Organization = os.getenv('DB_Organization')
         # DB_Token = os.getenv('DB_Token')
-        DB_IP = "localhost"
-        DB_Port = "8086"
-        DB_Organization = "UCO"
-        DB_Token = "H2ppwa50IDSKVY1wtjhC0j2QCZWaTYpzD9mhrY3clL62IuJTLAwXPzfDVxACwUsTRW2Xy_QVRHmCwXprDmG3fg=="
-        DB_Bucket = "BiogasPlantSimulator"
+        # DB_IP = "localhost"
+        # DB_Port = "8086"
+        # DB_Organization = "UCO"
+        # DB_Token = "H2ppwa50IDSKVY1wtjhC0j2QCZWaTYpzD9mhrY3clL62IuJTLAwXPzfDVxACwUsTRW2Xy_QVRHmCwXprDmG3fg=="
+        # DB_Bucket = "BiogasPlantSimulator"
+        DB_IP = 'localhost'
+        DB_Port = '8086'
+        DB_Bucket = 'BiogasPlantSimulator'
+        DB_Organization = 'UCO'
+        DB_Token = 'yksWy5XIJIv-TA-DDvCH7OQJAx-VApFBFQsibukbs_VJUtTe0asUREiRXQLbhGH2O78XHegCXGSavURt2Atniw=='
         
         self.influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
         self.influxDB.InfluxDBconnection()
@@ -61,6 +82,7 @@ class TrainingBiogasPlant:
         #Get data from User input plant plant
         self.query1 = self.influxDB.QueryCreator(measurement="Planta_Biogas", device="interfaz", type=5)
         self.Datainterfaz = pd.concat(self.influxDB.InfluxDBreader(query = self.query1), ignore_index=True)
+        # self.Datainterfaz = self.influxDB.InfluxDBreader(query = self.query1)
         self.Datainterfaz.set_index("_field", inplace = True)
         
         #Get Asynchronous and synchronous Data
@@ -551,7 +573,7 @@ class TrainingBiogasPlant:
                         
             #R101
             PH_R101 = DataPlant["_value"]["AT-101"]        
-            V_R101 = DataPlant["_value"]["LT-101"]       #L: level
+            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
             P_R101 = DataPlant["_value"]["PT-101"]
             T1_R101 =  DataPlant["_value"]["TE-101A"]
             T2_R101 = DataPlant["_value"]["TE-101B"]
@@ -603,7 +625,7 @@ class TrainingBiogasPlant:
             T2_R101 = SameDimension(P_V101, T2_R101)
             Tprom_R101 = SameDimension(P_V101, Tprom_R101)
             PH_R101 = SameDimension(P_V101, PH_R101)
-            L_R101 = SameDimension(P_V101, L_R101)
+            V_R101 = SameDimension(P_V101, L_R101)
             P_R101 = SameDimension(P_V101, P_R101)  
             
             #Variables for V102
@@ -647,7 +669,7 @@ class TrainingBiogasPlant:
                 "T2_R101": T2_R101.tolist(),
                 "Tprom_R101": Tprom_R101.tolist(),
                 "PH_R101": PH_R101.tolist(),
-                "V_R101": L_R101.tolist(),
+                "V_R101": V_R101.tolist(),
                 "P_R101": P_R101.tolist(),
                 "P_V102":P_V102.tolist(),
                 "T_V102":TT_V102.tolist(),
@@ -661,7 +683,7 @@ class TrainingBiogasPlant:
                 "T2_R102": T2_R102.tolist(),
                 "Tprom_R102": Tprom_R102.tolist(),
                 "PH_R102": PH_R102.tolist(),
-                "V_R102": L_R102.tolist(),
+                "V_R102": V_R102.tolist(),
                 "P_R102": P_R102.tolist(),
                 "P_V107":P_V107.tolist(),
                 "T_V107":TT_V107.tolist(),
@@ -684,6 +706,8 @@ class TrainingBiogasPlant:
             self.DataPlant = AlignAsynchronous(variable = "SE-109", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
             #Pump 102
             self.DataPlant = AlignAsynchronous(variable = "P-102", SyncDBRaw = DataPlant, SyncDB = self.DataPlant, current_time = time)
+
+        self.DataPlant.fillna(0, inplace = True)
 
     def LimitReagentCalculation(self):
         self.SN = self.Datainterfaz["_value"]["MNS"]    #SN: substrate number
@@ -936,11 +960,18 @@ class TrainingBiogasPlant:
             # Methane produce by R101 using V101 storage
             #Set initial value from previuos layer
             try:
-                if self.TrainMode1.empty:
-                    print("The DataFrame exists but is empty.")
-                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                if self.Operation_mode == 1:
+                    if self.TrainMode1.empty:
+                        print("The DataFrame exists but is empty.")
+                        self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    else:
+                        self.Csus_ini_SV_R101 = self.TrainMode1["Csus_exp"].iloc[0]
                 else:
-                    self.Csus_ini_SV_R101 = self.TrainMode1["Csus_exp"].iloc[0]       
+                    if self.TrainMode2.empty:
+                        print("The DataFrame exists but is empty.")
+                        self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    else:
+                        self.Csus_ini_SV_R101 = self.TrainMode2["Csus_exp"].iloc[0]             
             except AttributeError:
                     print("The DataFrame does not exist.")
             # Create list for TrainModel Dataframe            
@@ -993,10 +1024,10 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure
                 #mol organic compound
-                mol_ini = self.Csus_ini_SV_R101 * (self.DataPlant["V_R101"][i]/1000)                  #Kmol
+                mol_ini = self.Csus_ini_SV_R101 * (self.DataPlant["V_R101"][i])                       #Kmol
                 mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus                                           #Kmol 
                 mol_expended = (self.mol_acum_CH4_V101) * (1/self.s_CH4)                              #Kmol    
-                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i]/1000)    #kmol/m3 = mol/L
+                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i])    #kmol/m3 = mol/L
                                              
                 timev.append(self.DataPlant["time"][i])
                 V.append(self.DataPlant["V_R101"][i])
@@ -1024,17 +1055,26 @@ class TrainingBiogasPlant:
         
         #---------------------------------------------
         #--------- Variables to train Operation Mode 3 or 5
-        if self.Operation_mode == 3:
+        if self.Operation_mode == 3 or self.Operation_mode == 5:
             # Methane produce by R101 using V101 storage
             #Set initial value from previuos layer
             try:
-                if self.TrainMode1.empty:
-                    print("The DataFrame exists but is empty.")
-                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
-                    self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                if self.Operation_mode == 3:
+                    if self.TrainMode3.empty:
+                        print("The DataFrame exists but is empty.")
+                        self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                        self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                    else:
+                        self.Csus_ini_SV_R101 = self.TrainMode3["Csus_exp_R101"].iloc[0]
+                        self.Csus_ini_SV_R102 = self.TrainMode3["Csus_exp_R102"].iloc[0]
                 else:
-                    self.Csus_ini_SV_R101 = self.TrainMode3["Csus_exp"].iloc[0]
-                    self.Csus_ini_SV_R102 = self.TrainMode3["Csus_exp"].iloc[0]       
+                    if self.TrainMode5.empty:
+                        print("The DataFrame exists but is empty.")
+                        self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                        self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                    else:
+                        self.Csus_ini_SV_R101 = self.TrainMode5["Csus_exp_R101"].iloc[0]
+                        self.Csus_ini_SV_R102 = self.TrainMode5["Csus_exp_R102"].iloc[0]
             except AttributeError:
                     print("The DataFrame does not exist.")
             # Create list for TrainModel Dataframe            
@@ -1108,10 +1148,10 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure in R101
                 #mol organic compound
-                mol_ini_R101 = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
+                mol_ini_R101 = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]
                 mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
                 mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
-                self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i]/1000)
+                self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i])
                                               
                 timev.append(self.DataPlant["time"][i])
                 V_R101.append(self.DataPlant["V_R101"][i])
@@ -1135,11 +1175,11 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure in R102
                 #mol organic compound
-                mol_ini_R102 = self.Csus_ini_SV_R102 * self.DataPlant["V_R102"][i]/1000
+                mol_ini_R102 = self.Csus_ini_SV_R102 * self.DataPlant["V_R102"][i]
                 mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
                 mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
-                self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i]/1000)
-                                              
+                self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i])
+                                    
                 V_R102.append(self.DataPlant["V_R102"][i])
                 Q_P101v.append(Q_P101)
                 C_in_sus_R102.append(self.Csv_sus)
@@ -1162,6 +1202,7 @@ class TrainingBiogasPlant:
                                                 "Vol_R101": V_R101,
                                                 "Q_P104": self.DataPlant["FE-104"].tolist(),
                                                 "Csus_exp_R101":Csus_R101,
+                                                "Csus_in_R101": C_in_sus_R101,
                                                 "T_R101": self.DataPlant["Tprom_R101"],
                                                 "Vol_R102": V_R102,
                                                 "Q_P101": self.DataPlant["P-101"].tolist(), 
@@ -1176,13 +1217,13 @@ class TrainingBiogasPlant:
             # Methane produce by R101 using V101 storage
             #Set initial value from previuos layer
             try:
-                if self.TrainMode1.empty:
+                if self.TrainMode4.empty:
                     print("The DataFrame exists but is empty.")
                     self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
                     self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
                 else:
-                    self.Csus_ini_SV_R101 = self.TrainMode3["Csus_exp"].iloc[0]
-                    self.Csus_ini_SV_R102 = self.TrainMode3["Csus_exp"].iloc[0]       
+                    self.Csus_ini_SV_R101 = self.TrainMode4["Csus_exp_R101"].iloc[0]
+                    self.Csus_ini_SV_R102 = self.TrainMode4["Csus_exp_R102"].iloc[0]       
             except AttributeError:
                     print("The DataFrame does not exist.")
             # Create list for TrainModel Dataframe            
@@ -1258,11 +1299,11 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure in R101
                 #mol organic compound
-                mol_ini_R101 = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]/1000
+                mol_ini_R101 = self.Csus_ini_SV_R101 * self.DataPlant["V_R101"][i]
                 mol_in_R101 = (Q_P104 * tp/60 * self.Csv_sus) + (Q_P102 * tp/60 * self.Csus_ini_SV_R102)
                 mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
-                self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i]/1000)
-                                              
+                self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i])
+                              
                 timev.append(self.DataPlant["time"][i])
                 V_R101.append(self.DataPlant["V_R101"][i])
                 Q_P104v.append(Q_P104)
@@ -1285,11 +1326,11 @@ class TrainingBiogasPlant:
                 
                 #Stochoimetric expenditure in R102
                 #mol organic compound
-                mol_ini_R102 = self.Csus_ini_SV_R102 * self.DataPlant["V_R102"][i]/1000
+                mol_ini_R102 = self.Csus_ini_SV_R102 * self.DataPlant["V_R102"][i]
                 mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
                 mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
-                self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i]/1000)
-                                              
+                self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i])
+                                 
                 V_R102.append(self.DataPlant["V_R102"][i])
                 Q_P101v.append(Q_P101)
                 C_in_sus_R102.append(self.Csv_sus)
@@ -1300,6 +1341,7 @@ class TrainingBiogasPlant:
                                             "Vol_R101": V_R101,
                                             "Q_P104": self.DataPlant["FE-104"].tolist(),
                                             "Csus_exp_R101":Csus_R101,
+                                            "Csus_in_R101": C_in_sus_R101,
                                             "T_R101": self.DataPlant["Tprom_R101"],
                                             "Vol_R102": V_R102,
                                             "Q_P101": self.DataPlant["P-101"].tolist(), 
@@ -1457,29 +1499,178 @@ class TrainingBiogasPlant:
             #Kinetics for R102
             self.K_mean_R102 = st.mean(K_R102)
             self.Ea_mean_R102 = st.mean(Ea_R102)
-                
-
-
-
-
-
-
-            
-                        # self.TrainMode1 = pd.DataFrame({"time": timev,
-                        #                         "Vol": V,
-                        #                         "Q_P104": self.DataPlant["FE-104"].tolist(),
-                        #                         "Csus_exp":Csus 
-                        #                         }) 
         
+        elif self.Operation_mode == 4:
+            #Optimization variables for R101
+            t_exp = (self.TrainMode4["time"]*60).tolist()               #seconds
+            C_exp_R101 = self.TrainMode4["Csus_exp_R101"].tolist()      #Kmol/m3 = mol/L
+            Q_P104 = (self.TrainMode4["Q_P104"]/3600).tolist()          #L/s
+            VR_exp_R101 = self.TrainMode4["Vol_R101"].tolist()          #L
+            T_R101 = (self.TrainMode4["T_R101"] + 273.15).tolist()      #K
+            Csus_in_R101 = (self.TrainMode4["Csus_in_R101"]).tolist()   #kmol/m3 = mol/L
+            Q_P102 = (self.TrainMode4["Q_P102"]/3600).tolist()
+            K_R101 = []
+            Ea_R101 = []
+            
+            #Optimization variables for R102
+            C_exp_R102 = self.TrainMode4["Csus_exp_R102"].tolist()    #Kmol/m3 = mol/L
+            Q_P101 = (self.TrainMode4["Q_P101"]/3600).tolist()        #L/s
+            VR_exp_R102 = self.TrainMode4["Vol_R102"].tolist()          #L
+            T_R102 = (self.TrainMode4["T_R102"]).tolist()             #K
+            K_R102 = []
+            Ea_R102 = []
+        
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                #Variables for R101
+                C_exp_R101_opt = C_exp_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                VR_exp_R101_opt = VR_exp_R101[i : i+resolution]
+                T_R101_opt = T_R101[i : i+resolution]
+                Csus_in_R101_opt = Csus_in_R101[i : i+resolution]
+                Q_P102_opt = Q_P102[i : i+resolution]
+                
+                #Variables for R102
+                C_exp_R102_opt = C_exp_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+                VR_exp_R102_opt = VR_exp_R102[i : i+resolution]
+                T_R102_opt = T_R102[i : i+resolution]
+                
+                #optimization R101
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
+                                                  Qi2 = Q_P102_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 2)
+                
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Ea_R101.append(Opt_kinetic_params_R101.x[1])
+                
+                #Optimization for R102
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
+                                                  temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Ea_R102.append(Opt_kinetic_params_R102.x[1])
+            
+            #Kinetics for R101
+            self.K_mean_R101 = st.mean(K_R101)
+            self.Ea_mean_R101 = st.mean(Ea_R101)
+
+            #Kinetics for R102
+            self.K_mean_R102 = st.mean(K_R102)
+            self.Ea_mean_R102 = st.mean(Ea_R102)
+        
+        elif self.Operation_mode == 5:
+            #Optimization variables for R101
+            t_exp = (self.TrainMode5["time"]*60).tolist()               #seconds
+            C_exp_R101 = self.TrainMode5["Csus_exp_R101"].tolist()      #Kmol/m3 = mol/L
+            Q_P104 = (self.TrainMode5["Q_P104"]/3600).tolist()          #L/s
+            VR_exp_R101 = self.TrainMode5["Vol_R101"].tolist()          #L
+            T_R101 = (self.TrainMode5["T_R101"] + 273.15).tolist()      #K
+            Csus_in_R101 = (self.TrainMode5["Csus_in_R101"]).tolist()   #kmol/m3 = mol/L
+            Q_P102 = (self.TrainMode5["Q_P102"]/3600).tolist()          #L/s
+            K_R101 = []
+            Ea_R101 = []
+            
+            #Optimization variables for R102
+            C_exp_R102 = self.TrainMode5["Csus_exp_R102"].tolist()    #Kmol/m3 = mol/L
+            Q_P101 = (self.TrainMode5["Q_P101"]/3600).tolist()        #L/s
+            VR_exp_R102 = self.TrainMode5["Vol_R102"].tolist()          #L
+            T_R102 = (self.TrainMode5["T_R102"]).tolist()             #K
+            Csus_in_R102 = self.TrainMode5["Csus_exp_R101"].tolist()  #Kmol/m3 = mol/L
+            K_R102 = []
+            Ea_R102 = []
+            
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                #Variables for R101
+                C_exp_R101_opt = C_exp_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                VR_exp_R101_opt = VR_exp_R101[i : i+resolution]
+                T_R101_opt = T_R101[i : i+resolution]
+                Csus_in_R101_opt = Csus_in_R101[i : i+resolution]
+
+                #Variables for R102
+                C_exp_R102_opt = C_exp_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+                VR_exp_R102_opt = VR_exp_R102[i : i+resolution]
+                T_R102_opt = T_R102[i : i+resolution]
+
+                #Optimization for R101
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
+                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
+                
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Ea_R101.append(Opt_kinetic_params_R101.x[1])
+                
+                #Optimization for R102
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
+                                                  temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Ea_R102.append(Opt_kinetic_params_R102.x[1])
+
+            #Kinetics for R101
+            self.K_mean_R101 = st.mean(K_R101)
+            self.Ea_mean_R101 = st.mean(Ea_R101)
+    
+    def OptimizationADM1 (self, resolution):
+        
+        def model_ADM1(C, t, K, VR, Q_func_1, Q_func_2, Csus_in_func_1, Csus_in_func_2, Operation):
+            Q_1=Q_func_1(t)
+            Q_2=Q_func_2(t)
+            Csus_in_1 = Csus_in_func_1(t)
+            Csus_in_2 = Csus_in_func_2(t)
+            if Operation == 1:         #Without recirculation
+                dCsus_dt = ((Q_1 / VR) * (Csus_in_1 - C)) - (C * K) / VR
+            elif Operation == 2:       #two entrances
+                dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * Csus_in_2)/VR - ((Q_1 + Q_2)*C)/VR - (C * K) / VR
+            elif Operation == 3:       #Auto-recirculation
+                dCsus_dt = (Q_1 * Csus_in_1)/VR + (Q_2 * C)/VR - ((Q_1 + Q_2)*C)/VR - (C * K) / VR
+            return dCsus_dt
+        
+        # Optimization function t: vector of experimental time, C_exp: sustrate experimental concentration, y0: Initial value, 
+        def Optimization(t, C_exp, y0, VR, temperatures, Qi1, Csus_in_i1, Qi2, Csus_in_i2, Operation, K=1): 
+            # Define the objective function to minimize
+            def objective(params):
+                K = params
+                t_train = t
+
+                #interpol the vectors according to experimental time
+                T_func = lambda t: np.interp(t, t_train, temperatures)
+                Q_func1 = lambda t: np.interp(t, t_train, Qi1)
+                Q_func2 = lambda t: np.interp(t, t_train, Qi2)
+                VR_func = lambda t: np.interp(t, t_train, VR)
+                Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
+                Csus_in2 = lambda t: np.interp(t, t_train, Csus_in_i2)
+                
+                C_model = odeint(model_ADM1, y0, t, args = (K, VR_func, T_func, Q_func1, Q_func2, Csus_in1, Csus_in2, Operation)).flatten()
+
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                return squared_diff
+            
+            result = minimize(objective, [K, Ea], method = 'Nelder-Mead')
+            return result
+                 
                               
 #This will be the way to call method from API
+#singletone
 Training = TrainingBiogasPlant(ST_ini_R101 = 2, SV_ini_R101 = 1.5, t_train=60, Volume_V101 = 15) 
-Training.getData()
-Training.LimitReagentCalculation()
-for i in range (2):
+#Loop calling
+for i in range (4):
+    Training.getData()
+    print("-------- Datos de interfaz")
+    print(Training.Datainterfaz)
+    print("------------Datos de planta")
+    print(Training.DataPlant)
+    Training.LimitReagentCalculation()
     Training.StochoimetricExpenditure()
+    # print(Training.TrainMode4)
     Training.OptimizationArrhenius(resolution=2)
-    # print(Training.TrainMode1)
-    print(Training.K_mean_R101)
-    print(Training.Ea_mean_R101)
+    # print(Training.K_mean_R101)
+    # print(Training.Ea_mean_R101)
+    # print(Training.K_mean_R102)
+    # print(Training.Ea_mean_R102)
       

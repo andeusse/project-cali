@@ -71,4 +71,4 @@ class TwinTower:
         self.waterTemperatureReduction = self.bottomWaterTemperature - self.topWaterTemperature
         self.airTemperatureRise = self.topAirTemperature - self.bottomAirTemperature
 
-        return round(self.bottomWaterTemperature,2), round(self.waterTemperatureReduction,2), round(self.topAirTemperature,2), round(self.topAirHumidity,2), round(self.airTemperatureRise,2), round(self.powerAppliedToWater,2), self.energyAppliedToWater, round(self.deltaPressure,2)
+        return self.bottomWaterTemperature, self.waterTemperatureReduction, self.topAirTemperature, self.topAirHumidity, self.airTemperatureRise, self.powerAppliedToWater, self.energyAppliedToWater, self.deltaPressure

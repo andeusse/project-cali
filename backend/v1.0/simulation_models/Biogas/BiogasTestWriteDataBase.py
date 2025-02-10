@@ -14,10 +14,10 @@ tp = 120
 Biogas_plant = Biogas_Model_Simulation.BiogasPlantSimulation(VR1=30, VR2=70, VG1=15, VG2=35, VG3=35, tp=tp, 
                  ST_R101=10, SV_R101=1, Cc_R101=40.48, Ch_R101=5.29, Co_R101=29.66, Cn_R101=1.37, Cs_R101=0.211, rho_R101=1000,
                  ST_R102=10, SV_R102=1, Cc_R102=40.48, Ch_R102=5.29, Co_R102=29.66, Cn_R102=1.37, Cs_R102=0.211, rho_R102=1000, 
-                 OperationMode="Modo3")
+                 OperationMode="Modo4")
 
 Biogas_plant.Substrate_conditions(Cc = 40.48, Ch = 5.29, Co = 29.66, Cn = 1.37, Cs = 0.211, rho=1000, ST = 10, SV = 5)   
-DB = DBManager.InfluxDBmodel(server="http://localhost:8086", org = "UCO", bucket="BiogasPlantSimulator",token="sUQWhjFGAQNgrENMawYuLw2oQUDjhnaeLeK9MJ7ZRUh4uLgHCgamC70xQFugGMNvc_dWqkmfRFOo-NP6_sJzqA==")
+DB = DBManager.InfluxDBmodel(server="http://localhost:8086", org = "UCO", bucket="BiogasPlantSimulator",token="yksWy5XIJIv-TA-DDvCH7OQJAx-VApFBFQsibukbs_VJUtTe0asUREiRXQLbhGH2O78XHegCXGSavURt2Atniw==")
 DB.InfluxDBconnection()
 timestamp1 = int(time.time())
 
@@ -98,7 +98,7 @@ while True:
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MQP102", value = 2.4, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MFTP102", value = 5, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "MTTOP102", value = 10, timestamp = timestamp1)
-        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "ciclo", value = 3, timestamp = timestamp1)
+        DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "interfaz", variable = "ciclo", value = 4, timestamp = timestamp1)
         
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-101A", value = 35, timestamp = timestamp1)
         DB.InfluxDBwriter(measurement = "Planta_Biogas", device = "R101", variable = "TE-101B", value = 36, timestamp = timestamp1)
