@@ -121,7 +121,7 @@ class Turbine(Resource):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      if inputFlow <= 2.1:
+      if inputFlow <= 2.0:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", type=6)
         queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", type=6)
       elif inputFlow <= 3.1:
@@ -224,7 +224,7 @@ class Turbine(Resource):
     
     turbine["batteryTemperature"] = T_bat
     
-    twinHydro.turbineType(turbineType)
+    twinHydro.turbineType(turbineType, inputFlow)
     twinHydro.twinParameters(turbineEfficiency, controllerEfficiency, inverterEfficiency)
     P_h = twinHydro.PowerOutput(inputPressure, inputFlow)
     
@@ -308,7 +308,7 @@ class Turbine(Resource):
       connectionState = influxDB.InfluxDBconnection()
   
       if turbineType == 1:
-        if inputFlow <= 2.1:
+        if inputFlow <= 2.0:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", value = twinHydro.n_controller, timestamp = timestamp)
         elif inputFlow <= 3.1:

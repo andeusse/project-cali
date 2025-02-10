@@ -9,7 +9,7 @@ class TwinHydro:
         self.systemName = systemName # Nombre del sistema
 
     # Parametrizacion de turbinas de acuerdo a tipo
-    def turbineType (self, type):
+    def turbineType (self, type, inputFlow):
         # Pelton
         if type == 1:
             self.H_min = 0.0
@@ -18,7 +18,7 @@ class TwinHydro:
             self.Q_max = 10.0
             self.f_h = 0.0
             self.P_max = 623.0
-            self.V_t = 40.0
+            self.V_t = 0.128*(inputFlow**5) - 2.842*(inputFlow**4) + 23.756*(inputFlow**3) - 92.933*(inputFlow**2) + 176.44*inputFlow - 105.41
         # Turgo
         elif type == 2:
             self.H_min = 0.0
