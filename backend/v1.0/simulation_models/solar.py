@@ -317,7 +317,7 @@ class TwinPVWF:
                 self.V_bat = cellsNumber * (1637.9*((self.SOC)**5) - 4933.5*((self.SOC)**4) + 5931.2*((self.SOC)**3) - 3555.9*((self.SOC)**2) + 1063.3*(self.SOC) - 124.86) + self.delta_V * (T_bat - 25)
             else:
                 self.V_bat = cellsNumber * (0.3378*((self.SOC)**2) + 0.2408*(self.SOC) + 2.0058) + self.delta_V * (T_bat - 25)
-            if self.V_bat > cellsNumber * 2.385: self.V_bat = cellsNumber * 2.385
+            if self.V_bat > cellsNumber * 2.33: self.V_bat = cellsNumber * 2.33
         elif self.P_bat <= 0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
             self.V_bat = cellsNumber * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
@@ -459,7 +459,7 @@ class TwinPVWF:
                 self.V_bat = cellsNumber * (1637.9*((self.SOC)**5) - 4933.5*((self.SOC)**4) + 5931.2*((self.SOC)**3) - 3555.9*((self.SOC)**2) + 1063.3*(self.SOC) - 124.86) + self.delta_V * (T_bat - 25)
             else:
                 self.V_bat = cellsNumber * (0.3378*((self.SOC)**2) + 0.2408*(self.SOC) + 2.0058) + self.delta_V * (T_bat - 25)
-            if self.V_bat > cellsNumber * 2.385: self.V_bat = cellsNumber * 2.385
+            if self.V_bat > cellsNumber * 2.33: self.V_bat = cellsNumber * 2.33
         elif self.P_bat <= 0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
             self.V_bat = cellsNumber * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
