@@ -14,16 +14,17 @@ class TwinHydro:
         if type == 1:
             self.H_min = 0.0
             self.H_max = 130.0
-            self.Q_min = 0.1
+            self.Q_min = 1.05
             self.Q_max = 10.0
             self.f_h = 0.0
             self.P_max = 623.0
-            self.V_t = 0.128*(inputFlow**5) - 2.842*(inputFlow**4) + 23.756*(inputFlow**3) - 92.933*(inputFlow**2) + 176.44*inputFlow - 105.41
+            self.V_t = (0.128*(inputFlow**5) - 2.842*(inputFlow**4) + 23.756*(inputFlow**3) - 92.933*(inputFlow**2) + 176.44*inputFlow - 105.41 if inputFlow >= self.Q_min else 0.0)
+            if self.V_t > 52.0: self.V_t = 52.0
         # Turgo
         elif type == 2:
             self.H_min = 0.0
             self.H_max = 30.0
-            self.Q_min = 8.0
+            self.Q_min = 4.05
             self.Q_max = 16.0
             self.f_h = 0.0
             self.P_max = 1042.0
@@ -35,7 +36,7 @@ class TwinHydro:
         self.Press = Pressure
         self.Q = Flux
         #Calculo de potencia de la turbina kW
-        self.P_h = ((self.n_t/100) * self.Press * self.Q * (1 - (self.f_h/100)))
+        self.P_h = (((self.n_t/100) * self.Press * self.Q * (1 - (self.f_h/100))) if self.Q >= self.Q_min else 0.0)
 
         return self.P_h
     
@@ -146,7 +147,7 @@ class TwinHydro:
                 self.V_bat = 12 * (1637.9*((self.SOC)**5) - 4933.5*((self.SOC)**4) + 5931.2*((self.SOC)**3) - 3555.9*((self.SOC)**2) + 1063.3*(self.SOC) - 124.86) + self.delta_V * (T_bat - 25)
             else:
                 self.V_bat = 12 * (0.3378*((self.SOC)**2) + 0.2408*(self.SOC) + 2.0058) + self.delta_V * (T_bat - 25)
-            if self.V_bat > 12 * 2.385: self.V_bat = 12 * 2.385
+            if self.V_bat > 12 * 2.33: self.V_bat = 12 * 2.33
         elif self.P_bat <= 0.0:
             ABCD = np.dot(self.dischargeMatrix, [abs(self.I_bat)**2, abs(self.I_bat), 1])
             self.V_bat = 12 * np.dot(ABCD, [self.SOC**3, self.SOC**2, self.SOC, 1]) + self.delta_V * (T_bat - 25)
@@ -183,9 +184,6 @@ class TwinHydro:
         else: 
             self.V_CD = self.V_bat
         
-        print(iteration, flush=True)
-        print(self.V_bat, flush=True)
-        print(self.V_sink_on, flush=True)
         # Lógica de la disipación
         if sinkLoadMode == 'Auto' and iteration > 2:
             if self.V_bat > self.V_sink_on: # Cambiar por condición de voltaje
@@ -193,7 +191,7 @@ class TwinHydro:
             elif self.V_bat < self.V_sink_off:
                 self.sinkState = False
         
-        self.I_t = self.P_h / self.V_t
+        self.I_t = (self.P_h / self.V_t if self.V_t != 0 else 0.0)        
         self.I_CC = self.P_CC / self.V_CD
         self.I_CA = (self.S_CA / self.V_CA if self.V_CA != 0.0 else 0.0)
         self.I_inv = self.P_inv / self.V_CD
