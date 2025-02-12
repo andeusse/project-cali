@@ -1,6 +1,8 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+const DEBOUNCE_TIME = 2000;
 
 const CustomNumberField = (props: CustomTextFieldType) => {
   const {
@@ -16,10 +18,6 @@ const CustomNumberField = (props: CustomTextFieldType) => {
 
   const [numberFieldValue, setNumberFieldValue] = useState(value.toString());
 
-  useEffect(() => {
-    setNumberFieldValue(value.toString());
-  }, [value]);
-
   const useDebounce = (cb: any, delay: number) => {
     const [debounceValue, setDebounceValue] = useState(cb);
     useEffect(() => {
@@ -33,9 +31,9 @@ const CustomNumberField = (props: CustomTextFieldType) => {
     return debounceValue;
   };
 
-  const debounceValue = useDebounce(numberFieldValue, 750);
+  const debounceValue = useDebounce(numberFieldValue, DEBOUNCE_TIME);
 
-  useEffect(() => {
+  const handleVariableChange = useCallback(() => {
     if (name !== undefined) {
       var variableTemp = {
         target: {
@@ -77,6 +75,14 @@ const CustomNumberField = (props: CustomTextFieldType) => {
       }
     }
   }, [debounceValue, isInteger, name, variable.max, variable.min]);
+
+  useEffect(() => {
+    setNumberFieldValue(value.toString());
+  }, [value]);
+
+  useEffect(() => {
+    handleVariableChange();
+  }, [handleVariableChange]);
 
   const handleValueChange = (e: any) => {
     setNumberFieldValue(e.target.value);
