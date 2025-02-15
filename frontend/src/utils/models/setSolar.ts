@@ -85,6 +85,10 @@ export const setSolar = (
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
 
+        newState.monocrystallinePanel.isConnectedDisabled = false;
+        newState.policrystallinePanel.isConnectedDisabled = false;
+        newState.flexPanel.isConnectedDisabled = true;
+
         newState.isBattery2 = true;
 
         newState.offgridInverter.isConnected = true;
@@ -101,6 +105,10 @@ export const setSolar = (
         newState.policrystallinePanel.isConnected = true;
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
+
+        newState.monocrystallinePanel.isConnectedDisabled = false;
+        newState.policrystallinePanel.isConnectedDisabled = false;
+        newState.flexPanel.isConnectedDisabled = true;
 
         newState.isBattery2 = false;
 
@@ -134,6 +142,10 @@ export const setSolar = (
         newState.monocrystallinePanel.isConnectedDisabled = false;
         newState.policrystallinePanel.isConnectedDisabled = false;
         newState.flexPanel.isConnectedDisabled = false;
+
+        newState.monocrystallinePanel.isConnectedDisabled = false;
+        newState.policrystallinePanel.isConnectedDisabled = false;
+        newState.flexPanel.isConnectedDisabled = true;
 
         newState.isBattery2 = true;
 
@@ -171,6 +183,10 @@ export const setSolar = (
           } else {
             newState.policrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
+
+            newState.monocrystallinePanel.isConnectedDisabled = true;
+            newState.policrystallinePanel.isConnectedDisabled = false;
+            newState.flexPanel.isConnectedDisabled = false;
           }
           break;
         case 'policrystallinePanel':
@@ -186,6 +202,10 @@ export const setSolar = (
           } else {
             newState.monocrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
+
+            newState.monocrystallinePanel.isConnectedDisabled = false;
+            newState.policrystallinePanel.isConnectedDisabled = true;
+            newState.flexPanel.isConnectedDisabled = false;
           }
           break;
         case 'flexPanel':
@@ -201,6 +221,10 @@ export const setSolar = (
           } else {
             newState.monocrystallinePanel.isConnected = true;
             newState.policrystallinePanel.isConnected = true;
+
+            newState.monocrystallinePanel.isConnectedDisabled = false;
+            newState.policrystallinePanel.isConnectedDisabled = false;
+            newState.flexPanel.isConnectedDisabled = true;
           }
           break;
         case 'cadmiumTelluridePanel':
