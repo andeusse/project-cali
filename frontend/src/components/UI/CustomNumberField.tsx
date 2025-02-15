@@ -1,6 +1,7 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { debounce } from 'lodash';
 
 const DEBOUNCE_TIME = 2000;
 
@@ -16,83 +17,87 @@ const CustomNumberField = (props: CustomTextFieldType) => {
   const { disabled, value, tooltip, unit, variableString, variableSubString } =
     variable;
 
-  const [numberFieldValue, setNumberFieldValue] = useState(value.toString());
+  const [inputValue, setInputValue] = useState(value.toString());
+  const [, setDebouncedValue] = useState('');
 
-  const useDebounce = (cb: any, delay: number) => {
-    const [debounceValue, setDebounceValue] = useState(cb);
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        setDebounceValue(cb);
-      }, delay);
-      return () => {
-        clearTimeout(handler);
-      };
-    }, [cb, delay]);
-    return debounceValue;
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+    debouncedSetValue(event.target.value);
   };
 
-  const debounceValue = useDebounce(numberFieldValue, DEBOUNCE_TIME);
-
-  const handleVariableChange = useCallback(() => {
-    if (name !== undefined) {
-      var variableTemp = {
-        target: {
-          type: 'text',
-          name: name,
-          value: 0,
-        },
-      };
-      if (debounceValue !== '') {
-        let newValue = parseFloat(debounceValue);
-        variableTemp.target.value = newValue;
-        if (isInteger) {
-          variableTemp.target.value = Math.round(newValue);
-        }
-        if (variable.min !== undefined && newValue < variable.min) {
-          variableTemp.target.value = variable.min;
-        }
-        if (variable.max !== undefined && newValue > variable.max) {
-          variableTemp.target.value = variable.max;
-        }
-        if (
-          name
-            .toLocaleLowerCase()
-            .includes('PowerFactor'.toLocaleLowerCase()) &&
-          newValue === 0
-        ) {
-          variableTemp.target.value = 1;
-        }
-      } else {
-        if (variable.min !== undefined) {
-          variableTemp.target.value = variable.min;
+  const setValue = useCallback(
+    (value: string) => {
+      const numValue = Number(value);
+      if (name !== undefined) {
+        var variableTemp = {
+          target: {
+            type: 'text',
+            name: name,
+            value: 0,
+          },
+        };
+        if (value !== '') {
+          variableTemp.target.value = numValue;
+          if (isInteger) {
+            variableTemp.target.value = Math.round(numValue);
+          }
+          if (variable.min !== undefined && numValue < variable.min) {
+            variableTemp.target.value = variable.min;
+          }
+          if (variable.max !== undefined && numValue > variable.max) {
+            variableTemp.target.value = variable.max;
+          }
+          if (
+            name
+              .toLocaleLowerCase()
+              .includes('PowerFactor'.toLocaleLowerCase()) &&
+            numValue === 0
+          ) {
+            variableTemp.target.value = 1;
+          }
         } else {
-          variableTemp.target.value = 0;
+          if (variable.min !== undefined) {
+            variableTemp.target.value = variable.min;
+          } else {
+            variableTemp.target.value = 0;
+          }
+        }
+        if (handleChange !== undefined) {
+          setDebouncedValue(value);
+          handleChange(variableTemp);
+          setInputValue(variableTemp.target.value.toString());
         }
       }
-      if (handleChange !== undefined) {
-        setNumberFieldValue(variableTemp.target.value.toString());
-        handleChange(variableTemp);
-      }
-    }
-  }, [debounceValue, isInteger, name, variable.max, variable.min]);
+    },
+    [handleChange, isInteger, name, variable.max, variable.min]
+  );
 
-  useEffect(() => {
-    setNumberFieldValue(value.toString());
-  }, [value]);
-
-  useEffect(() => {
-    handleVariableChange();
-  }, [handleVariableChange]);
-
-  const handleValueChange = (e: any) => {
-    setNumberFieldValue(e.target.value);
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedSetValue = useCallback(
+    debounce((value: string) => {
+      setValue(value);
+    }, DEBOUNCE_TIME),
+    []
+  );
 
   const onWheel = (e: any) => {
     e.target.blur();
   };
 
-  const onBlur = (e: any) => {};
+  const onBlur = () => {
+    setValue(inputValue);
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disableKeyDown && event.key !== 'Enter') {
+      event.preventDefault();
+      return;
+    }
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      setValue(inputValue);
+    }
+  };
 
   return (
     <FormControl fullWidth>
@@ -111,14 +116,12 @@ const CustomNumberField = (props: CustomTextFieldType) => {
             </>
           }
           disabled={disabled || disabledProp}
-          value={numberFieldValue}
+          value={inputValue}
           name={name}
-          onChange={handleValueChange}
+          onChange={handleInputChange}
           onWheel={onWheel}
-          onBlur={(event) => (!disableKeyDown ? onBlur(event) : undefined)}
-          onKeyDown={(event) =>
-            disableKeyDown ? event.preventDefault() : undefined
-          }
+          onBlur={onBlur}
+          onKeyDown={onKeyDown}
           InputProps={{
             type: 'number',
             inputProps: {
