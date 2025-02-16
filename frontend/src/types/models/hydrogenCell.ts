@@ -1,4 +1,4 @@
-import Config from '../../config/config';
+import Constants from '../../config/constants';
 import { CommonSystemParameter, StepUnitType } from '../common';
 import { CommonChartType } from '../graph';
 import { InputArrayType, InputType } from '../inputType';
@@ -127,7 +127,7 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
     step: 1,
   },
   stepUnit: StepUnitType.Second,
-  queryTime: Config.QUERY_TIME_OFFLINE,
+  queryTime: Constants.QUERY_TIME_OFFLINE,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,

@@ -61,6 +61,7 @@ import { errorResp, loginInput, loginOutput } from '../../types/api';
 import { modelsAPI } from '../../api/digitalTwinsModels';
 import ConfimationModal from '../../components/UI/ConfimationModal';
 import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
 
 const Turbine = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -303,7 +304,7 @@ const Turbine = () => {
             dispatch(
               setError({
                 isShown: true,
-                message: 'Contraseña incorrecta',
+                message: Constants.WRONG_PASSWORD,
               })
             );
           }
@@ -354,8 +355,7 @@ const Turbine = () => {
           dispatch(
             setError({
               isShown: true,
-              message:
-                'El archivo no corresponde a un gemelo digital de turbinas',
+              message: Constants.GetWrongFormatError('turbinas'),
             })
           );
         }

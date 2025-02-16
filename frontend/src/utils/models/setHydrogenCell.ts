@@ -4,8 +4,8 @@ import {
   HydrogencellParameters,
 } from '../../types/models/hydrogenCell';
 import { CellChange2Array } from '../cellChange2Array';
-import Config from '../../config/config';
 import { StepUnitType } from '../../types/common';
+import Constants from '../../config/constants';
 
 export const setHydrogenCell = (
   e: any,
@@ -15,8 +15,8 @@ export const setHydrogenCell = (
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.inputHydrogenFlow.disabled = !newState.inputOfflineOperation;
     newState.inputHydrogenFlow.arrayEnabled = false;
     newState.inputHydrogenPressure.disabled = !newState.inputOfflineOperation;
@@ -67,8 +67,8 @@ export const setHydrogenCell = (
     newState.trainingMode = e.target.checked;
     newState.inputOfflineOperation = !newState.trainingMode;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.inputHydrogenFlow.disabled = !newState.inputOfflineOperation;
     newState.inputHydrogenFlow.arrayEnabled = false;
     newState.inputHydrogenPressure.disabled = !newState.inputOfflineOperation;

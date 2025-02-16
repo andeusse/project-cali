@@ -8,6 +8,7 @@ import { data2Graph } from '../utils/data2Graph';
 import { CommonDigitalTwinsParameter } from '../types/models/common';
 import { useAppDispatch } from '../redux/reduxHooks';
 import { setError } from '../redux/slices/errorSlice';
+import Constants from '../config/constants';
 
 export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   url: string,
@@ -65,9 +66,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         dispatch(
           setError({
             isShown: true,
-            message: `${moment()}: Error al realizar la consulta con el código: ${
-              err.code
-            } y con mensaje de error: ${err.message}`,
+            message: Constants.GetErrorWithDate(err.message, err.code),
           })
         );
       })

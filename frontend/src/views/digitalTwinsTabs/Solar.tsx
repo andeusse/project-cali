@@ -66,6 +66,7 @@ import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
 import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
 
 const Solar = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -440,7 +441,7 @@ const Solar = () => {
             dispatch(
               setError({
                 isShown: true,
-                message: 'Contraseña incorrecta',
+                message: Constants.WRONG_PASSWORD,
               })
             );
           }
@@ -491,7 +492,7 @@ const Solar = () => {
           dispatch(
             setError({
               isShown: true,
-              message: 'El archivo no corresponde a un gemelo digital solar',
+              message: Constants.GetWrongFormatError('solar'),
             })
           );
         }

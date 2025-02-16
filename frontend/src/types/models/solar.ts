@@ -1,4 +1,4 @@
-import Config from '../../config/config';
+import Constants from '../../config/constants';
 import {
   CommonSystemParameter,
   MONOCRYSTALLINE_PANEL as MP,
@@ -449,7 +449,7 @@ export const SOLAR_WIND: SolarWindParameters = {
   },
   stepUnit: StepUnitType.Second,
   isBatteryConnected: true,
-  queryTime: Config.QUERY_TIME_OFFLINE,
+  queryTime: Constants.QUERY_TIME_OFFLINE,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,

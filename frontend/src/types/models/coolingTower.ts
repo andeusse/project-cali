@@ -1,4 +1,4 @@
-import Config from '../../config/config';
+import Constants from '../../config/constants';
 import { CommonSystemParameter, StepUnitType } from '../common';
 import { InputArrayType, InputType } from '../inputType';
 import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
@@ -98,7 +98,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
     step: 1,
   },
   stepUnit: StepUnitType.Second,
-  queryTime: Config.QUERY_TIME_OFFLINE_TOWER,
+  queryTime: Constants.QUERY_TIME_OFFLINE_TOWER,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,

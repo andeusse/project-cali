@@ -76,6 +76,7 @@ import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import CustomToggle from '../../components/UI/CustomToggle';
 import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
 
 const tabs = [
   'solar',
@@ -280,7 +281,7 @@ const SmartCity = () => {
           dispatch(
             setError({
               isShown: true,
-              message: 'El archivo no corresponde a un escenario',
+              message: Constants.GetWrongFormatError('escenario'),
             })
           );
         }

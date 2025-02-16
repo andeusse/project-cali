@@ -54,9 +54,9 @@ import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
 import { TrainingDataType } from '../../types/trainingData';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
-import moment from 'moment';
 import { useAppDispatch } from '../../redux/reduxHooks';
 import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
 
 type Props = {};
 
@@ -199,9 +199,7 @@ const BiochemicalMethanePotential = (props: Props) => {
         dispatch(
           setError({
             isShown: true,
-            message: `${moment()}: Error al realizar la consulta de los parámetros de entrenamiento del lado A: ${
-              err.response?.status
-            } y con mensaje de error: ${err.response?.data.message}`,
+            message: Constants.GetErrorWithDate(err.message, err.code),
           })
         );
       })
@@ -230,9 +228,7 @@ const BiochemicalMethanePotential = (props: Props) => {
         dispatch(
           setError({
             isShown: true,
-            message: `${moment()}: Error al realizar la consulta de los parámetros de entrenamiento del lado B: ${
-              err.response?.status
-            } y con mensaje de error: ${err.response?.data.message}`,
+            message: Constants.GetErrorWithDate(err.message, err.code),
           })
         );
       })
@@ -314,7 +310,7 @@ const BiochemicalMethanePotential = (props: Props) => {
             dispatch(
               setError({
                 isShown: true,
-                message: 'Contraseña incorrecta',
+                message: Constants.WRONG_PASSWORD,
               })
             );
           }
@@ -368,7 +364,7 @@ const BiochemicalMethanePotential = (props: Props) => {
           dispatch(
             setError({
               isShown: true,
-              message: 'El archivo no corresponde a un gemelo digital de BMP',
+              message: Constants.GetWrongFormatError('BMP'),
             })
           );
         }

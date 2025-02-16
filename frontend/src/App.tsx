@@ -12,6 +12,7 @@ import axios from 'axios';
 import { setIsLoading } from './redux/slices/isLoadingSlice';
 import ErrorDialog from './components/UI/ErrorDialog';
 import { setError } from './redux/slices/errorSlice';
+import Constants from './config/constants';
 
 const LABEL_SIZE = '20px';
 const TAB_SIZE = '18px';
@@ -150,8 +151,7 @@ function App() {
             dispatch(
               setError({
                 isShown: true,
-                message:
-                  'Sin conexión con la API, revisar la conexión o comunicarse con un administrador',
+                message: Constants.NO_API_CONNECTION,
               })
             );
           })

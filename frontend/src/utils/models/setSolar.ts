@@ -4,10 +4,10 @@ import {
 } from '../../types/models/solar';
 import { setFormObjectValue } from '../setFormObjectValue';
 import { getKeyByValue } from '../getKeyByValue';
-import Config from '../../config/config';
 import { CellChange } from '@silevis/reactgrid';
 import { CellChange2Array } from '../cellChange2Array';
 import { StepUnitType } from '../../types/common';
+import Constants from '../../config/constants';
 
 export const setSolar = (
   e: any,
@@ -33,8 +33,8 @@ export const setSolar = (
   if (name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
     newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
     newState.windSpeed.disabled = !newState.inputOfflineOperation;
@@ -301,8 +301,8 @@ export const setSolar = (
     newState.trainingMode = e.target.checked;
     newState.inputOfflineOperation = !newState.trainingMode;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
     newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
     newState.windSpeed.disabled = !newState.inputOfflineOperation;

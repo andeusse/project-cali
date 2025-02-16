@@ -5,8 +5,8 @@ import {
 } from '../common';
 import { CommonDigitalTwinsParameter, DiagramVariableType } from './common';
 import { CommonChartType } from '../graph';
-import Config from '../../config/config';
 import { InputType } from '../inputType';
+import Constants from '../../config/constants';
 
 export enum PlantOperationType {
   SideA = 'SideA',
@@ -620,7 +620,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     step: 0.1,
   },
   stepUnit: StepUnitType.Hour,
-  queryTime: Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS,
+  queryTime: Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,

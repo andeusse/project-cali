@@ -1,4 +1,4 @@
-import Config from '../../config/config';
+import Constants from '../../config/constants';
 import { CommonSystemParameter, StepUnitType } from '../common';
 import { CommonChartType } from '../graph';
 import { InputArrayType, InputType } from '../inputType';
@@ -311,7 +311,7 @@ export const TURBINE: TurbineParameters = {
   },
   stepUnit: StepUnitType.Second,
   isBatteryConnected: true,
-  queryTime: Config.QUERY_TIME_OFFLINE,
+  queryTime: Constants.QUERY_TIME_OFFLINE,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,

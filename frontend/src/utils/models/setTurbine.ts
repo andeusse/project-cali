@@ -1,5 +1,4 @@
 import { CellChange } from '@silevis/reactgrid';
-import Config from '../../config/config';
 import {
   PELTON_TURBINE_CONST,
   TURGO_TURBINE_CONST,
@@ -9,6 +8,7 @@ import {
 import { getKeyByValue } from '../getKeyByValue';
 import { CellChange2Array } from '../cellChange2Array';
 import { StepUnitType } from '../../types/common';
+import Constants from '../../config/constants';
 
 export const setTurbine = (
   e: any,
@@ -40,8 +40,8 @@ export const setTurbine = (
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.inputPressure.disabled = !newState.inputOfflineOperation;
     newState.inputPressure.arrayEnabled = false;
     newState.inputFlow.disabled = !newState.inputOfflineOperation;
@@ -76,8 +76,8 @@ export const setTurbine = (
     newState.trainingMode = e.target.checked;
     newState.inputOfflineOperation = !newState.trainingMode;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.inputPressure.disabled = !newState.inputOfflineOperation;
     newState.inputPressure.arrayEnabled = false;
     newState.inputFlow.disabled = !newState.inputOfflineOperation;

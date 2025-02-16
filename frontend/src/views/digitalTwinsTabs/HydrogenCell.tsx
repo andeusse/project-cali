@@ -56,6 +56,7 @@ import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
 import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
 
 type Props = {};
 
@@ -389,7 +390,7 @@ const HydrogenCell = (props: Props) => {
             dispatch(
               setError({
                 isShown: true,
-                message: 'Contraseña incorrecta',
+                message: Constants.WRONG_PASSWORD,
               })
             );
           }
@@ -440,8 +441,7 @@ const HydrogenCell = (props: Props) => {
           dispatch(
             setError({
               isShown: true,
-              message:
-                'El archivo no corresponde a un gemelo digital de celdas de hidrógeno',
+              message: Constants.GetWrongFormatError('celda de hidrógeno'),
             })
           );
         }
