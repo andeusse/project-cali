@@ -1,6 +1,6 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 
 const DEBOUNCE_TIME = 2000;
@@ -79,6 +79,10 @@ const CustomNumberField = (props: CustomTextFieldType) => {
     }, DEBOUNCE_TIME),
     []
   );
+
+  useEffect(() => {
+    setInputValue(value.toString());
+  }, [value]);
 
   const onWheel = (e: any) => {
     e.target.blur();

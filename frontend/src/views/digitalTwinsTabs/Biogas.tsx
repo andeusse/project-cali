@@ -38,7 +38,6 @@ import CustomNumberField from '../../components/UI/CustomNumberField';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import CustomToggle from '../../components/UI/CustomToggle';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import biogasIllustration from '../../assets/illustrations/biogas.png';
 import BiogasDiagram from '../../components/models/diagram/BiogasDiagram';
@@ -56,6 +55,7 @@ import { TrainingDataType } from '../../types/trainingData';
 import moment from 'moment';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
 import { useAppDispatch } from '../../redux/reduxHooks';
+import { setError } from '../../redux/slices/errorSlice';
 
 const Biogas = () => {
   const dispatch = useAppDispatch();
@@ -63,12 +63,13 @@ const Biogas = () => {
   const [system, setSystem] = useState<BiogasParameters>({ ...BIOGAS });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
   const [diagramVariables, setDiagramVariables] = useState(BIOGAS_MODE1);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<BiogasParameters, BiogasOutput>('biogas', system);
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    BiogasParameters,
+    BiogasOutput
+  >('biogas', system);
 
   useEffect(() => {
     if (system.inputOperationMode === OperationModeType.Modo1) {
@@ -101,12 +102,6 @@ const Biogas = () => {
       setSystem((o) => ({ ...o, restartFlag: true }));
     }
   }, [data]);
-
-  useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
 
   const [trainingData, settrainingData] = useState<TrainingDataType>({
     names: [],
@@ -182,17 +177,19 @@ const Biogas = () => {
         setSystem((old) => setData(old));
       })
       .catch((err: AxiosError<errorResp>) => {
-        setError(
-          `Error al realizar la consulta de los parámetros de entrenamiento: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
+        dispatch(
+          setError({
+            isShown: true,
+            message: `${moment()}: Error al realizar la consulta de los parámetros de entrenamiento: ${
+              err.response?.status
+            } y con mensaje de error: ${err.response?.data.message}`,
+          })
         );
       })
       .finally(() => {
         dispatch(setIsLoading(false));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [system.inputOperationMode, system.operationModelType]);
 
   useEffect(() => {
@@ -246,11 +243,21 @@ const Biogas = () => {
               setSystem(newState as BiogasParameters);
             }
           } else {
-            setError('Contraseña incorrecta');
+            dispatch(
+              setError({
+                isShown: true,
+                message: 'Contraseña incorrecta',
+              })
+            );
           }
         })
         .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
+          dispatch(
+            setError({
+              isShown: true,
+              message: err.message,
+            })
+          );
         })
         .finally(() => {});
     }
@@ -287,8 +294,13 @@ const Biogas = () => {
         if ('anaerobicReactorVolume1' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital de biogas');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message:
+                'El archivo no corresponde a un gemelo digital de biogas',
+            })
+          );
         }
         event.target.value = '';
       };
@@ -307,11 +319,6 @@ const Biogas = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
       <PasswordModal
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}

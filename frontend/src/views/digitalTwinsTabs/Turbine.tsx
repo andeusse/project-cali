@@ -38,14 +38,13 @@ import singleDiagramLight from '../../assets/singleDiagram/singleDiagramTurbineL
 import singleDiagramDark from '../../assets/singleDiagram/singleDiagramTurbineDark.png';
 import turbineIllustration from '../../assets/illustrations/turbine.png';
 import TurbineDiagram from '../../components/models/diagram/TurbineDiagram';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import { getValueByKey } from '../../utils/getValueByKey';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
-import { useAppSelector } from '../../redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 import { ThemeType } from '../../types/theme';
 import {
   CellChange,
@@ -61,18 +60,21 @@ import { AxiosError } from 'axios';
 import { errorResp, loginInput, loginOutput } from '../../types/api';
 import { modelsAPI } from '../../api/digitalTwinsModels';
 import ConfimationModal from '../../components/UI/ConfimationModal';
+import { setError } from '../../redux/slices/errorSlice';
 
 const Turbine = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
+  const dispatch = useAppDispatch();
 
   const [system, setSystem] = useState<TurbineParameters>({ ...TURBINE });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isSingleDiagramExpanded, setIsSingleDiagramExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<TurbineParameters, TurbineOutput>('turbine', system);
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    TurbineParameters,
+    TurbineOutput
+  >('turbine', system);
 
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
@@ -206,12 +208,6 @@ const Turbine = () => {
   }, [isPlaying]);
 
   useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
-
-  useEffect(() => {
     if (data !== undefined) {
       setSystem((o) => ({
         ...o,
@@ -304,11 +300,21 @@ const Turbine = () => {
               setSystem(newState as TurbineParameters);
             }
           } else {
-            setError('Contraseña incorrecta');
+            dispatch(
+              setError({
+                isShown: true,
+                message: 'Contraseña incorrecta',
+              })
+            );
           }
         })
         .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
+          dispatch(
+            setError({
+              isShown: true,
+              message: err.message,
+            })
+          );
         })
         .finally(() => {});
     }
@@ -345,8 +351,13 @@ const Turbine = () => {
         if ('turbineType' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital de turbinas');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message:
+                'El archivo no corresponde a un gemelo digital de turbinas',
+            })
+          );
         }
         event.target.value = '';
       };
@@ -365,11 +376,6 @@ const Turbine = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
       <PasswordModal
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}

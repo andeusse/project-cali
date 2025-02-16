@@ -23,7 +23,6 @@ import { useControlPlayer } from '../../hooks/useControlPlayer';
 import { setFormState } from '../../utils/setFormState';
 import saveAs from 'file-saver';
 import PlayerControls from '../../components/UI/PlayerControls';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import {
   Accordion,
   AccordionDetails,
@@ -57,6 +56,7 @@ import { TrainingDataType } from '../../types/trainingData';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
 import moment from 'moment';
 import { useAppDispatch } from '../../redux/reduxHooks';
+import { setError } from '../../redux/slices/errorSlice';
 
 type Props = {};
 
@@ -68,13 +68,11 @@ const BiochemicalMethanePotential = (props: Props) => {
   });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<
-      BiochemicalMethanePotentialParameters,
-      BiochemicalMethanePotentialOutput
-    >('bmp', system);
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    BiochemicalMethanePotentialParameters,
+    BiochemicalMethanePotentialOutput
+  >('bmp', system);
 
   useEffect(() => {
     setSystem((o) => {
@@ -89,12 +87,6 @@ const BiochemicalMethanePotential = (props: Props) => {
       setSystem((o) => ({ ...o, restartFlag: true }));
     }
   }, [data]);
-
-  useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
 
   const [trainingDataA, settrainingDataA] = useState<TrainingDataType>({
     names: [],
@@ -204,17 +196,19 @@ const BiochemicalMethanePotential = (props: Props) => {
         setSystem((old) => setDataA(old));
       })
       .catch((err: AxiosError<errorResp>) => {
-        setError(
-          `Error al realizar la consulta de los parámetros de entrenamiento: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
+        dispatch(
+          setError({
+            isShown: true,
+            message: `${moment()}: Error al realizar la consulta de los parámetros de entrenamiento del lado A: ${
+              err.response?.status
+            } y con mensaje de error: ${err.response?.data.message}`,
+          })
         );
       })
       .finally(() => {
         dispatch(setIsLoading(false));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [system.measurementMethodSideA, system.modelSelectionSideA]);
 
   useEffect(() => {
@@ -233,17 +227,19 @@ const BiochemicalMethanePotential = (props: Props) => {
         setSystem((old) => setDataB(old));
       })
       .catch((err: AxiosError<errorResp>) => {
-        setError(
-          `Error al realizar la consulta de los parámetros de entrenamiento: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
+        dispatch(
+          setError({
+            isShown: true,
+            message: `${moment()}: Error al realizar la consulta de los parámetros de entrenamiento del lado B: ${
+              err.response?.status
+            } y con mensaje de error: ${err.response?.data.message}`,
+          })
         );
       })
       .finally(() => {
         dispatch(setIsLoading(false));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [system.measurementMethodSideB, system.modelSelectionSideB]);
 
   useEffect(() => {
@@ -315,11 +311,21 @@ const BiochemicalMethanePotential = (props: Props) => {
               setSystem(newState as BiochemicalMethanePotentialParameters);
             }
           } else {
-            setError('Contraseña incorrecta');
+            dispatch(
+              setError({
+                isShown: true,
+                message: 'Contraseña incorrecta',
+              })
+            );
           }
         })
         .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
+          dispatch(
+            setError({
+              isShown: true,
+              message: err.message,
+            })
+          );
         })
         .finally(() => {});
     }
@@ -359,8 +365,12 @@ const BiochemicalMethanePotential = (props: Props) => {
         if ('plantOperation' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital de BMP');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message: 'El archivo no corresponde a un gemelo digital de BMP',
+            })
+          );
         }
         event.target.value = '';
       };
@@ -379,11 +389,6 @@ const BiochemicalMethanePotential = (props: Props) => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
       <PasswordModal
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}

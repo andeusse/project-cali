@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import {
   COOLING_TOWER,
@@ -44,7 +43,7 @@ import {
   ReactGrid,
   Row,
 } from '@silevis/reactgrid';
-import { useAppSelector } from '../../redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 import { ThemeType } from '../../types/theme';
 import { setCoolingTowerTable } from '../../utils/models/setCoolingTower';
 import { AxiosError } from 'axios';
@@ -52,22 +51,22 @@ import { modelsAPI } from '../../api/digitalTwinsModels';
 import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
+import { setError } from '../../redux/slices/errorSlice';
 
 const CoolingTower = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
+  const dispatch = useAppDispatch();
 
   const [system, setSystem] = useState<CoolingTowerParameters>({
     ...COOLING_TOWER,
   });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<CoolingTowerParameters, CoolingTowerOutput>(
-      'coolingTower',
-      system
-    );
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    CoolingTowerParameters,
+    CoolingTowerOutput
+  >('coolingTower', system);
 
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
@@ -329,11 +328,21 @@ const CoolingTower = () => {
               setSystem(newState as CoolingTowerParameters);
             }
           } else {
-            setError('Contraseña incorrecta');
+            dispatch(
+              setError({
+                isShown: true,
+                message: 'Contraseña incorrecta',
+              })
+            );
           }
         })
         .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
+          dispatch(
+            setError({
+              isShown: true,
+              message: err.message,
+            })
+          );
         })
         .finally(() => {});
     }
@@ -370,10 +379,13 @@ const CoolingTower = () => {
         if ('topWaterFlow' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError(
-            'El archivo no corresponde a un gemelo digital de torre de enfriamiento'
+          dispatch(
+            setError({
+              isShown: true,
+              message:
+                'El archivo no corresponde a un gemelo digital de torre de enfriamiento',
+            })
           );
-          setIsOpen(true);
         }
         event.target.value = '';
       };
@@ -392,11 +404,6 @@ const CoolingTower = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
       <PasswordModal
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}

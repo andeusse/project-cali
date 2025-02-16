@@ -7,36 +7,33 @@ import {
   DialogTitle,
 } from '@mui/material';
 import React from 'react';
+import { setError } from '../../redux/slices/errorSlice';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 
-type Props = {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  error: string;
-};
+const ErrorDialog = () => {
+  const dispatch = useAppDispatch();
+  const error = useAppSelector((state) => state.error);
 
-const ErrorDialog = (props: Props) => {
-  const { isOpen, setIsOpen, error } = props;
+  const closeErrorDialog = () => {
+    dispatch(setError({ isShown: false, message: '' }));
+  };
 
   return (
     <React.Fragment>
       <Dialog
-        open={isOpen}
-        onClose={setIsOpen}
+        open={error.isShown}
+        onClose={closeErrorDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{'Algo salió mal'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {error}
+            {error.message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setIsOpen(false)}
-            variant="contained"
-            color="error"
-          >
+          <Button onClick={closeErrorDialog} variant="contained" color="error">
             Cerrar
           </Button>
         </DialogActions>

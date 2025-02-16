@@ -44,14 +44,13 @@ import singleDiagramOffgridDark from '../../assets/singleDiagram/singleDiagramSo
 import singleDiagramHybridLight from '../../assets/singleDiagram/singleDiagramSolarHybridLight.png';
 import singleDiagramHybridDark from '../../assets/singleDiagram/singleDiagramSolarHybridDark.png';
 import solarIllustration from '../../assets/illustrations/solar.png';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
-import { useAppSelector } from '../../redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 import { ThemeType } from '../../types/theme';
 import {
   CellChange,
@@ -66,9 +65,11 @@ import { modelsAPI } from '../../api/digitalTwinsModels';
 import PasswordModal from '../../components/models/PasswordModal';
 import { loginOutput, loginInput, errorResp } from '../../types/api';
 import ConfimationModal from '../../components/UI/ConfimationModal';
+import { setError } from '../../redux/slices/errorSlice';
 
 const Solar = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
+  const dispatch = useAppDispatch();
 
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
@@ -76,10 +77,11 @@ const Solar = () => {
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isMetInformationExpanded, setIsMetInformationExpanded] =
     useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', system);
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    SolarWindParameters,
+    SolarWindOutput
+  >('solar', system);
 
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
@@ -276,12 +278,6 @@ const Solar = () => {
     });
   }, [isPlaying]);
 
-  useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
-
   const [diagramVariables, setDiagramVariables] = useState(MODE_1_MODE_3);
 
   useEffect(() => {
@@ -441,11 +437,21 @@ const Solar = () => {
               setSystem(newState as SolarWindParameters);
             }
           } else {
-            setError('Contraseña incorrecta');
+            dispatch(
+              setError({
+                isShown: true,
+                message: 'Contraseña incorrecta',
+              })
+            );
           }
         })
         .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
+          dispatch(
+            setError({
+              isShown: true,
+              message: err.message,
+            })
+          );
         })
         .finally(() => {});
     }
@@ -482,8 +488,12 @@ const Solar = () => {
         if ('monocrystallinePanel' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital solar');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message: 'El archivo no corresponde a un gemelo digital solar',
+            })
+          );
         }
         event.target.value = '';
       };
@@ -502,11 +512,6 @@ const Solar = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
       <PasswordModal
         handleClose={handlePasswordModalClose}
         open={showPasswordModal}
