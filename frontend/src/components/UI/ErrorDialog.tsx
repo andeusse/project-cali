@@ -15,7 +15,7 @@ const ErrorDialog = () => {
   const error = useAppSelector((state) => state.error);
 
   const closeErrorDialog = () => {
-    dispatch(setError({ isShown: false, message: '' }));
+    dispatch(setError({ ...error, isShown: false }));
   };
 
   return (
