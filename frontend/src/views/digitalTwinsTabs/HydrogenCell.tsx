@@ -50,13 +50,9 @@ import CustomToggle from '../../components/UI/CustomToggle';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
 import HydrogenCellDiagram from '../../components/models/diagram/HydrogenCellDiagram';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
-import { AxiosError } from 'axios';
-import { modelsAPI } from '../../api/digitalTwinsModels';
-import PasswordModal from '../../components/models/PasswordModal';
-import { loginOutput, loginInput, errorResp } from '../../types/api';
-import ConfimationModal from '../../components/UI/ConfimationModal';
 import { setError } from '../../redux/slices/errorSlice';
 import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 type Props = {};
 
@@ -350,74 +346,6 @@ const HydrogenCell = (props: Props) => {
     }
   };
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState = setFormState<HydrogencellParameters>(
-              passwordEl,
-              system
-            );
-            if (newState) {
-              setSystem(newState as HydrogencellParameters);
-            }
-          } else {
-            dispatch(
-              setError({
-                isShown: true,
-                message: Constants.WRONG_PASSWORD,
-              })
-            );
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          dispatch(
-            setError({
-              isShown: true,
-              message: err.message,
-            })
-          );
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<HydrogencellParameters>(passwordEl, system);
-      if (newState) {
-        setSystem(newState as HydrogencellParameters);
-      }
-    }
-    setShowConfimationModal(false);
-  };
-
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -462,14 +390,6 @@ const HydrogenCell = (props: Props) => {
 
   return (
     <>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -818,18 +738,12 @@ const HydrogenCell = (props: Props) => {
                     disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <h3>Modo de entrenamiento</h3>
-                </Grid>
                 <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
-                  <CustomToggle
-                    name="trainingMode"
-                    value={system.trainingMode}
-                    handleChange={handleTrainingModeChange}
-                    trueString="On"
-                    falseString="Off"
-                    disabled={isPlaying}
-                  ></CustomToggle>
+                  <TrainingMode
+                    isPlaying={isPlaying}
+                    setSystem={setSystem}
+                    system={system}
+                  ></TrainingMode>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Parámetros celda hidrógeno</h2>

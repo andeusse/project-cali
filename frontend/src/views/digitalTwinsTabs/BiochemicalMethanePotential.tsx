@@ -48,15 +48,14 @@ import TimeGraphs from '../../components/models/common/TimeGraphs';
 import BiochemicalMethanePotentialDiagram from '../../components/models/diagram/BiochemicalMethanePotentialDiagram';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import { AxiosError } from 'axios';
-import { modelsAPI, trainingDataAPIMock } from '../../api/digitalTwinsModels';
-import PasswordModal from '../../components/models/PasswordModal';
-import { loginOutput, loginInput, errorResp } from '../../types/api';
-import ConfimationModal from '../../components/UI/ConfimationModal';
+import { trainingDataAPIMock } from '../../api/digitalTwinsModels';
+import { errorResp } from '../../types/api';
 import { TrainingDataType } from '../../types/trainingData';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
 import { useAppDispatch } from '../../redux/reduxHooks';
 import { setError } from '../../redux/slices/errorSlice';
 import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 type Props = {};
 
@@ -269,78 +268,6 @@ const BiochemicalMethanePotential = (props: Props) => {
     }
   };
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState =
-              setFormState<BiochemicalMethanePotentialParameters>(
-                passwordEl,
-                system
-              );
-            if (newState) {
-              setSystem(newState as BiochemicalMethanePotentialParameters);
-            }
-          } else {
-            dispatch(
-              setError({
-                isShown: true,
-                message: Constants.WRONG_PASSWORD,
-              })
-            );
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          dispatch(
-            setError({
-              isShown: true,
-              message: err.message,
-            })
-          );
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<BiochemicalMethanePotentialParameters>(
-        passwordEl,
-        system
-      );
-      if (newState) {
-        setSystem(newState as BiochemicalMethanePotentialParameters);
-      }
-    }
-    setShowConfimationModal(false);
-  };
-
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -385,14 +312,6 @@ const BiochemicalMethanePotential = (props: Props) => {
 
   return (
     <>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -614,26 +533,15 @@ const BiochemicalMethanePotential = (props: Props) => {
                           <Grid
                             item
                             xs={12}
-                            md={6}
-                            xl={6}
-                            sx={{ height: '72px' }}
-                          >
-                            <h3>Entrenamiento</h3>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            md={6}
-                            xl={6}
+                            md={12}
+                            xl={12}
                             alignContent={'center'}
                           >
-                            <CustomToggle
-                              name="trainingMode"
-                              value={system.trainingMode}
-                              handleChange={handleTrainingModeChange}
-                              trueString="On"
-                              falseString="Off"
-                            ></CustomToggle>
+                            <TrainingMode
+                              isPlaying={isPlaying}
+                              setSystem={setSystem}
+                              system={system}
+                            ></TrainingMode>
                           </Grid>
                           <Grid item xs={12} md={6} xl={12}>
                             <CustomNumberField
@@ -1234,26 +1142,15 @@ const BiochemicalMethanePotential = (props: Props) => {
                           <Grid
                             item
                             xs={12}
-                            md={6}
-                            xl={6}
-                            sx={{ height: '72px' }}
-                          >
-                            <h3>Entrenamiento</h3>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            md={6}
-                            xl={6}
+                            md={12}
+                            xl={12}
                             alignContent={'center'}
                           >
-                            <CustomToggle
-                              name="trainingMode"
-                              value={system.trainingMode}
-                              handleChange={handleTrainingModeChange}
-                              trueString="On"
-                              falseString="Off"
-                            ></CustomToggle>
+                            <TrainingMode
+                              isPlaying={isPlaying}
+                              setSystem={setSystem}
+                              system={system}
+                            ></TrainingMode>
                           </Grid>
                           <Grid item xs={12} md={6} xl={12}>
                             <CustomNumberField

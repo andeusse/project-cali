@@ -55,13 +55,9 @@ import {
 } from '@silevis/reactgrid';
 import { setTurbineTable } from '../../utils/models/setTurbine';
 import Config from '../../config/config';
-import PasswordModal from '../../components/models/PasswordModal';
-import { AxiosError } from 'axios';
-import { errorResp, loginInput, loginOutput } from '../../types/api';
-import { modelsAPI } from '../../api/digitalTwinsModels';
-import ConfimationModal from '../../components/UI/ConfimationModal';
 import { setError } from '../../redux/slices/errorSlice';
 import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 const Turbine = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
@@ -264,74 +260,6 @@ const Turbine = () => {
     }
   };
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState = setFormState<TurbineParameters>(
-              passwordEl,
-              system
-            );
-            if (newState) {
-              setSystem(newState as TurbineParameters);
-            }
-          } else {
-            dispatch(
-              setError({
-                isShown: true,
-                message: Constants.WRONG_PASSWORD,
-              })
-            );
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          dispatch(
-            setError({
-              isShown: true,
-              message: err.message,
-            })
-          );
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<TurbineParameters>(passwordEl, system);
-      if (newState) {
-        setSystem(newState as TurbineParameters);
-      }
-    }
-    setShowConfimationModal(false);
-  };
-
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -376,14 +304,6 @@ const Turbine = () => {
 
   return (
     <>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -777,18 +697,12 @@ const Turbine = () => {
                     disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <h3>Modo de entrenamiento</h3>
-                </Grid>
                 <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
-                  <CustomToggle
-                    name="trainingMode"
-                    value={system.trainingMode}
-                    handleChange={handleTrainingModeChange}
-                    trueString="On"
-                    falseString="Off"
-                    disabled={isPlaying}
-                  ></CustomToggle>
+                  <TrainingMode
+                    isPlaying={isPlaying}
+                    setSystem={setSystem}
+                    system={system}
+                  ></TrainingMode>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros turbina</h3>
