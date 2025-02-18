@@ -1,16 +1,16 @@
 import { CellChange } from '@silevis/reactgrid';
 import { CoolingTowerParameters } from '../../types/models/coolingTower';
 import { CellChange2Array } from '../cellChange2Array';
-import Config from '../../config/config';
 import { StepUnitType } from '../../types/common';
+import Constants from '../../config/constants';
 
 export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
   let newState = { ...oldState };
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE_TOWER
-      : Config.QUERY_TIME_ONLINE_TOWER;
+      ? Constants.QUERY_TIME_OFFLINE_TOWER
+      : Constants.QUERY_TIME_ONLINE_TOWER;
 
     newState.topWaterFlow.disabled = !newState.inputOfflineOperation;
     newState.topWaterFlow.arrayEnabled = false;
@@ -60,8 +60,8 @@ export const setCoolingTower = (e: any, oldState: CoolingTowerParameters) => {
     newState.trainingMode = e.target.checked;
     newState.inputOfflineOperation = !newState.trainingMode;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE_TOWER
-      : Config.QUERY_TIME_ONLINE_TOWER;
+      ? Constants.QUERY_TIME_OFFLINE_TOWER
+      : Constants.QUERY_TIME_ONLINE_TOWER;
 
     newState.topWaterFlow.disabled = !newState.inputOfflineOperation;
     newState.topWaterFlow.arrayEnabled = false;

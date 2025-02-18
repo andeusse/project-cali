@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useAppSelector } from '../../redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 import {
   ElectronicLoadModeText,
   ElectronicLoadModeType,
@@ -25,7 +25,6 @@ import hydrogenCellIllustration from '../../assets/illustrations/hydrogen.png';
 import singleDiagramLight from '../../assets/singleDiagram/singleDiagramHydrogenLight.png';
 import singleDiagramDark from '../../assets/singleDiagram/singleDiagramHydrogenDark.png';
 import { setFormState } from '../../utils/setFormState';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import {
   Accordion,
   AccordionDetails,
@@ -51,16 +50,15 @@ import CustomToggle from '../../components/UI/CustomToggle';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
 import HydrogenCellDiagram from '../../components/models/diagram/HydrogenCellDiagram';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
-import { AxiosError } from 'axios';
-import { modelsAPI } from '../../api/digitalTwinsModels';
-import PasswordModal from '../../components/models/PasswordModal';
-import { loginOutput, loginInput, errorResp } from '../../types/api';
-import ConfimationModal from '../../components/UI/ConfimationModal';
+import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 type Props = {};
 
 const HydrogenCell = (props: Props) => {
   const userTheme = useAppSelector((state) => state.theme.value);
+  const dispatch = useAppDispatch();
 
   const [system, setSystem] = useState<HydrogencellParameters>({
     ...HYDROGEN_CELL,
@@ -68,13 +66,11 @@ const HydrogenCell = (props: Props) => {
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isSingleDiagramExpanded, setIsSingleDiagramExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<HydrogencellParameters, HydrogenCellOutput>(
-      'hydrogenCell',
-      system
-    );
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    HydrogencellParameters,
+    HydrogenCellOutput
+  >('hydrogenCell', system);
 
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
@@ -339,12 +335,6 @@ const HydrogenCell = (props: Props) => {
     });
   }, [isPlaying]);
 
-  useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
-
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<HydrogencellParameters>(
       e,
@@ -354,64 +344,6 @@ const HydrogenCell = (props: Props) => {
     if (newState) {
       setSystem(newState as HydrogencellParameters);
     }
-  };
-
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState = setFormState<HydrogencellParameters>(
-              passwordEl,
-              system
-            );
-            if (newState) {
-              setSystem(newState as HydrogencellParameters);
-            }
-          } else {
-            setError('Contraseña incorrecta');
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<HydrogencellParameters>(passwordEl, system);
-      if (newState) {
-        setSystem(newState as HydrogencellParameters);
-      }
-    }
-    setShowConfimationModal(false);
   };
 
   const handleSaveSystem = () => {
@@ -434,10 +366,12 @@ const HydrogenCell = (props: Props) => {
         if ('electronicLoadMode' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError(
-            'El archivo no corresponde a un gemelo digital de celdas de hidrógeno'
+          dispatch(
+            setError({
+              isShown: true,
+              message: Constants.GetWrongFormatError('celda de hidrógeno'),
+            })
           );
-          setIsOpen(true);
         }
         event.target.value = '';
       };
@@ -456,19 +390,6 @@ const HydrogenCell = (props: Props) => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -675,7 +596,6 @@ const HydrogenCell = (props: Props) => {
                           value={system.lightsMode}
                           name="lightsMode"
                           onChange={(e: any) => handleChange(e)}
-                          disabled={isPlaying}
                         >
                           {Object.keys(LightsModeType).map((key) => (
                             <MenuItem key={key} value={key}>
@@ -817,18 +737,12 @@ const HydrogenCell = (props: Props) => {
                     disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <h3>Modo de entrenamiento</h3>
-                </Grid>
                 <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
-                  <CustomToggle
-                    name="trainingMode"
-                    value={system.trainingMode}
-                    handleChange={handleTrainingModeChange}
-                    trueString="On"
-                    falseString="Off"
-                    disabled={isPlaying}
-                  ></CustomToggle>
+                  <TrainingMode
+                    isPlaying={isPlaying}
+                    setSystem={setSystem}
+                    system={system}
+                  ></TrainingMode>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h2>Parámetros celda hidrógeno</h2>

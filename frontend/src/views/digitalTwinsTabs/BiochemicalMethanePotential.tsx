@@ -23,7 +23,6 @@ import { useControlPlayer } from '../../hooks/useControlPlayer';
 import { setFormState } from '../../utils/setFormState';
 import saveAs from 'file-saver';
 import PlayerControls from '../../components/UI/PlayerControls';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import {
   Accordion,
   AccordionDetails,
@@ -49,14 +48,14 @@ import TimeGraphs from '../../components/models/common/TimeGraphs';
 import BiochemicalMethanePotentialDiagram from '../../components/models/diagram/BiochemicalMethanePotentialDiagram';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
 import { AxiosError } from 'axios';
-import { modelsAPI, trainingDataAPIMock } from '../../api/digitalTwinsModels';
-import PasswordModal from '../../components/models/PasswordModal';
-import { loginOutput, loginInput, errorResp } from '../../types/api';
-import ConfimationModal from '../../components/UI/ConfimationModal';
+import { trainingDataAPIMock } from '../../api/digitalTwinsModels';
+import { errorResp } from '../../types/api';
 import { TrainingDataType } from '../../types/trainingData';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
-import moment from 'moment';
 import { useAppDispatch } from '../../redux/reduxHooks';
+import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 type Props = {};
 
@@ -68,13 +67,11 @@ const BiochemicalMethanePotential = (props: Props) => {
   });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<
-      BiochemicalMethanePotentialParameters,
-      BiochemicalMethanePotentialOutput
-    >('bmp', system);
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    BiochemicalMethanePotentialParameters,
+    BiochemicalMethanePotentialOutput
+  >('bmp', system);
 
   useEffect(() => {
     setSystem((o) => {
@@ -89,12 +86,6 @@ const BiochemicalMethanePotential = (props: Props) => {
       setSystem((o) => ({ ...o, restartFlag: true }));
     }
   }, [data]);
-
-  useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
 
   const [trainingDataA, settrainingDataA] = useState<TrainingDataType>({
     names: [],
@@ -204,17 +195,17 @@ const BiochemicalMethanePotential = (props: Props) => {
         setSystem((old) => setDataA(old));
       })
       .catch((err: AxiosError<errorResp>) => {
-        setError(
-          `Error al realizar la consulta de los parámetros de entrenamiento: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
+        dispatch(
+          setError({
+            isShown: true,
+            message: Constants.GetErrorWithDate(err.message, err.code),
+          })
         );
       })
       .finally(() => {
         dispatch(setIsLoading(false));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [system.measurementMethodSideA, system.modelSelectionSideA]);
 
   useEffect(() => {
@@ -233,17 +224,17 @@ const BiochemicalMethanePotential = (props: Props) => {
         setSystem((old) => setDataB(old));
       })
       .catch((err: AxiosError<errorResp>) => {
-        setError(
-          `Error al realizar la consulta de los parámetros de entrenamiento: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
+        dispatch(
+          setError({
+            isShown: true,
+            message: Constants.GetErrorWithDate(err.message, err.code),
+          })
         );
       })
       .finally(() => {
         dispatch(setIsLoading(false));
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [system.measurementMethodSideB, system.modelSelectionSideB]);
 
   useEffect(() => {
@@ -277,68 +268,6 @@ const BiochemicalMethanePotential = (props: Props) => {
     }
   };
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState =
-              setFormState<BiochemicalMethanePotentialParameters>(
-                passwordEl,
-                system
-              );
-            if (newState) {
-              setSystem(newState as BiochemicalMethanePotentialParameters);
-            }
-          } else {
-            setError('Contraseña incorrecta');
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<BiochemicalMethanePotentialParameters>(
-        passwordEl,
-        system
-      );
-      if (newState) {
-        setSystem(newState as BiochemicalMethanePotentialParameters);
-      }
-    }
-    setShowConfimationModal(false);
-  };
-
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -359,8 +288,12 @@ const BiochemicalMethanePotential = (props: Props) => {
         if ('plantOperation' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital de BMP');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message: Constants.GetWrongFormatError('BMP'),
+            })
+          );
         }
         event.target.value = '';
       };
@@ -379,19 +312,6 @@ const BiochemicalMethanePotential = (props: Props) => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -613,26 +533,15 @@ const BiochemicalMethanePotential = (props: Props) => {
                           <Grid
                             item
                             xs={12}
-                            md={6}
-                            xl={6}
-                            sx={{ height: '72px' }}
-                          >
-                            <h3>Entrenamiento</h3>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            md={6}
-                            xl={6}
+                            md={12}
+                            xl={12}
                             alignContent={'center'}
                           >
-                            <CustomToggle
-                              name="trainingMode"
-                              value={system.trainingMode}
-                              handleChange={handleTrainingModeChange}
-                              trueString="On"
-                              falseString="Off"
-                            ></CustomToggle>
+                            <TrainingMode
+                              isPlaying={isPlaying}
+                              setSystem={setSystem}
+                              system={system}
+                            ></TrainingMode>
                           </Grid>
                           <Grid item xs={12} md={6} xl={12}>
                             <CustomNumberField
@@ -1233,26 +1142,15 @@ const BiochemicalMethanePotential = (props: Props) => {
                           <Grid
                             item
                             xs={12}
-                            md={6}
-                            xl={6}
-                            sx={{ height: '72px' }}
-                          >
-                            <h3>Entrenamiento</h3>
-                          </Grid>
-                          <Grid
-                            item
-                            xs={12}
-                            md={6}
-                            xl={6}
+                            md={12}
+                            xl={12}
                             alignContent={'center'}
                           >
-                            <CustomToggle
-                              name="trainingMode"
-                              value={system.trainingMode}
-                              handleChange={handleTrainingModeChange}
-                              trueString="On"
-                              falseString="Off"
-                            ></CustomToggle>
+                            <TrainingMode
+                              isPlaying={isPlaying}
+                              setSystem={setSystem}
+                              system={system}
+                            ></TrainingMode>
                           </Grid>
                           <Grid item xs={12} md={6} xl={12}>
                             <CustomNumberField

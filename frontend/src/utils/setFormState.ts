@@ -1,6 +1,3 @@
-import { TurbineParameters } from '../types/models/turbine';
-import { SolarWindParameters } from '../types/models/solar';
-import { BiogasParameters } from '../types/models/biogas';
 import { setTurbine } from './models/setTurbine';
 import { setBiogas } from './models/setBiogas';
 import { setSolar } from './models/setSolar';
@@ -9,20 +6,11 @@ import { InputArrayType, InputType } from '../types/inputType';
 import { setScenario } from './scenarios/setScenario';
 import { SmartSystemParameters } from '../types/scenarios/common';
 import { setCoolingTower } from './models/setCoolingTower';
-import { CoolingTowerParameters } from '../types/models/coolingTower';
-import { HydrogencellParameters } from '../types/models/hydrogenCell';
 import { setHydrogenCell } from './models/setHydrogenCell';
-import { BiochemicalMethanePotentialParameters } from '../types/models/biochemicalMethanePotential';
 import { setBiochemicalMethanePotential } from './models/setBiochemicalMethanePotential';
+import { digitalTwinsType } from '../types/digitalTwinsType';
 
-export type formType =
-  | TurbineParameters
-  | SolarWindParameters
-  | BiogasParameters
-  | CoolingTowerParameters
-  | SmartSystemParameters
-  | HydrogencellParameters
-  | BiochemicalMethanePotentialParameters;
+export type formType = digitalTwinsType | SmartSystemParameters;
 
 export const setFormState = <T extends formType>(
   e: any,

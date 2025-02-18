@@ -44,14 +44,13 @@ import singleDiagramOffgridDark from '../../assets/singleDiagram/singleDiagramSo
 import singleDiagramHybridLight from '../../assets/singleDiagram/singleDiagramSolarHybridLight.png';
 import singleDiagramHybridDark from '../../assets/singleDiagram/singleDiagramSolarHybridDark.png';
 import solarIllustration from '../../assets/illustrations/solar.png';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import SolarDiagram from '../../components/models/diagram/SolarDiagram';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import ToggleArrayCustomNumberField from '../../components/UI/ToggleArrayCustomNumberField';
-import { useAppSelector } from '../../redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 import { ThemeType } from '../../types/theme';
 import {
   CellChange,
@@ -61,14 +60,13 @@ import {
   Row,
 } from '@silevis/reactgrid';
 import { setSolarTable } from '../../utils/models/setSolar';
-import { AxiosError } from 'axios';
-import { modelsAPI } from '../../api/digitalTwinsModels';
-import PasswordModal from '../../components/models/PasswordModal';
-import { loginOutput, loginInput, errorResp } from '../../types/api';
-import ConfimationModal from '../../components/UI/ConfimationModal';
+import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 const Solar = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
+  const dispatch = useAppDispatch();
 
   const [system, setSystem] = useState<SolarWindParameters>({ ...SOLAR_WIND });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
@@ -76,10 +74,11 @@ const Solar = () => {
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isMetInformationExpanded, setIsMetInformationExpanded] =
     useState(false);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<SolarWindParameters, SolarWindOutput>('solar', system);
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    SolarWindParameters,
+    SolarWindOutput
+  >('solar', system);
 
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
@@ -276,12 +275,6 @@ const Solar = () => {
     });
   }, [isPlaying]);
 
-  useEffect(() => {
-    if (error !== '') {
-      setIsOpen(true);
-    }
-  }, [error]);
-
   const [diagramVariables, setDiagramVariables] = useState(MODE_1_MODE_3);
 
   useEffect(() => {
@@ -404,64 +397,6 @@ const Solar = () => {
     }
   };
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState = setFormState<SolarWindParameters>(
-              passwordEl,
-              system
-            );
-            if (newState) {
-              setSystem(newState as SolarWindParameters);
-            }
-          } else {
-            setError('Contraseña incorrecta');
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<SolarWindParameters>(passwordEl, system);
-      if (newState) {
-        setSystem(newState as SolarWindParameters);
-      }
-    }
-    setShowConfimationModal(false);
-  };
-
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -482,8 +417,12 @@ const Solar = () => {
         if ('monocrystallinePanel' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un gemelo digital solar');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message: Constants.GetWrongFormatError('solar'),
+            })
+          );
         }
         event.target.value = '';
       };
@@ -502,19 +441,6 @@ const Solar = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -1231,18 +1157,12 @@ const Solar = () => {
                     disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <h3>Modo de entrenamiento</h3>
-                </Grid>
                 <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
-                  <CustomToggle
-                    name="trainingMode"
-                    value={system.trainingMode}
-                    handleChange={handleTrainingModeChange}
-                    trueString="On"
-                    falseString="Off"
-                    disabled={isPlaying}
-                  ></CustomToggle>
+                  <TrainingMode
+                    isPlaying={isPlaying}
+                    setSystem={setSystem}
+                    system={system}
+                  ></TrainingMode>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros ambientales</h3>

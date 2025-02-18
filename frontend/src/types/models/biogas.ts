@@ -1,4 +1,4 @@
-import Config from '../../config/config';
+import Constants from '../../config/constants';
 import {
   CommonSystemParameter,
   OperationModelType,
@@ -405,7 +405,7 @@ export const BIOGAS: BiogasParameters = {
     step: 0.1,
   },
   stepUnit: StepUnitType.Hour,
-  queryTime: Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS,
+  queryTime: Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,

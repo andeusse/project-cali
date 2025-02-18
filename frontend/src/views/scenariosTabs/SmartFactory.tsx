@@ -24,7 +24,6 @@ import {
 } from '../../types/scenarios/common';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { setFormState } from '../../utils/setFormState';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 
 import illustration from '../../assets/illustrations/smartFactory.png';
 import {
@@ -61,12 +60,13 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { StepUnitText, StepUnitType } from '../../types/common';
 import CustomToggle from '../../components/UI/CustomToggle';
+import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
 
 const tabs = ['solar', 'biogas', 'load', 'result'];
 
 const SmartFactory = () => {
   const [system, setSystem] = useState({ ...SMART_FACTORY });
-  const [isOpen, setIsOpen] = useState(false);
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [selectedTab, setSelectedTab] = useState<string>('solar');
@@ -74,7 +74,6 @@ const SmartFactory = () => {
   const [sortableList, setSortableList] = useState(system.priorityList);
 
   const [data, setData] = useState<SmartSystemOutput | undefined>(undefined);
-  const [error, setError] = useState('');
 
   const dispatch = useAppDispatch();
 
@@ -137,8 +136,12 @@ const SmartFactory = () => {
       })
       .catch((err: AxiosError<errorResp>) => {
         setData(undefined);
-        setError(err.message);
-        setIsOpen(true);
+        dispatch(
+          setError({
+            isShown: true,
+            message: err.message,
+          })
+        );
       })
       .finally(() => {
         dispatch(setIsLoading(false));
@@ -148,7 +151,6 @@ const SmartFactory = () => {
   const handleResetScenario = () => {
     chooseTab('solarSystemNumber', system.solarSystemNumber.value, true);
     setData(undefined);
-    setError('');
   };
 
   const reorder = (
@@ -217,8 +219,12 @@ const SmartFactory = () => {
         if ('solarSystemNumber' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError('El archivo no corresponde a un escenario');
-          setIsOpen(true);
+          dispatch(
+            setError({
+              isShown: true,
+              message: Constants.GetWrongFormatError('escenario'),
+            })
+          );
         }
         event.target.value = '';
       };
@@ -228,11 +234,6 @@ const SmartFactory = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion

@@ -4,10 +4,10 @@ import {
 } from '../../types/models/solar';
 import { setFormObjectValue } from '../setFormObjectValue';
 import { getKeyByValue } from '../getKeyByValue';
-import Config from '../../config/config';
 import { CellChange } from '@silevis/reactgrid';
 import { CellChange2Array } from '../cellChange2Array';
 import { StepUnitType } from '../../types/common';
+import Constants from '../../config/constants';
 
 export const setSolar = (
   e: any,
@@ -33,8 +33,8 @@ export const setSolar = (
   if (name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
     newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
     newState.windSpeed.disabled = !newState.inputOfflineOperation;
@@ -85,6 +85,10 @@ export const setSolar = (
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
 
+        newState.monocrystallinePanel.isConnectedDisabled = false;
+        newState.policrystallinePanel.isConnectedDisabled = false;
+        newState.flexPanel.isConnectedDisabled = true;
+
         newState.isBattery2 = true;
 
         newState.offgridInverter.isConnected = true;
@@ -101,6 +105,10 @@ export const setSolar = (
         newState.policrystallinePanel.isConnected = true;
         newState.flexPanel.isConnected = false;
         newState.cadmiumTelluridePanel.isConnected = false;
+
+        newState.monocrystallinePanel.isConnectedDisabled = false;
+        newState.policrystallinePanel.isConnectedDisabled = false;
+        newState.flexPanel.isConnectedDisabled = true;
 
         newState.isBattery2 = false;
 
@@ -134,6 +142,10 @@ export const setSolar = (
         newState.monocrystallinePanel.isConnectedDisabled = false;
         newState.policrystallinePanel.isConnectedDisabled = false;
         newState.flexPanel.isConnectedDisabled = false;
+
+        newState.monocrystallinePanel.isConnectedDisabled = false;
+        newState.policrystallinePanel.isConnectedDisabled = false;
+        newState.flexPanel.isConnectedDisabled = true;
 
         newState.isBattery2 = true;
 
@@ -171,6 +183,10 @@ export const setSolar = (
           } else {
             newState.policrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
+
+            newState.monocrystallinePanel.isConnectedDisabled = true;
+            newState.policrystallinePanel.isConnectedDisabled = false;
+            newState.flexPanel.isConnectedDisabled = false;
           }
           break;
         case 'policrystallinePanel':
@@ -186,6 +202,10 @@ export const setSolar = (
           } else {
             newState.monocrystallinePanel.isConnected = true;
             newState.flexPanel.isConnected = true;
+
+            newState.monocrystallinePanel.isConnectedDisabled = false;
+            newState.policrystallinePanel.isConnectedDisabled = true;
+            newState.flexPanel.isConnectedDisabled = false;
           }
           break;
         case 'flexPanel':
@@ -201,6 +221,10 @@ export const setSolar = (
           } else {
             newState.monocrystallinePanel.isConnected = true;
             newState.policrystallinePanel.isConnected = true;
+
+            newState.monocrystallinePanel.isConnectedDisabled = false;
+            newState.policrystallinePanel.isConnectedDisabled = false;
+            newState.flexPanel.isConnectedDisabled = true;
           }
           break;
         case 'cadmiumTelluridePanel':
@@ -277,8 +301,8 @@ export const setSolar = (
     newState.trainingMode = e.target.checked;
     newState.inputOfflineOperation = !newState.trainingMode;
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_OFFLINE
-      : Config.QUERY_TIME_ONLINE;
+      ? Constants.QUERY_TIME_OFFLINE
+      : Constants.QUERY_TIME_ONLINE;
     newState.solarRadiation1.disabled = !newState.inputOfflineOperation;
     newState.solarRadiation2.disabled = !newState.inputOfflineOperation;
     newState.windSpeed.disabled = !newState.inputOfflineOperation;

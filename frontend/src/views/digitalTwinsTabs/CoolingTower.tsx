@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import ErrorDialog from '../../components/UI/ErrorDialog';
 import { useControlPlayer } from '../../hooks/useControlPlayer';
 import {
   COOLING_TOWER,
@@ -44,30 +43,27 @@ import {
   ReactGrid,
   Row,
 } from '@silevis/reactgrid';
-import { useAppSelector } from '../../redux/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../redux/reduxHooks';
 import { ThemeType } from '../../types/theme';
 import { setCoolingTowerTable } from '../../utils/models/setCoolingTower';
-import { AxiosError } from 'axios';
-import { modelsAPI } from '../../api/digitalTwinsModels';
-import PasswordModal from '../../components/models/PasswordModal';
-import { loginOutput, loginInput, errorResp } from '../../types/api';
-import ConfimationModal from '../../components/UI/ConfimationModal';
+import { setError } from '../../redux/slices/errorSlice';
+import Constants from '../../config/constants';
+import TrainingMode from '../../components/models/common/TrainingMode';
 
 const CoolingTower = () => {
   const userTheme = useAppSelector((state) => state.theme.value);
+  const dispatch = useAppDispatch();
 
   const [system, setSystem] = useState<CoolingTowerParameters>({
     ...COOLING_TOWER,
   });
   const [isImageExpanded, setIsImageExpanded] = useState(true);
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
 
-  const [data, charts, isPlaying, error, onPlay, onPause, onStop, setError] =
-    useControlPlayer<CoolingTowerParameters, CoolingTowerOutput>(
-      'coolingTower',
-      system
-    );
+  const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
+    CoolingTowerParameters,
+    CoolingTowerOutput
+  >('coolingTower', system);
 
   const getColumns = useCallback((): Column[] => {
     if (system.steps.value > 1) {
@@ -292,64 +288,6 @@ const CoolingTower = () => {
     }
   };
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [showConfimationModal, setShowConfimationModal] = useState(false);
-  const [passwordEl, setPasswordEl] = useState<any>(undefined);
-
-  const handleTrainingModeChange = (e: any) => {
-    setPasswordEl({
-      target: {
-        type: 'checkbox',
-        checked: e.target.checked,
-        name: e.target.name,
-      },
-    });
-    if (e.target.checked) {
-      setShowPasswordModal(true);
-    } else {
-      setShowConfimationModal(true);
-    }
-  };
-
-  const handlePasswordModalClose = (
-    confirm: boolean,
-    password: string | undefined
-  ) => {
-    if (confirm && password !== undefined) {
-      modelsAPI<loginOutput, loginInput>('trainingMode', {
-        password: password,
-      })
-        .then((resp) => {
-          if (resp.data.succeed) {
-            const newState = setFormState<CoolingTowerParameters>(
-              passwordEl,
-              system
-            );
-            if (newState) {
-              setSystem(newState as CoolingTowerParameters);
-            }
-          } else {
-            setError('Contraseña incorrecta');
-          }
-        })
-        .catch((err: AxiosError<errorResp>) => {
-          setError(err.message);
-        })
-        .finally(() => {});
-    }
-    setShowPasswordModal(false);
-  };
-
-  const handleConfirmationModalClose = (confirm: boolean) => {
-    if (confirm) {
-      const newState = setFormState<CoolingTowerParameters>(passwordEl, system);
-      if (newState) {
-        setSystem(newState as CoolingTowerParameters);
-      }
-    }
-    setShowConfimationModal(false);
-  };
-
   const handleSaveSystem = () => {
     var blob = new Blob([JSON.stringify(system)], {
       type: 'application/json',
@@ -370,10 +308,12 @@ const CoolingTower = () => {
         if ('topWaterFlow' in jsonData) {
           setSystem(jsonData);
         } else {
-          setError(
-            'El archivo no corresponde a un gemelo digital de torre de enfriamiento'
+          dispatch(
+            setError({
+              isShown: true,
+              message: Constants.GetWrongFormatError('torre de enfriamiento'),
+            })
           );
-          setIsOpen(true);
         }
         event.target.value = '';
       };
@@ -392,19 +332,6 @@ const CoolingTower = () => {
 
   return (
     <>
-      <ErrorDialog
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        error={error}
-      ></ErrorDialog>
-      <PasswordModal
-        handleClose={handlePasswordModalClose}
-        open={showPasswordModal}
-      ></PasswordModal>
-      <ConfimationModal
-        open={showConfimationModal}
-        handleClose={handleConfirmationModalClose}
-      ></ConfimationModal>
       <Grid container spacing={2}>
         <Grid item xs={12} md={12} xl={12}>
           <Accordion
@@ -661,18 +588,12 @@ const CoolingTower = () => {
                     disabled={system.trainingMode}
                   ></CustomToggle>
                 </Grid>
-                <Grid item xs={12} md={12} xl={12}>
-                  <h3>Modo de entrenamiento</h3>
-                </Grid>
                 <Grid item xs={12} md={12} xl={12} alignContent={'center'}>
-                  <CustomToggle
-                    name="trainingMode"
-                    value={system.trainingMode}
-                    handleChange={handleTrainingModeChange}
-                    trueString="On"
-                    falseString="Off"
-                    disabled={isPlaying}
-                  ></CustomToggle>
+                  <TrainingMode
+                    isPlaying={isPlaying}
+                    setSystem={setSystem}
+                    system={system}
+                  ></TrainingMode>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
                   <h3>Parámetros agua de entrada</h3>

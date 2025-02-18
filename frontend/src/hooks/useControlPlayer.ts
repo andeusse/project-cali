@@ -6,11 +6,15 @@ import { errorResp, resp } from '../types/api';
 import { ChartValues } from '../types/graph';
 import { data2Graph } from '../utils/data2Graph';
 import { CommonDigitalTwinsParameter } from '../types/models/common';
+import { useAppDispatch } from '../redux/reduxHooks';
+import { setError } from '../redux/slices/errorSlice';
+import Constants from '../config/constants';
 
 export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   url: string,
   model: T
 ) => {
+  const dispatch = useAppDispatch();
   const [data, setData] = useState<G | undefined>();
 
   const [historicData, setHistoricData] = useState<any>({});
@@ -18,8 +22,6 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   const [charts, setCharts] = useState<ChartValues>();
 
   const [isPlaying, setIsPlaying] = useState(false);
-
-  const [error, setError] = useState('');
 
   const queryApi = useCallback(() => {
     modelsAPI<T, resp<G>>(url, model)
@@ -56,20 +58,20 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
             setCharts(data2Graph(historicData));
             return d;
           });
-          setError('');
+          resetErrorState();
         }
       })
       .catch((err: AxiosError<errorResp>) => {
         setIsPlaying(false);
-        setError(
-          `Error al realizar la consulta con el código: ${
-            err.response?.status
-          } y con mensaje de error: ${
-            err.response?.data.message
-          } y fecha ${moment()}`
+        dispatch(
+          setError({
+            isShown: true,
+            message: Constants.GetErrorWithDate(err.message, err.code),
+          })
         );
       })
       .finally(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historicData, isPlaying, model, url]);
 
   useEffect(() => {
@@ -87,9 +89,18 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
     setIsPlaying(true);
   };
 
+  const resetErrorState = () => {
+    dispatch(
+      setError({
+        isShown: false,
+        message: '',
+      })
+    );
+  };
+
   const onPause = () => {
     setIsPlaying(false);
-    setError('');
+    resetErrorState();
   };
 
   const onStop = () => {
@@ -98,17 +109,8 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
     setData(undefined);
     setHistoricData({});
     setCharts(undefined);
-    setError('');
+    resetErrorState();
   };
 
-  return [
-    data,
-    charts,
-    isPlaying,
-    error,
-    onPlay,
-    onPause,
-    onStop,
-    setError,
-  ] as const;
+  return [data, charts, isPlaying, onPlay, onPause, onStop] as const;
 };

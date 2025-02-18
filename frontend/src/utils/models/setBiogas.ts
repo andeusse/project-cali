@@ -1,4 +1,4 @@
-import Config from '../../config/config';
+import Constants from '../../config/constants';
 import { OperationModelType, StepUnitType } from '../../types/common';
 import { BiogasParameters, OperationModeType } from '../../types/models/biogas';
 import { getKeyByValue } from '../getKeyByValue';
@@ -13,20 +13,20 @@ export const setBiogas = (
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
 
     if (newState.inputOfflineOperation && !newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
 
     if (newState.inputOfflineOperation && newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
 
     if (!newState.inputOfflineOperation && !newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
 
     if (!newState.inputOfflineOperation && newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
 
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
-      : Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+      ? Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
+      : Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
 
     newState.inputSubstrateConditions = newState.inputOfflineOperation;
     (newState as BiogasParameters) = setSubstrateConditions(
@@ -395,20 +395,20 @@ export const setBiogas = (
     newState.digitalTwinState = newState.trainingMode;
 
     if (newState.inputOfflineOperation && !newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
 
     if (newState.inputOfflineOperation && newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
 
     if (!newState.inputOfflineOperation && !newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
 
     if (!newState.inputOfflineOperation && newState.digitalTwinState)
-      newState.queryTime = Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
 
     newState.queryTime = newState.inputOfflineOperation
-      ? Config.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
-      : Config.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+      ? Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
+      : Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
 
     newState.inputSubstrateConditions = newState.inputOfflineOperation;
     (newState as BiogasParameters) = setSubstrateConditions(
