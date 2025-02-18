@@ -99,10 +99,9 @@ class Solar(Resource):
       else:
         solarRadiation1 = float(solarRadiation1Array[-1])
     elif (data["inputOperationMode"] == 'Mode1' and (monoModuleState or polyModuleState)) or (data["inputOperationMode"] == 'Mode2' and (monoModuleState or polyModuleState)) or (data["inputOperationMode"] == 'Mode3' and (monoModuleState or polyModuleState)) or (data["inputOperationMode"] == 'Mode5' and (monoModuleState or polyModuleState)):
-      solarRadiation1 = (0.0 if not data["solarRadiation1"]["value"] else data["solarRadiation1"]["value"]) if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS-001'],3)
+      solarRadiation1 = (0.0 if not data["solarRadiation1"]["value"] else data["solarRadiation1"]["value"]) if not data["solarRadiation1"]["disabled"] else round(values_df["Value"]['RS-002'],3)
     else:
       solarRadiation1 = 0.0
-    print(solarRadiation1, flush=True)
     
     if data["solarRadiation2"]["arrayEnabled"]:
       solarRadiation2Array = np.repeat(np.array(data["solarRadiation2Array"]),repeats)
@@ -111,10 +110,9 @@ class Solar(Resource):
       else:
         solarRadiation2 = float(solarRadiation2Array[-1])
     elif (data["inputOperationMode"] == 'Mode1' and (flexiModuleState or cdteModuleState)) or (data["inputOperationMode"] == 'Mode2' and (flexiModuleState or cdteModuleState)) or (data["inputOperationMode"] == 'Mode3' and (flexiModuleState or cdteModuleState)) or (data["inputOperationMode"] == 'Mode5' and (flexiModuleState or cdteModuleState)):
-      solarRadiation2 = (0.0 if not data["solarRadiation2"]["value"] else data["solarRadiation2"]["value"]) if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS-002'],3)
+      solarRadiation2 = (0.0 if not data["solarRadiation2"]["value"] else data["solarRadiation2"]["value"]) if not data["solarRadiation2"]["disabled"] else round(values_df["Value"]['RS-001'],3)
     else:
       solarRadiation2 = 0.0
-    print(solarRadiation2, flush=True)
     
     if data["temperature"]["arrayEnabled"]:
       temperatureArray = np.repeat(np.array(data["temperatureArray"]),repeats)
@@ -416,11 +414,11 @@ class Solar(Resource):
       solarWind["controllerPower"] = twinResults[0]
       solarWind["inverterInputPower"] = twinResults[1]
       solarWind["batteryPower"] = twinResults[2]
-      if (not data["inputOfflineOperation"] and PV_Voltage == 0.0) or solarWind['solarPanelPower'] == 0.0:
+      if (not data["inputOfflineOperation"] and PV_Voltage == 0.0):
         solarWind['solarPanelVoltage'] = 0.0
       else: 
         solarWind['solarPanelVoltage'] = twinResults[3]
-      if (not data["inputOfflineOperation"] and WT_Voltage == 0.0) or solarWind['windTurbinePower'] == 0.0:
+      if (not data["inputOfflineOperation"] and WT_Voltage == 0.0):
         solarWind['windTurbineVoltage'] = 0.0
       else:
         solarWind['windTurbineVoltage'] = twinResults[4]

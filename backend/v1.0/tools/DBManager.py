@@ -103,7 +103,7 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
             |> filter(fn: (r) => r["device"] == "''' + device + '''")
             |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
-            |> aggregateWindow(every: 2m, fn: mean, createEmpty: false)
+            |> aggregateWindow(every: 3m, fn: mean, createEmpty: false)
             |> last()'''
         else:
             self.query = "Tipo de query inválido"

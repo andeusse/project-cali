@@ -9,20 +9,29 @@ class TwinCell:
         self.systemName = systemName # Nombre del sistema
     
     # Parametrizacion de gemelo 
-    def twinParameters (self,converterEfficiency, voltageCoefficients):
+    def twinParameters (self,converterEfficiency, voltageCoefficients, flowCoefficients):
         self.n_converter = converterEfficiency
         self.voltageCoefficients = voltageCoefficients
+        self.flowCoefficients = flowCoefficients
     
     def optimal_voltageCoefficients(self, cellVoltage_meas, cellCurrent_meas, inputFanPercentage):
         def cellVoltage(voltageCoefficients, cellVoltage_meas, cellCurrent_meas, inputFanPercentage):
             # if inputFanPercentage < 90:
             #     return cellVoltage_meas - voltageCoefficients[0]*16.9 - voltageCoefficients[1]*13.2672427*cellCurrent + voltageCoefficients[2]*13.5756291*cellCurrent**2 - voltageCoefficients[3]*6.66323789*cellCurrent**3 + voltageCoefficients[4]*1.21415288*cellCurrent**4 - voltageCoefficients[5]*0.0005*cellCurrent**5 - voltageCoefficients[6]*0.0155*cellCurrent**6 - voltageCoefficients[7]*0.0111392658*inputFanPercentage + voltageCoefficients[8]*0.00015*inputFanPercentage**2
             # else:
-            return cellVoltage_meas - (voltageCoefficients[0]*17.2 - voltageCoefficients[1]*12.55529151*cellCurrent_meas + voltageCoefficients[2]*13.2196722*cellCurrent_meas**2 - voltageCoefficients[3]*7.84413473*cellCurrent_meas**3 + voltageCoefficients[4]*2.40358984*cellCurrent_meas**4 - voltageCoefficients[5]*0.3615*cellCurrent_meas**5 + voltageCoefficients[6]*0.02101814*cellCurrent_meas**6 - voltageCoefficients[7]*0.1*inputFanPercentage + voltageCoefficients[8]*0.001066*inputFanPercentage**2)
-        voltageCoefficients_0 = (1,) * 9
-        voltageCoefficients = least_squares(cellVoltage, x0 = voltageCoefficients_0, bounds = ([-10] * 9, [10] * 9), args = (cellVoltage_meas, cellCurrent_meas, inputFanPercentage))
+            return cellVoltage_meas - (voltageCoefficients[0]*17.2 - voltageCoefficients[1]*12.55529151*cellCurrent_meas + voltageCoefficients[2]*13.2196722*cellCurrent_meas**2 - voltageCoefficients[3]*7.84413473*cellCurrent_meas**3 + voltageCoefficients[4]*2.40358984*cellCurrent_meas**4 - voltageCoefficients[5]*0.3615*cellCurrent_meas**5 + 0.02106*cellCurrent_meas**6 - voltageCoefficients[6]*0.1*inputFanPercentage + voltageCoefficients[7]*0.001066*inputFanPercentage**2)
+        voltageCoefficients_0 = (1,) * 8
+        voltageCoefficients = least_squares(cellVoltage, x0 = voltageCoefficients_0, bounds = ([-10] * 8, [10] * 8), args = (cellVoltage_meas, cellCurrent_meas, inputFanPercentage))
         self.voltageCoefficients = voltageCoefficients.x
         return self.voltageCoefficients
+    
+    def optimal_flowCoefficients(self, hydrogenFlow_meas, cellCurrent_meas):
+        def hydrogenFlow(flowCoefficients, hydrogenFlow_meas, cellCurrent_meas):
+            return hydrogenFlow_meas - (flowCoefficients[0]*0.63173435*cellCurrent_meas**5 - flowCoefficients[1]*4.45717449*cellCurrent_meas**4 + flowCoefficients[2]*8.93813509*cellCurrent_meas**3 - flowCoefficients[3]*1.38222392*cellCurrent_meas**2 + flowCoefficients[4]*145.33329002*cellCurrent_meas + flowCoefficients[5]*11.05591085)
+        flowCoefficients_0 = (1,) * 6
+        flowCoefficients = least_squares(hydrogenFlow, x0 = flowCoefficients_0, bounds = ([-10] * 6, [10] * 6), args = (hydrogenFlow_meas, cellCurrent_meas))
+        self.flowCoefficients = flowCoefficients.x
+        return self.flowCoefficients
 
     def optimal_n_converter(self, cellSelfFeedingPower_meas, lightsPower_meas, cellPower_meas, electronicLoadPower_meas):
         if cellSelfFeedingPower_meas + lightsPower_meas > 0:
@@ -51,17 +60,24 @@ class TwinCell:
         # if inputFanPercentage < 90:
         #     self.cellVoltage = 16.9 - 13.2672427*self.cellCurrent + 13.5756291*self.cellCurrent**2 - 6.66323789*self.cellCurrent**3 + 1.21415288*self.cellCurrent**4 - 0.0005*self.cellCurrent**5 - 0.0155*self.cellCurrent**6 - 0.0111392658*inputFanPercentage + 0.00015*inputFanPercentage**2
         # else:
-        self.cellVoltage = self.voltageCoefficients[0]*17.2 - self.voltageCoefficients[1]*12.55529151*self.cellCurrent + self.voltageCoefficients[2]*13.2196722*self.cellCurrent**2 - self.voltageCoefficients[3]*7.84413473*self.cellCurrent**3 + self.voltageCoefficients[4]*2.40358984*self.cellCurrent**4 - self.voltageCoefficients[5]*0.3615*self.cellCurrent**5 + self.voltageCoefficients[6]*0.02101814*self.cellCurrent**6 - self.voltageCoefficients[7]*0.1*inputFanPercentage + self.voltageCoefficients[8]*0.001066*inputFanPercentage**2
+        # self.cellVoltage = self.voltageCoefficients[0]*17.2 - self.voltageCoefficients[1]*12.55529151*self.cellCurrent + self.voltageCoefficients[2]*13.23*self.cellCurrent**2 - self.voltageCoefficients[3]*7.84413473*self.cellCurrent**3 + self.voltageCoefficients[4]*2.40358984*self.cellCurrent**4 - self.voltageCoefficients[5]*0.3615*self.cellCurrent**5 + 0.02106*self.cellCurrent**6 - self.voltageCoefficients[6]*0.1*inputFanPercentage + self.voltageCoefficients[7]*0.001066*inputFanPercentage**2
         
+        # self.cellVoltage = 17.2 - 16.5*self.cellCurrent + 14.15*self.cellCurrent**2 - 7.79*self.cellCurrent**3 + 2.374*self.cellCurrent**4 - 0.3615*self.cellCurrent**5 + 0.02105*self.cellCurrent**6 + 0.007*inputFanPercentage
+
+        self.cellVoltage = 0.0725*self.cellCurrent**6 - 1.0604*self.cellCurrent**5 + 6.0632*self.cellCurrent**4 - 17.22*self.cellCurrent**3 + 25.516*self.cellCurrent**2 - 21.223*self.cellCurrent + 16.4 + 0.013*inputFanPercentage
+
         if self.cellVoltage <= 5.5:
             self.cellCurrent = 0.0
             self.cellVoltage = 5.5
             self.electronicLoadCurrent = 0.0
             self.cellSelfFeedingPower = 0.0
             self.lightsPower = 0.0
+        
         self.cellPower = self.cellCurrent * self.cellVoltage
-        self.hydrogenFlow = 0.63173435*self.cellCurrent**5 - 4.45717449*self.cellCurrent**4 + 8.93813509*self.cellCurrent**3 - 1.38222392*self.cellCurrent**2 + 145.33329002*self.cellCurrent + 11.05591085
-        standardHydrogenFlow = (273.15 / 101325) * ((101325 + 34473.8) * self.hydrogenFlow) / (40.0 + 273.15)
+        # self.hydrogenFlow = self.flowCoefficients[0]*0.63173435*self.cellCurrent**5 - self.flowCoefficients[1]*4.45717449*self.cellCurrent**4 + self.flowCoefficients[2]*8.93813509*self.cellCurrent**3 - self.flowCoefficients[3]*1.38222392*self.cellCurrent**2 + self.flowCoefficients[4]*145.33329002*self.cellCurrent + self.flowCoefficients[5]*11.05591085
+        self.hydrogenFlow = 148.55*self.cellCurrent + 13.265
+        # standardHydrogenFlow = (273.15 / 101325) * ((101325 + 127553) * self.hydrogenFlow) / (35.0 + 273.15)
+        standardHydrogenFlow = self.hydrogenFlow
         self.cellEfficiency = 100 * ((self.cellPower * 60) / (10.8 * standardHydrogenFlow))
 
         self.electronicLoadVoltage = self.cellVoltage

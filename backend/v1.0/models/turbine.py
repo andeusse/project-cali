@@ -82,7 +82,10 @@ class Turbine(Resource):
       else:
         inputActivePower = float(inputActivePowerArray[-1])
     else:
-      inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],3)
+      try:
+        inputActivePower = (0.0 if not data["inputActivePower"]["value"] else data["inputActivePower"]["value"]) if not data["inputActivePower"]["disabled"] else round(values_df["Value"]['PKW-002'],3)
+      except:
+        inputActivePower = 0.0
     if data["inputPowerFactor"]["arrayEnabled"]:
       inputPowerFactorArray = np.repeat(np.array(data["inputPowerFactorArray"]),repeats)
       if iteration <= len(inputPowerFactorArray):
@@ -90,7 +93,10 @@ class Turbine(Resource):
       else:
         inputPowerFactor = float(inputPowerFactorArray[-1])
     else:
-      inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round((values_df["Value"]['FP-001'] if values_df["Value"]['FP-001'] != 0.0 else 1.0)* (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),3)
+      try:
+        inputPowerFactor = (1.0 if not data["inputPowerFactor"]["value"] and data["inputPowerFactor"]["value"]!=0 else data["inputPowerFactor"]["value"]) if not data["inputPowerFactor"]["disabled"] else round((values_df["Value"]['FP-001'] if values_df["Value"]['FP-001'] != 0.0 else 1.0)* (1 if values_df["Value"]['PKVAR-001'] >= 0.0 else -1),3)
+      except:
+        inputPowerFactor = 1.0
     inputDirectCurrentPower = 0.0 if data["inputDirectCurrentPower"] == False or turbineType == 1 else 3.6
     if inputPowerFactor == 0.0: inputPowerFactor = 1.0
     
@@ -121,7 +127,7 @@ class Turbine(Resource):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      if inputFlow <= 2.0:
+      if inputFlow <= 1.9:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", type=6)
         queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", type=6)
       elif inputFlow <= 3.1:
@@ -143,7 +149,7 @@ class Turbine(Resource):
           break
         except:
           turbineEfficiency = 60.0
-          controllerEfficiency = 90.0
+          controllerEfficiency = 95.0
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
@@ -152,7 +158,7 @@ class Turbine(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
       
-      if inputFlow <= 4.1:
+      if inputFlow <= 3.9:
         queryTurbine = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R0", type=6)
         queryController = influxDB.QueryCreator(measurement='Turbinas', device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R0", type=6)
       elif inputFlow <= 6.1:
@@ -177,7 +183,7 @@ class Turbine(Resource):
           break
         except:
           turbineEfficiency = 54.0
-          controllerEfficiency = 90.0
+          controllerEfficiency = 95.0
           attempts += 1
         finally:
           influxDB.InfluxDBclose()
@@ -190,7 +196,10 @@ class Turbine(Resource):
       if data["turbineType"] == "Pelton":
         T_bat = round(values_df["Value"]['TE-003'],3)
         P_h_meas = round(values_df["Value"]['PG-001'],3)
-        P_CC_meas = round(values_df["Value"]['PC-001'],3)
+        if P_h_meas == 0.0:
+          P_CC_meas = 0.0
+        else:
+          P_CC_meas = round(values_df["Value"]['PC-001'],3)
         V_t = round(values_df["Value"]['VG-001'],3)
         simulatedDirectCurrentVoltage = round(values_df["Value"]['VCH-001'],3)
         if values_df["Value"]['AUX-1001'] == "OFF":
@@ -202,7 +211,10 @@ class Turbine(Resource):
       else:
         T_bat = round(values_df["Value"]['TE-004'],3)
         P_h_meas = round(values_df["Value"]['PG-002'],3)
-        P_CC_meas = round(values_df["Value"]['PC-002'],3)
+        if P_h_meas == 0.0:
+          P_CC_meas = 0.0
+        else:
+          P_CC_meas = round(values_df["Value"]['PC-002'],3)
         V_t = round(values_df["Value"]['VG-002'],3)
         simulatedDirectCurrentVoltage = round(values_df["Value"]['VCH-002'],3)
         if values_df["Value"]['AUX-1002'] == "OFF":
@@ -270,7 +282,7 @@ class Turbine(Resource):
     turbine["controllerPower"] = results[0]
     turbine["inverterInputPower"] = results[1]
     turbine["batteryPower"] = results[2]
-    if (not data["inputOfflineOperation"] and V_t == 0.0) or turbine["turbinePower"] == 0.0:
+    if (not data["inputOfflineOperation"] and V_t == 0.0):
       turbine["turbineVoltage"] = 0.0
     else: 
       turbine["turbineVoltage"] = results[3]
@@ -308,7 +320,7 @@ class Turbine(Resource):
       connectionState = influxDB.InfluxDBconnection()
   
       if turbineType == 1:
-        if inputFlow <= 2.0:
+        if inputFlow <= 1.9:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R1", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R1", value = twinHydro.n_controller, timestamp = timestamp)
         elif inputFlow <= 3.1:
@@ -321,7 +333,7 @@ class Turbine(Resource):
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Pelton_R4", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Pelton_R4", value = twinHydro.n_controller, timestamp = timestamp)
       else:
-        if inputFlow <= 4.1:
+        if inputFlow <= 3.9:
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_turbina_Turgo_R0", value = twinHydro.n_t, timestamp = timestamp)
           influxDB.InfluxDBwriter( measurement = "Turbinas", device = "entrenamiento", variable = "eficiencia_controlador_Turgo_R0", value = twinHydro.n_controller, timestamp = timestamp)
         elif inputFlow <= 6.1:
