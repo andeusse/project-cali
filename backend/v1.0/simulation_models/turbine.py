@@ -10,8 +10,9 @@ class TwinHydro:
 
     # Parametrizacion de turbinas de acuerdo a tipo
     def turbineType (self, type, inputFlow):
+        self.turbine = type
         # Pelton
-        if type == 1:
+        if self.turbine == 1:
             self.H_min = 0.0
             self.H_max = 130.0
             self.Q_min = 1.05
@@ -21,14 +22,21 @@ class TwinHydro:
             self.V_t = (0.128*(inputFlow**5) - 2.842*(inputFlow**4) + 23.756*(inputFlow**3) - 92.933*(inputFlow**2) + 176.44*inputFlow - 105.41 if inputFlow >= self.Q_min else 0.0)
             if self.V_t > 52.0: self.V_t = 52.0
         # Turgo
-        elif type == 2:
+        elif self.turbine == 2:
             self.H_min = 0.0
             self.H_max = 30.0
-            self.Q_min = 4.05
+            self.Q_min = 4.0
             self.Q_max = 16.0
             self.f_h = 0.0
             self.P_max = 1042.0
-            self.V_t = 80.0
+            if inputFlow >= self.Q_min:
+                self.V_t = 5.94667374e-03*(inputFlow**4) - 2.01615599e-01*(inputFlow**3) + 2.10341536e+00*(inputFlow**2) - 2.15312613e-01*inputFlow + 8.84469496e+00
+                if self.V_t > 84.0: self.V_t = 84.0
+            elif inputFlow >= 3.0:
+                self.V_t = 22.0
+            else:
+                self.V_t = 0.0
+            
         return self.H_min, self.H_max, self.Q_min, self.Q_max , self.f_h
     
     # Calculo de potencia de las turbinas
@@ -67,7 +75,7 @@ class TwinHydro:
         def turbinePowerOutput(n_t, P_h_meas, Pressure, Flux):      
             return ((n_t/100) * Pressure * Flux) - P_h_meas
         n_t_0 = n_t
-        n_t = least_squares(turbinePowerOutput, x0 = n_t_0, bounds = (0, 120), args = (P_h_meas, Pressure, Flux))
+        n_t = least_squares(turbinePowerOutput, x0 = n_t_0, bounds = (0, 130), args = (P_h_meas, Pressure, Flux))
         self.n_t = n_t.x[0]*random.uniform(0.98,1.02)
         return n_t.x[0]
     
@@ -75,8 +83,9 @@ class TwinHydro:
         def controllerPowerOuput(n_controller, P_h, P_CD, P_CC_meas):
             return (P_h * n_controller / 100) - P_CD - P_CC_meas
         n_controller_0 = n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (0, 150), args = (P_h, P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (0, 160), args = (P_h, P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
+        if self.n_controller > 99.0: self.n_controller = 99.0
         return n_controller.x[0]
     
     def twinOutput(self, chargeSOC_0, batteryState, P_CA, inverterState, PF, P_CD, T_bat, V_CD, SOC_0, V_bulk, V_float, V_charge, sinkLoadMode, sinkState, V_sink_on, V_sink_off, delta_t, V_t, V_CA, iteration):
@@ -101,7 +110,7 @@ class TwinHydro:
         if V_CA > 0:
             self.V_CA = V_CA
         else:
-            self.V_CA = 120.0
+            self.V_CA = 112.0
         
         if not self.inverterState and V_CD > 24.0:
             self.inverterState = True
@@ -115,8 +124,17 @@ class TwinHydro:
         self.Q_CA = (self.PF / abs(self.PF)) * ((self.S_CA**2 - self.P_CA**2)**(1/2))
         self.P_inv = self.S_CA / (self.n_inverter / 100) # Potencia a la entrada del inversor
         
-        if self.sinkState: 
-            self.P_sink = self.V_CD**2 / 0.9
+        # Potencia de la disipadora
+        # if self.sinkState:
+        #     self.P_sink = 0.2211*self.P_h + 505
+        # else:
+        #     self.P_sink = 0.0
+        
+        if self.sinkState:
+            if self.P_h > 10:
+                self.P_sink = (self.V_CD+1.0)**2 / 0.92
+            else:
+                self.P_sink = (self.V_CD+1.0)**2 / 0.96
         else:
             self.P_sink = 0.0
                       

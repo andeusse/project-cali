@@ -49,7 +49,7 @@ class TwinPVWF:
             self.T_cNOCT = 45
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 1.0
+            self.n_c = 0.8
             self.polyModule = True
         # Silicio Monocristalino de Pelicula Delgada
         elif type == 3:
@@ -177,7 +177,7 @@ class TwinPVWF:
     # Parametrizacion de gemelo 
     def twinParameters (self, n_controller, n_inverter, n_hybrid, batteries, parallel):
         self.parallel = parallel
-        self.n_controller = n_controller # Eficiencia controlador en % -> se optomiza con medidas de potencia
+        self.n_controller = n_controller # Eficiencia controlador en % -> se optimiza con medidas de potencia
         self.n_inverter = n_inverter # Eficiencia de inversor en %
         self.n_hybrid = n_hybrid # Eficiencia de inversor hibrido en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
@@ -234,7 +234,7 @@ class TwinPVWF:
             return ((self.P_PV + self.P_WT) * self.n_controller / 100) - (P_CD / (self.n_controller / 100)) - P_CC_meas
         n_controller_0 = self.n_controller
         n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (10.0, 120.0), args = (P_CD, P_CC_meas))
-        self.n_controller = n_controller.x[0]
+        self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
         return n_controller.x[0]
     
     def offgridTwinOutput(self, chargeSOC_0, batteryState, inverterState, P_CA, PF, P_CD, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, V_PV, V_WT, V_CDload, V_CA, delta_t):
@@ -245,17 +245,27 @@ class TwinPVWF:
         self.P_CD = P_CD
 
         if V_PV == 0.0:
+            Vmono = self.monoModule * (0.00000002*self.G_1**3 - 0.000031*self.G_1**2 + 0.0168*self.G_1 + 10.807)
+            if Vmono > self.Vmpp_monoModule: Vmono = self.Vmpp_monoModule
+            Vpoly = self.polyModule * (0.000000000013*self.G_1**4 - 0.000000031*self.G_1**3 + 0.00002*self.G_1**2 - 0.0015*self.G_1 + 13.011)
+            if Vpoly > self.Vmpp_polyModule: Vpoly = self.Vmpp_polyModule
+            Vflexi = self.flexiModule * (-0.000000000368*self.G_2**4 + 0.000000585*self.G_2**3 - 0.000327*self.G_2**2 + 0.0775*self.G_2 + 7.6213)
+            if Vflexi > self.Vmpp_flexiModule: Vflexi = self.Vmpp_flexiModule
+            Vcdte = self.cdteModule * (-0.00000000108*self.G_2**4 + 0.000001504*self.G_2**3 - 0.00073*self.G_2**2 + 0.1477*self.G_2 + 14.9)
+            if Vcdte > self.Vmpp_cdteModule: Vcdte = self.Vmpp_cdteModule
+            
             if self.cdteModule:
-                self.V_PV = self.Vmpp_cdteModule
+                self.V_PV = Vcdte
             elif self.parallel:
-                self.V_PV = max(self.monoModule * self.Vmpp_monoModule, self.polyModule * self.Vmpp_polyModule, self.flexiModule * self.Vmpp_flexiModule)
+                self.V_PV = max(Vmono, Vpoly, Vflexi)
             else:
-                self.V_PV = self.monoModule * self.Vmpp_monoModule + self.polyModule * self.Vmpp_polyModule + self.flexiModule * self.Vmpp_flexiModule
+                self.V_PV = Vmono + Vpoly + Vflexi
         else:
             self.V_PV = V_PV
         
         if V_WT == 0.0:
-            self.V_WT = 18.0
+            self.V_WT = 0.0263*(self.V_a**3) - 0.6441*(self.V_a**2) + 5.76*self.V_a + 0.0181
+            if self.V_WT > 28.5: self.V_WT = 28.5
         else:
             self.V_WT = V_WT
         
@@ -265,7 +275,7 @@ class TwinPVWF:
             self.V_CDload = V_CDload
             
         if V_CA == 0.0:
-            self.V_CA = 120.0
+            self.V_CA = 112.0
         else:
             self.V_CA = V_CA
 
