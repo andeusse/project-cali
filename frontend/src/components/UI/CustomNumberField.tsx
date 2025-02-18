@@ -1,6 +1,6 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash';
 
 const DEBOUNCE_TIME = 2000;
@@ -22,7 +22,7 @@ const CustomNumberField = (props: CustomTextFieldType) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
-    debouncedSetValue(event.target.value);
+    // debouncedSetValue(event.target.value);
   };
 
   const setValue = useCallback(
