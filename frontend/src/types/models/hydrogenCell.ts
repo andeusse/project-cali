@@ -144,14 +144,14 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
   lightsMode: LightsModeType.Parallel,
   cellMaximumPower: {
     disabled: true,
-    value: 50,
+    value: 20,
     tooltip: 'Potencia nominal de la celda',
     unit: 'W',
     variableString: 'Potencia nominal',
   },
   cellMaximumCurrent: {
     disabled: true,
-    value: 4.2,
+    value: 2,
     tooltip: 'Corriente nominal de la celda',
     unit: 'A',
     variableString: 'Corriente nominal',
@@ -162,7 +162,7 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
     tooltip: 'Voltage nominal de la celda',
     unit: 'VDC',
     variableString: 'Voltaje de salida',
-    stringValue: '12 - 18',
+    stringValue: '6 - 18',
   },
   cellRatedEfficiency: {
     disabled: true,
