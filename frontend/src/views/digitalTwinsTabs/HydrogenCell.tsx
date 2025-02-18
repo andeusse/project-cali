@@ -596,7 +596,6 @@ const HydrogenCell = (props: Props) => {
                           value={system.lightsMode}
                           name="lightsMode"
                           onChange={(e: any) => handleChange(e)}
-                          disabled={isPlaying}
                         >
                           {Object.keys(LightsModeType).map((key) => (
                             <MenuItem key={key} value={key}>
