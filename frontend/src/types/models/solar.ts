@@ -264,7 +264,7 @@ const HYBRID_INVERTER: InverterHybrid = {
   isConnectedDisabled: false,
   efficiency: {
     disabled: true,
-    value: 90,
+    value: 96,
     tooltip: 'Eficiencia inversor',
     unit: '%',
     variableString: 'η',
