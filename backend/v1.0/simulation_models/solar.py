@@ -382,8 +382,18 @@ class TwinPVWF:
         self.P_CA = P_CA
         self.V_CD = V_CD
         self.PF = PF
+
         if V_PV == 0.0:
-            self.V_PV = self.monoModule * self.Vmpp_monoModule + self.polyModule * self.Vmpp_polyModule + self.flexiModule * self.Vmpp_flexiModule
+            Vmono = self.monoModule * (0.00000002*self.G_1**3 - 0.000031*self.G_1**2 + 0.0168*self.G_1 + 10.807)
+            if Vmono > self.Vmpp_monoModule: Vmono = self.Vmpp_monoModule
+            Vpoly = self.polyModule * (0.000000000013*self.G_1**4 - 0.000000031*self.G_1**3 + 0.00002*self.G_1**2 - 0.0015*self.G_1 + 13.011)
+            if Vpoly > self.Vmpp_polyModule: Vpoly = self.Vmpp_polyModule
+            Vflexi = self.flexiModule * (-0.000000000368*self.G_2**4 + 0.000000585*self.G_2**3 - 0.000327*self.G_2**2 + 0.0775*self.G_2 + 7.6213)
+            if Vflexi > self.Vmpp_flexiModule: Vflexi = self.Vmpp_flexiModule
+            Vcdte = self.cdteModule * (-0.00000000108*self.G_2**4 + 0.000001504*self.G_2**3 - 0.00073*self.G_2**2 + 0.1477*self.G_2 + 14.9)
+            if Vcdte > self.Vmpp_cdteModule: Vcdte = self.Vmpp_cdteModule
+            
+            self.V_PV = Vmono + Vpoly + Vflexi
         else:
             self.V_PV = V_PV
         
@@ -402,7 +412,7 @@ class TwinPVWF:
 
         self.S_CA = (self.P_CA / abs(self.PF)) # Potencia aparente a la salida del inversor
         self.Q_CA = (self.PF / abs(self.PF)) * ((self.S_CA**2 - self.P_CA**2)**(1/2)) # Potencia reactiva a la salida del inversor
-        self.P_inv = self.S_CA / (self.n_hybrid / 100) # Potencia a la entrada del inversor
+        self.P_inv = self.S_CA # Potencia a la entrada del inversor
 
         if self.gridState:
             if not batteryState:
@@ -417,20 +427,23 @@ class TwinPVWF:
                     if self.I_bat > currentCurve:
                         self.I_bat = currentCurve
                         self.P_bat = self.I_bat * self.V_CD
-                if SOC >= 110.0:
+                if SOC >= 100.0:
                     self.P_bat = 0.0
                     self.I_bat = 0.0
                     chargeCycle = False
 
-            self.P_grid = self.P_inv + self.P_bat - (self.P_PV * self.n_hybrid / 100)
+            self.P_grid = (self.P_inv + self.P_bat) / (self.n_hybrid / 100)  - (self.P_PV * self.n_hybrid / 100)
 
         else:
             self.P_grid = 0.0
-            self.P_bat = (self.P_PV * self.n_hybrid / 100) - self.P_inv # Potencia de la bateria, + carga, - descarga
+            if (self.P_PV * self.n_hybrid / 100) >= (self.P_inv / (self.n_hybrid / 100)):
+                self.P_bat = ((self.P_PV * self.n_hybrid / 100) - (self.P_inv / (self.n_hybrid / 100))) * self.n_hybrid / 100 # Potencia de la bateria, + carga
+            else:
+               self.P_bat = (self.P_PV * self.n_hybrid / 100) - (self.P_inv / (self.n_hybrid / 100)) / (self.n_hybrid / 100) # Potencia de la bateria, - descarga 
             if SOC > 50.0 and chargeCycle:
                 chargeCycle = False
             if SOC <= 50.0 and chargeCycle and self.P_bat < 0.0:
-                self.P_bat = (self.P_PV * self.n_hybrid / 100)
+                self.P_bat = (self.P_PV * self.n_hybrid / 100) * self.n_hybrid / 100
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.Q_CA = 0.0
@@ -438,7 +451,7 @@ class TwinPVWF:
                 self.V_CA = 0.0
             if self.V_CD <= V_charge and self.P_bat < 0.0:
                 chargeCycle = True
-                self.P_bat = (self.P_PV * self.n_hybrid / 100)
+                self.P_bat = (self.P_PV * self.n_hybrid / 100) * self.n_hybrid / 100
                 self.P_inv = 0.0
                 self.P_CA = 0.0
                 self.Q_CA = 0.0
@@ -486,8 +499,8 @@ class TwinPVWF:
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.1:
-            self.SOC = 1.1
+        elif self.SOC > 1.0:
+            self.SOC = 1.0
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
         

@@ -112,7 +112,7 @@ class TwinHydro:
         else:
             self.V_CA = 112.0
         
-        if not self.inverterState and V_CD > 24.0:
+        if not self.inverterState and V_CD > 22.0:
             self.inverterState = True
 
         if self.V_CD <= V_charge or not self.inverterState:
@@ -130,17 +130,29 @@ class TwinHydro:
         # else:
         #     self.P_sink = 0.0
         
-        if self.sinkState:
-            if self.P_h > 10:
-                self.P_sink = (self.V_CD+1.0)**2 / 0.92
+        if self.V_CD > 23.8:
+            if self.sinkState:
+                if self.P_h > 10:
+                    if self.V_CD < V_bulk:
+                        self.P_sink = (self.V_CD+1.0)**2 / 0.93
+                    else:
+                        self.P_sink = (self.V_CD)**2 / 0.98
+                else:
+                    self.P_sink = (self.V_CD+1.0)**2 / 0.96
             else:
-                self.P_sink = (self.V_CD+1.0)**2 / 0.96
+                self.P_sink = 0.0
         else:
-            self.P_sink = 0.0
+            if self.sinkState:
+                if self.P_h > 10:
+                    self.P_sink = (self.V_CD)**2 / 0.93
+                else:
+                    self.P_sink = (self.V_CD)**2 / 0.96
+            else:
+                self.P_sink = 0.0
                       
         # Balance de potencias
         self.P_bat = self.P_CC - self.P_inv - self.P_sink # Potencia de la bateria, + carga, - descarga
-        
+
         # Corriente de la batería
         if (SOC_0 > 0.0 or (SOC_0 == 0.0 and self.P_bat >= 0.0)) and batteryState:
             self.I_bat = self.maxBatteryChargeCurrent if self.P_bat / self.V_CD > self.maxBatteryChargeCurrent else self.P_bat / self.V_CD
@@ -181,16 +193,18 @@ class TwinHydro:
                 self.V_CA = 0.0
                 P_CD = 0.0
                 V_CDload = 0.0
-            self.P_CC = self.P_inv
+            self.P_CC = self.P_inv + self.P_sink
+            self.P_h = self.P_CC / (self.n_controller / 100)
             self.P_bat = 0.0
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.1:
-            self.SOC = 1.1
+        elif self.SOC > 1.0:
+            self.SOC = 1.0
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
-            self.P_CC = self.P_bat + self.P_inv
+            self.P_CC = self.P_bat + self.P_inv + self.P_sink
+            self.P_h = self.P_CC / self.n_controller
         
         # Actualización de voltaje de CD
         if self.P_bat > 0.1 and self.V_bat < V_bulk:
@@ -203,7 +217,7 @@ class TwinHydro:
             self.V_CD = self.V_bat
         
         # Lógica de la disipación
-        if sinkLoadMode == 'Auto' and iteration > 2:
+        if sinkLoadMode == 'Auto' and iteration > 1:
             if self.V_bat > self.V_sink_on: # Cambiar por condición de voltaje
                 self.sinkState = True 
             elif self.V_bat < self.V_sink_off:

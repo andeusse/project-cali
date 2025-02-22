@@ -225,9 +225,14 @@ class Turbine(Resource):
           sinkLoadMode = "On"
         elif values_df["Value"]['AUX-1002'] == "AUTO":
           sinkLoadMode = "Auto"
-
-      V_CA = round(values_df["Value"]['VAC-002'],3)
-      simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
+      try:
+        V_CA = round(values_df["Value"]['VAC-002'],3)
+      except:
+        V_CA = 0
+      try:
+        simulatedInverterState = bool(int(values_df["Value"]['EI-001']))
+      except:
+        simulatedInverterState = False
 
     else:
       T_bat = 30.0
@@ -277,7 +282,7 @@ class Turbine(Resource):
                                      controllerChargeVoltageBulk, controllerChargeVoltageFloat, controllerChargingMinimumVoltage, sinkLoadMode, simulatedSinkLoadState, controllerSinkOnVoltage, controllerSinkOffVoltage, 
                                      delta_t*timeMultiplier, V_t, V_CA, int(iteration/timeMultiplier))
 
-    turbine["turbinePower"] = P_h
+    turbine["turbinePower"] = twinHydro.P_h
 
     turbine["controllerPower"] = results[0]
     turbine["inverterInputPower"] = results[1]
