@@ -215,7 +215,29 @@ class Solar(Resource):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
-      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name, type=6)
+      if max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 100:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R1', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 200:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R2', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 300:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R3', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 400:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R4', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 500:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R5', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 600:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R6', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 700:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R7', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 800:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R8', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 900:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R9', type=6)
+      elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 1000:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R10', type=6)
+      else:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_fPV_Name + '_R11', type=6)
+
       attempts = 1
       while attempts <= 5:
         try:
@@ -224,6 +246,7 @@ class Solar(Resource):
           break
         except:
           attempts += 1
+          deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
         finally:
           influxDB.InfluxDBclose()
       
@@ -248,6 +271,7 @@ class Solar(Resource):
           break
         except:
           attempts += 1
+          turbineEfficiency = 0.49
         finally:
           influxDB.InfluxDBclose()
 
@@ -303,8 +327,24 @@ class Solar(Resource):
         query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R1", type=6)
       elif PV_Results[0] + WT_Results <= 20.0:
         query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R2", type=6)
-      else:
+      elif PV_Results[0] + WT_Results <= 30.0:
         query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R3", type=6)
+      elif PV_Results[0] + WT_Results <= 40.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R4", type=6)
+      elif PV_Results[0] + WT_Results <= 50.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R5", type=6)
+      elif PV_Results[0] + WT_Results <= 60.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R6", type=6)
+      elif PV_Results[0] + WT_Results <= 70.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R7", type=6)
+      elif PV_Results[0] + WT_Results <= 80.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R8", type=6)
+      elif PV_Results[0] + WT_Results <= 90.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R9", type=6)
+      elif PV_Results[0] + WT_Results <= 100.0:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R10", type=6)
+      else:
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R11", type=6)
       
       attempts = 1
       while attempts <= 5:
@@ -314,6 +354,7 @@ class Solar(Resource):
           break
         except:
           attempts += 1
+          controllerEfficiency = data["controller"]["efficiency"]["value"]
         finally:
           influxDB.InfluxDBclose()
 
@@ -337,9 +378,12 @@ class Solar(Resource):
       WT_Results = twinPVWF.WT_PowerOutput(data["inputOfflineOperation"], turbineState, turbineEfficiency, windDensity, windSpeed)
       twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
 
-    solarWind["controllerEfficiency"] = (twinPVWF.n_controller if twinPVWF.n_controller < 100.0 else controllerEfficiency)
-    solarWind["inverterEfficiency"] = (twinPVWF.n_inverter if twinPVWF.n_inverter < 100.0 else inverterEfficiency)
-    solarWind["hybridEfficiency"] = (twinPVWF.n_hybrid if twinPVWF.n_hybrid < 100.0 else hybridEfficiency)
+    # solarWind["controllerEfficiency"] = (twinPVWF.n_controller if twinPVWF.n_controller < 100.0 else controllerEfficiency)
+    # solarWind["inverterEfficiency"] = (twinPVWF.n_inverter if twinPVWF.n_inverter < 100.0 else inverterEfficiency)
+    # solarWind["hybridEfficiency"] = (twinPVWF.n_hybrid if twinPVWF.n_hybrid < 100.0 else hybridEfficiency)
+    solarWind["controllerEfficiency"] = controllerEfficiency
+    solarWind["inverterEfficiency"] = inverterEfficiency
+    solarWind["hybridEfficiency"] = hybridEfficiency
 
     if data["inputOperationMode"] == 'Mode2' and hybridState:
       solarWind['solarPanelPower'] = PV_Results[0]
@@ -457,8 +501,29 @@ class Solar(Resource):
       timestamp = int(time.mktime(time.strptime(str(datetime.now().year) + "-" + str(datetime.now().month).zfill(2) + "-" + str(datetime.now().day).zfill(2) + " " + str(datetime.now().hour).zfill(2) + ":" + str(datetime.now().minute).zfill(2) + ":" + str(datetime.now().second).zfill(2), '%Y-%m-%d %H:%M:%S')))
 
       if data["inputOperationMode"] in ['Mode1', 'Mode2', 'Mode3', 'Mode5']:
-        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name, value = twinPVWF.f_PV, timestamp = timestamp)
-      
+        if max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 100:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R1', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 200:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R2', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 300:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R3', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 400:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R4', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 500:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R5', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 600:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R6', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 700:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R7', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 800:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R8', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 900:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R9', value = twinPVWF.f_PV, timestamp = timestamp)
+        elif max((monoModuleState or polyModuleState)*solarRadiation1, (flexiModuleState or cdteModuleState)*solarRadiation2) <= 1000:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R10', value = twinPVWF.f_PV, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_fPV_Name + '_R11', value = twinPVWF.f_PV, timestamp = timestamp)
+    
       if data["inputOperationMode"] in ['Mode4', 'Mode5']:
         if windSpeed <= 4.8:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R1", value = twinPVWF.n_WT, timestamp = timestamp)
@@ -470,12 +535,30 @@ class Solar(Resource):
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R4", value = twinPVWF.n_WT, timestamp = timestamp)
 
       if not hybridState:
+        if twinPVWF.n_controller >= 100: twinPVWF.n_controller = 99.0
+
         if PV_Results[0] + WT_Results <= 10.0:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R1", value = twinPVWF.n_controller, timestamp = timestamp)
         elif PV_Results[0] + WT_Results <= 20.0:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R2", value = twinPVWF.n_controller, timestamp = timestamp)
-        else:
+        elif PV_Results[0] + WT_Results <= 30.0:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R3", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 40.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R4", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 50.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R5", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 60.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R6", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 70.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R7", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 80.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R8", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 90.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R9", value = twinPVWF.n_controller, timestamp = timestamp)
+        elif PV_Results[0] + WT_Results <= 100.0:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R10", value = twinPVWF.n_controller, timestamp = timestamp)
+        else:
+          influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R11", value = twinPVWF.n_controller, timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 

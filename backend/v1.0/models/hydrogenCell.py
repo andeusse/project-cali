@@ -119,37 +119,44 @@ class hydrogenCell(Resource):
     connectionState = influxDB.InfluxDBconnection()
     if not connectionState:
       return {"message":influxDB.ERROR_MESSAGE}, 503
+    
+    queryVoltageCoefficient = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "coeficiente_voltaje", type=6)
+    queryFlowCoefficient = (influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "coeficiente_flujo", type=6))
+    
     if lightsMode == 'Parallel':
         queryConverter = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "eficiencia_convertidor_directo", type=6)
     elif lightsMode == 'Series':
         queryConverter = influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "eficiencia_convertidor_semaforo", type=6)
-    queryVoltageCoefficients = []
+    # queryVoltageCoefficients = []
     # queryFlowCoefficients = []
-    for i in range(8):
-      queryVoltageCoefficients.append(influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "voltaje_celda_C" + str(i), type=6))
-    # for i in range(6):
+    # for i in range(8):
+    #   queryVoltageCoefficients.append(influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "voltaje_celda_C" + str(i), type=6))
+    # for i in range(2):
     #   queryFlowCoefficients.append(influxDB.QueryCreator(measurement='Hidrogeno', device = "entrenamiento", variable = "flujo_celda_C" + str(i), type=6))
+    
     attempts = 1
     while attempts <= 5:
       try:
+        voltageCoefficient = influxDB.InfluxDBreader(queryVoltageCoefficient)['_value'][0]
+        flowCoefficient = influxDB.InfluxDBreader(queryFlowCoefficient)['_value'][0]
         converterEfficiency = influxDB.InfluxDBreader(queryConverter)['_value'][0]
-        voltageCoefficients = []
+        # voltageCoefficients = []
         # flowCoefficients = []
-        for i in range(8):
-          voltageCoefficients.append(influxDB.InfluxDBreader(queryVoltageCoefficients[i])['_value'][0])
-        # for i in range(6):
-        #   flowCoefficients.append((influxDB.InfluxDBreader(queryFlowCoefficients[i])['_value'][0]))
+        # for i in range(8):
+        #   voltageCoefficients.append(influxDB.InfluxDBreader(queryVoltageCoefficients[i])['_value'][0])
+        # for i in range(2):
+        #   flowCoefficients.append(influxDB.InfluxDBreader(queryFlowCoefficients[i])['_value'][0])
         influxDB.InfluxDBclose()
         break
       except:
+        voltageCoefficient = 1.0
+        flowCoefficient = 30.0
         converterEfficiency = 0.9
-        voltageCoefficients = [1] * 8
-        flowCoefficients = [1] * 6
+        # voltageCoefficients = [1] * 8
+        # flowCoefficients = [1.0] * 2
         attempts += 1
       finally:
         influxDB.InfluxDBclose()
-    
-    flowCoefficients = [1] * 6
 
     if not data["inputOfflineOperation"]:
       hydrogenPressure = round(values_df["Value"]['PT-101'],3)
@@ -183,11 +190,11 @@ class hydrogenCell(Resource):
     delta_t = data["queryTime"] / 1000 # Delta de tiempo de la simulación en s -> se definen valores diferentes para offline y online
 
     twinCell = TwinCell(name)
-    twinCell.twinParameters(converterEfficiency, voltageCoefficients, flowCoefficients)
+    twinCell.twinParameters(converterEfficiency, voltageCoefficient, flowCoefficient)
     
     if not data["inputOfflineOperation"] and data["inputFanPercentage"]["disabled"] and data["inputElectronicLoadCurrent"]["disabled"]:
       twinCell.optimal_voltageCoefficients(cellVoltage_meas, cellCurrent_meas, inputFanPercentage)
-      # twinCell.optimal_flowCoefficients(hydrogenFlow_meas, cellCurrent_meas)
+      twinCell.optimal_flowCoefficients(hydrogenFlow_meas, cellCurrent_meas)
       twinCell.optimal_n_converter(cellSelfFeedingPower, lightsPower, cellPower_meas, electronicLoadPower_meas)
 
     results = twinCell.twinOutput(previousCellVoltage, inputFanPercentage, electronicLoadMode, inputElectronicLoad, lightsPower, cellSelfFeedingPower, previousGeneratedEnergy, delta_t * timeMultiplier)
@@ -213,19 +220,23 @@ class hydrogenCell(Resource):
 
       influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
       connectionState = influxDB.InfluxDBconnection()
-      if lightsMode == 'Parallel':
+
+      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "coeficiente_voltaje", value = twinCell.voltageCoefficient, timestamp = timestamp)
+      influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "coeficiente_flujo", value = twinCell.flowCoefficients, timestamp = timestamp)
+
+      if lightsConnected and lightsMode == 'Parallel':
         influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "eficiencia_convertidor_directo", value = twinCell.n_converter, timestamp = timestamp)
-      elif lightsMode == 'Series':
+      elif lightsConnected and lightsMode == 'Series':
         influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "eficiencia_convertidor_semaforo", value = twinCell.n_converter, timestamp = timestamp)
       
       # for c,value in enumerate(twinCell.voltageCoefficients):
-      for i in range(8):
+      # for i in range(8):
         # print(value)
         # influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "voltaje_celda_C" + str(c), value = float(value), timestamp = timestamp)
-        influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "voltaje_celda_C" + str(i), value = twinCell.voltageCoefficients[i], timestamp = timestamp)
+        # influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "voltaje_celda_C" + str(i), value = twinCell.voltageCoefficients[i], timestamp = timestamp)
 
-      # for c,value in enumerate(twinCell.flowCoefficients):
-      #   influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "flujo_celda_C" + str(c), value = float(value), timestamp = timestamp)
+      # for i in range(2):
+      #   influxDB.InfluxDBwriter( measurement = "Hidrogeno", device = "entrenamiento", variable = "flujo_celda_C" + str(i), value = twinCell.flowCoefficients[i], timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 
