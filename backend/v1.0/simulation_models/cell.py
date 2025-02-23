@@ -69,7 +69,7 @@ class TwinCell:
 
         self.cellVoltage = 0.0725*self.cellCurrent**6 - 1.0604*self.cellCurrent**5 + 6.0632*self.cellCurrent**4 - 17.22*self.cellCurrent**3 + 25.516*self.cellCurrent**2 - self.voltageCoefficient*21.223*self.cellCurrent + 16.4 + 0.01*inputFanPercentage
 
-        if self.cellVoltage <= 5.5:
+        if self.cellVoltage <= 5.5 or self.cellCurrent > 4.5:
             self.cellCurrent = 0.0
             self.cellVoltage = 5.5
             self.electronicLoadCurrent = 0.0
