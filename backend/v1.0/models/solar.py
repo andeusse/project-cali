@@ -72,7 +72,6 @@ class Solar(Resource):
       turbineState = False
     hybridState = data["hybridInverter"]["isConnected"]
     inverterState = data["offgridInverter"]["isConnected"]
-    gridState = data["externalGridState"]
     batteryState = data['isBatteryConnected']
     
     training_fPV_Name = "eficienciaPanel" + data["inputOperationMode"] + (monoModuleState * "_mono") + (polyModuleState * "_poli") + (flexiModuleState * "_flex") + (cdteModuleState * "_cdte") + (turbineState * "_aero") + (hybridState * "_hibrid")
@@ -285,7 +284,10 @@ class Solar(Resource):
         batteryTemperature = 30.0
         measuredPV_Power = round(values_df["Value"]['PG-003'],3)
         measuredWT_Power = 0.0
+        gridState = round(values_df["Value"]['ER-001'])
         measuredHybridDC_Power = round(values_df["Value"]['PC-002'],3)
+        measuredGridPower = round(values_df["Value"]['PKVA-003'],3)
+        measuredHybridAC_Power = round(values_df["Value"]['PKVA-002'],3)
         PV_Voltage = round(values_df["Value"]['VG-003'],3)
         gridVoltage = round(values_df["Value"]['VAC-004'],3)
         WT_Voltage = 0.0
@@ -307,6 +309,8 @@ class Solar(Resource):
       solarWind["batteryTemperature"] = batteryTemperature
       
     else:
+      if data["inputOperationMode"] == 'Mode2' and hybridState:
+        gridState = data["externalGridState"]
       batteryTemperature = 30.0
       PV_Voltage = 0.0
       gridVoltage = 0.0
@@ -319,7 +323,7 @@ class Solar(Resource):
     PV_Results = twinPVWF.arrayPowerOutput(True, deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
     WT_Results = twinPVWF.WT_PowerOutput(True, turbineState, turbineEfficiency, windDensity, windSpeed)
     
-    if not hybridState:
+    if not (data["inputOperationMode"] == 'Mode2' and hybridState):
       connectionState = influxDB.InfluxDBconnection()
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
@@ -357,6 +361,22 @@ class Solar(Resource):
           controllerEfficiency = data["controller"]["efficiency"]["value"]
         finally:
           influxDB.InfluxDBclose()
+    else:
+      connectionState = influxDB.InfluxDBconnection()
+      if not connectionState:
+        return {"message":influxDB.ERROR_MESSAGE}, 503
+      query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = 'eficienciaControlMode2_hybrid', type=6)
+      attempts = 1
+      while attempts <= 5:
+        try:
+          hybridEfficiency = influxDB.InfluxDBreader(query)['_value'][0]
+          influxDB.InfluxDBclose()
+          break
+        except:
+          attempts += 1
+          hybridEfficiency = data["hybridInverter"]["efficiency"]["value"]
+        finally:
+          influxDB.InfluxDBclose()
 
     twinPVWF.twinParameters(controllerEfficiency, inverterEfficiency, hybridEfficiency, batteries, isParallel)
 
@@ -366,12 +386,16 @@ class Solar(Resource):
         PV_Results = twinPVWF.arrayPowerOutput(data["inputOfflineOperation"], deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
+        elif gridState:
+          twinPVWF.optimal_n_hybridController(self, measuredGridPower, measuredHybridDC_Power, measuredHybridAC_Power)
     elif flexiModuleState or cdteModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation2"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
         PV_Results = twinPVWF.arrayPowerOutput(data["inputOfflineOperation"], deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
+        elif gridState:
+          twinPVWF.optimal_n_hybridController(self, measuredGridPower, measuredHybridDC_Power, measuredHybridAC_Power)
 
     if turbineState and not data["inputOfflineOperation"] and data["windSpeed"]["disabled"]:
       twinPVWF.optimal_n_WT(measuredWT_Power)
@@ -534,9 +558,8 @@ class Solar(Resource):
         else:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nWT_Name + "_R4", value = twinPVWF.n_WT, timestamp = timestamp)
 
-      if not hybridState:
+      if not (data["inputOperationMode"] == 'Mode2' and hybridState):
         if twinPVWF.n_controller >= 100: twinPVWF.n_controller = 99.0
-
         if PV_Results[0] + WT_Results <= 10.0:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R1", value = twinPVWF.n_controller, timestamp = timestamp)
         elif PV_Results[0] + WT_Results <= 20.0:
@@ -559,6 +582,9 @@ class Solar(Resource):
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R10", value = twinPVWF.n_controller, timestamp = timestamp)
         else:
           influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = training_nController_Name + "_R11", value = twinPVWF.n_controller, timestamp = timestamp)
+      elif gridState:
+        if twinPVWF.n_hybrid >= 100: twinPVWF.n_hybrid = 99.0
+        influxDB.InfluxDBwriter( measurement = "Solar_eolico", device = "entrenamiento", variable = 'eficienciaControlMode2_hybrid', value = twinPVWF.n_hybrid, timestamp = timestamp)
 
       influxDB.InfluxDBclose()
 

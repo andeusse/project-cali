@@ -237,6 +237,15 @@ class TwinPVWF:
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
         return n_controller.x[0]
     
+    def optimal_n_hybridController(self, gridPower_meas, batteryPower_meas, ACloadPower_meas):
+        def controllerPowerOuput(n_hybrid, gridPower_meas, batteryPower_meas, ACloadPower_meas):
+            self.n_hybrid = n_hybrid[0]
+            return (gridPower_meas + self.P_PV) * self.n_hybrid / 100 - (ACloadPower_meas + batteryPower_meas) / (self.n_hybrid / 100) 
+        n_hybrid_0 = self.n_hybrid
+        n_hybrid = least_squares(controllerPowerOuput, x0 = n_hybrid_0, bounds = (0.0, 120.0), args = (gridPower_meas, batteryPower_meas, ACloadPower_meas))
+        self.n_hybrid = n_hybrid.x[0]*random.uniform(0.98,1.02)
+        return n_hybrid.x[0]
+    
     def offgridTwinOutput(self, chargeSOC_0, batteryState, inverterState, P_CA, PF, P_CD, T_bat, V_CD, SOC, V_bulk, V_float, V_charge, V_PV, V_WT, V_CDload, V_CA, delta_t):
         
         self.inverterState = inverterState
@@ -432,7 +441,7 @@ class TwinPVWF:
                     self.I_bat = 0.0
                     chargeCycle = False
 
-            self.P_grid = (self.P_inv + self.P_bat) / (self.n_hybrid / 100)  - (self.P_PV * self.n_hybrid / 100)
+            self.P_grid = (self.P_inv + self.P_bat) / (self.n_hybrid / 100) - (self.P_PV * self.n_hybrid / 100)
 
         else:
             self.P_grid = 0.0
