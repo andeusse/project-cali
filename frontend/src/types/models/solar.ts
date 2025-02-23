@@ -1240,9 +1240,9 @@ export const MODE_2_HYBRID: DiagramVariableType[] = [
   {
     name: 'Potencia red externa',
     variable: 'externalGridPower',
-    unit: 'W',
+    unit: 'VA',
     isShown: true,
-    diagramName: 'Potencia',
+    diagramName: 'P. aparente',
     fixed: 1,
     x: 200,
     y: 1960,

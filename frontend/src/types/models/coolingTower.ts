@@ -229,7 +229,7 @@ export const COOLING_TOWER: CoolingTowerParameters = {
 
 export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
   {
-    name: 'Flujo Agua superior',
+    name: 'Flujo Agua Entrada',
     variable: 'topWaterFlow',
     unit: 'L/min',
     isShown: true,
@@ -239,7 +239,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 1400,
   },
   {
-    name: 'Temperatura Agua superior',
+    name: 'Temperatura Agua Entrada',
     variable: 'topWaterTemperature',
     unit: '°C',
     isShown: true,
@@ -249,7 +249,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 800,
   },
   {
-    name: 'Temperatura Aire superior',
+    name: 'Temperatura Aire Salida',
     variable: 'topAirTemperature',
     unit: '°C',
     isShown: true,
@@ -259,7 +259,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 310,
   },
   {
-    name: 'Humedad Aire superior',
+    name: 'Humedad Aire Salida',
     variable: 'topAirHumidity',
     unit: '%',
     isShown: true,
@@ -279,11 +279,11 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 460,
   },
   {
-    name: 'Temperatura Agua Inferior',
+    name: 'Temperatura Agua Salida',
     variable: 'bottomWaterTemperature',
     unit: '°C',
     isShown: true,
-    diagramName: 'Tem. Agua Salida',
+    diagramName: 'Temp. Agua Salida',
     fixed: 2,
     x: 1600,
     y: 2610,
@@ -299,7 +299,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 2760,
   },
   {
-    name: 'Flujo Aire inferior',
+    name: 'Flujo Aire Entrada',
     variable: 'bottomAirFlow',
     unit: 'm³/min',
     isShown: true,
@@ -309,7 +309,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 3610,
   },
   {
-    name: 'Temperatura Aire inferior',
+    name: 'Temperatura Aire Entrada',
     variable: 'bottomAirTemperature',
     unit: '°C',
     isShown: true,
@@ -319,7 +319,7 @@ export const COOLING_TOWER_DIAGRAM_VARIABLES: DiagramVariableType[] = [
     y: 3010,
   },
   {
-    name: 'Humedad Aire inferior',
+    name: 'Humedad Aire Entrada',
     variable: 'bottomAirHumidity',
     unit: '%',
     isShown: true,

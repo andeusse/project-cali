@@ -267,7 +267,7 @@ export const HYDROGEN_CELL: HydrogencellParameters = {
   },
   inputElectronicLoadPower: {
     disabled: false,
-    value: 20,
+    value: 10,
     tooltip: 'Potencia carga electrónica',
     unit: 'W',
     variableString: 'Potencia',
