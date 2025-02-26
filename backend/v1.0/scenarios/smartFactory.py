@@ -23,6 +23,7 @@ class SmartFactory(Resource):
     elif data['stepUnit'] == 'Day':
       stepTime = data['stepTime']['value'] * 24
 
+    gridState = data['isGridConnected']
     solarSystemNumber = data['solarSystemNumber']['value']
     biogasSystemNumber = data['biogasSystemNumber']['value']
 
@@ -186,9 +187,13 @@ class SmartFactory(Resource):
                                               biogasStages = biogasStages,
                                               weights = weightList)
 
+    if gridState:
+      results_df.rename(columns={"Red": "Red importación (+) / exportación (-)"}, inplace=True)
+    else:
+      results_df.rename(columns={"Red": "Potencia faltante (+) / excedente (-)"}, inplace=True)
+    
     results_df = results_df.reindex(sorted(results_df.columns), axis=1)
 
     response = results_df.to_json(orient='split')
-    # print(response)
 
     return response

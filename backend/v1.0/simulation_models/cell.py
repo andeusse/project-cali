@@ -30,9 +30,9 @@ class TwinCell:
     
     def optimal_flowCoefficients(self, hydrogenFlow_meas, cellCurrent_meas):
         def hydrogenFlow(flowCoefficients, hydrogenFlow_meas, cellCurrent_meas):
-            return hydrogenFlow_meas - (148.55*cellCurrent_meas + 13.265 + flowCoefficients)
-        flowCoefficients_0 = 30.0
-        flowCoefficients = least_squares(hydrogenFlow, x0 = flowCoefficients_0, bounds = (0, 200.0), args = (hydrogenFlow_meas, cellCurrent_meas))
+            return hydrogenFlow_meas - (151.29*cellCurrent_meas + 23.533 + flowCoefficients)
+        flowCoefficients_0 = 0.0
+        flowCoefficients = least_squares(hydrogenFlow, x0 = flowCoefficients_0, bounds = (-100.0, 100.0), args = (hydrogenFlow_meas, cellCurrent_meas))
         self.flowCoefficients = flowCoefficients.x[0]
         return self.flowCoefficients
 
@@ -78,7 +78,7 @@ class TwinCell:
         
         self.cellPower = self.cellCurrent * self.cellVoltage
         # self.hydrogenFlow = self.flowCoefficients[0]*0.63173435*self.cellCurrent**5 - self.flowCoefficients[1]*4.45717449*self.cellCurrent**4 + self.flowCoefficients[2]*8.93813509*self.cellCurrent**3 - self.flowCoefficients[3]*1.38222392*self.cellCurrent**2 + self.flowCoefficients[4]*145.33329002*self.cellCurrent + self.flowCoefficients[5]*11.05591085
-        self.hydrogenFlow = 148.55*self.cellCurrent + 13.265 + self.flowCoefficients
+        self.hydrogenFlow = 151.29*self.cellCurrent + 23.533 + self.flowCoefficients
         # standardHydrogenFlow = (273.15 / 101325) * ((101325 + 127553) * self.hydrogenFlow) / (35.0 + 273.15)
         standardHydrogenFlow = self.hydrogenFlow
         self.cellEfficiency = 100 * ((self.cellPower * 60) / (10.8 * standardHydrogenFlow))
