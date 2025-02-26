@@ -177,9 +177,9 @@ class hydrogenCell(Resource):
       cellTemperature = 40.0
       electronicLoadState = True
       if lightsMode == 'Parallel':
-          lightsPower = 9.0
+          lightsPower = 8.0
       elif lightsMode == 'Series':
-          lightsPower = 4.0
+          lightsPower = 3.5
       cellSelfFeedingPower = 1.8
 
     inputElectronicLoad = inputElectronicLoad * electronicLoadState

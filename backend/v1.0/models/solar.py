@@ -88,7 +88,8 @@ class Solar(Resource):
     else:
       isParallel = True
 
-    inverterEfficiency = data["offgridInverter"]["efficiency"]["value"]
+    # inverterEfficiency = data["offgridInverter"]["efficiency"]["value"]
+    inverterEfficiency = 94.0
     hybridEfficiency = data["hybridInverter"]["efficiency"]["value"]
 
     if data["solarRadiation1"]["arrayEnabled"]:
@@ -245,7 +246,7 @@ class Solar(Resource):
           break
         except:
           attempts += 1
-          deratingFactorList = [data["monocrystallinePanel"]["deratingFactor"]["value"], data["policrystallinePanel"]["deratingFactor"]["value"], data["flexPanel"]["deratingFactor"]["value"], data["cadmiumTelluridePanel"]["deratingFactor"]["value"]]
+          deratingFactorList = [0.5] * 4
         finally:
           influxDB.InfluxDBclose()
       
@@ -328,27 +329,27 @@ class Solar(Resource):
       if not connectionState:
         return {"message":influxDB.ERROR_MESSAGE}, 503
       if PV_Results[0] + WT_Results <= 10.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R1", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R1", type=6)
       elif PV_Results[0] + WT_Results <= 20.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R2", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R2", type=6)
       elif PV_Results[0] + WT_Results <= 30.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R3", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R3", type=6)
       elif PV_Results[0] + WT_Results <= 40.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R4", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R4", type=6)
       elif PV_Results[0] + WT_Results <= 50.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R5", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R5", type=6)
       elif PV_Results[0] + WT_Results <= 60.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R6", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R6", type=6)
       elif PV_Results[0] + WT_Results <= 70.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R7", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R7", type=6)
       elif PV_Results[0] + WT_Results <= 80.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R8", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R8", type=6)
       elif PV_Results[0] + WT_Results <= 90.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R9", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R9", type=6)
       elif PV_Results[0] + WT_Results <= 100.0:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R10", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R10", type=6)
       else:
-        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "R11", type=6)
+        query = influxDB.QueryCreator(measurement='Solar_eolico', device = "entrenamiento", variable = training_nController_Name + "_R11", type=6)
       
       attempts = 1
       while attempts <= 5:

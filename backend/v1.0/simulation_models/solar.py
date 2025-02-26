@@ -33,7 +33,7 @@ class TwinPVWF:
             self.T_cNOCT = 45
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 1.0
+            self.n_c = 10.0
             self.monoModule = True
         # Silicio Policristalino
         elif type == 2:
@@ -49,7 +49,7 @@ class TwinPVWF:
             self.T_cNOCT = 45
             self.T_aNOCT = 20
             self.G_NOCT = 800
-            self.n_c = 0.8
+            self.n_c = 0.1
             self.polyModule = True
         # Silicio Monocristalino de Pelicula Delgada
         elif type == 3:
@@ -233,7 +233,7 @@ class TwinPVWF:
             self.n_controller = n_controller[0]
             return ((self.P_PV + self.P_WT) * self.n_controller / 100) - (P_CD / (self.n_controller / 100)) - P_CC_meas
         n_controller_0 = self.n_controller
-        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (10.0, 120.0), args = (P_CD, P_CC_meas))
+        n_controller = least_squares(controllerPowerOuput, x0 = n_controller_0, bounds = (0.0, 150.0), args = (P_CD, P_CC_meas))
         self.n_controller = n_controller.x[0]*random.uniform(0.98,1.02)
         return n_controller.x[0]
     
@@ -254,13 +254,13 @@ class TwinPVWF:
         self.P_CD = P_CD
 
         if V_PV == 0.0:
-            Vmono = self.monoModule * (0.00000002*self.G_1**3 - 0.000031*self.G_1**2 + 0.0168*self.G_1 + 10.807)
+            Vmono = self.monoModule * (0.00000002*self.G_1**3 - 0.000031*self.G_1**2 + 0.0168*self.G_1 + 10.307)
             if Vmono > self.Vmpp_monoModule: Vmono = self.Vmpp_monoModule
-            Vpoly = self.polyModule * (0.000000000013*self.G_1**4 - 0.000000031*self.G_1**3 + 0.00002*self.G_1**2 - 0.0015*self.G_1 + 13.011)
+            Vpoly = self.polyModule * (0.000000000013*self.G_1**4 - 0.000000031*self.G_1**3 + 0.00002*self.G_1**2 - 0.0015*self.G_1 + 12.511)
             if Vpoly > self.Vmpp_polyModule: Vpoly = self.Vmpp_polyModule
-            Vflexi = self.flexiModule * (-0.000000000368*self.G_2**4 + 0.000000585*self.G_2**3 - 0.000327*self.G_2**2 + 0.0775*self.G_2 + 7.6213)
+            Vflexi = self.flexiModule * (-0.000000000368*self.G_2**4 + 0.000000585*self.G_2**3 - 0.000327*self.G_2**2 + 0.0775*self.G_2 + 7.1213)
             if Vflexi > self.Vmpp_flexiModule: Vflexi = self.Vmpp_flexiModule
-            Vcdte = self.cdteModule * (-0.00000000108*self.G_2**4 + 0.000001504*self.G_2**3 - 0.00073*self.G_2**2 + 0.1477*self.G_2 + 14.9)
+            Vcdte = self.cdteModule * (-0.00000000108*self.G_2**4 + 0.000001504*self.G_2**3 - 0.00073*self.G_2**2 + 0.1477*self.G_2 + 14.4)
             if Vcdte > self.Vmpp_cdteModule: Vcdte = self.Vmpp_cdteModule
             
             if self.cdteModule:
@@ -268,7 +268,7 @@ class TwinPVWF:
             elif self.parallel:
                 self.V_PV = max(Vmono, Vpoly, Vflexi)
             else:
-                self.V_PV = Vmono + Vpoly + Vflexi
+                self.V_PV = (Vmono + Vpoly + Vflexi) * 0.93
         else:
             self.V_PV = V_PV
         
@@ -279,12 +279,15 @@ class TwinPVWF:
             self.V_WT = V_WT
         
         if V_CDload == 0.0:
-            self.V_CDload = 12.0
+            if self.parallel:
+                self.V_CDload = 12.0
+            else:
+                self.V_CDload = 24.0
         else:
             self.V_CDload = V_CDload
             
         if V_CA == 0.0:
-            self.V_CA = 112.0
+            self.V_CA = 122.0
         else:
             self.V_CA = V_CA
 
@@ -393,13 +396,13 @@ class TwinPVWF:
         self.PF = PF
 
         if V_PV == 0.0:
-            Vmono = self.monoModule * (0.00000002*self.G_1**3 - 0.000031*self.G_1**2 + 0.0168*self.G_1 + 10.807)
+            Vmono = self.monoModule * (0.00000002*self.G_1**3 - 0.000031*self.G_1**2 + 0.0168*self.G_1 + 10.307)
             if Vmono > self.Vmpp_monoModule: Vmono = self.Vmpp_monoModule
-            Vpoly = self.polyModule * (0.000000000013*self.G_1**4 - 0.000000031*self.G_1**3 + 0.00002*self.G_1**2 - 0.0015*self.G_1 + 13.011)
+            Vpoly = self.polyModule * (0.000000000013*self.G_1**4 - 0.000000031*self.G_1**3 + 0.00002*self.G_1**2 - 0.0015*self.G_1 + 12.511)
             if Vpoly > self.Vmpp_polyModule: Vpoly = self.Vmpp_polyModule
-            Vflexi = self.flexiModule * (-0.000000000368*self.G_2**4 + 0.000000585*self.G_2**3 - 0.000327*self.G_2**2 + 0.0775*self.G_2 + 7.6213)
+            Vflexi = self.flexiModule * (-0.000000000368*self.G_2**4 + 0.000000585*self.G_2**3 - 0.000327*self.G_2**2 + 0.0775*self.G_2 + 7.1213)
             if Vflexi > self.Vmpp_flexiModule: Vflexi = self.Vmpp_flexiModule
-            Vcdte = self.cdteModule * (-0.00000000108*self.G_2**4 + 0.000001504*self.G_2**3 - 0.00073*self.G_2**2 + 0.1477*self.G_2 + 14.9)
+            Vcdte = self.cdteModule * (-0.00000000108*self.G_2**4 + 0.000001504*self.G_2**3 - 0.00073*self.G_2**2 + 0.1477*self.G_2 + 14.4)
             if Vcdte > self.Vmpp_cdteModule: Vcdte = self.Vmpp_cdteModule
             
             self.V_PV = Vmono + Vpoly + Vflexi
