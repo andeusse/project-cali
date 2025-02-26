@@ -15,6 +15,8 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   model: T
 ) => {
   const dispatch = useAppDispatch();
+  const [failureCount, setFailureCount] = useState(0);
+
   const [data, setData] = useState<G | undefined>();
 
   const [historicData, setHistoricData] = useState<any>({});
@@ -22,6 +24,29 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   const [charts, setCharts] = useState<ChartValues>();
 
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState<
+    AxiosError<errorResp> | undefined
+  >(undefined);
+
+  useEffect(() => {
+    if (
+      failureCount >= Constants.MAX_RETRIES_BEFORE_STOP &&
+      errorMessage !== undefined
+    ) {
+      setFailureCount(0);
+      setIsPlaying(false);
+      dispatch(
+        setError({
+          isShown: true,
+          message: Constants.GetErrorWithDate(
+            errorMessage.message,
+            errorMessage.code
+          ),
+        })
+      );
+    }
+  }, [dispatch, errorMessage, failureCount]);
 
   const queryApi = useCallback(() => {
     modelsAPI<T, resp<G>>(url, model)
@@ -62,13 +87,8 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         }
       })
       .catch((err: AxiosError<errorResp>) => {
-        setIsPlaying(false);
-        dispatch(
-          setError({
-            isShown: true,
-            message: Constants.GetErrorWithDate(err.message, err.code),
-          })
-        );
+        setFailureCount((prev) => prev + 1);
+        setErrorMessage(err);
       })
       .finally(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -110,6 +130,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
     setHistoricData({});
     setCharts(undefined);
     resetErrorState();
+    setFailureCount(0);
   };
 
   return [data, charts, isPlaying, onPlay, onPause, onStop] as const;
