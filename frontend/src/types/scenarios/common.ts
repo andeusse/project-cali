@@ -602,7 +602,7 @@ export const COMMON_LOAD_SYSTEM: LoadSystem = {
 export const COMMON_SCENARIO: SmartSystemParameters = {
   smartScenarioType: SmartScenarioType.smartCity,
   name: 'Nombre',
-  isGridConnected: false,
+  isGridConnected: true,
   operationMode: ScenariosModesType.Manual,
   steps: {
     disabled: false,

@@ -14,7 +14,7 @@ export default class Constants {
 
   public static MAX_RETRIES_BEFORE_STOP = 5;
 
-  public static INACTIVITY_TIMEOUT = 3000;
+  public static INACTIVITY_TIMEOUT = 4000;
 
   public static NO_API_CONNECTION =
     'Error de conexión. Revise su conexión. Si el error persiste comuníquese con el administrador de la red';

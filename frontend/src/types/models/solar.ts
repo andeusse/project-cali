@@ -497,10 +497,10 @@ export const SOLAR_WIND: SolarWindParameters = {
   },
   temperature: {
     disabled: false,
-    value: 25,
-    tooltip: 'Temperatura ambiente',
+    value: 32,
+    tooltip: 'Temperatura ambiente panel',
     unit: '°C',
-    variableString: 'Temperatura ambiente',
+    variableString: 'Temperatura ambiente panel',
     min: -20,
     max: 60,
     arrayEnabled: false,
