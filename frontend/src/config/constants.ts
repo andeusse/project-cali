@@ -8,11 +8,13 @@ export default class Constants {
   public static QUERY_TIME_ONLINE_TOWER: number = 5000;
 
   public static QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS: number = 3000;
-  public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 30000;
+  public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 600000;
   public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 3000;
-  public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 30000;
+  public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 600000;
 
   public static MAX_RETRIES_BEFORE_STOP = 5;
+
+  public static INACTIVITY_TIMEOUT = 3000;
 
   public static NO_API_CONNECTION =
     'Error de conexión. Revise su conexión. Si el error persiste comuníquese con el administrador de la red';

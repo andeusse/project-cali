@@ -1,9 +1,7 @@
 import { FormControl, Tooltip, TextField, InputAdornment } from '@mui/material';
 import { CustomTextFieldType } from '../../types/customTextField';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { debounce } from 'lodash';
-
-const DEBOUNCE_TIME = 2000;
+import Constants from '../../config/constants';
 
 const CustomNumberField = (props: CustomTextFieldType) => {
   const {
@@ -18,11 +16,13 @@ const CustomNumberField = (props: CustomTextFieldType) => {
     variable;
 
   const [inputValue, setInputValue] = useState(value.toString());
-  const [, setDebouncedValue] = useState('');
+
+  const timeoutId = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
-    // debouncedSetValue(event.target.value);
+    resetInactivityTimer();
   };
 
   const setValue = useCallback(
@@ -63,7 +63,6 @@ const CustomNumberField = (props: CustomTextFieldType) => {
           }
         }
         if (handleChange !== undefined) {
-          setDebouncedValue(value);
           handleChange(variableTemp);
           setInputValue(variableTemp.target.value.toString());
         }
@@ -72,27 +71,32 @@ const CustomNumberField = (props: CustomTextFieldType) => {
     [handleChange, isInteger, name, variable.max, variable.min]
   );
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedSetValue = useCallback(
-    debounce((value: string) => {
-      setValue(value);
-    }, DEBOUNCE_TIME),
-    []
-  );
+  useEffect(() => {
+    return () => {
+      if (timeoutId.current) {
+        clearTimeout(timeoutId.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     setInputValue(value.toString());
   }, [value]);
 
-  const onWheel = (e: any) => {
+  const handleFocus = () => {
+    resetInactivityTimer();
+  };
+
+  const handleWheel = (e: any) => {
     e.target.blur();
   };
 
-  const onBlur = () => {
+  const handleBlur = () => {
     setValue(inputValue);
+    clearTimeout(timeoutId.current as NodeJS.Timeout);
   };
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (disableKeyDown && event.key !== 'Enter') {
       event.preventDefault();
       return;
@@ -101,6 +105,17 @@ const CustomNumberField = (props: CustomTextFieldType) => {
       event.preventDefault();
       setValue(inputValue);
     }
+  };
+
+  const resetInactivityTimer = () => {
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+    }, Constants.INACTIVITY_TIMEOUT);
   };
 
   return (
@@ -122,10 +137,12 @@ const CustomNumberField = (props: CustomTextFieldType) => {
           disabled={disabled || disabledProp}
           value={inputValue}
           name={name}
+          onFocus={handleFocus}
           onChange={handleInputChange}
-          onWheel={onWheel}
-          onBlur={onBlur}
-          onKeyDown={onKeyDown}
+          onWheel={handleWheel}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          inputRef={inputRef}
           InputProps={{
             type: 'number',
             inputProps: {
