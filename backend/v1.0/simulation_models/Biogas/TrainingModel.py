@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 # Get the absolute path of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))  
@@ -39,16 +40,18 @@ class TrainingBiogasPlant:
         # DB_Bucket = os.getenv('DB_Bucket')
         # DB_Organization = os.getenv('DB_Organization')
         # DB_Token = os.getenv('DB_Token')
-        DB_IP = 'localhost'
-        DB_Port = '8086'
-        DB_Bucket = 'Laboratorio_Energias'
-        DB_Organization = 'USC'
-        DB_Token = '4pJB_298afu0WKjKBtPESjnUxvpJV0PODWBNMGzeeU_ahg1P4H3Bg5KOfwI2A9LXm2BQwaQR_un792HXy3bsvg=='
+        ## Universidad Santiago De Cali servidor
         # DB_IP = 'localhost'
         # DB_Port = '8086'
-        # DB_Bucket = 'BiogasPlantSimulator'
-        # DB_Organization = 'UCO'
-        # DB_Token = 'yksWy5XIJIv-TA-DDvCH7OQJAx-VApFBFQsibukbs_VJUtTe0asUREiRXQLbhGH2O78XHegCXGSavURt2Atniw=='
+        # DB_Bucket = 'Laboratorio_Energias'
+        # DB_Organization = 'USC'
+        # DB_Token = '4pJB_298afu0WKjKBtPESjnUxvpJV0PODWBNMGzeeU_ahg1P4H3Bg5KOfwI2A9LXm2BQwaQR_un792HXy3bsvg=='
+        ## Computador personal UCO
+        DB_IP = 'localhost'
+        DB_Port = '8086'
+        DB_Bucket = 'BiogasPlantSimulator'
+        DB_Organization = 'UCO'
+        DB_Token = 'PdISKZ9gcighknh3X66cqwB1FvOexgDh7KUHKlvWvuLyw3UZZGBd1fGBtZg3IBEkKZmcknzOtYBwmEpJzJl6GQ=='
         
         self.influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
         self.influxDB.InfluxDBconnection()
@@ -93,8 +96,8 @@ class TrainingBiogasPlant:
         
         #Get Asynchronous and synchronous Data
         self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(self.t_train), type=4)
-        # DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
-        DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
+        DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
+        # DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
         DataPlant.set_index("_field", inplace = True)
         
         self.Operation_mode = self.Datainterfaz["_value"]["ciclo"]
@@ -1042,7 +1045,7 @@ class TrainingBiogasPlant:
                 mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus                                           #Kmol 
                 mol_expended = (self.mol_acum_CH4_V101) * (1/self.s_CH4)                              #Kmol    
                 self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i])    #kmol/m3 = mol/L
-                self.SV_g = self.Csus_ini_ST_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]              #Volatile solids g
+                self.SV_g = self.Csus_ini_SV_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]              #Volatile solids g
                 SV_g_Gompertz.append(self.SV_g)                                                                 #storage grams of volatile solids  
 
                 timev.append(self.DataPlant["time"][i])
@@ -1188,8 +1191,8 @@ class TrainingBiogasPlant:
                 mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
                 mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
                 self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i])
-                self.SV_g_R101 = self.Csus_ini_ST_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
-                SV_g_Gompertz.append(self.SV_g_R101)                                                                 #storage grams of volatile solids  
+                self.SV_g_R101 = self.Csus_ini_SV_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
+                SV_g_Gompertz.append(self.SV_g_R101)                                                            #storage grams of volatile solids  
                   
                 timev.append(self.DataPlant["time"][i])
                 V_R101.append(self.DataPlant["V_R101"][i])
@@ -1217,7 +1220,7 @@ class TrainingBiogasPlant:
                 mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
                 mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
                 self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i])
-                self.SV_g_R102 = self.Csus_ini_ST_R102 * self.MW_sustrato * self.DataPlant["V_R102"][i]              #Volatile solids g
+                self.SV_g_R102 = self.Csus_ini_SV_R102 * self.MW_sustrato * self.DataPlant["V_R102"][i]              #Volatile solids g
                 SV_g_Gompertz_R102.append(self.SV_g_R102)                                                                 #storage grams of volatile solids  
                                     
                 V_R102.append(self.DataPlant["V_R102"][i])
@@ -1261,7 +1264,7 @@ class TrainingBiogasPlant:
                     V_bio_R102 = (((n_biogas_acum_Gompertz_R102[i]*8.314 * 273.15)/(100))*1000)/(SV_g_Gompertz_R102[i])         #Normal volume of biogas per unit of volatile solids weight [L/gSV] 
                     V_biogas_gompertz_R101.append(V_bio_R101)
                     V_biogas_gompertz_R102.append(V_bio_R102)
-                self.TrainGompertzMode1 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
+                self.TrainGompertzMode2_3 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
                                                         "y_t_exp_R101": V_biogas_gompertz_R101,
                                                         "y_t_exp_R102": V_biogas_gompertz_R102})
         
@@ -1368,8 +1371,8 @@ class TrainingBiogasPlant:
                 mol_in_R101 = (Q_P104 * tp/60 * self.Csv_sus) + (Q_P102 * tp/60 * self.Csus_ini_SV_R102)
                 mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
                 self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i])
-                self.SV_g_R101 = self.Csus_ini_ST_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
-                SV_g_Gompertz.append(self.SV_g_R101)                                                                 #storage grams of volatile solids  
+                self.SV_g_R101 = self.Csus_ini_SV_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
+                SV_g_Gompertz_R101.append(self.SV_g_R101)                                                       #storage grams of volatile solids  
                               
                 timev.append(self.DataPlant["time"][i])
                 V_R101.append(self.DataPlant["V_R101"][i])
@@ -1397,7 +1400,9 @@ class TrainingBiogasPlant:
                 mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
                 mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
                 self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i])
-                                 
+                self.SV_g_R102 = self.Csus_ini_SV_R102 * self.MW_sustrato * self.DataPlant["V_R102"][i]         #Volatile solids g
+                SV_g_Gompertz_R101.append(self.SV_g_R101)                                                       #storage grams of volatile solids
+                             
                 V_R102.append(self.DataPlant["V_R102"][i])
                 Q_P101v.append(Q_P101)
                 C_in_sus_R102.append(self.Csv_sus)
@@ -1423,8 +1428,8 @@ class TrainingBiogasPlant:
                 V_biogas_gompertz_R101 = []
                 V_biogas_gompertz_R102 = []
                 for i in range (len(n_biogas_acum_Gompertz_R101)):
-                    V_bio_R101 = (n_biogas_acum_Gompertz_R101[i]*8.314 * 273.15)/(100)         #Normal volume of biogas according to moles produced by R_101
-                    V_bio_R102 = (n_biogas_acum_Gompertz_R102[i]*8.314 * 273.15)/(100)         #Normal volume of biogas according to moles produced by R_102  
+                    V_bio_R101 = (((n_biogas_acum_Gompertz_R101[i]*8.314 * 273.15)/(100))*1000)/(SV_g_Gompertz_R101[i])         #Normal volume of biogas according to moles produced by R_101
+                    V_bio_R102 = (((n_biogas_acum_Gompertz_R102[i]*8.314 * 273.15)/(100))*1000)/(SV_g_Gompertz_R102[i])         #Normal volume of biogas according to moles produced by R_102  
                     V_biogas_gompertz_R101.append(V_bio_R101)
                     V_biogas_gompertz_R102.append(V_bio_R102)
                 self.TrainGompertzMode1 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
@@ -1947,27 +1952,24 @@ class TrainingBiogasPlant:
         if self.Operation_mode == 1:
             t_exp = self.TrainGompertzMode1["time"]
 
-
-        
-    
-
                           
 #This will be the way to call method from API
 #singletone
 Training = TrainingBiogasPlant(ST_ini_R101 = 4.9, SV_ini_R101 = 1.5, t_train=60, Volume_V101 = 15) 
 #Loop calling
-for i in range (4):
+while True:
     Training.getData()
     print("-------- Datos de interfaz")
     print(Training.Datainterfaz)
     print("------------Datos de planta")
     print(Training.DataPlant)
     Training.LimitReagentCalculation()
-    # Training.StochoimetricExpenditure()
-    # print(Training.TrainMode4)
-    # Training.OptimizationArrhenius(resolution=2)
-    # print(Training.K_mean_R101)
-    # print(Training.Ea_mean_R101)
-    # print(Training.K_mean_R102)
-    # print(Training.Ea_mean_R102)
+    Training.StochoimetricExpenditure()
+    print(Training.TrainMode4)
+    Training.OptimizationArrhenius(resolution=2)
+    print(Training.K_mean_R101)
+    print(Training.Ea_mean_R101)
+    print(Training.K_mean_R102)
+    print(Training.Ea_mean_R102)
+    time.sleep(600)
       
