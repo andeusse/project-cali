@@ -34,7 +34,7 @@ from scipy.optimize import minimize
 import statistics as st
 
 class TrainingBiogasPlant:
-    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101 = 15, ST_ini_R102 = 2, SV_ini_R102 = 1.5, Volume_V102 = 35):
+    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101 = 15, ST_ini_R102 = 2, SV_ini_R102 = 1.5, Volume_V102 = 35, Volume_V107 = 35):
         # DB_IP = os.getenv('DB_IP')
         # DB_Port = os.getenv('DB_Port')
         # DB_Bucket = os.getenv('DB_Bucket')
@@ -79,8 +79,12 @@ class TrainingBiogasPlant:
         self.Csus_ini_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_SV_R102
         
         #initial and constructive conditions for V102
-        self.Pi_V102 = 0          #Is the biggest pressure in V101 before pressure in V101 drop
+        self.Pi_V102 = 0                   #Is the biggest pressure in V102 before pressure in V102 drop
         self.Volume_V102 = Volume_V102     #Volume of the tank in Liters
+
+        #Initial and constructive conditions for V107
+        self.Pi_V107 = 0                   #Is the biggest pressure in V107 before pressure in V107 drop  
+        self.Volume_V107 = Volume_V107     #Volume of the tank in liters  
         
         #Initial values for Arrhenius and ADM1
         self.K_mean_R101 = 1, self.Ea_mean_R101 = 1
@@ -1006,7 +1010,8 @@ class TrainingBiogasPlant:
             SV_g_Gompertz = []
             for i in range (len(self.DataPlant)):
                 self.P_V101 = self.DataPlant["P_V101"][i]
-                
+                self.P_V102 = self.DataPlant["P_V102"][i]
+                self.P_V107 = self.DataPlant["P_V107"][i]
                 #conditions when the pressure inside V101 drop
                 if i > 0:
                     if (i + 1) in self.DataPlant.index and i in self.DataPlant.index:
@@ -1016,12 +1021,18 @@ class TrainingBiogasPlant:
                     Q_P104 = self.DataPlant["FE-104"][i-1]
                     if self.P_V101 < (self.DataPlant["P_V101"][i-1] * 1.05):         
                         self.Pi_V101 = self.P_V101          #P_ini is the actual pressure in V101
+                    if self.P_V102 < (self.DataPlant["P_V102"][i-1] * 1.05):
+                        self.Pi_V102 = self.P_V102
+                    if self.P_V107 < (self.DataPlant["P_V107"][i-1] * 1.05):
+                        self.Pi_V107 = self.P_V107
                 else:
                     tp = 0
                     Q_P104 = 0  #Flow of pump at the beginning
                     
-                #Estimate the accumulated pressure
+                #Estimate the accumulated pressure in each vessel
                 self.Pacum_V101 = self.Pi_V101 + self.P_V101
+                self.Pacum_V102 = self.Pi_V102 + self.P_V102
+                self.Pacum_V107 = self.Pi_V107 + self.Pi_V107
                 
                 #Estimate the Storage and accumulated mol of biogas
                 # Storage biogas mol
@@ -2016,7 +2027,45 @@ class TrainingBiogasPlant:
             self.ym_R102 = st.mean(ym_R102)
             self.U_R102 = st.mean(U_R102)
             self.L_R102 = st.mean(L_R102)
-    
+        
+        elif self.Operation_mode == 4:
+            t_exp = self.TrainGompertzMode4["time"].tolist()
+            y_exp_R101 = self.TrainGompertzMode4["y_t_exp_R101"].tolist()
+            y_exp_R102 = self.TrainGompertzMode4["y_t_exp_R102"].tolist()
+            ym_R101 = []
+            U_R101 = []
+            L_R101 = []
+            ym_R102 = []
+            U_R102 = []
+            L_R102 = []
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i + resolution]
+                y_exp_R101_opt = y_exp_R101[i : i + resolution]
+                y_exp_R102_opt = y_exp_R102[i: i + resolution]
+                #Optimization for R101
+                results_R101 = Optimization_Gompertz(params = (self.ym_R101, self.U_R101, self.L_R101), t = t_exp_opt, y_exp = y_exp_R101_opt)
+                #Optimization for R102
+                results_R102 = Optimization_Gompertz(params = (self.ym_R102, self.U_R102, self.L_R102), t = t_exp_opt, y_exp = y_exp_R102_opt)
+                #Storage Values for R101
+                ym_R101.append(results_R101.x[0])
+                U_R101.append(results_R101.x[1])
+                L_R101.append(results_R101.x[2])
+                #Storage values for R102
+                ym_R102.append(results_R102.x[0])
+                U_R102.append(results_R102.x[1])
+                L_R102.append(results_R102.x[2])
+            
+            #Average params for Gompertz in R101
+            self.ym_R101 = st.mean(ym_R101)
+            self.U_R101 = st.mean(U_R101)
+            self.L_R101 = st.mean(L_R101)
+            
+            #Average params for gompertz in R102
+            self.ym_R102 = st.mean(ym_R102)
+            self.U_R102 = st.mean(U_R102)
+            self.L_R102 = st.mean(L_R102)
+
+
 #This will be the way to call method from API
 #singletone
 Training = TrainingBiogasPlant(ST_ini_R101 = 4.9, SV_ini_R101 = 1.5, t_train=60, Volume_V101 = 15) 
