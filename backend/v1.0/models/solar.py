@@ -389,7 +389,7 @@ class Solar(Resource):
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
         elif gridState:
-          twinPVWF.optimal_n_hybridController(self, measuredGridPower, measuredHybridDC_Power, measuredHybridAC_Power)
+          twinPVWF.optimal_n_hybridController(measuredGridPower, measuredHybridDC_Power, measuredHybridAC_Power)
     elif flexiModuleState or cdteModuleState:
       if not data["inputOfflineOperation"] and data["solarRadiation2"]["disabled"]:
         twinPVWF.optimal_f_PV(measuredPV_Power)
@@ -397,7 +397,7 @@ class Solar(Resource):
         if not (data["inputOperationMode"] == 'Mode2' and hybridState):
           twinPVWF.optimal_n_controller(inputDirectCurrentPower, measuredControllerDC_Power)
         elif gridState:
-          twinPVWF.optimal_n_hybridController(self, measuredGridPower, measuredHybridDC_Power, measuredHybridAC_Power)
+          twinPVWF.optimal_n_hybridController(measuredGridPower, measuredHybridDC_Power, measuredHybridAC_Power)
 
     if turbineState and not data["inputOfflineOperation"] and data["windSpeed"]["disabled"]:
       twinPVWF.optimal_n_WT(measuredWT_Power)
@@ -496,7 +496,7 @@ class Solar(Resource):
       solarWind['batteryStateOfCharge'] = twinResults[6]
       solarWind['batteryVoltage'] = twinResults[7]
       solarWind['directCurrentVoltage'] = twinResults[8]
-      if not data["inputOfflineOperation"] and inverterVoltage == 0.0:
+      if (not data["inputOfflineOperation"] and inverterVoltage == 0.0) or not simulatedInverterState:
         solarWind['inverterVoltage'] = 0.0
       else:
         solarWind['inverterVoltage'] = twinResults[9]

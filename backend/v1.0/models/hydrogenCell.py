@@ -173,8 +173,8 @@ class hydrogenCell(Resource):
       cellPower_meas = round(values_df["Value"]['PG-101'],3)
       electronicLoadPower_meas = round(values_df["Value"]['VM'],3) * round(values_df["Value"]['IM'],3)
     else:
-      hydrogenPressure = 18.5
-      cellTemperature = 40.0
+      hydrogenPressure = 18.0
+      cellTemperature = 35.0
       electronicLoadState = True
       if lightsMode == 'Parallel':
           lightsPower = 8.0

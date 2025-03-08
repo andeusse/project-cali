@@ -324,6 +324,7 @@ class TwinPVWF:
             self.P_bat = self.I_bat * self.V_CD
         elif self.P_bat < 0.0 or not batteryState:
             self.I_bat = 0.0
+            self.P_bat = 0.0
         
         # Corrección de capacidad por temperatura
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
@@ -354,16 +355,16 @@ class TwinPVWF:
                 self.V_CA = 0.0
                 self.P_CD = 0.0
                 self.V_CDload = 0.0
-            self.P_CC = self.P_inv
             self.P_bat = 0.0
             self.I_bat = 0.0
             if self.SOC <= 0.0:
                 self.SOC = 0.0
-        elif self.SOC > 1.1:
-            self.SOC = 1.1
+        elif self.SOC > 1.0:
+            self.SOC = 1.0
             self.P_bat = (self.sigma_bat * delta_t / 100)
             self.I_bat = self.P_bat / self.V_CD
-            self.P_CC = self.P_bat + self.P_inv
+        
+        self.P_CC = self.P_bat + self.P_inv
         
         # Actualización de voltaje de CD
         if self.P_bat > 0.1 and self.V_bat < V_bulk:
