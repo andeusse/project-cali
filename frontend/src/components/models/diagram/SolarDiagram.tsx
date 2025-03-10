@@ -151,67 +151,85 @@ const SolarDiagram = (props: Props) => {
             </g>
           )}
 
-        {solarWind.inputOperationMode === OperationModeType.Mode4 && 
+        {solarWind.inputOperationMode === OperationModeType.Mode4 &&
           !solarWind.offgridInverter.isConnected && (
-          <g>
-            <image href={mode4Diagram}></image>
-            <image
-              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
-              transform="translate(1730 1700) scale(0.8 0.8)"
-            ></image>
-          </g>
-        )}
+            <g>
+              <image href={mode4Diagram}></image>
+              <image
+                href={
+                  data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff
+                }
+                transform="translate(1730 1700) scale(0.8 0.8)"
+              ></image>
+            </g>
+          )}
 
-        {solarWind.inputOperationMode === OperationModeType.Mode4 && 
+        {solarWind.inputOperationMode === OperationModeType.Mode4 &&
           solarWind.offgridInverter.isConnected && (
-          <g>
-            <image href={mode4InverterDiagram}></image>
-            <image
-              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
-              transform="translate(1730 1700) scale(0.8 0.8)"
-            ></image>
-          </g>
-        )}
+            <g>
+              <image href={mode4InverterDiagram}></image>
+              <image
+                href={
+                  data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff
+                }
+                transform="translate(1730 1700) scale(0.8 0.8)"
+              ></image>
+            </g>
+          )}
 
-        {solarWind.inputOperationMode === OperationModeType.Mode5 && 
+        {solarWind.inputOperationMode === OperationModeType.Mode5 &&
           !solarWind.offgridInverter.isConnected && (
-          <g>
-            <image href={mode5Diagram}></image>
-            <image
-              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
-              transform="translate(1730 1700) scale(0.8 0.8)"
-            ></image>
-            <image
-              href={
-                solarWind.solarRadiation1.value !== 0 ||
-                solarWind.solarRadiation2.value !== 0
-                  ? lightOn
-                  : lightOff
-              }
-              transform="translate(350 1400) scale(0.5 0.5)"
-            ></image>
-          </g>
-        )}
+            <g>
+              <image href={mode5Diagram}></image>
+              <image
+                href={
+                  data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff
+                }
+                transform="translate(1730 1700) scale(0.8 0.8)"
+              ></image>
+              <image
+                href={
+                  solarWind.solarRadiation1.value !== 0 ||
+                  solarWind.solarRadiation2.value !== 0
+                    ? lightOn
+                    : lightOff
+                }
+                transform="translate(350 1400) scale(0.5 0.5)"
+              ></image>
+            </g>
+          )}
 
-        {solarWind.inputOperationMode === OperationModeType.Mode5 && 
+        {solarWind.inputOperationMode === OperationModeType.Mode5 &&
           solarWind.offgridInverter.isConnected && (
-          <g>
-            <image href={mode5InverterDiagram}></image>
-            <image
-              href={data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff}
-              transform="translate(1730 1700) scale(0.8 0.8)"
-            ></image>
-            <image
-              href={
-                solarWind.solarRadiation1.value !== 0 ||
-                solarWind.solarRadiation2.value !== 0
-                  ? lightOn
-                  : lightOff
-              }
-              transform="translate(350 1400) scale(0.5 0.5)"
-            ></image>
-          </g>
-        )}
+            <g>
+              <image href={mode5InverterDiagram}></image>
+              <image
+                href={
+                  data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff
+                }
+                transform="translate(1730 1700) scale(0.8 0.8)"
+              ></image>
+              <image
+                href={
+                  data?.inverterActivePower !== 0 &&
+                  (solarWind.offgridInverter.isConnected ||
+                    solarWind.hybridInverter.isConnected)
+                    ? cargaACOn
+                    : cargaACOff
+                }
+                transform="translate(2900 1500) scale(1 1)"
+              ></image>
+              <image
+                href={
+                  solarWind.solarRadiation1.value !== 0 ||
+                  solarWind.solarRadiation2.value !== 0
+                    ? lightOn
+                    : lightOff
+                }
+                transform="translate(350 1400) scale(0.5 0.5)"
+              ></image>
+            </g>
+          )}
 
         <DiagramVariables
           data={data}
