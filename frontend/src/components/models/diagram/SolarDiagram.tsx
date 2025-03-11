@@ -170,6 +170,16 @@ const SolarDiagram = (props: Props) => {
               <image href={mode4InverterDiagram}></image>
               <image
                 href={
+                  data?.inverterActivePower !== 0 &&
+                  (solarWind.offgridInverter.isConnected ||
+                    solarWind.hybridInverter.isConnected)
+                    ? cargaACOn
+                    : cargaACOff
+                }
+                transform="translate(2900 1500) scale(1 1)"
+              ></image>
+              <image
+                href={
                   data?.directCurrentLoadPower !== 0 ? cargaDCOn : cargaDCOff
                 }
                 transform="translate(1730 1700) scale(0.8 0.8)"
