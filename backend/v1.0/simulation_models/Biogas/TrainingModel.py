@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 # Get the absolute path of the script
 script_dir = os.path.dirname(os.path.abspath(__file__))  
@@ -33,22 +34,24 @@ from scipy.optimize import minimize
 import statistics as st
 
 class TrainingBiogasPlant:
-    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101 = 15, ST_ini_R102 = 2, SV_ini_R102 = 1.5, Volume_V102 = 35):
+    def __init__(self, t_train, ST_ini_R101, SV_ini_R101, Volume_V101 = 15, ST_ini_R102 = 2, SV_ini_R102 = 1.5, Volume_V102 = 35, Volume_V107 = 35):
         # DB_IP = os.getenv('DB_IP')
         # DB_Port = os.getenv('DB_Port')
         # DB_Bucket = os.getenv('DB_Bucket')
         # DB_Organization = os.getenv('DB_Organization')
         # DB_Token = os.getenv('DB_Token')
-        DB_IP = 'localhost'
-        DB_Port = '8086'
-        DB_Bucket = 'Laboratorio_Energias'
-        DB_Organization = 'USC'
-        DB_Token = '4pJB_298afu0WKjKBtPESjnUxvpJV0PODWBNMGzeeU_ahg1P4H3Bg5KOfwI2A9LXm2BQwaQR_un792HXy3bsvg=='
+        ## Universidad Santiago De Cali servidor
         # DB_IP = 'localhost'
         # DB_Port = '8086'
-        # DB_Bucket = 'BiogasPlantSimulator'
-        # DB_Organization = 'UCO'
-        # DB_Token = 'yksWy5XIJIv-TA-DDvCH7OQJAx-VApFBFQsibukbs_VJUtTe0asUREiRXQLbhGH2O78XHegCXGSavURt2Atniw=='
+        # DB_Bucket = 'Laboratorio_Energias'
+        # DB_Organization = 'USC'
+        # DB_Token = '4pJB_298afu0WKjKBtPESjnUxvpJV0PODWBNMGzeeU_ahg1P4H3Bg5KOfwI2A9LXm2BQwaQR_un792HXy3bsvg=='
+        ## Computador personal UCO
+        DB_IP = 'localhost'
+        DB_Port = '8086'
+        DB_Bucket = 'BiogasPlantSimulator'
+        DB_Organization = 'UCO'
+        DB_Token = 'PdISKZ9gcighknh3X66cqwB1FvOexgDh7KUHKlvWvuLyw3UZZGBd1fGBtZg3IBEkKZmcknzOtYBwmEpJzJl6GQ=='
         
         self.influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
         self.influxDB.InfluxDBconnection()
@@ -76,9 +79,21 @@ class TrainingBiogasPlant:
         self.Csus_ini_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_SV_R102
         
         #initial and constructive conditions for V102
-        self.Pi_V102 = 0          #Is the biggest pressure in V101 before pressure in V101 drop
+        self.Pi_V102 = 0                   #Is the biggest pressure in V102 before pressure in V102 drop
         self.Volume_V102 = Volume_V102     #Volume of the tank in Liters
 
+        #Initial and constructive conditions for V107
+        self.Pi_V107 = 0                   #Is the biggest pressure in V107 before pressure in V107 drop  
+        self.Volume_V107 = Volume_V107     #Volume of the tank in liters  
+        
+        #Initial values for Arrhenius and ADM1
+        self.K_mean_R101 = 1, self.Ea_mean_R101 = 1
+        self.K_mean_R102 = 1, self.Ea_mean_R102 = 1
+        
+        #Initial values for Gompertz
+        self.ym_R101 = 1, self.U_R101 = 1, self.L_R101 = 1
+        self.ym_R102 = 1, self.U_R102 = 1, self.L_R102 = 1
+        
         #Model train time for gompertz
         self.total_time = 0
         self.timeGompertz = []
@@ -93,8 +108,8 @@ class TrainingBiogasPlant:
         
         #Get Asynchronous and synchronous Data
         self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(self.t_train), type=4)
-        # DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
-        DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
+        DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
+        # DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
         DataPlant.set_index("_field", inplace = True)
         
         self.Operation_mode = self.Datainterfaz["_value"]["ciclo"]
@@ -995,7 +1010,8 @@ class TrainingBiogasPlant:
             SV_g_Gompertz = []
             for i in range (len(self.DataPlant)):
                 self.P_V101 = self.DataPlant["P_V101"][i]
-                
+                self.P_V102 = self.DataPlant["P_V102"][i]
+                self.P_V107 = self.DataPlant["P_V107"][i]
                 #conditions when the pressure inside V101 drop
                 if i > 0:
                     if (i + 1) in self.DataPlant.index and i in self.DataPlant.index:
@@ -1005,12 +1021,18 @@ class TrainingBiogasPlant:
                     Q_P104 = self.DataPlant["FE-104"][i-1]
                     if self.P_V101 < (self.DataPlant["P_V101"][i-1] * 1.05):         
                         self.Pi_V101 = self.P_V101          #P_ini is the actual pressure in V101
+                    if self.P_V102 < (self.DataPlant["P_V102"][i-1] * 1.05):
+                        self.Pi_V102 = self.P_V102
+                    if self.P_V107 < (self.DataPlant["P_V107"][i-1] * 1.05):
+                        self.Pi_V107 = self.P_V107
                 else:
                     tp = 0
                     Q_P104 = 0  #Flow of pump at the beginning
                     
-                #Estimate the accumulated pressure
+                #Estimate the accumulated pressure in each vessel
                 self.Pacum_V101 = self.Pi_V101 + self.P_V101
+                self.Pacum_V102 = self.Pi_V102 + self.P_V102
+                self.Pacum_V107 = self.Pi_V107 + self.Pi_V107
                 
                 #Estimate the Storage and accumulated mol of biogas
                 # Storage biogas mol
@@ -1042,7 +1064,7 @@ class TrainingBiogasPlant:
                 mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus                                           #Kmol 
                 mol_expended = (self.mol_acum_CH4_V101) * (1/self.s_CH4)                              #Kmol    
                 self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_expended)/(self.DataPlant["V_R101"][i])    #kmol/m3 = mol/L
-                self.SV_g = self.Csus_ini_ST_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]              #Volatile solids g
+                self.SV_g = self.Csus_ini_SV_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]              #Volatile solids g
                 SV_g_Gompertz.append(self.SV_g)                                                                 #storage grams of volatile solids  
 
                 timev.append(self.DataPlant["time"][i])
@@ -1188,8 +1210,8 @@ class TrainingBiogasPlant:
                 mol_in_R101 = Q_P104 * tp/60 * self.Csv_sus
                 mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
                 self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i])
-                self.SV_g_R101 = self.Csus_ini_ST_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
-                SV_g_Gompertz.append(self.SV_g_R101)                                                                 #storage grams of volatile solids  
+                self.SV_g_R101 = self.Csus_ini_SV_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
+                SV_g_Gompertz.append(self.SV_g_R101)                                                            #storage grams of volatile solids  
                   
                 timev.append(self.DataPlant["time"][i])
                 V_R101.append(self.DataPlant["V_R101"][i])
@@ -1217,7 +1239,7 @@ class TrainingBiogasPlant:
                 mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
                 mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
                 self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i])
-                self.SV_g_R102 = self.Csus_ini_ST_R102 * self.MW_sustrato * self.DataPlant["V_R102"][i]              #Volatile solids g
+                self.SV_g_R102 = self.Csus_ini_SV_R102 * self.MW_sustrato * self.DataPlant["V_R102"][i]              #Volatile solids g
                 SV_g_Gompertz_R102.append(self.SV_g_R102)                                                                 #storage grams of volatile solids  
                                     
                 V_R102.append(self.DataPlant["V_R102"][i])
@@ -1261,7 +1283,7 @@ class TrainingBiogasPlant:
                     V_bio_R102 = (((n_biogas_acum_Gompertz_R102[i]*8.314 * 273.15)/(100))*1000)/(SV_g_Gompertz_R102[i])         #Normal volume of biogas per unit of volatile solids weight [L/gSV] 
                     V_biogas_gompertz_R101.append(V_bio_R101)
                     V_biogas_gompertz_R102.append(V_bio_R102)
-                self.TrainGompertzMode1 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
+                self.TrainGompertzMode3_5 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
                                                         "y_t_exp_R101": V_biogas_gompertz_R101,
                                                         "y_t_exp_R102": V_biogas_gompertz_R102})
         
@@ -1368,8 +1390,8 @@ class TrainingBiogasPlant:
                 mol_in_R101 = (Q_P104 * tp/60 * self.Csv_sus) + (Q_P102 * tp/60 * self.Csus_ini_SV_R102)
                 mol_expended_R101 = self.mol_acum_CH4_V101 * (1/self.s_CH4)
                 self.Csus_ini_SV_R101 = (mol_ini_R101 + mol_in_R101 - mol_expended_R101)/(self.DataPlant["V_R101"][i])
-                self.SV_g_R101 = self.Csus_ini_ST_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
-                SV_g_Gompertz.append(self.SV_g_R101)                                                                 #storage grams of volatile solids  
+                self.SV_g_R101 = self.Csus_ini_SV_R101 * self.MW_sustrato * self.DataPlant["V_R101"][i]         #Volatile solids g
+                SV_g_Gompertz_R101.append(self.SV_g_R101)                                                       #storage grams of volatile solids  
                               
                 timev.append(self.DataPlant["time"][i])
                 V_R101.append(self.DataPlant["V_R101"][i])
@@ -1397,7 +1419,9 @@ class TrainingBiogasPlant:
                 mol_in_R102 = Q_P101 * tp/60 * Csus_R101[-1]
                 mol_expended_R102 = self.mol_acum_CH4_V102 * (1/self.s_CH4)
                 self.Csus_ini_SV_R102 = (mol_ini_R102 + mol_in_R102 - mol_expended_R102)/(self.DataPlant["V_R102"][i])
-                                 
+                self.SV_g_R102 = self.Csus_ini_SV_R102 * self.MW_sustrato * self.DataPlant["V_R102"][i]         #Volatile solids g
+                SV_g_Gompertz_R101.append(self.SV_g_R101)                                                       #storage grams of volatile solids
+                             
                 V_R102.append(self.DataPlant["V_R102"][i])
                 Q_P101v.append(Q_P101)
                 C_in_sus_R102.append(self.Csv_sus)
@@ -1423,11 +1447,11 @@ class TrainingBiogasPlant:
                 V_biogas_gompertz_R101 = []
                 V_biogas_gompertz_R102 = []
                 for i in range (len(n_biogas_acum_Gompertz_R101)):
-                    V_bio_R101 = (n_biogas_acum_Gompertz_R101[i]*8.314 * 273.15)/(100)         #Normal volume of biogas according to moles produced by R_101
-                    V_bio_R102 = (n_biogas_acum_Gompertz_R102[i]*8.314 * 273.15)/(100)         #Normal volume of biogas according to moles produced by R_102  
+                    V_bio_R101 = (((n_biogas_acum_Gompertz_R101[i]*8.314 * 273.15)/(100))*1000)/(SV_g_Gompertz_R101[i])         #Normal volume of biogas according to moles produced by R_101
+                    V_bio_R102 = (((n_biogas_acum_Gompertz_R102[i]*8.314 * 273.15)/(100))*1000)/(SV_g_Gompertz_R102[i])         #Normal volume of biogas according to moles produced by R_102  
                     V_biogas_gompertz_R101.append(V_bio_R101)
                     V_biogas_gompertz_R102.append(V_bio_R102)
-                self.TrainGompertzMode1 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
+                self.TrainGompertzMode4 = pd.DataFrame({"time": self.timeGompertz[-len(self.DataPlant):],
                                                         "y_t_exp_R101": V_biogas_gompertz_R101,
                                                         "y_t_exp_R102": V_biogas_gompertz_R102})
         
@@ -1491,7 +1515,7 @@ class TrainingBiogasPlant:
                 Csus_in_opt = Csus_in[i : i + resolution]
                 Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101, Ea = self.Ea_mean_R101)
                 K.append(Opt_kinetic_params.x[0])
                 Ea.append(Opt_kinetic_params.x[1])
             
@@ -1516,7 +1540,7 @@ class TrainingBiogasPlant:
                 Csus_in_opt = Csus_in[i : i + resolution]
                 Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101, Ea=self.Ea_mean_R101)
                 K.append(Opt_kinetic_params.x[0])
                 Ea.append(Opt_kinetic_params.x[1])
             
@@ -1561,7 +1585,7 @@ class TrainingBiogasPlant:
                 #Optimization for R101
                 Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1, K = self.K_mean_R101, Ea = self.Ea_mean_R101)
                 
                 K_R101.append(Opt_kinetic_params_R101.x[0])
                 Ea_R101.append(Opt_kinetic_params_R101.x[1])
@@ -1569,7 +1593,7 @@ class TrainingBiogasPlant:
                 #Optimization for R102
                 Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
                                                   temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1, K = self.K_mean_R102, Ea = self.Ea_mean_R102)
                 
                 K_R102.append(Opt_kinetic_params_R102.x[0])
                 Ea_R102.append(Opt_kinetic_params_R102.x[1])
@@ -1621,7 +1645,7 @@ class TrainingBiogasPlant:
                 #optimization R101
                 Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
-                                                  Qi2 = Q_P102_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 2)
+                                                  Qi2 = Q_P102_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 2, K = self.K_mean_R101, Ea = self.Ea_mean_R101)
                 
                 K_R101.append(Opt_kinetic_params_R101.x[0])
                 Ea_R101.append(Opt_kinetic_params_R101.x[1])
@@ -1629,7 +1653,7 @@ class TrainingBiogasPlant:
                 #Optimization for R102
                 Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
                                                   temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1, K = self.K_mean_R102, Ea = self.Ea_mean_R102)
                 
                 K_R102.append(Opt_kinetic_params_R102.x[0])
                 Ea_R102.append(Opt_kinetic_params_R102.x[1])
@@ -1681,7 +1705,7 @@ class TrainingBiogasPlant:
                 #Optimization for R101
                 Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1, K = self.K_mean_R101, Ea = self.Ea_mean_R101)
                 
                 K_R101.append(Opt_kinetic_params_R101.x[0])
                 Ea_R101.append(Opt_kinetic_params_R101.x[1])
@@ -1689,7 +1713,7 @@ class TrainingBiogasPlant:
                 #Optimization for R102
                 Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
                                                   temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1, K = self.K_mean_R102, Ea = self.Ea_mean_R102)
                 
                 K_R102.append(Opt_kinetic_params_R102.x[0])
                 Ea_R102.append(Opt_kinetic_params_R102.x[1])
@@ -1753,7 +1777,7 @@ class TrainingBiogasPlant:
                 Csus_in_opt = Csus_in[i : i + resolution]
                 Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101)
                 K.append(Opt_kinetic_params.x[0])
             
             self.K_mean_R101 = st.mean(K)
@@ -1775,7 +1799,7 @@ class TrainingBiogasPlant:
                 Csus_in_opt = Csus_in[i : i + resolution]
                 Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101)
                 K.append(Opt_kinetic_params.x[0])
             
             self.K_mean_R101 = st.mean(K)
@@ -1816,14 +1840,14 @@ class TrainingBiogasPlant:
                 #Optimization for R101
                 Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
                                                     temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
-                                                    Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
+                                                    Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1, K = self.K_mean_R101)
                 
                 K_R101.append(Opt_kinetic_params_R101.x[0])
 
                 #Optimization for R102
                 Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
                                                   temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1, K = self.K_mean_R102)
                 
                 K_R102.append(Opt_kinetic_params_R102.x[0])
 
@@ -1864,14 +1888,14 @@ class TrainingBiogasPlant:
                 #optimization R101
                 Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
-                                                  Qi2 = Q_P102_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 2)
+                                                  Qi2 = Q_P102_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 2, K = self.K_mean_R101)
                 
                 K_R101.append(Opt_kinetic_params_R101.x[0])
                 
                 #Optimization for R102
                 Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
                                                   temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1, K = self.K_mean_R102)
                 
                 K_R102.append(Opt_kinetic_params_R102.x[0])
             
@@ -1918,21 +1942,24 @@ class TrainingBiogasPlant:
                 #Optimization for R101
                 Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_R101_opt, y0 = C_exp_R101_opt[0], VR = VR_exp_R101_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_R101_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_R101_opt, Operation = 1, K = self.K_mean_R101)
                 
                 K_R101.append(Opt_kinetic_params_R101.x[0])
                 
                 #Optimization for R102
                 Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_R102_opt, y0 = C_exp_R102_opt[0], VR = VR_exp_R102_opt,
                                                   temperatures = T_R102_opt, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_R101_opt,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1)
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_R101_opt, Operation = 1, K = self.K_mean_R102)
                 
                 K_R102.append(Opt_kinetic_params_R102.x[0])
 
             #Kinetics for R101
             self.K_mean_R101 = st.mean(K_R101)
+            
+            #Kinetics for R102
+            self.K_mean_R102 = st.mean(K_R102)
     
-    def OptimizationGompertz(self):
+    def OptimizationGompertz(self, resolution):
         
         def model_Gompertz(t, ym, U, L):
             y_t = ym * np.exp(-np.exp((U * np.e) / ym * (L - t) + 1))
@@ -1944,30 +1971,118 @@ class TrainingBiogasPlant:
             residuals = y_exp - y_pred
             return np.sum(residuals**2)
         
-        if self.Operation_mode == 1:
-            t_exp = self.TrainGompertzMode1["time"]
-
-
+        if self.Operation_mode == 1 or self.Operation_mode == 2:
+            t_exp = self.TrainGompertzMode1["time"].tolist()
+            y_exp = self.TrainGompertzMode1["y_t_exp"].tolist()
+            ym = []
+            U = []
+            L = []
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i + resolution]
+                y_exp_opt = y_exp[i : i + resolution]
+                
+                #Optimization Gompertz
+                Results = Optimization_Gompertz(params = (self.ym_R101, self.U_R101, self.L_R101), t = t_exp_opt, y_exp = y_exp_opt)
+                ym.append(Results.x[0])
+                U.append(Results.x[1])
+                L.append(Results.x[2])
+            
+            self.ym_R101 = st.mean(ym)
+            self.U_R101 = st.mean(U)
+            self.L_R101 = st.mean(L)
         
-    
+        elif self.Operation_mode == 3 or self.Operation_mode == 5:
+            t_exp = self.TrainGompertzMode3_5["time"].tolist()
+            y_exp_R101 = self.TrainGompertzMode3_5["y_t_exp_R101"].tolist()
+            y_exp_R102 = self.TrainGompertzMode3_5["y_t_exp_R102"].tolist()
+            ym_R101 = []
+            U_R101 = []
+            L_R101 = []
+            ym_R102 = []
+            U_R102 = []
+            L_R102 = []
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i + resolution]
+                y_exp_R101_opt = y_exp_R101[i : i + resolution]
+                y_exp_R102_opt = y_exp_R102[i: i + resolution]
+                #Optimization for R101
+                results_R101 = Optimization_Gompertz(params = (self.ym_R101, self.U_R101, self.L_R101), t = t_exp_opt, y_exp = y_exp_R101_opt)
+                #Optimization for R102
+                results_R102 = Optimization_Gompertz(params = (self.ym_R102, self.U_R102, self.L_R102), t = t_exp_opt, y_exp = y_exp_R102_opt)
+                #Storage Values for R101
+                ym_R101.append(results_R101.x[0])
+                U_R101.append(results_R101.x[1])
+                L_R101.append(results_R101.x[2])
+                #Storage values for R102
+                ym_R102.append(results_R102.x[0])
+                U_R102.append(results_R102.x[1])
+                L_R102.append(results_R102.x[2])
+            
+            #Average params for Gompertz in R101
+            self.ym_R101 = st.mean(ym_R101)
+            self.U_R101 = st.mean(U_R101)
+            self.L_R101 = st.mean(L_R101)
+            
+            #Average params for gompertz in R102
+            self.ym_R102 = st.mean(ym_R102)
+            self.U_R102 = st.mean(U_R102)
+            self.L_R102 = st.mean(L_R102)
+        
+        elif self.Operation_mode == 4:
+            t_exp = self.TrainGompertzMode4["time"].tolist()
+            y_exp_R101 = self.TrainGompertzMode4["y_t_exp_R101"].tolist()
+            y_exp_R102 = self.TrainGompertzMode4["y_t_exp_R102"].tolist()
+            ym_R101 = []
+            U_R101 = []
+            L_R101 = []
+            ym_R102 = []
+            U_R102 = []
+            L_R102 = []
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i + resolution]
+                y_exp_R101_opt = y_exp_R101[i : i + resolution]
+                y_exp_R102_opt = y_exp_R102[i: i + resolution]
+                #Optimization for R101
+                results_R101 = Optimization_Gompertz(params = (self.ym_R101, self.U_R101, self.L_R101), t = t_exp_opt, y_exp = y_exp_R101_opt)
+                #Optimization for R102
+                results_R102 = Optimization_Gompertz(params = (self.ym_R102, self.U_R102, self.L_R102), t = t_exp_opt, y_exp = y_exp_R102_opt)
+                #Storage Values for R101
+                ym_R101.append(results_R101.x[0])
+                U_R101.append(results_R101.x[1])
+                L_R101.append(results_R101.x[2])
+                #Storage values for R102
+                ym_R102.append(results_R102.x[0])
+                U_R102.append(results_R102.x[1])
+                L_R102.append(results_R102.x[2])
+            
+            #Average params for Gompertz in R101
+            self.ym_R101 = st.mean(ym_R101)
+            self.U_R101 = st.mean(U_R101)
+            self.L_R101 = st.mean(L_R101)
+            
+            #Average params for gompertz in R102
+            self.ym_R102 = st.mean(ym_R102)
+            self.U_R102 = st.mean(U_R102)
+            self.L_R102 = st.mean(L_R102)
 
-                          
+
 #This will be the way to call method from API
 #singletone
 Training = TrainingBiogasPlant(ST_ini_R101 = 4.9, SV_ini_R101 = 1.5, t_train=60, Volume_V101 = 15) 
 #Loop calling
-for i in range (4):
+while True:
     Training.getData()
     print("-------- Datos de interfaz")
     print(Training.Datainterfaz)
     print("------------Datos de planta")
     print(Training.DataPlant)
     Training.LimitReagentCalculation()
-    # Training.StochoimetricExpenditure()
-    # print(Training.TrainMode4)
-    # Training.OptimizationArrhenius(resolution=2)
-    # print(Training.K_mean_R101)
-    # print(Training.Ea_mean_R101)
-    # print(Training.K_mean_R102)
-    # print(Training.Ea_mean_R102)
+    Training.StochoimetricExpenditure()
+    print(Training.TrainMode4)
+    Training.OptimizationArrhenius(resolution=2)
+    print(Training.K_mean_R101)
+    print(Training.Ea_mean_R101)
+    print(Training.K_mean_R102)
+    print(Training.Ea_mean_R102)
+    time.sleep(600)
       
