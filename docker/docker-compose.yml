@@ -64,6 +64,12 @@ services:
       # - grafana
     networks:
       - laboratorio-default
+    deploy:
+      resources:
+        limits:
+          memory: 16G 
+        reservations:
+          memory: 8G
 
   collector:
     build:
