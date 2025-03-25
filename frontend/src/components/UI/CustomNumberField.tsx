@@ -22,6 +22,9 @@ const CustomNumberField = (props: CustomTextFieldType) => {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
+    if (disableKeyDown) {
+      setValue(event.target.value);
+    }
     resetInactivityTimer();
   };
 
