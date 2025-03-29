@@ -12,13 +12,15 @@ export default class Constants {
   public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 3000;
   public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 600000;
 
-  public static MAX_RETRIES_BEFORE_STOP = 5;
+  public static MAX_RETRIES_BEFORE_STOP: number = 5;
 
-  public static INACTIVITY_TIMEOUT = 5000;
+  public static INACTIVITY_TIMEOUT: number = 5000;
 
-  public static NO_API_CONNECTION =
+  public static NO_API_CONNECTION: string =
     'Error de conexión. Revise su conexión. Si el error persiste comuníquese con el administrador de la red';
-  public static WRONG_PASSWORD = 'Contraseña incorrecta';
+  public static WRONG_PASSWORD: string = 'Contraseña incorrecta';
+
+  public static LAMPS_HEIGHT_VALUES: number[] = [36, 50, 63, 83, 93];
 
   public static GetErrorWithDate = (
     message: string,

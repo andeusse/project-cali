@@ -42,6 +42,8 @@ export type SolarWindParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
     isBatteryConnected: boolean;
     inputOperationMode: OperationModeType;
+    lampsHeight: number;
+    panelsAngle: InputType;
     monocrystallinePanel: SolarPanel;
     policrystallinePanel: SolarPanel;
     flexPanel: SolarPanel;
@@ -428,6 +430,17 @@ export const SOLAR_WIND: SolarWindParameters = {
   trainingMode: false,
   iteration: 1,
   inputProfileEnable: false,
+  lampsHeight: 36,
+  panelsAngle: {
+    disabled: false,
+    value: 0,
+    tooltip: 'Ángulo de los páneles',
+    unit: '°',
+    variableString: '°',
+    min: 0,
+    max: 30,
+    step: 5,
+  },
   steps: {
     disabled: false,
     value: 1,

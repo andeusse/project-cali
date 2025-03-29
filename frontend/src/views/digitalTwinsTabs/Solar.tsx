@@ -10,6 +10,7 @@ import {
   AccordionSummary,
   Typography,
   Button,
+  Slider,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -74,6 +75,24 @@ const Solar = () => {
   const [isParametersExpanded, setIsParametersExpanded] = useState(true);
   const [isMetInformationExpanded, setIsMetInformationExpanded] =
     useState(false);
+
+  const panelsAngleMarks = [
+    {
+      value: system.panelsAngle.min ? system.panelsAngle.min : 0,
+      label: system.panelsAngle.min ? system.panelsAngle.min.toString() : 0,
+    },
+    {
+      value: system.panelsAngle.max ? system.panelsAngle.max : 30,
+      label: system.panelsAngle.max ? system.panelsAngle.max.toString() : 'Max',
+    },
+  ];
+
+  const lampsHeightMarks = Constants.LAMPS_HEIGHT_VALUES.map((x) => {
+    return {
+      value: x,
+      label: `${x.toString()} cm`,
+    };
+  });
 
   const [data, charts, isPlaying, onPlay, onPause, onStop] = useControlPlayer<
     SolarWindParameters,
@@ -390,8 +409,8 @@ const Solar = () => {
     }
   }, [data]);
 
-  const handleChange = (e: any, variableName?: string) => {
-    const newState = setFormState<SolarWindParameters>(e, system, variableName);
+  const handleChange = (e: any) => {
+    const newState = setFormState<SolarWindParameters>(e, system);
     if (newState) {
       setSystem(newState as SolarWindParameters);
     }
@@ -1238,6 +1257,48 @@ const Solar = () => {
                         name="windDensity"
                         handleChange={handleChange}
                       ></CustomNumberField>
+                    </Grid>
+                  </>
+                )}
+                {system.inputOperationMode !== OperationModeType.Mode4 && (
+                  <>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <h3>Configuración Física</h3>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <h4>
+                        {system.panelsAngle.tooltip} [{system.panelsAngle.unit}]
+                      </h4>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <Slider
+                        aria-label="panelsAngle"
+                        value={system.panelsAngle.value}
+                        name="panelsAngle"
+                        valueLabelDisplay="auto"
+                        step={system.panelsAngle.step}
+                        min={system.panelsAngle.min}
+                        max={system.panelsAngle.max}
+                        disabled={system.panelsAngle.disabled}
+                        onChange={handleChange}
+                        marks={panelsAngleMarks}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <h4>Altura Lámparas [cm]</h4>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <Slider
+                        aria-label="lampsHeight"
+                        value={system.lampsHeight}
+                        name="lampsHeight"
+                        min={Math.min(...Constants.LAMPS_HEIGHT_VALUES)}
+                        max={Math.max(...Constants.LAMPS_HEIGHT_VALUES)}
+                        valueLabelDisplay="auto"
+                        onChange={handleChange}
+                        marks={lampsHeightMarks}
+                        step={null}
+                      />
                     </Grid>
                   </>
                 )}
