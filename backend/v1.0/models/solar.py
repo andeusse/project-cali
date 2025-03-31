@@ -323,6 +323,13 @@ class Solar(Resource):
       solarWind['windTurbineRevolutions'] = 0.0
     
     PV_Results = twinPVWF.arrayPowerOutput(True, deratingFactorList, monoModuleState, polyModuleState, flexiModuleState, cdteModuleState, temperature, solarRadiation1, solarRadiation2)
+    lampsHeight= data["lampsHeight"]["value"]
+    panelsAngle = data["panelsAngle"]["value"]
+    if lampsHeight == 36 and panelsAngle == 0:
+      solarCoefficient = 1.0
+    else:
+      solarCoefficient = ((1-panelsAngle/80.0)+(1-(lampsHeight-36)/110.0))/2.0-0.03
+    PV_Results[0] = PV_Results[0] * solarCoefficient
     WT_Results = twinPVWF.WT_PowerOutput(True, turbineState, turbineEfficiency, windDensity, windSpeed)
     
     if not (data["inputOperationMode"] == 'Mode2' and hybridState):
