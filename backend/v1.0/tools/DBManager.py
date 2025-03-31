@@ -44,9 +44,9 @@ class InfluxDBmodel:
             return 'An error ocurred writing the InfluxDB Database'
         
     # %%  InfluxDB Writer         
-    def InfluxDBwriterBiogasTraining(self, measurement, device, mode, model, timestamp):
+    def InfluxDBwriterBiogasTraining(self, measurement, device, mode, model, variable, value, timestamp):
         write_api = self.influxDBclient.write_api(write_options=SYNCHRONOUS)
-        payload = influxdb_client.Point(measurement).tag('device',device).field('mode', mode).field('model', model).time(timestamp, write_precision=WritePrecision.S)
+        payload = influxdb_client.Point(measurement).tag('device',device).field('mode', mode).field('model', model).field(variable, value).time(timestamp, write_precision=WritePrecision.S)
         
         try:
             write_api.write(self.bucket, self.org, payload)
@@ -86,11 +86,22 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["location"] == "''' + location + '''")
             |> filter(fn: (r) => r["period"] == "0")'''
         elif type == 4:
-            self.query ='''from(bucket: "''' + self.bucket + '''")
-            |> range(start: -'''+train_time+'''m, stop: now())
-            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
-            |> filter(fn: (r) => r["device"] == "P104" or r["device"] == "P101" or r["device"] == "P102" or r["device"] == "R101" or r["device"] == "R102" or r["device"] == "V101" or r["device"] == "V102" or r["device"] == "V107")
-            '''
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: -{train_time}m, stop: now())
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) => 
+                r["device"] == "P104" or 
+                r["device"] == "P101" or 
+                r["device"] == "P102" or 
+                r["device"] == "R101" or 
+                r["device"] == "R102" or 
+                r["device"] == "V101" or 
+                r["device"] == "V102" or 
+                r["device"] == "V107" or
+                r["device"] == "TK100"
+            )'''
+
         elif type == 5:
             self.query ='''from(bucket: "''' + self.bucket + '''")
             |> range(start: 0)
@@ -105,6 +116,14 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["_field"] == "''' + variable + '''")
             |> aggregateWindow(every: 3m, fn: mean, createEmpty: false)
             |> last()'''
+        
+        elif type == 7:
+            self.query ='''from(bucket: "''' + self.bucket + '''")
+            |> range(start: 0)
+            |> filter(fn: (r) => r["_measurement"] == "''' + measurement + '''")
+            |> filter(fn: (r) => r["_field"] == "SE-107" or r["_field"] == "SE-108" or r["_field"] == "SE-109")
+            |> last()
+            '''
         else:
             self.query = "Tipo de query inválido"
         return self.query
