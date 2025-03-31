@@ -4,13 +4,13 @@ export default class Constants {
   public static QUERY_TIME_OFFLINE: number = 2000;
   public static QUERY_TIME_ONLINE: number = 3000;
 
-  public static QUERY_TIME_OFFLINE_TOWER: number = 4000;
-  public static QUERY_TIME_ONLINE_TOWER: number = 5000;
+  public static QUERY_TIME_OFFLINE_TOWER: number = 10000;
+  public static QUERY_TIME_ONLINE_TOWER: number = 10000;
 
   public static QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS: number = 3000;
-  public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 600000;
-  public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 3000;
-  public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 600000;
+  public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 480000;
+  public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 480000;
+  public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 480000;
 
   public static MAX_RETRIES_BEFORE_STOP: number = 5;
 

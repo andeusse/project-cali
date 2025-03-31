@@ -13,6 +13,7 @@ services:
       - influxdb-storage-data:/var/lib/influxdb2
       - influxdb-storage-config:/etc/influxdb2
     environment:
+      - DOCKER_INFLUXDB_REPORTING_DISABLED=false
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
       - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
