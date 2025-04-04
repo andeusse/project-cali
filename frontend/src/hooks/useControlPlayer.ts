@@ -15,11 +15,6 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   model: T
 ) => {
   const dispatch = useAppDispatch();
-
-  const [intervalState, setIntervalState] = useState<NodeJS.Timer | undefined>(
-    undefined
-  );
-
   const [failureCount, setFailureCount] = useState(0);
 
   const [data, setData] = useState<G | undefined>();
@@ -56,37 +51,40 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   const queryApi = useCallback(() => {
     modelsAPI<T, resp<G>>(url, model)
       .then((resp) => {
-        model.iteration += 1;
-        setData((_) => {
-          const d = resp.data.model;
-          for (const key in d) {
+        if (isPlaying) {
+          model.iteration += 1;
+          setData((_) => {
+            const d = resp.data.model;
+            for (const key in d) {
+              setHistoricData((oldState: any) => {
+                if (oldState[key] === undefined) {
+                  oldState[key] = [];
+                }
+                oldState[key].push(d[key]);
+                return oldState;
+              });
+            }
             setHistoricData((oldState: any) => {
-              if (oldState[key] === undefined) {
-                oldState[key] = [];
+              if (oldState['time'] === undefined) {
+                const newDate = moment();
+                oldState['time'] = [newDate];
+              } else {
+                const newDate = moment(
+                  oldState['time'][oldState['time'].length - 1]
+                ).add(
+                  model.timeMultiplier.value *
+                    Math.floor(model.queryTime / 1000),
+                  's'
+                );
+                oldState['time'].push(newDate);
               }
-              oldState[key].push(d[key]);
               return oldState;
             });
-          }
-          setHistoricData((oldState: any) => {
-            if (oldState['time'] === undefined) {
-              const newDate = moment();
-              oldState['time'] = [newDate];
-            } else {
-              const newDate = moment(
-                oldState['time'][oldState['time'].length - 1]
-              ).add(
-                model.timeMultiplier.value * Math.floor(model.queryTime / 1000),
-                's'
-              );
-              oldState['time'].push(newDate);
-            }
-            return oldState;
+            setCharts(data2Graph(historicData));
+            return d;
           });
-          setCharts(data2Graph(historicData));
-          return d;
-        });
-        resetErrorState();
+          resetErrorState();
+        }
       })
       .catch((err: AxiosError<errorResp>) => {
         setFailureCount((prev) => prev + 1);
@@ -102,16 +100,13 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         queryApi();
       }
     }, model.queryTime);
-    setIntervalState(interval);
     return () => {
-      clearInterval(intervalState);
+      clearInterval(interval);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaying]);
+  }, [isPlaying, queryApi, model]);
 
   const onPlay = () => {
     setIsPlaying(true);
-    queryApi();
   };
 
   const resetErrorState = () => {
@@ -124,13 +119,11 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   };
 
   const onPause = () => {
-    clearInterval(intervalState);
     setIsPlaying(false);
     resetErrorState();
   };
 
   const onStop = () => {
-    clearInterval(intervalState);
     model.iteration = 1;
     setIsPlaying(false);
     setData(undefined);
