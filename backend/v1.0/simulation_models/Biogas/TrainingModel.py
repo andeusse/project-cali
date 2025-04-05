@@ -1255,6 +1255,7 @@ class TrainingBiogasPlant:
                         self.Vsus_inj_total_R101 = self.Vsus_inj_total_R101
                         
                     else:
+
                         self.Csus_ini_SV_R101 = self.TrainMode2["Csus_exp"].iloc[0]  
                         self.Csus_ini_ST_R101 = self.TrainMode2["Csus_exp_ST"].iloc[0] 
                         self.Vsus_inj_total_R101 = self.TrainMode2["Vsus_inj_R101"].iloc[0]
@@ -1313,24 +1314,26 @@ class TrainingBiogasPlant:
                     
                     Q_P104 = (self.DataPlant["FE-104"][i-1])/60                        #Convert[L/h] to [LPM]
                     #Conditions for estimation of accumulated pressure in V101
-                    if (self.P_V101*1.25) < (self.DataPlant["P_V101"].iloc[i-1]): 
-                        print("Pressure drop")      
-                        self.Pi_V101 = self.P_V101
-                        self.Pacum_V101_i = self.Pacum_V101 
-                    
+                    if self.P_V101 > 2:
+                        if (self.P_V101*1.04) < (self.DataPlant["P_V101"].iloc[i-1]): 
+                            print("Pressure drop")      
+                            self.Pi_V101 = self.P_V101
+                            self.Pacum_V101_i = self.Pacum_V101
+                        
                     #Conditions for estimation of accumulated pressure in V102
-                    if (self.P_V102*1.25) < (self.DataPlant["P_V102"].iloc[i-1]):
-                        self.Pi_V102 = self.P_V102
-                        self.Pacum_V102_i = self.Pacum_V102
+                    if self.P_V102 > 2:
+                        if (self.P_V102*1.04) < (self.DataPlant["P_V102"].iloc[i-1]):
+                            self.Pi_V102 = self.P_V102
+                            self.Pacum_V102_i = self.Pacum_V102
                     
                     #Conditions for estimation of accumulated pressure in V107
-                    if (self.P_V107*1.25) < (self.DataPlant["P_V107"].iloc[i-1]):
-                        self.Pi_V107 = self.P_V107
-                        self.Pacum_V107_i = self.Pacum_V107
+                    if self.P_V107 > 2:
+                        if (self.P_V107*1.04) < (self.DataPlant["P_V107"].iloc[i-1]):
+                            self.Pi_V107 = self.P_V107
+                            self.Pacum_V107_i = self.Pacum_V107
                 else:
                     tp = 0
                     Q_P104 = 0  #Flow of pump at the beginning
-                    
                     
                 #Estimate the accumulated pressure
                 #V101
@@ -1366,16 +1369,16 @@ class TrainingBiogasPlant:
                 
                 #Estimate the storage and accumulated mol for component in biogas
                 #Storage compounds
-                self.mol_sto_CH4_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CH4_V101"].iloc[i]      #mol
-                self.mol_sto_CO2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_CO2_V101"].iloc[i]      #mol
-                self.mol_sto_O2_V101 = self.n_biogas_sto_V101 *  self.DataPlant["x_O2_V101"].iloc[i]        #mol
+                self.mol_sto_CH4_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_CH4_V101"].iloc[i]/100)      #mol
+                self.mol_sto_CO2_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_CO2_V101"].iloc[i]/100)      #mol
+                self.mol_sto_O2_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_O2_V101"].iloc[i]/100)        #mol
                 self.mol_sto_H2S_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_H2S_V101"].iloc[i]/1000000)      #mol
                 self.mol_sto_H2_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_H2_V101"].iloc[i]/1000000)        #mol
             
                 #Accumulated compounds
-                self.mol_acum_CH4_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CH4_V101"].iloc[i]      #mol
-                self.mol_acum_CO2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_CO2_V101"].iloc[i]      #mol
-                self.mol_acum_O2_V101 = self.n_biogas_acum_V101 *  self.DataPlant["x_O2_V101"].iloc[i]        #mol
+                self.mol_acum_CH4_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_CH4_V101"].iloc[i]/100)     #mol
+                self.mol_acum_CO2_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_CO2_V101"].iloc[i]/100)      #mol
+                self.mol_acum_O2_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_O2_V101"].iloc[i]/100)        #mol
                 self.mol_acum_H2S_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_H2S_V101"].iloc[i]/1000000)      #mol
                 self.mol_acum_H2_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_H2_V101"].iloc[i]/1000000)       #mol
                 
@@ -1391,19 +1394,24 @@ class TrainingBiogasPlant:
                     x_substrate = 1
                     x_inoculum = 0
                 else:
-                    Vtotal = self.Vsus_inj_total_R101 + self.Level_R101_actual
-                    x_inoculum = self.Level_R101_actual / Vtotal
-                    x_substrate = self.Vsus_inj_total_R101/ Vtotal
+                    x_substrate = self.Vsus_inj_total_R101/ self.Level_R101_actual
+                    x_inoculum = (1 - x_substrate)
                 
                 #Volatile solids
                 mol_ini = self.Csus_ini_SV_R101 * (self.Level_R101_actual)                            #mol
-                mol_in_R101 = Q_P104 * tp * self.Csv_sus                                              #mol 
-                mol_expended = (self.mol_acum_CH4_V101) * (1/self.s_CH4)                              #mol
+                mol_in_R101 = Q_P104 * tp * self.Csv_sus                                              #mol
+                if x_substrate == 0:
+                    mol_expended = 0
+                else: 
+                    mol_expended = (self.mol_acum_CH4_V101) * (1/(x_substrate*self.s_CH4))            #mol
                 mol_out_R101 = (Q_P104 * tp * self.Csus_ini_SV_R101)   
                 self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_out_R101 - mol_expended)/(self.Level_R101_actual)    #mol/L
                 self.SV_g = self.Csus_ini_SV_R101 * (self.MW_sustrato*x_substrate + self.MW_inocum_ini_R101*x_inoculum) * self.Level_R101_actual              #Volatile solids g
                 SV_g_Gompertz.append(self.SV_g)                                                                 #storage grams of volatile solids  
-
+                # print("molin:", mol_in_R101)
+                # print("molini: ", mol_ini)
+                # print("mol expended", mol_expended)
+                # print("mol out", mol_out_R101)
                 #Total solids
                 mol_ini_ST = self.Csus_ini_ST_R101 * (self.Level_R101_actual)                         #mol
                 mol_in_R101_ST = Q_P104 * tp * self.Cst_sus                                           #mol
@@ -1485,6 +1493,7 @@ class TrainingBiogasPlant:
             self.ST_R01 = ((self.Csus_ST_R101)/(self.rho*x_substrate + self.rho_ini_R101*x_inoculum))*100
             self.x_R101 = (abs(self.Cst_sus - self.Csus_ini_SV_R101)/self.Cst_sus) * 100
             self.OC_R101 = self.Csus_SV_R01/(tp_global_OC/1440)
+            self.TrainMode2.to_csv("Train2.csv")
             
         #---------------------------------------------
         #--------- Variables to train Operation Mode 3 or 5
@@ -2743,8 +2752,8 @@ class TrainingBiogasPlant:
         #Absollute humidity estimation
         self.AH_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = float(self.DataPlant["rh_V102"].iloc[-1]), T = float(self.DataPlant["T_V102"].iloc[-1]))
         #Estimation of normal volume of biogas
-        self.Vnorm_bio_V102 = ((self.Pacum_V102*6894.76)*(self.Volume_V102/1000)*273.15)/(100000*float(self.DataPlant["T_V102"].iloc[-1]))
-        self.Vnorm_bio_sto_V102 = ((self.P_V102*6894.76)*(self.Volume_V102/1000)*273.15)/(100000*float(self.DataPlant["T_V102"].iloc[-1]))
+        self.Vnorm_bio_V102 = ((self.Pacum_V102*6894.76)*(self.Volume_V102/1000)*273.15)/(100000*float(self.DataPlant["T_V102"].iloc[-1]+273.15))
+        self.Vnorm_bio_sto_V102 = ((self.P_V102*6894.76)*(self.Volume_V102/1000)*273.15)/(100000*float(self.DataPlant["T_V102"].iloc[-1]+273.15))
 
         #Estimation moles of water
         MW_H2O = 18
@@ -2827,8 +2836,8 @@ class TrainingBiogasPlant:
         #Absollute humidity estimation
         self.AH_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = float(self.DataPlant["rh_V107"].iloc[-1]), T = float(self.DataPlant["T_V107"].iloc[-1]))
         #Estimation of normal volume of biogas
-        self.Vnorm_bio_V107 = ((self.Pacum_V107*6894.76)*(self.Volume_V107/1000)*273.15)/(100000*float(self.DataPlant["T_V107"].iloc[-1]))
-        self.Vnorm_bio_sto_V107 = ((self.P_V107*6894.76)*(self.Volume_V107/1000)*273.15)/(100000*float(self.DataPlant["T_V107"].iloc[-1]))
+        self.Vnorm_bio_V107 = ((self.Pacum_V107*6894.76)*(self.Volume_V107/1000)*273.15)/(100000*float(self.DataPlant["T_V107"].iloc[-1]+273.15))
+        self.Vnorm_bio_sto_V107 = ((self.P_V107*6894.76)*(self.Volume_V107/1000)*273.15)/(100000*float(self.DataPlant["T_V107"].iloc[-1]+273.15))
         #Estimation moles of water
         MW_H2O = 18
         self.mol_acum_H2O_V107 = (self.AH_V107 * self.Vnorm_bio_V107 )/MW_H2O*1000 #mol H2O
@@ -2919,56 +2928,39 @@ class TrainingBiogasPlant:
         timestamp = self.DataPlant["_time"].iloc[-1]  # Convert to nanoseconds
         
         if self.Model == "Arrhenius" and (self.Operation_mode == 1 or self.Operation_mode == 2):
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'K_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.K_mean_R101), timestamp=timestamp) 
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'Ea_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.Ea_mean_R101), timestamp=timestamp)  
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = float(self.K_mean_R101), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = float(self.Ea_mean_R101), timestamp=timestamp)  
         
         elif self.Model == "ADM1" and (self.Operation_mode == 1 or self.Operation_mode == 2):
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'K_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.K_mean_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
+                                                    model = self.Model, variable = f'Mode{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = float(self.K_mean_R101), timestamp=timestamp)
         
         elif self.Model == "Gompertz" and (self.Operation_mode == 1 or self.Operation_mode == 2):
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'ym_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.ym_R101), timestamp=timestamp) 
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'U_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.U_R101), timestamp=timestamp)
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'L_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.L_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?U_R101?{name}', value = float(self.U_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R101?{name}', value = float(self.L_R101), timestamp=timestamp)
 
         elif self.Model == "Arrhenius" and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'K_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.K_mean_R101), timestamp=timestamp) 
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'Ea_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.Ea_mean_R101), timestamp=timestamp)
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'Ea_R102_{name}_{self.Model}_{self.Operation_mode}', value = float(self.K_mean_R102), timestamp=timestamp) 
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'Ea_R102_{name}_{self.Model}_{self.Operation_mode}', value = float(self.Ea_mean_R102), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = float(self.K_mean_R101), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = float(self.Ea_mean_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = float(self.K_mean_R102), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = float(self.Ea_mean_R102), timestamp=timestamp)
         
         elif self.Model == "ADM1"  and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'K_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.K_mean_R101), timestamp=timestamp)
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'K_R102_{name}_{self.Model}_{self.Operation_mode}', value = float(self.K_mean_R102), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = float(self.K_mean_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R102?{name}', value = float(self.K_mean_R102), timestamp=timestamp)
         
         elif self.Model == "Gompertz" and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'ym_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.ym_R101), timestamp=timestamp) 
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'U_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.U_R101), timestamp=timestamp)
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'L_R101_{name}_{self.Model}_{self.Operation_mode}', value = float(self.L_R101), timestamp=timestamp)
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'ym_R102_{name}_{self.Model}_{self.Operation_mode}', value = float(self.ym_R102), timestamp=timestamp) 
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'U_R102_{name}_{self.Model}_{self.Operation_mode}', value = float(self.U_R102), timestamp=timestamp)
-            self.influxDB.InfluxDBwriterBiogasTraining(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'L_R102_{name}_{self.Model}_{self.Operation_mode}', value = float(self.L_R102), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?U_R101?{name}', value = float(self.U_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R101?{name}', value = float(self.L_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R102?{name}', value = float(self.ym_R102), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?U_R102?{name}', value = float(self.U_R102), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R102?{name}', value = float(self.L_R102), timestamp=timestamp)
         
-        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'N_H2S_abs{name}_{self.Model}_{self.Operation_mode}', value=self.mol_H2S_ads, timestamp=timestamp)
-        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'N_NH3_abs{name}_{self.Model}_{self.Operation_mode}', value=self.mol_NH3_ads, timestamp=timestamp)
-        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'N_H2O_abs{name}_{self.Model}_{self.Operation_mode}', value=self.mol_H2O_ads, timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_H2S_abs?{name}', value=self.mol_H2S_ads, timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_NH3_abs?{name}', value=self.mol_NH3_ads, timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_H2O_abs?{name}', value=self.mol_H2O_ads, timestamp=timestamp)
 
 # #This will be the way to call method from API
 # #singletone

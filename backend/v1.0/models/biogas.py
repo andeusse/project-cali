@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from simulation_models.Biogas import TrainingModel
 from tools import DBManager
+import pandas as pd
 import os
 import json
 
@@ -51,7 +52,8 @@ class Biogas(Resource):
         attempts += 1
       finally:
         influxDB.InfluxDBclose()
-
+    
+    print(trainingData, flush=True)
     return trainingData
 
   def post(self):
@@ -109,8 +111,9 @@ class Biogas(Resource):
       Model = data["operationModelType"]
       biogas_plant.StochoimetricExpenditure(Model=Model)
       print(biogas_plant.TrainMode2, flush=True)
+      #biogas_plant.TrainMode2.to_csv("TraningMode2.csv")
       if Model == "Arrhenius":
-        biogas_plant.OptimizationArrhenius(resolution = 2)
+        biogas_plant.OptimizationArrhenius(resolution = 3)
         biogas_output["K_R101"] = biogas_plant.K_mean_R101
         biogas_output["Ea_R101"] = biogas_plant.Ea_mean_R101
         if (biogas_plant.Operation_mode == 3 or biogas_plant.Operation_mode == 4 or biogas_plant.Operation_mode == 5):
