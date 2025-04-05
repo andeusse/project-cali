@@ -4,8 +4,8 @@ export default class Constants {
   public static QUERY_TIME_OFFLINE: number = 2000;
   public static QUERY_TIME_ONLINE: number = 3000;
 
-  public static QUERY_TIME_OFFLINE_TOWER: number = 10000;
-  public static QUERY_TIME_ONLINE_TOWER: number = 10000;
+  public static QUERY_TIME_OFFLINE_TOWER: number = 30000;
+  public static QUERY_TIME_ONLINE_TOWER: number = 30000;
 
   public static QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS: number = 3000;
   public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 480000;
