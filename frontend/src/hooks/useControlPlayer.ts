@@ -25,9 +25,20 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
 
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const [firstQuery, setFirstQuery] = useState(true);
+
   const [errorMessage, setErrorMessage] = useState<
     AxiosError<errorResp> | undefined
   >(undefined);
+
+  const resetErrorState = useCallback(() => {
+    dispatch(
+      setError({
+        isShown: false,
+        message: '',
+      })
+    );
+  }, [dispatch]);
 
   useEffect(() => {
     if (
@@ -51,7 +62,8 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
   const queryApi = useCallback(() => {
     modelsAPI<T, resp<G>>(url, model)
       .then((resp) => {
-        if (isPlaying) {
+        if (isPlaying || firstQuery) {
+          setFirstQuery(false);
           model.iteration += 1;
           setData((_) => {
             const d = resp.data.model;
@@ -91,8 +103,7 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
         setErrorMessage(err);
       })
       .finally(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [historicData, isPlaying, model, url]);
+  }, [firstQuery, historicData, isPlaying, model, resetErrorState, url]);
 
   useEffect(() => {
     const interval: NodeJS.Timer = setInterval(() => {
@@ -107,25 +118,19 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
 
   const onPlay = () => {
     setIsPlaying(true);
-  };
-
-  const resetErrorState = () => {
-    dispatch(
-      setError({
-        isShown: false,
-        message: '',
-      })
-    );
+    queryApi();
   };
 
   const onPause = () => {
     setIsPlaying(false);
+    setFirstQuery(true);
     resetErrorState();
   };
 
   const onStop = () => {
     model.iteration = 1;
     setIsPlaying(false);
+    setFirstQuery(true);
     setData(undefined);
     setHistoricData({});
     setCharts(undefined);
