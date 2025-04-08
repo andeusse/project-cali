@@ -585,13 +585,13 @@ export const SOLAR_WIND: SolarWindParameters = {
 
 const COMMON_VARIABLES: DiagramVariableType[] = [
   {
-    name: 'Radiación solar 1',
+    name: 'Radiación solar 2',
     variable: 'inputSolarRadiation1',
     unit: 'W / m²',
     isShown: false,
   },
   {
-    name: 'Radiación solar 2',
+    name: 'Radiación solar 1',
     variable: 'inputSolarRadiation2',
     unit: 'W / m²',
     isShown: false,

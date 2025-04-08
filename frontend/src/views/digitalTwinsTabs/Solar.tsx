@@ -1198,7 +1198,7 @@ const Solar = () => {
                           disabled={
                             system.inputOfflineOperation || system.trainingMode
                           }
-                          variableName="Radiación solar 1"
+                          variableName="Radiación solar 2"
                           arrayDisabled={!system.inputOfflineOperation}
                           steps={system.steps.value}
                         ></ToggleArrayCustomNumberField>
