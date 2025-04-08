@@ -409,8 +409,8 @@ const Solar = () => {
     }
   }, [data]);
 
-  const handleChange = (e: any) => {
-    const newState = setFormState<SolarWindParameters>(e, system);
+  const handleChange = (e: any, variableName?: string) => {
+    const newState = setFormState<SolarWindParameters>(e, system, variableName);
     if (newState) {
       setSystem(newState as SolarWindParameters);
     }
@@ -1280,7 +1280,7 @@ const Solar = () => {
                         min={system.panelsAngle.min}
                         max={system.panelsAngle.max}
                         disabled={system.panelsAngle.disabled}
-                        onChange={handleChange}
+                        onChange={(e: any) => handleChange(e)}
                         marks={panelsAngleMarks}
                       />
                     </Grid>
@@ -1295,7 +1295,7 @@ const Solar = () => {
                         min={Math.min(...Constants.LAMPS_HEIGHT_VALUES)}
                         max={Math.max(...Constants.LAMPS_HEIGHT_VALUES)}
                         valueLabelDisplay="auto"
-                        onChange={handleChange}
+                        onChange={(e: any) => handleChange(e)}
                         marks={lampsHeightMarks}
                         step={null}
                       />
