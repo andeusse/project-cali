@@ -2,7 +2,7 @@ import { saveAs } from 'file-saver';
 import { utils, write } from 'xlsx';
 
 export const DownloadCSV = (
-  data: Array<Array<number | string>>,
+  data: Array<Array<number | string | moment.Moment>>,
   fileName: string
 ) => {
   const worksheet = utils.json_to_sheet(data);
@@ -14,7 +14,7 @@ export const DownloadCSV = (
 };
 
 export const DownloadExcel = (
-  data: Array<Array<number | string>>,
+  data: Array<Array<number | string | moment.Moment>>,
   fileName: string
 ) => {
   const worksheet = utils.json_to_sheet(data);

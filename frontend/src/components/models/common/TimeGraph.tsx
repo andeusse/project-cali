@@ -184,21 +184,25 @@ const TimeGraph = (props: Props) => {
           icon={<ZoomOutMapIcon fontSize="inherit" />}
           tooltip="Reset Zoom"
           handleClick={handleResetZoom}
+          disabled={isPlaying}
         ></CustomIconButton>
         <CustomIconButton
           icon={<FileDownloadIcon fontSize="inherit" />}
           tooltip="Download CSV"
           handleClick={handleSaveCSV}
+          disabled={isPlaying}
         ></CustomIconButton>
         <CustomIconButton
           icon={<GridOnIcon fontSize="inherit" />}
           tooltip="Download XLSX"
           handleClick={handleDownloadExcel}
+          disabled={isPlaying}
         ></CustomIconButton>
         <CustomIconButton
           icon={<ImageIcon fontSize="inherit" />}
           tooltip="Download chart PNG"
           handleClick={handleSavePNG}
+          disabled={isPlaying}
         ></CustomIconButton>
         <CustomIconButton
           icon={<DeleteIcon fontSize="inherit" />}

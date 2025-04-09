@@ -23,16 +23,30 @@ type Props = {
     | undefined;
   icon: React.ReactNode;
   handleClick: () => void;
+  disabled?: boolean;
 };
 
 export const CustomIconButton = (props: Props) => {
-  const { tooltip, color = 'info', icon, handleClick } = props;
+  const {
+    tooltip,
+    color = 'info',
+    icon,
+    handleClick,
+    disabled = false,
+  } = props;
 
   return (
     <Tooltip title={tooltip} placement="top" arrow>
-      <IconButton color={color} size="large" onClick={handleClick}>
-        {icon}
-      </IconButton>
+      <span>
+        <IconButton
+          color={color}
+          size="large"
+          onClick={handleClick}
+          disabled={disabled}
+        >
+          {icon}
+        </IconButton>
+      </span>
     </Tooltip>
   );
 };
