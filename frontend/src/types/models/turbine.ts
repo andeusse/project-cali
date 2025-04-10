@@ -223,7 +223,7 @@ const BATTERY: Battery = {
   },
   chargeDischargeEfficiency: {
     disabled: true,
-    value: 98,
+    value: 96,
     tooltip: 'Eficiencia de carga y descarga',
     unit: '%',
     variableString: 'η',
