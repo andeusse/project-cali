@@ -182,8 +182,8 @@ class TwinPVWF:
         self.n_hybrid = n_hybrid # Eficiencia de inversor hibrido en %
         self.delta_C = 0.6 # Coeficiente de temperatura bateria en %/°C (Se calcula entre 20-30°C)
         self.sigma_bat = 9.6e-7 # Coeficiente de descarga de baterias en %/s (a 20°C)
-        self.n_batCharge = 98.0 # Eficiencia de carga de la bateria en %
-        self.n_batDischarge = 98.0 # Eficiencia de descarga de la bateria en %
+        self.n_batCharge = 95.0 # Eficiencia de carga de la bateria en %
+        self.n_batDischarge = 95.0 # Eficiencia de descarga de la bateria en %
         self.chargeMatrix = [[-0.00152, 0.05509, 0.15782], 
                              [0.00165, -0.05758, -0.39049], 
                              [-0.00024, 0.01018, 0.52391], 
@@ -195,17 +195,17 @@ class TwinPVWF:
                                 [-0.00021, -0.00306, 1.93286]]
         if self.parallel:
             if batteries == 1:
-                self.cap_bat = 50.0 # Capacidad de las baterias en Ah
+                self.cap_bat = 110.0 # Capacidad de las baterias en Ah
                 self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
                 self.CA_Current = 50.0 # Corriente de arranque en Amperios
                 self.maxBatteryChargeCurrent = 12.5 # Corriente máxima de carga en amperios
             else:
-                self.cap_bat = 100.0 # Capacidad de las baterias en Ah
+                self.cap_bat = 220.0 # Capacidad de las baterias en Ah
                 self.delta_V = -0.015 # Coeficiente de compensación de temperatura V/°C
                 self.CA_Current = 100.0 # Corriente de arranque en Amperios
                 self.maxBatteryChargeCurrent = 25.0 # Corriente máxima de carga en amperios
         else:
-            self.cap_bat = 100.0 # Capacidad de las baterias en Ah
+            self.cap_bat = 220.0 # Capacidad de las baterias en Ah
             self.delta_V = -0.03 # Coeficiente de compensación de temperatura V/°C
             self.CA_Current = 50.0 # Corriente de arranque en Amperios
             self.maxBatteryChargeCurrent = 12.5 # Corriente máxima de carga en amperios
@@ -330,7 +330,7 @@ class TwinPVWF:
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
 
         # Cálculo de nuevo SOC
-        n_bat = self.n_batCharge if self.P_bat > 0.0 else self.n_batDischarge
+        n_bat = self.n_batCharge if self.P_bat > 0.0 else (200.0-self.n_batDischarge)
         self.SOC = (SOC/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * n_bat / 100) / (self.corrected_cap_bat * 3600)) 
 
         # Cálculo de voltaje de batería
@@ -485,7 +485,7 @@ class TwinPVWF:
         self.corrected_cap_bat = self.cap_bat * (1 + (self.delta_C / 100) * (T_bat - 25))
 
         # Cálculo de nuevo SOC
-        n_bat = self.n_batCharge if self.P_bat > 0.0 else self.n_batDischarge
+        n_bat = self.n_batCharge if self.P_bat > 0.0 else (200.0-self.n_batDischarge)
         self.SOC = (SOC/100) * (1 - (self.sigma_bat * delta_t / 100) ) + ((self.I_bat * delta_t * n_bat / 100) / (self.corrected_cap_bat * 3600)) 
          
         # Cálculo de voltaje de batería
