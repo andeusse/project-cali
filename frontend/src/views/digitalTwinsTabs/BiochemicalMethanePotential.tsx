@@ -92,31 +92,25 @@ const BiochemicalMethanePotential = (props: Props) => {
     values: {},
   });
 
-  const [selectedTrainingDataA, setSelectedTrainingDataA] =
-    useState<string>('Default');
-
   const [trainingDataB, settrainingDataB] = useState<TrainingDataType>({
     names: [],
     values: {},
   });
 
-  const [selectedTrainingDataB, setSelectedTrainingDataB] =
-    useState<string>('Default');
-
   const setDataA = useCallback(
     (
       old: BiochemicalMethanePotentialParameters
     ): BiochemicalMethanePotentialParameters => {
-      if (selectedTrainingDataA !== 'Default') {
+      if (system.selectedTrainingDataA !== 'Default') {
         const newState = { ...old };
         newState.kineticKSideA.value =
-          trainingDataA.values[selectedTrainingDataA].activationEnergyR101 ??
-          newState.kineticKSideA.value;
+          trainingDataA.values[system.selectedTrainingDataA]
+            .activationEnergyR101 ?? newState.kineticKSideA.value;
         newState.kineticEaSideA.value =
-          trainingDataA.values[selectedTrainingDataA].exponentialFactorR101 ??
-          newState.kineticEaSideA.value;
+          trainingDataA.values[system.selectedTrainingDataA]
+            .exponentialFactorR101 ?? newState.kineticEaSideA.value;
         newState.kineticLambdaSideA.value =
-          trainingDataA.values[selectedTrainingDataA].lambdaR101 ??
+          trainingDataA.values[system.selectedTrainingDataA].lambdaR101 ??
           newState.kineticLambdaSideA.value;
         return newState;
       } else {
@@ -138,23 +132,23 @@ const BiochemicalMethanePotential = (props: Props) => {
         return newState;
       }
     },
-    [selectedTrainingDataA, trainingDataA.values]
+    [system.selectedTrainingDataA, trainingDataA.values]
   );
 
   const setDataB = useCallback(
     (
       old: BiochemicalMethanePotentialParameters
     ): BiochemicalMethanePotentialParameters => {
-      if (selectedTrainingDataB !== 'Default') {
+      if (system.selectedTrainingDataB !== 'Default') {
         const newState = { ...old };
         newState.kineticKSideB.value =
-          trainingDataB.values[selectedTrainingDataB].activationEnergyR101 ??
-          newState.kineticKSideB.value;
+          trainingDataB.values[system.selectedTrainingDataB]
+            .activationEnergyR101 ?? newState.kineticKSideB.value;
         newState.kineticEaSideB.value =
-          trainingDataB.values[selectedTrainingDataB].exponentialFactorR101 ??
-          newState.kineticEaSideB.value;
+          trainingDataB.values[system.selectedTrainingDataB]
+            .exponentialFactorR101 ?? newState.kineticEaSideB.value;
         newState.kineticLambdaSideB.value =
-          trainingDataB.values[selectedTrainingDataB].lambdaR101 ??
+          trainingDataB.values[system.selectedTrainingDataB].lambdaR101 ??
           newState.kineticLambdaSideB.value;
         return newState;
       } else {
@@ -176,7 +170,7 @@ const BiochemicalMethanePotential = (props: Props) => {
         return newState;
       }
     },
-    [selectedTrainingDataB, trainingDataB.values]
+    [system.selectedTrainingDataB, trainingDataB.values]
   );
 
   useEffect(() => {
@@ -188,8 +182,13 @@ const BiochemicalMethanePotential = (props: Props) => {
       false
     )
       .then((resp) => {
-        if (!resp.names.includes(selectedTrainingDataA)) {
-          setSelectedTrainingDataA('Default');
+        if (!resp.names.includes(system.selectedTrainingDataA)) {
+          handleChange({
+            target: {
+              name: 'selectedTrainingDataA',
+              value: 'Default',
+            },
+          });
         }
         settrainingDataA(resp);
         setSystem((old) => setDataA(old));
@@ -217,8 +216,13 @@ const BiochemicalMethanePotential = (props: Props) => {
       false
     )
       .then((resp) => {
-        if (!resp.names.includes(selectedTrainingDataB)) {
-          setSelectedTrainingDataB('Default');
+        if (!resp.names.includes(system.selectedTrainingDataB)) {
+          handleChange({
+            target: {
+              name: 'selectedTrainingDataB',
+              value: 'Default',
+            },
+          });
         }
         settrainingDataB(resp);
         setSystem((old) => setDataB(old));
@@ -241,21 +245,13 @@ const BiochemicalMethanePotential = (props: Props) => {
     setSystem((old) => {
       return setDataA(old);
     });
-  }, [selectedTrainingDataA, setDataA, trainingDataA.values]);
+  }, [system.selectedTrainingDataA, setDataA, trainingDataA.values]);
 
   useEffect(() => {
     setSystem((old) => {
       return setDataB(old);
     });
-  }, [selectedTrainingDataB, setDataB, trainingDataB.values]);
-
-  const handleTrainingDataAChange = (e: any) => {
-    setSelectedTrainingDataA(e.target.value);
-  };
-
-  const handleTrainingDataBChange = (e: any) => {
-    setSelectedTrainingDataB(e.target.value);
-  };
+  }, [system.selectedTrainingDataB, setDataB, trainingDataB.values]);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiochemicalMethanePotentialParameters>(
@@ -589,15 +585,13 @@ const BiochemicalMethanePotential = (props: Props) => {
                                   </InputLabel>
                                   <Select
                                     label="Parámetros de entrenamiento"
-                                    value={selectedTrainingDataA}
-                                    name="selectedTrainingData"
+                                    value={system.selectedTrainingDataA}
+                                    name="selectedTrainingDataA"
                                     disabled={system.disableParameters}
-                                    onChange={(e: any) =>
-                                      handleTrainingDataAChange(e)
-                                    }
+                                    onChange={(e: any) => handleChange(e)}
                                   >
                                     <MenuItem key={'Default'} value={'Default'}>
-                                      {'Valores por defecto'}
+                                      {'Personalizado'}
                                     </MenuItem>
                                     {trainingDataA.names.map((key) => (
                                       <MenuItem key={key} value={key}>
@@ -1198,15 +1192,13 @@ const BiochemicalMethanePotential = (props: Props) => {
                                   </InputLabel>
                                   <Select
                                     label="Parámetros de entrenamiento"
-                                    value={selectedTrainingDataB}
-                                    name="selectedTrainingData"
+                                    value={system.selectedTrainingDataB}
+                                    name="selectedTrainingDataB"
                                     disabled={system.disableParameters}
-                                    onChange={(e: any) =>
-                                      handleTrainingDataBChange(e)
-                                    }
+                                    onChange={(e: any) => handleChange(e)}
                                   >
                                     <MenuItem key={'Default'} value={'Default'}>
-                                      {'Valores por defecto'}
+                                      {'Personalizado'}
                                     </MenuItem>
                                     {trainingDataB.names.map((key) => (
                                       <MenuItem key={key} value={key}>

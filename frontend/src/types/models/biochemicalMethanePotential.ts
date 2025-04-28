@@ -86,6 +86,8 @@ export enum DiagramBiogasMeasurementMethodText {
 
 export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
+    selectedTrainingDataA: string;
+    selectedTrainingDataB: string;
     plantOperation: PlantOperationType;
     measurementMethodSideA: DiagramBiogasMeasurementMethodType;
     modelSelectionSideA: OperationModelType;
@@ -600,6 +602,8 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   trainingMode: false,
   iteration: 1,
   inputProfileEnable: false,
+  selectedTrainingDataA: 'Default',
+  selectedTrainingDataB: 'Default',
   steps: {
     disabled: false,
     value: 24,

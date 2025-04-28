@@ -71,6 +71,7 @@ export type BiogasInitialAnalysisConditions = {
 
 export type BiogasParameters = CommonSystemParameter &
   CommonDigitalTwinsParameter & {
+    selectedTrainingData: string;
     anaerobicReactorVolume1: InputType;
     anaerobicReactorVolume2: InputType;
     inputOperationMode: OperationModeType;
@@ -385,6 +386,7 @@ export const BIOGAS: BiogasParameters = {
   trainingMode: false,
   iteration: 1,
   inputProfileEnable: false,
+  selectedTrainingData: 'Default',
   steps: {
     disabled: false,
     value: 24,

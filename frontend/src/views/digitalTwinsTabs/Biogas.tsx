@@ -107,30 +107,27 @@ const Biogas = () => {
     values: {},
   });
 
-  const [selectedTrainingData, setSelectedTrainingData] =
-    useState<string>('Default');
-
   const setData = useCallback(
     (old: BiogasParameters): BiogasParameters => {
-      if (selectedTrainingData !== 'Default') {
+      if (system.selectedTrainingData !== 'Default') {
         const newState = { ...old };
         newState.activationEnergyR101.value =
-          trainingData.values[selectedTrainingData].activationEnergyR101 ??
-          newState.activationEnergyR101.value;
+          trainingData.values[system.selectedTrainingData]
+            .activationEnergyR101 ?? newState.activationEnergyR101.value;
         newState.activationEnergyR102.value =
-          trainingData.values[selectedTrainingData].activationEnergyR102 ??
-          newState.activationEnergyR102.value;
+          trainingData.values[system.selectedTrainingData]
+            .activationEnergyR102 ?? newState.activationEnergyR102.value;
         newState.exponentialFactorR101.value =
-          trainingData.values[selectedTrainingData].exponentialFactorR101 ??
-          newState.exponentialFactorR101.value;
+          trainingData.values[system.selectedTrainingData]
+            .exponentialFactorR101 ?? newState.exponentialFactorR101.value;
         newState.exponentialFactorR102.value =
-          trainingData.values[selectedTrainingData].exponentialFactorR102 ??
-          newState.exponentialFactorR102.value;
+          trainingData.values[system.selectedTrainingData]
+            .exponentialFactorR102 ?? newState.exponentialFactorR102.value;
         newState.lambdaR101.value =
-          trainingData.values[selectedTrainingData].lambdaR101 ??
+          trainingData.values[system.selectedTrainingData].lambdaR101 ??
           newState.lambdaR101.value;
         newState.lambdaR102.value =
-          trainingData.values[selectedTrainingData].lambdaR102 ??
+          trainingData.values[system.selectedTrainingData].lambdaR102 ??
           newState.lambdaR102.value;
         return newState;
       } else {
@@ -158,7 +155,7 @@ const Biogas = () => {
         return newState;
       }
     },
-    [selectedTrainingData, trainingData.values]
+    [system.selectedTrainingData, trainingData.values]
   );
 
   useEffect(() => {
@@ -169,8 +166,13 @@ const Biogas = () => {
       system.operationModelType
     )
       .then((resp) => {
-        if (!resp.names.includes(selectedTrainingData)) {
-          setSelectedTrainingData('Default');
+        if (!resp.names.includes(system.selectedTrainingData)) {
+          handleChange({
+            target: {
+              name: 'selectedTrainingData',
+              value: 'Default',
+            },
+          });
         }
         settrainingData(resp);
         setSystem((old) => setData(old));
@@ -193,11 +195,7 @@ const Biogas = () => {
     setSystem((old) => {
       return setData(old);
     });
-  }, [selectedTrainingData, setData, trainingData.values]);
-
-  const handleTrainingDataChange = (e: any) => {
-    setSelectedTrainingData(e.target.value);
-  };
+  }, [system.selectedTrainingData, setData, trainingData.values]);
 
   const handleChange = (e: any, variableName?: string) => {
     const newState = setFormState<BiogasParameters>(e, system, variableName);
@@ -447,13 +445,13 @@ const Biogas = () => {
                             <InputLabel>Parámetros de entrenamiento</InputLabel>
                             <Select
                               label="Parámetros de entrenamiento"
-                              value={selectedTrainingData}
+                              value={system.selectedTrainingData}
                               name="selectedTrainingData"
                               disabled={system.disableParameters}
-                              onChange={(e: any) => handleTrainingDataChange(e)}
+                              onChange={(e: any) => handleChange(e)}
                             >
                               <MenuItem key={'Default'} value={'Default'}>
-                                {'Valores por defecto'}
+                                {'Personalizado'}
                               </MenuItem>
                               {trainingData.names.map((key) => (
                                 <MenuItem key={key} value={key}>
