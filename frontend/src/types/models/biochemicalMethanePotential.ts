@@ -690,7 +690,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   timeStepSideA: {
     disabled: false,
     value: 1,
-    tooltip: 'paso del tiempo',
+    tooltip: 'Paso del tiempo',
     unit: 's',
     variableString: 'Paso de tiempo',
     min: 1,

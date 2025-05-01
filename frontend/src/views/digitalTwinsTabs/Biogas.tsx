@@ -321,7 +321,12 @@ const Biogas = () => {
                         variable={system.anaerobicReactorVolume2}
                         name="anaerobicReactorVolume2"
                         handleChange={handleChange}
-                        disabled={system.disableParameters}
+                        disabled={
+                          system.disableParameters ||
+                          system.inputOperationMode ===
+                            OperationModeType.Modo1 ||
+                          system.inputOperationMode === OperationModeType.Modo2
+                        }
                       ></CustomNumberField>
                     </Grid>
                     <Grid item xs={12} md={6} xl={12}>
