@@ -13,6 +13,10 @@ export default class Config {
       apiUrl: process.env.REACT_APP_DEV_API_URL_PRIVATE
         ? process.env.REACT_APP_DEV_API_URL_PRIVATE
         : '',
+      grafanaServerStatusUrl: process.env
+        .REACT_APP_DEV_GRAFANA_SERVER_TAB_PRIVATE
+        ? process.env.REACT_APP_DEV_GRAFANA_SERVER_TAB_PRIVATE
+        : '',
       grafanaUrls: process.env.REACT_APP_DEV_GRAFANA_TABS_PRIVATE
         ? process.env.REACT_APP_DEV_GRAFANA_TABS_PRIVATE.split(' ')
         : [],

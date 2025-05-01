@@ -8,6 +8,7 @@ import Monitoring from '../views/Monitoring';
 import DigitalTwins from '../views/DigitalTwins';
 import Scenarios from '../views/Scenarios';
 import AboutUs from '../views/AboutUs';
+import ServerStatus from '../views/ServerStatus';
 
 type Props = {};
 
@@ -37,6 +38,10 @@ const Router = (props: Props) => {
         {
           path: '/about',
           element: <AboutUs></AboutUs>,
+        },
+        {
+          path: '/serverStatus',
+          element: <ServerStatus></ServerStatus>,
         },
         {
           path: '/',

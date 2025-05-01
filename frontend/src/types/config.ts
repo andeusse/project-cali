@@ -1,6 +1,7 @@
 export type ConfigType = {
   projectName: string;
   apiUrl: string;
+  grafanaServerStatusUrl: string;
   grafanaUrls: string[];
   electricalUrls: string[];
   windyUrlRadiation: string;

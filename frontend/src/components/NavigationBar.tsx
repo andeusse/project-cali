@@ -17,6 +17,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import MonitorIcon from '@mui/icons-material/Monitor';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import StackedLineChartIcon from '@mui/icons-material/StackedLineChart';
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
 
 import { ThemeType } from '../types/theme';
 import { changeTheme } from '../redux/slices/themeSlice';
@@ -54,11 +55,11 @@ const pages: PageType[] = [
     to: '/scenarios',
     icon: <StackedLineChartIcon></StackedLineChartIcon>,
   },
-  // {
-  //   text: 'Acerca de',
-  //   to: '/about',
-  //   icon: <InfoIcon></InfoIcon>,
-  // },
+  {
+    text: 'Estado Servidor',
+    to: '/serverStatus',
+    icon: <NetworkCheckIcon></NetworkCheckIcon>,
+  },
 ];
 
 const NavigationBar = (props: Props) => {

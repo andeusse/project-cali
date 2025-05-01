@@ -144,6 +144,10 @@ function App() {
               .REACT_APP_DEV_ELECTRICAL_TABS_PUBLIC
               ? process.env.REACT_APP_DEV_ELECTRICAL_TABS_PUBLIC.split(' ')
               : [];
+            Config.getInstance().params.grafanaServerStatusUrl = process.env
+              .REACT_APP_DEV_GRAFANA_SERVER_TAB_PUBLIC
+              ? process.env.REACT_APP_DEV_GRAFANA_SERVER_TAB_PUBLIC
+              : '';
             console.log(Config.getInstance().params.apiUrl);
           })
           .catch(() => {
