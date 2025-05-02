@@ -2933,7 +2933,7 @@ class TrainingBiogasPlant:
         
         elif self.Model == "ADM1" and (self.Operation_mode == 1 or self.Operation_mode == 2):
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'Mode{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = float(self.K_mean_R101), timestamp=timestamp)
+                                                    model = self.Model, variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = float(self.K_mean_R101), timestamp=timestamp)
         
         elif self.Model == "Gompertz" and (self.Operation_mode == 1 or self.Operation_mode == 2):
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 

@@ -287,11 +287,11 @@ class Turbine(Resource):
     turbine["controllerPower"] = results[0]
     turbine["inverterInputPower"] = results[1]
     turbine["batteryPower"] = results[2]
-    if (not data["inputOfflineOperation"] and V_t == 0.0):
+    if (not data["inputOfflineOperation"] and data["inputPressure"]["disabled"] and data["inputFlow"]["disabled"] and V_t == 0.0):
       turbine["turbineVoltage"] = 0.0
     else: 
       turbine["turbineVoltage"] = results[3]
-    if not data["inputOfflineOperation"] and V_CA == 0.0:
+    if (not data["inputOfflineOperation"] and data["inputActivePower"]["disabled"] and data["inputPowerFactor"]["disabled"] and V_CA == 0.0):
       turbine["inverterOutputVoltage"] = 0.0
     else: 
       turbine["inverterOutputVoltage"] = results[4]
