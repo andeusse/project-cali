@@ -495,11 +495,11 @@ class Solar(Resource):
       solarWind["controllerPower"] = twinResults[0]
       solarWind["inverterInputPower"] = twinResults[1]
       solarWind["batteryPower"] = twinResults[2]
-      if (not data["inputOfflineOperation"] and PV_Voltage == 0.0):
+      if (not data["inputOfflineOperation"] and data["solarRadiation1"]["disabled"] and data["solarRadiation2"]["disabled"] and PV_Voltage == 0.0):
         solarWind['solarPanelVoltage'] = 0.0
       else: 
         solarWind['solarPanelVoltage'] = twinResults[3]
-      if (not data["inputOfflineOperation"] and WT_Voltage == 0.0):
+      if (not data["inputOfflineOperation"] and data["windSpeed"]["disabled"] and WT_Voltage == 0.0):
         solarWind['windTurbineVoltage'] = 0.0
       else:
         solarWind['windTurbineVoltage'] = twinResults[4]
@@ -507,7 +507,7 @@ class Solar(Resource):
       solarWind['batteryStateOfCharge'] = twinResults[6]
       solarWind['batteryVoltage'] = twinResults[7]
       solarWind['directCurrentVoltage'] = twinResults[8]
-      if (not data["inputOfflineOperation"] and inverterVoltage == 0.0) or not simulatedInverterState:
+      if (not data["inputOfflineOperation"] and data["alternCurrentLoadPower"]["disabled"] and data["alternCurrentLoadPowerFactor"]["disabled"] and inverterVoltage == 0.0) or not simulatedInverterState:
         solarWind['inverterVoltage'] = 0.0
       else:
         solarWind['inverterVoltage'] = twinResults[9]
