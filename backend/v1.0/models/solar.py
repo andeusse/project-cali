@@ -507,11 +507,7 @@ class Solar(Resource):
       solarWind['batteryStateOfCharge'] = twinResults[6]
       solarWind['batteryVoltage'] = twinResults[7]
       solarWind['directCurrentVoltage'] = twinResults[8]
-<<<<<<< Updated upstream
-      if not data["inputOfflineOperation"] and inverterVoltage == 0.0:
-=======
       if (not data["inputOfflineOperation"] and data["alternCurrentLoadPower"]["disabled"] and data["alternCurrentLoadPowerFactor"]["disabled"] and inverterVoltage == 0.0) or not simulatedInverterState:
->>>>>>> Stashed changes
         solarWind['inverterVoltage'] = 0.0
       else:
         solarWind['inverterVoltage'] = twinResults[9]
