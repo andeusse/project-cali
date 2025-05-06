@@ -491,8 +491,8 @@ class BiogasPlantSimulation:
         self.SV_R101_gl = self.Csus_ini_R101 * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)                     #[gSV/L]
         
         #Total Solids
-        self.ST_R101_p = (((self.Csus_ini_R101 + self.Csus_fixed*self.x_substrate_R101 + self.Csus_fixed_R101*self.x_inoculum_R101) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)) / (self.rho*self.x_substrate_R101 + self.rho_R101*self.x_inoculum_R101))
-        self.ST_R101_gl = (self.Csus_ini_R101 + self.Csus_fixed*self.x_substrate_R101 + self.Csus_fixed_R101*self.x_inoculum_R101) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)
+        self.ST_R101_p = (((self.Csus_ini_R101 + self.Csus_fixed) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)) / (self.rho*self.x_substrate_R101 + self.rho_R101*self.x_inoculum_R101))
+        self.ST_R101_gl = (self.Csus_ini_R101 + self.Csus_fixed) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)
         
         for i,j in zip(Qin_1, Qin_2):
             self.Vinj_R101 = self.Vinj_R101 + (i * self.tp) + (j * self.tp)
@@ -525,7 +525,7 @@ class BiogasPlantSimulation:
         self.biogas_R101_dry = self.molCH4_R101 + self.molCO2_R101 + self.molH2S_R101 + self.molNH3_R101
         self.molO2_R101 = np.random.uniform(0.02, 0.05) * self.biogas_R101_dry
         self.biogas_R101_dry = self.molO2_R101 + self.molH2_R101 + self.biogas_R101_dry
-        self.molH2O_R101 = np.random.uniform(0.01, 0.010)*self.biogas_R101_dry
+        self.molH2O_R101 = np.random.uniform(0.01, 0.015)*self.biogas_R101_dry
         self.biogas_R101_wet = self.biogas_R101_dry + self.molH2O_R101
     
     def Reactor101Simulation_ADM1 (self, Operation, VR, Qin_1, Csus_in1,
@@ -579,8 +579,8 @@ class BiogasPlantSimulation:
         self.SV_R101_gl = self.Csus_ini_R101 * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)                     #[gSV/L]
         
         #Total Solids
-        self.ST_R101_p = (((self.Csus_ini_R101 + self.Csus_fixed*self.x_substrate_R101 + self.Csus_fixed_R101*self.x_inoculum_R101) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)) / (self.rho*self.x_substrate_R101 + self.rho_R101*self.x_inoculum_R101))
-        self.ST_R101_gl = (self.Csus_ini_R101 + self.Csus_fixed*self.x_substrate_R101 + self.Csus_fixed_R101*self.x_inoculum_R101) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)
+        self.ST_R101_p = (((self.Csus_ini_R101 + self.Csus_fixed) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)) / (self.rho*self.x_substrate_R101 + self.rho_R101*self.x_inoculum_R101))
+        self.ST_R101_gl = (self.Csus_ini_R101 + self.Csus_fixed) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)
         
         for i,j in zip(Qin_1, Qin_2):
             self.Vinj_R101 = self.Vinj_R101 + (i * self.tp) + (j * self.tp)
@@ -660,8 +660,23 @@ class BiogasPlantSimulation:
         
         self.x_R101 = abs(self.Csus_ini - self.Csus_ini_R101)/self.Csus_ini
         self.SV_R101 = ((self.Csus_ini_R101 * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)) / (self.rho*self.x_substrate_R101 + self.rho_R101*self.x_inoculum_R101))*100    #[%]
-        self.SV_R101_p = self.SV_R101/3
+        
+        #Volatile solids
+        self.SV_R101_p = (self.SV_R101/3)/100
         self.SV_R101_gl = self.Csus_ini_R101 * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)
+
+        #Total Solids
+        self.ST_R101_p = (((self.Csus_ini_R101 + self.Csus_fixed) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)) / (self.rho*self.x_substrate_R101 + self.rho_R101*self.x_inoculum_R101))
+        self.ST_R101_gl = (self.Csus_ini_R101 + self.Csus_fixed) * (self.MW_sustrato*self.x_substrate_R101 + self.MW_sustrato_R101*self.x_inoculum_R101)
+
+        #Organic Charge
+        try:
+            if self.GlobalTime == 0:
+                self.Organic_Charge_R101 = 0                                        #[gSV/L.dia]
+            else:
+                self.Organic_Charge_R101 =  self.SV_R101_gl/(self.GlobalTime/86400) #[gSV/L.dia]    
+        except (ZeroDivisionError, ValueError):
+            self.Organic_Charge_R101 = 0
 
         self.molCH4_R101 = (self.mol_sus_expended_R101 * self.s_CH4)
         self.molCO2_R101 = (self.mol_sus_expended_R101 * self.s_CO2)
@@ -877,7 +892,7 @@ class BiogasPlantSimulation:
                                            molO2=self.molO2_acum_V102, molH2=self.molH2_acum_V102)[1]
 
         #Relative Humidity estimation
-        self.RH_V102 = self.thermo.BiogasRelativeHumidity(nH2O=self.biogas_storage_mol_V102 * self.xCH4_V102, VnormalTotal=self.Vstorage_std_V102, T=self.Temperature, P=self.Pstorage_V102)
+        self.RH_V102 = self.thermo.BiogasRelativeHumidity(nH2O=self.biogas_storage_mol_V102 * self.xH2O_V102, VnormalTotal=self.Vstorage_std_V102/1000, T=self.Temperature, P=self.Pstorage_V102)
         
         #Pressure control
         if self.Pstorage_V102 > Pset:
@@ -983,7 +998,7 @@ class BiogasPlantSimulation:
                                            molO2=self.molO2_acum_V107, molH2=self.molH2_acum_V107)[1]
  
         #Relative Humidity estimation
-        self.RH_V107 = self.thermo.BiogasRelativeHumidity(nH2O=self.molH2O_acum_V107, VnormalTotal=self.Vacum_std_V107, T=self.Temperature, P=self.Pstorage_V107)
+        self.RH_V107 = self.thermo.BiogasRelativeHumidity(nH2O=self.molH2O_acum_V107, VnormalTotal=self.Vacum_std_V107/1000, T=self.Temperature, P=self.Pstorage_V107)
         
         #Pressure control
         if self.Pstorage_V107 > Pset:
