@@ -391,11 +391,11 @@ class Biogas(Resource):
           biogas_output["K_R101"] = K_R101
 
         elif Model == "Gompertz":
-          reactor_R101 = biogas_plant.biogas_plant.Reactor101Simulation_Gompertz(Operation=1, ym = K_R101, U = Ea_R101, Lambda = L_R101, 
+          reactor_R101 = biogas_plant.Reactor101Simulation_Gompertz(Operation=1, ym = K_R101, U = Ea_R101, Lambda = L_R101, 
                                                                         Qin_1 = biogas_plant.Q_P104v)
           biogas_output["K_R101"] = K_R101
           biogas_output["Ea_R101"] = Ea_R101
-          biogas_plant["Lambda_R101"] = L_R101
+          biogas_output["Lambda_R101"] = L_R101
         
         biogas_plant.V101_mode1(Pset=50, Model=Model)
         biogas_plant.V102_mode1(Pset=50)
@@ -532,7 +532,7 @@ class Biogas(Resource):
           biogas_output["K_R101"] = K_R101
 
         elif Model == "Gompertz":
-          reactor_R101 = biogas_plant.biogas_plant.Reactor101Simulation_Gompertz(Operation=1, ym = K_R101, U = Ea_R101, Lambda = L_R101, 
+          reactor_R101 = biogas_plant.Reactor101Simulation_Gompertz(Operation=1, ym = K_R101, U = Ea_R101, Lambda = L_R101, 
                                                                         Qin_1 = biogas_plant.Q_P104v)
           biogas_output["K_R101"] = K_R101
           biogas_output["Ea_R101"] = Ea_R101
