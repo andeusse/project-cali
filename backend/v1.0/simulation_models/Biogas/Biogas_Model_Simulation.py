@@ -164,6 +164,11 @@ class BiogasPlantSimulation:
                 self.Csus_ini_R102 = (self.rho_R102*(self.SV_R102/100))/self.MW_sustrato_R102
                 self.Csus_ini_ST_R102 = (self.rho_R102*(self.ST_R102/100))/self.MW_sustrato_R102
                 self.Csus_fixed_R102 = self.Csus_ini_ST_R102 - self.Csus_ini_R102
+
+                #gompertz
+                self.mol_ini_R102 = (self.SV_R102/100)/(self.MW_sustrato_R102)*(self.rho_R102)*self.VR2
+                self.biogas_mol_R102 = 0
+                self.mol_sus_expended_R102 = 0
         
         #V101 gas storage initial conditions
         self.molCH4_acum_V101 = 0
@@ -212,16 +217,11 @@ class BiogasPlantSimulation:
         self.Pacum_V107 = 0
         self.biogasmol_storage_V107 = 0
 
-        #gomperz
+        #gompertz
         self.mol_ini_R101 = (self.SV_R101/100)/(self.MW_sustrato_R101)*(self.rho_R101)*self.VR1
         self.biogas_mol_R101 = 0
         self.mol_sus_expended_R101 = 0
-        
-        self.mol_ini_R102 = (self.SV_R102/100)/(self.MW_sustrato_R102)*(self.rho_R102)*self.VR2
-        self.biogas_mol_R102 = 0
-        self.mol_sus_expended_R102 = 0
-        
-            
+                
     def Substrate_conditions (self, Cc, Ch, Co, Cn, Cs, ST, SV, rho):
         self.ST = ST
         self.SV = SV
