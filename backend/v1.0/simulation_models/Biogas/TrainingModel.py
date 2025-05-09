@@ -20,7 +20,7 @@ from tools import DBManager
 from fractions import Fraction
 from functools import reduce
 from math import gcd
-import ThermoProperties
+from simulation_models.Biogas import ThermoProperties
 import pandas as pd
 import numpy as np
 import math
