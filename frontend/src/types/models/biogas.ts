@@ -144,6 +144,7 @@ export type BiogasParameters = CommonSystemParameter &
   };
 
 export type BiogasOutput = {
+  operationMode: string;
   n: number;
   a: number;
   b: number;

@@ -96,7 +96,16 @@ const Biogas = () => {
 
   useEffect(() => {
     if (data !== undefined) {
-      setSystem((o) => ({ ...o, restartFlag: false }));
+      setSystem((o) => {
+        if (o.digitalTwinState) {
+          o.inputOperationMode =
+            OperationModeType[
+              data.operationMode as keyof typeof OperationModeType
+            ];
+        }
+        o.restartFlag = false;
+        return o;
+      });
     } else {
       setSystem((o) => ({ ...o, restartFlag: true }));
     }
@@ -336,7 +345,9 @@ const Biogas = () => {
                           label="Modo de operación"
                           value={system.inputOperationMode}
                           name="inputOperationMode"
-                          disabled={system.disableParameters}
+                          disabled={
+                            system.disableParameters || system.digitalTwinState
+                          }
                           onChange={(e: any) => handleChange(e)}
                         >
                           {Object.values(OperationModeType).map((key) => (
