@@ -894,7 +894,7 @@ const Biogas = () => {
                     handleChange={handleChange}
                     trueString="Offline"
                     falseString="Online"
-                    disabled={!system.digitalTwinState || system.trainingMode}
+                    disabled={system.digitalTwinState}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>

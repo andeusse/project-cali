@@ -11,74 +11,7 @@ export const setBiogas = (
 
   if (e.target.name === 'inputOfflineOperation') {
     newState.inputOfflineOperation = !newState.inputOfflineOperation;
-
-    if (newState.inputOfflineOperation && !newState.digitalTwinState)
-      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
-
-    if (newState.inputOfflineOperation && newState.digitalTwinState)
-      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
-
-    if (!newState.inputOfflineOperation && !newState.digitalTwinState)
-      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
-
-    if (!newState.inputOfflineOperation && newState.digitalTwinState)
-      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
-
-    newState.queryTime = newState.inputOfflineOperation
-      ? Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
-      : Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
-
-    newState.inputSubstrateConditions = newState.inputOfflineOperation;
-    (newState as BiogasParameters) = setSubstrateConditions(
-      newState,
-      !newState.inputOfflineOperation
-    );
-
-    newState.inputMixTK100 = newState.inputOfflineOperation;
-    newState.inputSpeedMixTK100.disabled = !newState.inputOfflineOperation;
-    newState.inputStartsPerDayMixTK100.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputStartTimeMixTK100.disabled = !newState.inputOfflineOperation;
-
-    newState.inputPump104 = newState.inputOfflineOperation;
-    newState.inputPump104HydraulicRetentionTime.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputPump104StartsPerDay.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputPump104StartTime.disabled = !newState.inputOfflineOperation;
-
-    newState.inputPump101 = newState.inputOfflineOperation;
-    newState.inputPump101Flow.disabled = !newState.inputOfflineOperation;
-    newState.inputPump101StartsPerDay.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputPump101StartTime.disabled = !newState.inputOfflineOperation;
-
-    newState.inputPump102 = newState.inputOfflineOperation;
-    newState.inputPump102Flow.disabled = !newState.inputOfflineOperation;
-    newState.inputPump102StartsPerDay.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputPump102StartTime.disabled = !newState.inputOfflineOperation;
-
-    newState.inputMixR101 = newState.inputOfflineOperation;
-    newState.inputSpeedMixR101.disabled = !newState.inputOfflineOperation;
-    newState.inputStartsPerDayMixR101.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputStartTimeMixR101.disabled = !newState.inputOfflineOperation;
-    newState.inputPHR101.disabled = !newState.inputOfflineOperation;
-    newState.inputTemperatureR101.disabled = !newState.inputOfflineOperation;
-
-    newState.inputMixR102 = newState.inputOfflineOperation;
-    newState.inputSpeedMixR102.disabled = !newState.inputOfflineOperation;
-    newState.inputStartsPerDayMixR102.disabled =
-      !newState.inputOfflineOperation;
-    newState.inputStartTimeMixR102.disabled = !newState.inputOfflineOperation;
-    newState.inputPHR102.disabled = !newState.inputOfflineOperation;
-    newState.inputTemperatureR102.disabled = !newState.inputOfflineOperation;
-
-    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
-    if (!newState.inputOfflineOperation) {
-      newState.timeMultiplier.value = 1;
-    }
+    setInputOfflineOperation();
   }
 
   if (e.target.name === 'digitalTwinState') {
@@ -86,7 +19,8 @@ export const setBiogas = (
     newState.digitalTwinStepTime.disabled = newState.digitalTwinState;
     newState.digitalTwinForecastTime.disabled = !newState.digitalTwinState;
 
-    newState.inputOfflineOperation = true;
+    newState.inputOfflineOperation = !newState.digitalTwinState;
+    setInputOfflineOperation();
 
     switch (newState.operationModelType) {
       case OperationModelType.Arrhenius:
@@ -471,6 +405,76 @@ export const setBiogas = (
     }
   }
   return newState;
+
+  function setInputOfflineOperation() {
+    if (newState.inputOfflineOperation && !newState.digitalTwinState)
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS;
+
+    if (newState.inputOfflineOperation && newState.digitalTwinState)
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS;
+
+    if (!newState.inputOfflineOperation && !newState.digitalTwinState)
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS;
+
+    if (!newState.inputOfflineOperation && newState.digitalTwinState)
+      newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+
+    newState.queryTime = newState.inputOfflineOperation
+      ? Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
+      : Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
+
+    newState.inputSubstrateConditions = newState.inputOfflineOperation;
+    (newState as BiogasParameters) = setSubstrateConditions(
+      newState,
+      !newState.inputOfflineOperation
+    );
+
+    newState.inputMixTK100 = newState.inputOfflineOperation;
+    newState.inputSpeedMixTK100.disabled = !newState.inputOfflineOperation;
+    newState.inputStartsPerDayMixTK100.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputStartTimeMixTK100.disabled = !newState.inputOfflineOperation;
+
+    newState.inputPump104 = newState.inputOfflineOperation;
+    newState.inputPump104HydraulicRetentionTime.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump104StartsPerDay.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump104StartTime.disabled = !newState.inputOfflineOperation;
+
+    newState.inputPump101 = newState.inputOfflineOperation;
+    newState.inputPump101Flow.disabled = !newState.inputOfflineOperation;
+    newState.inputPump101StartsPerDay.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump101StartTime.disabled = !newState.inputOfflineOperation;
+
+    newState.inputPump102 = newState.inputOfflineOperation;
+    newState.inputPump102Flow.disabled = !newState.inputOfflineOperation;
+    newState.inputPump102StartsPerDay.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputPump102StartTime.disabled = !newState.inputOfflineOperation;
+
+    newState.inputMixR101 = newState.inputOfflineOperation;
+    newState.inputSpeedMixR101.disabled = !newState.inputOfflineOperation;
+    newState.inputStartsPerDayMixR101.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputStartTimeMixR101.disabled = !newState.inputOfflineOperation;
+    newState.inputPHR101.disabled = !newState.inputOfflineOperation;
+    newState.inputTemperatureR101.disabled = !newState.inputOfflineOperation;
+
+    newState.inputMixR102 = newState.inputOfflineOperation;
+    newState.inputSpeedMixR102.disabled = !newState.inputOfflineOperation;
+    newState.inputStartsPerDayMixR102.disabled =
+      !newState.inputOfflineOperation;
+    newState.inputStartTimeMixR102.disabled = !newState.inputOfflineOperation;
+    newState.inputPHR102.disabled = !newState.inputOfflineOperation;
+    newState.inputTemperatureR102.disabled = !newState.inputOfflineOperation;
+
+    newState.timeMultiplier.disabled = !newState.inputOfflineOperation;
+    if (!newState.inputOfflineOperation) {
+      newState.timeMultiplier.value = 1;
+    }
+  }
 };
 
 function setSubstrateConditions(
