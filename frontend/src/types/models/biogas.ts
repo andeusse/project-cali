@@ -265,6 +265,8 @@ export type BiogasOutput = {
   Organic_Charge_R102: number;
   x_R102: number;
   Pump102Flow: number;
+  DailyBiogasPressure: number;
+  DailyBiogasVolume: number;
 };
 
 export type BiogasOutputHistoric = CommonChartType & {
@@ -384,6 +386,8 @@ export type BiogasOutputHistoric = CommonChartType & {
   Organic_Charge_R102: number[];
   x_R102: number[];
   Pump102Flow: number[];
+  DailyBiogasPressure: number[];
+  DailyBiogasVolume: number[];
 };
 
 export const BIOGAS: BiogasParameters = {
