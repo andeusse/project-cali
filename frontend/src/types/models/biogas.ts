@@ -124,6 +124,10 @@ export type BiogasParameters = CommonSystemParameter &
     inputPump102Flow: InputType;
     inputPump102StartTime: InputType;
     inputPump102StartsPerDay: InputType;
+    inputTankPressure: boolean;
+    inputPressureTankV101: InputType;
+    inputPressureTankV102: InputType;
+    inputPressureTankV107: InputType;
     inputMixR101: boolean;
     inputSpeedMixR101: InputType;
     inputStartsPerDayMixR101: InputType;
@@ -966,6 +970,34 @@ export const BIOGAS: BiogasParameters = {
     variableString: 'Encendido / día',
     min: 0,
     max: 24,
+  },
+  inputTankPressure: true,
+  inputPressureTankV101: {
+    disabled: false,
+    value: 50,
+    tooltip: 'Presión tanque V101',
+    unit: 'psi',
+    variableString: 'Presión tanque V101',
+    min: 0,
+    max: 50,
+  },
+  inputPressureTankV102: {
+    disabled: false,
+    value: 50,
+    tooltip: 'Presión tanque V102',
+    unit: 'psi',
+    variableString: 'Presión tanque V102',
+    min: 0,
+    max: 50,
+  },
+  inputPressureTankV107: {
+    disabled: false,
+    value: 50,
+    tooltip: 'Presión tanque V107',
+    unit: 'psi',
+    variableString: 'Presión tanque V107',
+    min: 0,
+    max: 50,
   },
   inputMixR101: true,
   inputSpeedMixR101: {

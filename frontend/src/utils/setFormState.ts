@@ -54,6 +54,7 @@ export const setFormState = <T extends formType>(
       name === 'inputOfflineOperation' ||
       name === 'digitalTwinState' ||
       name === 'inputSubstrateConditions' ||
+      name === 'inputTankPressure' ||
       name === 'inputPump104' ||
       name === 'inputPump102' ||
       name === 'inputPump101' ||

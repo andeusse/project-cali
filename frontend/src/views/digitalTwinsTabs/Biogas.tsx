@@ -1041,6 +1041,46 @@ const Biogas = () => {
                     handleChange={handleChange}
                   ></CustomNumberField>
                 </Grid>
+                <>
+                  <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
+                    <h3>Presión tanques</h3>
+                  </Grid>
+                  <Grid item xs={12} md={6} xl={6} alignContent={'center'}>
+                    <CustomToggle
+                      name="inputTankPressure"
+                      value={system.inputTankPressure}
+                      handleChange={handleChange}
+                      disabled={
+                        system.inputOfflineOperation || system.trainingMode
+                      }
+                    ></CustomToggle>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.inputPressureTankV101}
+                      name="inputPressureTankV101"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.inputPressureTankV102}
+                      name="inputPressureTankV102"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                  <Grid item xs={12} md={12} xl={12}>
+                    <CustomNumberField
+                      variable={system.inputPressureTankV107}
+                      name="inputPressureTankV107"
+                      handleChange={handleChange}
+                    ></CustomNumberField>
+                  </Grid>
+                </>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} md={6} xl={2.5}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>
                   <h3>Bomba P-104</h3>
                 </Grid>
@@ -1075,10 +1115,6 @@ const Biogas = () => {
                     handleChange={handleChange}
                   ></CustomNumberField>
                 </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={6} xl={2.5}>
-              <Grid container spacing={2}>
                 {system.inputOperationMode === OperationModeType.Modo2 && (
                   <>
                     <Grid item xs={12} md={6} xl={6} sx={{ height: '72px' }}>

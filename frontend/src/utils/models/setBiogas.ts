@@ -262,6 +262,13 @@ export const setBiogas = (
     );
   }
 
+  if (e.target.name === 'inputTankPressure') {
+    newState.inputTankPressure = !newState.inputTankPressure;
+    newState.inputPressureTankV101.disabled = !newState.inputTankPressure;
+    newState.inputPressureTankV102.disabled = !newState.inputTankPressure;
+    newState.inputPressureTankV107.disabled = !newState.inputTankPressure;
+  }
+
   if (e.target.name === 'inputPump104') {
     newState.inputPump104 = !newState.inputPump104;
     newState.inputPump104HydraulicRetentionTime.disabled =
@@ -356,6 +363,11 @@ export const setBiogas = (
       !newState.inputOfflineOperation;
     newState.inputStartTimeMixTK100.disabled = !newState.inputOfflineOperation;
 
+    newState.inputTankPressure = newState.inputOfflineOperation;
+    newState.inputPressureTankV101.disabled = !newState.inputOfflineOperation;
+    newState.inputPressureTankV102.disabled = !newState.inputOfflineOperation;
+    newState.inputPressureTankV107.disabled = !newState.inputOfflineOperation;
+
     newState.inputPump104 = newState.inputOfflineOperation;
     newState.inputPump104HydraulicRetentionTime.disabled =
       !newState.inputOfflineOperation;
@@ -434,6 +446,11 @@ export const setBiogas = (
     newState.inputStartsPerDayMixTK100.disabled =
       !newState.inputOfflineOperation;
     newState.inputStartTimeMixTK100.disabled = !newState.inputOfflineOperation;
+
+    newState.inputTankPressure = newState.inputOfflineOperation;
+    newState.inputPressureTankV101.disabled = !newState.inputOfflineOperation;
+    newState.inputPressureTankV102.disabled = !newState.inputOfflineOperation;
+    newState.inputPressureTankV107.disabled = !newState.inputOfflineOperation;
 
     newState.inputPump104 = newState.inputOfflineOperation;
     newState.inputPump104HydraulicRetentionTime.disabled =
