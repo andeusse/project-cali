@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
   Button,
   FormControl,
   Grid,
@@ -647,7 +648,7 @@ const Biogas = () => {
                 <Grid item xs={12} md={6} xl={4.5}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
-                      <h3>Condiciones iniciales</h3>
+                      <h3>Condiciones iniciales (inóculo)</h3>
                     </Grid>
                     <Grid item xs={12} md={6} xl={6}>
                       <Grid container spacing={2}>
@@ -1348,6 +1349,14 @@ const Biogas = () => {
             />
           </Button>
         </Grid>
+        {system.digitalTwinState && isPlaying && (
+          <Grid item xs={12} md={12} xl={12}>
+            <Alert severity="warning">
+              Los tiempos de simulación en el modo online pueden ser altos: (
+              {system.queryTime / 1000} segundos)
+            </Alert>
+          </Grid>
+        )}
         <Grid item xs={12} md={12} xl={12}>
           {playerControl}
         </Grid>
