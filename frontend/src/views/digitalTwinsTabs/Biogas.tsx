@@ -221,6 +221,24 @@ const Biogas = () => {
     saveAs(blob, `${system.name}.json`);
   };
 
+  const [toggleState, setToggleState] = useState(
+    system.inputOfflineOperation ||
+      system.trainingMode ||
+      (!system.inputOfflineOperation && system.digitalTwinState)
+  );
+
+  useEffect(() => {
+    setToggleState(
+      system.inputOfflineOperation ||
+        system.trainingMode ||
+        (!system.inputOfflineOperation && system.digitalTwinState)
+    );
+  }, [
+    system.digitalTwinState,
+    system.inputOfflineOperation,
+    system.trainingMode,
+  ]);
+
   const handleUploadSystem = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -923,9 +941,7 @@ const Biogas = () => {
                     name="inputSubstrateConditions"
                     value={system.inputSubstrateConditions}
                     handleChange={handleChange}
-                    disabled={
-                      system.inputOfflineOperation || system.trainingMode
-                    }
+                    disabled={toggleState}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={6} xl={6}>
@@ -1016,9 +1032,7 @@ const Biogas = () => {
                     name="inputMixTK100"
                     value={system.inputMixTK100}
                     handleChange={handleChange}
-                    disabled={
-                      system.inputOfflineOperation || system.trainingMode
-                    }
+                    disabled={toggleState}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1051,9 +1065,7 @@ const Biogas = () => {
                       name="inputTankPressure"
                       value={system.inputTankPressure}
                       handleChange={handleChange}
-                      disabled={
-                        system.inputOfflineOperation || system.trainingMode
-                      }
+                      disabled={toggleState}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -1090,9 +1102,7 @@ const Biogas = () => {
                     name="inputPump104"
                     value={system.inputPump104}
                     handleChange={handleChange}
-                    disabled={
-                      system.inputOfflineOperation || system.trainingMode
-                    }
+                    disabled={toggleState}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1126,9 +1136,7 @@ const Biogas = () => {
                         name="inputPump101"
                         value={system.inputPump101}
                         handleChange={handleChange}
-                        disabled={
-                          system.inputOfflineOperation || system.trainingMode
-                        }
+                        disabled={toggleState}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -1165,9 +1173,7 @@ const Biogas = () => {
                         name="inputPump102"
                         value={system.inputPump102}
                         handleChange={handleChange}
-                        disabled={
-                          system.inputOfflineOperation || system.trainingMode
-                        }
+                        disabled={toggleState}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
@@ -1205,9 +1211,7 @@ const Biogas = () => {
                     name="inputMixR101"
                     value={system.inputMixR101}
                     handleChange={handleChange}
-                    disabled={
-                      system.inputOfflineOperation || system.trainingMode
-                    }
+                    disabled={toggleState}
                   ></CustomToggle>
                 </Grid>
                 <Grid item xs={12} md={12} xl={12}>
@@ -1264,9 +1268,7 @@ const Biogas = () => {
                         name="inputMixR102"
                         value={system.inputMixR102}
                         handleChange={handleChange}
-                        disabled={
-                          system.inputOfflineOperation || system.trainingMode
-                        }
+                        disabled={toggleState}
                       ></CustomToggle>
                     </Grid>
                     <Grid item xs={12} md={12} xl={12}>
