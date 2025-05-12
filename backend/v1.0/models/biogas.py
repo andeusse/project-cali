@@ -117,7 +117,7 @@ class Biogas(Resource):
       Volume_V102 = data["biogasTankVolume2"]["value"]
       Volume_V107 = data["biogasTankVolume3"]["value"]
       if user not in biogas_instances:
-        biogas_instances[user] = TrainingModel.TrainingBiogasPlant(DB_IP = DB_IP, DB_Port = DB_Port, DB_Organization = DB_Organization, DB_Bucket = DB_Bucket, DB_Token = DB_Token,
+        biogas_instances[user] = TrainingModel.Training_offline(DB_IP = DB_IP, DB_Port = DB_Port, DB_Organization = DB_Organization, DB_Bucket = DB_Bucket, DB_Token = DB_Token,
                                                                     t_train = t_train, ST_ini_R101=ST_ini_R101, SV_ini_R101=SV_ini_R101, Cc_R101 = Cc_ini_R101, Ch_R101=Ch_ini_R101, Co_R101=Co_ini_R101, Cn_R101=Cn_ini_R101, Cs_R101=Cs_ini_R101, rho_R101=rho_ini_R101, Volume_V101 = Volume_V101,  
                                                                     ST_ini_R102 = ST_ini_R102, SV_ini_R102 = SV_ini_R102, Cc_R102 = Cc_ini_R102, Ch_R102 = Ch_ini_R102, Co_R102 = Co_ini_R102, Cn_R102 = Cn_ini_R102, Cs_R102 = Cs_ini_R102, rho_R102 = rho_ini_R102, 
                                                                     Volume_V102 = Volume_V102, Volume_V107 = Volume_V107)

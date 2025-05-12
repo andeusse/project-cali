@@ -2215,7 +2215,7 @@ class Training_offline:
             self.Optimized_parameters = pd.DataFrame({"ym": Results.x[0],
                                                       "U": Results.x[1],
                                                       "L": Results.x[2]}, index=[0])
-            self.ym_R101 = self.Optimized_parameters["ym"].iloc[0]
-            self.U_R101 = self.Optimized_parameters["U"].iloc[0]
-            self.L_R101 = self.Optimized_parameters["L"].iloc[0]   
+            self.ym_R101 = float(self.Optimized_parameters["ym"].iloc[0])
+            self.U_R101 = float(self.Optimized_parameters["U"].iloc[0])
+            self.L_R101 = float(self.Optimized_parameters["L"].iloc[0])   
                              
