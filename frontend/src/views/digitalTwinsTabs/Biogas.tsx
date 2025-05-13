@@ -436,14 +436,16 @@ const Biogas = () => {
                         system={system}
                       ></TrainingMode>
                     </Grid>
-                    <Grid item xs={12} md={6} xl={12}>
-                      <CustomNumberField
-                        variable={system.digitalTwinStepTime}
-                        name="digitalTwinStepTime"
-                        handleChange={handleChange}
-                        disabled={system.disableParameters}
-                      ></CustomNumberField>
-                    </Grid>
+                    {system.digitalTwinStepTime !== undefined && (
+                      <Grid item xs={12} md={6} xl={12}>
+                        <CustomNumberField
+                          variable={system.digitalTwinStepTime}
+                          name="digitalTwinStepTime"
+                          handleChange={handleChange}
+                          disabled={system.disableParameters}
+                        ></CustomNumberField>
+                      </Grid>
+                    )}
                     <Grid item xs={12} md={6} xl={12}>
                       <CustomNumberField
                         variable={system.digitalTwinForecastTime}

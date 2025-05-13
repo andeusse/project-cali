@@ -16,7 +16,9 @@ export const setBiogas = (
 
   if (e.target.name === 'digitalTwinState') {
     newState.digitalTwinState = !newState.digitalTwinState;
-    newState.digitalTwinStepTime.disabled = newState.digitalTwinState;
+    if (newState.digitalTwinStepTime !== undefined) {
+      newState.digitalTwinStepTime.disabled = newState.digitalTwinState;
+    }
     newState.digitalTwinForecastTime.disabled = !newState.digitalTwinState;
 
     newState.inputOfflineOperation = !newState.digitalTwinState;

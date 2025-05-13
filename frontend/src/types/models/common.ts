@@ -31,6 +31,7 @@ export type CommonDigitalTwinsParameter = {
   steps: InputType;
   stepTime: InputType;
   stepUnit: StepUnitType;
+  digitalTwinStepTime?: InputType;
 };
 
 export type IsConnected = {

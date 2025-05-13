@@ -109,7 +109,6 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
     rxnVolumeSideA: InputType;
     freeVolumeSideA: InputType;
     stateSelectionSideA: boolean;
-    timeStepSideA: InputType;
     kineticKSideA: InputType;
     kineticEaSideA: InputType;
     kineticLambdaSideA: InputType;
@@ -197,7 +196,6 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
     rxnVolumeSideB: InputType;
     freeVolumeSideB: InputType;
     stateSelectionSideB: boolean;
-    timeStepSideB: InputType;
     kineticKSideB: InputType;
     kineticEaSideB: InputType;
     kineticLambdaSideB: InputType;
@@ -669,6 +667,15 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   nameSubstrate2SideB: '',
   nameSubstrate3SideB: '',
   nameSubstrate4SideB: '',
+  digitalTwinStepTime: {
+    disabled: false,
+    value: 1,
+    tooltip: 'Paso de tiempo del gemelo digital',
+    unit: 's',
+    variableString: 'Paso de tiempo',
+    min: 1,
+    max: 3600,
+  },
   rxnVolumeSideA: {
     disabled: false,
     value: 750,
@@ -686,15 +693,6 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     variableString: 'Volumen libre reactores',
     min: 100,
     max: 2000,
-  },
-  timeStepSideA: {
-    disabled: false,
-    value: 1,
-    tooltip: 'Paso del tiempo',
-    unit: 's',
-    variableString: 'Paso de tiempo',
-    min: 1,
-    max: 3600,
   },
   kineticKSideA: {
     disabled: false,
@@ -1382,15 +1380,6 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     variableString: 'Volumen libre reactores',
     min: 100,
     max: 2000,
-  },
-  timeStepSideB: {
-    disabled: false,
-    value: 1,
-    tooltip: 'paso del tiempo',
-    unit: 's',
-    variableString: 'Paso de tiempo',
-    min: 1,
-    max: 3600,
   },
   kineticKSideB: {
     disabled: false,

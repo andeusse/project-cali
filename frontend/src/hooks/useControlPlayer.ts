@@ -78,16 +78,27 @@ export const useControlPlayer = <T extends CommonDigitalTwinsParameter, G>(
             }
             setHistoricData((oldState: any) => {
               if (oldState['time'] === undefined) {
-                const newDate = moment();
+                const newDate: moment.Moment = moment();
                 oldState['time'] = [newDate];
               } else {
-                const newDate = moment(
-                  oldState['time'][oldState['time'].length - 1]
-                ).add(
-                  model.timeMultiplier.value *
-                    Math.floor(model.queryTime / 1000),
-                  's'
-                );
+                var newDate: moment.Moment = moment();
+                if (model.digitalTwinStepTime !== undefined) {
+                  newDate = moment(
+                    oldState['time'][oldState['time'].length - 1]
+                  ).add(
+                    model.timeMultiplier.value *
+                      Math.floor(model.digitalTwinStepTime.value),
+                    's'
+                  );
+                } else {
+                  newDate = moment(
+                    oldState['time'][oldState['time'].length - 1]
+                  ).add(
+                    model.timeMultiplier.value *
+                      Math.floor(model.queryTime / 1000),
+                    's'
+                  );
+                }
                 oldState['time'].push(newDate);
               }
               return oldState;

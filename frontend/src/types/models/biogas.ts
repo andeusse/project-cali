@@ -79,7 +79,6 @@ export type BiogasParameters = CommonSystemParameter &
     biogasTankVolume2: InputType;
     biogasTankVolume3: InputType;
     digitalTwinState: boolean;
-    digitalTwinStepTime: InputType;
     digitalTwinForecastTime: InputType;
     operationModelType: OperationModelType;
     exponentialFactorR101: InputType;
