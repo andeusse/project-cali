@@ -2215,7 +2215,12 @@ class Training_offline:
             self.Optimized_parameters = pd.DataFrame({"ym": Results.x[0],
                                                       "U": Results.x[1],
                                                       "L": Results.x[2]}, index=[0])
-            self.ym_R101 = float(self.Optimized_parameters["ym"].iloc[0])
-            self.U_R101 = float(self.Optimized_parameters["U"].iloc[0])
-            self.L_R101 = float(self.Optimized_parameters["L"].iloc[0])   
-                             
+            self.ym_R101 = float(Results.x[0])
+            self.U_R101 = float(Results.x[1])
+            self.L_R101 = float(Results.x[2])   
+    
+    def V101model1_2 (self):
+        self.Vnorm_bio_V101 = ((self.Pacum_V101 * 6894.76) * self.Volume_V101 * 273.15)/(100000 * (self.T_V101_actual+273.15))
+        self.Vnorm_bio_sto_V101 = ((self.P_V101 * 6894.76) * self.Volume_V101 * 273.15)/(100000 * (self.T_V101_actual+273.15))
+        self.VCH4_acum_V101 = self.Vnorm_bio_V101 * self.DataPlant["x_CH4_V101"].iloc[-1]
+        self.xCH4_V101 = self.DataPlant["x_CH4_V101"].iloc[-1]
