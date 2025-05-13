@@ -1454,6 +1454,7 @@ const Biogas = () => {
                 variables={diagramVariables}
                 playerControl={playerControl}
                 isPlaying={isPlaying}
+                maxPlayingValues={140}
               ></TimeGraphs>
             </Grid>
           </>

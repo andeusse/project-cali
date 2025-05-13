@@ -33,6 +33,7 @@ type Props = {
   variables: DiagramVariableType[];
   playerControl: React.ReactNode;
   isPlaying: boolean;
+  maxPlayingValues?: number;
 };
 
 const TimeGraphs = (props: Props) => {
@@ -43,6 +44,7 @@ const TimeGraphs = (props: Props) => {
     variables,
     playerControl,
     isPlaying,
+    maxPlayingValues,
   } = props;
 
   const [availableGraphs, setAvailableGraphs] = useState([...charts.variables]);
@@ -227,6 +229,7 @@ const TimeGraphs = (props: Props) => {
                     variables={variables}
                     handleDeleteChart={handleRemoveGraph}
                     isPlaying={isPlaying}
+                    maxPlayingValues={maxPlayingValues}
                   ></TimeGraph>
                 </Grid>
               );

@@ -33,10 +33,17 @@ type Props = {
   variables: DiagramVariableType[];
   handleDeleteChart: (e: string) => void;
   isPlaying: boolean;
+  maxPlayingValues?: number;
 };
 
 const TimeGraph = (props: Props) => {
-  const { chart, variables, handleDeleteChart, isPlaying } = props;
+  const {
+    chart,
+    variables,
+    handleDeleteChart,
+    isPlaying,
+    maxPlayingValues = 20,
+  } = props;
 
   const chartRef = useRef<any>(undefined);
 
@@ -119,7 +126,7 @@ const TimeGraph = (props: Props) => {
 
   const data = {
     labels: isPlaying
-      ? chart.chartValues.xValues.slice(-20)
+      ? chart.chartValues.xValues.slice(-maxPlayingValues)
       : chart.chartValues.xValues,
     datasets: chart.chartValues.variables.map((c) => {
       const variable = variables.find((v) => v.variable === c.variable);
@@ -129,7 +136,7 @@ const TimeGraph = (props: Props) => {
               variable.unit !== '' ? `[${variable.unit}]` : ''
             }`
           : '',
-        data: isPlaying ? c.yValues.slice(-20) : c.yValues,
+        data: isPlaying ? c.yValues.slice(-maxPlayingValues) : c.yValues,
         borderColor: c.color,
         backgroundColor: c.color,
       };

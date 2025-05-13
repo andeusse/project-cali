@@ -3493,6 +3493,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                 playerControl={playerControl}
                 isPlaying={isPlaying}
                 timeMultiplierAdditionalCondition={system.steps.value !== 1}
+                maxPlayingValues={140}
               ></TimeGraphs>
             </Grid>
           </>
