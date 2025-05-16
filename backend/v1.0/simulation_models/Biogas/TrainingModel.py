@@ -194,6 +194,16 @@ class Training_offline:
         #Vessels for biogas storage
         #Thermodynamic model initilization
         self.Thermo = ThermoProperties.ThermoProperties()
+
+        #Biogas filters
+        #hydrogen sulphide
+        self.K_H2S = 0.34
+        self.qmax_H2S = 0.008
+        self.K2_H2S = 0.01
+        #Water
+        self.K_H2O = 0.068
+        self.qmax_H2O = 0.0167
+        self.K2_H2O = 0.01
     
     def getData (self):
 
@@ -2233,6 +2243,15 @@ class Training_offline:
         self.VH2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2_V101"].iloc[-1]/100)
         self.xH2_V101 = self.DataPlant["x_H2_V101"].iloc[-1]
         mol_biogas_Acum_dry_V101 = self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101 + self.mol_acum_NH3_V101
+        try:
+            if mol_biogas_Acum_dry_V101 > 0:
+                self.xNH3_V101 = (self.mol_acum_NH3_V101/mol_biogas_Acum_dry_V101)*1000000
+            else:
+                self.xNH3_V101 = 0
+        except ZeroDivisionError:
+            self.xNH3_V101 = 0
+        self.VNH3_acum_V101 = self.Vnorm_bio_V101 * self.xNH3_V101
+        mol_biogas_Acum_dry_V101 = self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101 + self.mol_acum_NH3_V101
         self.xNH3_V101 = (self.mol_acum_NH3_V101/mol_biogas_Acum_dry_V101)*1000000
         self.RH_V101 = self.DataPlant["rh_V101"].iloc[-1]
         Absolute_humidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"].iloc[-1]/100, T = self.T_V101_actual)
@@ -2262,6 +2281,7 @@ class Training_offline:
                 self.xNH3_V102 = 0
         except ZeroDivisionError:
             self.xNH3_V102 = 0
+        self.VNH3_acum_V102 = self.Vnorm_bio_V102 * self.xNH3_V102
         self.RH_V102 = self.DataPlant["rh_V102"].iloc[-1]
         Absolute_humidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"].iloc[-1]/100, T = self.T_V102_actual)
         self.mol_acum_H2O_V102 = (Absolute_humidity_V102 * self.Vnorm_bio_sto_V102) / 18
@@ -2290,6 +2310,7 @@ class Training_offline:
                 self.xNH3_V107 = 0
         except ZeroDivisionError:
             self.xNH3_V107 = 0
+        self.VNH3_acum_V107 = self.Vnorm_bio_V107 * self.xNH3_V107
         self.RH_V107 = self.DataPlant["rh_V107"].iloc[-1]
         Absolute_humidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"].iloc[-1]/100, T = self.T_V107_actual)
         self.mol_acum_H2O_V107 = (Absolute_humidity_V107 * self.Vnorm_bio_sto_V107) / 18

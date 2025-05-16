@@ -140,7 +140,10 @@ class Biogas(Resource):
         biogas_output["Ea_R101"] = biogas_plant.U_R101
         biogas_output["Lambda_R101"] = biogas_plant.L_R101
 
-      biogas_plant.V101model1_2()        
+      biogas_plant.V101model1_2()
+      biogas_plant.V102model1_2()
+      biogas_plant.V107model1_2()
+      biogas_plant.biogas_treatment_optimization(W_feSO4=154.46, W_silica=3997.79)        
     
       # -------------Exit variables to front 
       # substrate conditions
