@@ -634,7 +634,7 @@ export const BIOGAS: BiogasParameters = {
       unit: '%',
       variableString: 'Sólidos volátiles',
       min: 0,
-      max: 10,
+      max: 30,
     },
     substrateDensity: {
       disabled: false,
@@ -717,7 +717,7 @@ export const BIOGAS: BiogasParameters = {
       unit: '%',
       variableString: 'Sólidos volátiles',
       min: 0,
-      max: 10,
+      max: 30,
     },
     substrateDensity: {
       disabled: false,
@@ -800,7 +800,7 @@ export const BIOGAS: BiogasParameters = {
     unit: '%',
     variableString: 'Sólidos volátiles',
     min: 0,
-    max: 10,
+    max: 30,
   },
   inputProximateAnalysisDensity: {
     disabled: false,
