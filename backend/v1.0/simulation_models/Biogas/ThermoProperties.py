@@ -273,7 +273,7 @@ class ThermoProperties:
             self.xCO2 = molCO2/molT
             self.xH2S = molH2S/molT
             self.xO2 = molO2/molT
-            self.H2 = molH2/molT
+            self.xH2 = molH2/molT
 
             self.hf_CH4 = -74520     #[J/mol]
             self.hf_CO2 = -393510    #[J/mol]

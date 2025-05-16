@@ -2222,5 +2222,158 @@ class Training_offline:
     def V101model1_2 (self):
         self.Vnorm_bio_V101 = ((self.Pacum_V101 * 6894.76) * self.Volume_V101 * 273.15)/(100000 * (self.T_V101_actual+273.15))
         self.Vnorm_bio_sto_V101 = ((self.P_V101 * 6894.76) * self.Volume_V101 * 273.15)/(100000 * (self.T_V101_actual+273.15))
-        self.VCH4_acum_V101 = self.Vnorm_bio_V101 * self.DataPlant["x_CH4_V101"].iloc[-1]
+        self.VCH4_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_CH4_V101"].iloc[-1]/100)
         self.xCH4_V101 = self.DataPlant["x_CH4_V101"].iloc[-1]
+        self.VCO2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_CO2_V101"].iloc[-1]/100)
+        self.xCO2_V101 = self.DataPlant["x_CO2_V101"].iloc[-1]
+        self.VH2S_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2S_V101"].iloc[-1]/100)
+        self.xH2S_V101 = self.DataPlant["x_H2S_V101"].iloc[-1]
+        self.VO2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_O2_V101"].iloc[-1]/100)
+        self.xO2_V101 = self.DataPlant["x_O2_V101"].iloc[-1]
+        self.VH2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2_V101"].iloc[-1]/100)
+        self.xH2_V101 = self.DataPlant["x_H2_V101"].iloc[-1]
+        mol_biogas_Acum_dry_V101 = self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101 + self.mol_acum_NH3_V101
+        self.xNH3_V101 = (self.mol_acum_NH3_V101/mol_biogas_Acum_dry_V101)*1000000
+        self.RH_V101 = self.DataPlant["rh_V101"].iloc[-1]
+        Absolute_humidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"].iloc[-1]/100, T = self.T_V101_actual)
+        self.mol_acum_H2O_V101 = (Absolute_humidity_V101 * self.Vnorm_bio_sto_V101) / 18
+        Energy_V101 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V101, molCO2=self.mol_acum_CO2_V101, molH2S=self.mol_acum_H2S_V101, molO2=self.mol_acum_O2_V101, molH2 = self.mol_acum_H2_V101)
+        self.Energy_V101 = Energy_V101[1]/3600
+        self.LHV_V101 = Energy_V101[0]
+
+    def V102model1_2 (self):
+        self.Vnorm_bio_V102 = ((self.Pacum_V102 * 6894.76) * self.Volume_V102 * 273.15)/(100000 * (self.T_V102_actual+273.15))
+        self.Vnorm_bio_sto_V102 = ((self.P_V102 * 6894.76) * self.Volume_V102 * 273.15)/(100000 * (self.T_V102_actual+273.15))
+        self.VCH4_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_CH4_V102"].iloc[-1]/100)
+        self.xCH4_V102 = self.DataPlant["x_CH4_V102"].iloc[-1]
+        self.VCO2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_CO2_V102"].iloc[-1]/100)
+        self.xCO2_V102 = self.DataPlant["x_CO2_V102"].iloc[-1]
+        self.VH2S_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2S_V102"].iloc[-1]/100)
+        self.xH2S_V102 = self.DataPlant["x_H2S_V102"].iloc[-1]
+        self.VO2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_O2_V102"].iloc[-1]/100)
+        self.xO2_V102 = self.DataPlant["x_O2_V102"].iloc[-1]
+        self.VH2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2_V102"].iloc[-1]/100)
+        self.xH2_V102 = self.DataPlant["x_H2_V102"].iloc[-1]
+        mol_biogas_Acum_dry_V102 = self.mol_acum_CH4_V102 + self.mol_acum_CO2_V102 + self.mol_acum_H2S_V102 + self.mol_acum_O2_V102 + self.mol_acum_H2_V102 + self.mol_acum_NH3_V102
+        try:
+            if mol_biogas_Acum_dry_V102 > 0:
+                self.xNH3_V102 = (self.mol_acum_NH3_V102/mol_biogas_Acum_dry_V102)*1000000
+            else:
+                self.xNH3_V102 = 0
+        except ZeroDivisionError:
+            self.xNH3_V102 = 0
+        self.RH_V102 = self.DataPlant["rh_V102"].iloc[-1]
+        Absolute_humidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"].iloc[-1]/100, T = self.T_V102_actual)
+        self.mol_acum_H2O_V102 = (Absolute_humidity_V102 * self.Vnorm_bio_sto_V102) / 18
+        Energy_V102 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V102, molCO2=self.mol_acum_CO2_V102, molH2S=self.mol_acum_H2S_V102, molO2=self.mol_acum_O2_V102, molH2 = self.mol_acum_H2_V102)
+        self.Energy_V102 = Energy_V102[1]/3600
+        self.LHV_V102 = Energy_V102[0]
+    
+    def V107model1_2 (self):
+        self.Vnorm_bio_V107 = ((self.Pacum_V107 * 6894.76) * self.Volume_V107 * 273.15)/(100000 * (self.T_V107_actual+273.15))
+        self.Vnorm_bio_sto_V107 = ((self.P_V107 * 6894.76) * self.Volume_V107 * 273.15)/(100000 * (self.T_V107_actual+273.15))
+        self.VCH4_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_CH4_V107"].iloc[-1]/100)
+        self.xCH4_V107 = self.DataPlant["x_CH4_V107"].iloc[-1]
+        self.VCO2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_CO2_V107"].iloc[-1]/100)
+        self.xCO2_V107 = self.DataPlant["x_CO2_V107"].iloc[-1]
+        self.VH2S_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_H2S_V107"].iloc[-1]/100)
+        self.xH2S_V107 = self.DataPlant["x_H2S_V107"].iloc[-1]
+        self.VO2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_O2_V107"].iloc[-1]/100)
+        self.xO2_V107 = self.DataPlant["x_O2_V107"].iloc[-1]
+        self.VH2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_H2_V107"].iloc[-1]/100)
+        self.xH2_V107 = self.DataPlant["x_H2_V107"].iloc[-1]
+        mol_biogas_Acum_dry_V107 = self.mol_acum_CH4_V107 + self.mol_acum_CO2_V107 + self.mol_acum_H2S_V107 + self.mol_acum_O2_V107 + self.mol_acum_H2_V107 + self.mol_acum_NH3_V107
+        try:
+            if mol_biogas_Acum_dry_V107 > 0:
+                self.xNH3_V107 = (self.mol_acum_NH3_V107/mol_biogas_Acum_dry_V107)*1000000
+            else:
+                self.xNH3_V107 = 0
+        except ZeroDivisionError:
+            self.xNH3_V107 = 0
+        self.RH_V107 = self.DataPlant["rh_V107"].iloc[-1]
+        Absolute_humidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"].iloc[-1]/100, T = self.T_V107_actual)
+        self.mol_acum_H2O_V107 = (Absolute_humidity_V107 * self.Vnorm_bio_sto_V107) / 18
+        Energy_V107 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V107, molCO2=self.mol_acum_CO2_V107, molH2S=self.mol_acum_H2S_V107, molO2=self.mol_acum_O2_V107, molH2 = self.mol_acum_H2_V107)
+        self.Energy_V107 = Energy_V107[1]/3600
+        self.LHV_V107 = Energy_V107[0]
+        
+    def biogas_treatment_optimization (self, W_feSO4, W_silica):
+        
+        self.biogas_V101["mol_T"] = self.biogas_V101["mol_CH4"] + self.biogas_V101["mol_CO2"] + self.biogas_V101["mol_O2"] + self.biogas_V101["mol_H2S"] + self.biogas_V101["mol_H2"] + self.biogas_V101["mol_NH3"]
+        self.biogas_V101["xCH4"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_CH4"] / self.biogas_V101["mol_T"])
+        self.biogas_V101["xCO2"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_CO2"] / self.biogas_V101["mol_T"])
+        self.biogas_V101["xO2"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_O2"] / self.biogas_V101["mol_T"])
+        self.biogas_V101["xH2S"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_H2S"] / self.biogas_V101["mol_T"])
+        self.biogas_V101["xH2"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_H2"] / self.biogas_V101["mol_T"])
+        self.biogas_V101["xNH3"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_NH3"] / self.biogas_V101["mol_T"])
+        self.biogas_V101["AbsoluteHumidity"] = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"], T = self.DataPlant["T_V101"])
+        self.biogas_V101["mol_H2O"] = (self.biogas_V101["AbsoluteHumidity"] * self.biogas_V101["Vacum"])/18 
+        self.biogas_V101.fillna(0, inplace=True)
+        
+        self.biogas_V102["mol_T"] = self.biogas_V102["mol_CH4"] + self.biogas_V102["mol_CO2"] + self.biogas_V102["mol_O2"] + self.biogas_V102["mol_H2S"] + self.biogas_V102["mol_H2"] + self.biogas_V102["mol_NH3"]
+        self.biogas_V102["xCH4"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_CH4"] / self.biogas_V102["mol_T"])
+        self.biogas_V102["xCO2"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_CO2"] / self.biogas_V102["mol_T"])
+        self.biogas_V102["xO2"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_O2"] / self.biogas_V102["mol_T"])
+        self.biogas_V102["xH2S"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_H2S"] / self.biogas_V102["mol_T"])
+        self.biogas_V102["xH2"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_H2"] / self.biogas_V102["mol_T"])
+        self.biogas_V102["xNH3"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_NH3"] / self.biogas_V102["mol_T"])
+        self.biogas_V102["AbsoluteHumidity"] = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"], T = self.DataPlant["T_V102"])
+        self.biogas_V102["mol_H2O"] = (self.biogas_V102["AbsoluteHumidity"] * self.biogas_V102["Vacum"])/18
+        self.biogas_V102.fillna(0, inplace=True)
+        
+        self.biogas_V107["mol_T"] = self.biogas_V107["mol_CH4"] + self.biogas_V107["mol_CO2"] + self.biogas_V107["mol_O2"] + self.biogas_V107["mol_H2S"] + self.biogas_V107["mol_H2"] + self.biogas_V107["mol_NH3"]
+        self.biogas_V107["xCH4"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_CH4"] / self.biogas_V107["mol_T"])
+        self.biogas_V107["xCO2"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_CO2"] / self.biogas_V107["mol_T"])
+        self.biogas_V107["xO2"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_O2"] / self.biogas_V107["mol_T"])
+        self.biogas_V107["xH2S"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_H2S"] / self.biogas_V107["mol_T"])
+        self.biogas_V107["xH2"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_H2"] / self.biogas_V107["mol_T"])
+        self.biogas_V107["xNH3"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_NH3"] / self.biogas_V107["mol_T"])
+        self.biogas_V107["AbsoluteHumidity"] = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"], T = self.DataPlant["T_V107"])
+        self.biogas_V107["mol_H2O"] = (self.biogas_V107["AbsoluteHumidity"] * self.biogas_V107["Vacum"])/18
+        self.biogas_V107.fillna(0, inplace=True)
+        
+        self.Treatment_system = pd.DataFrame() 
+        self.Treatment_system["time"] = self.biogas_V101["time"]
+        self.Treatment_system["nH2O_ads"] = (self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]) - self.biogas_V107["mol_H2O"]
+        self.Treatment_system["nH2S_ads"] = (self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]) - self.biogas_V107["mol_H2S"]
+        self.Treatment_system["nNH3_ads"] = (self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"]) - self.biogas_V107["mol_NH3"]
+        self.Treatment_system["xH2O"] = ((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]) - self.biogas_V107["mol_H2O"])/(self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"])
+        self.Treatment_system["xH2S"] = ((self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]) - self.biogas_V107["mol_H2S"])/(self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"])
+        self.Treatment_system["xNH3"] = ((self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"]) - self.biogas_V107["mol_NH3"])/(self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"])
+        self.Treatment_system["xGlobal"] = (self.Treatment_system["xH2O"] + self.Treatment_system["xH2S"] +self.Treatment_system["xNH3"])/3
+        
+        self.mol_NH3_ads = self.Treatment_system["nNH3_ads"].iloc[-1]
+        self.mol_H2S_ads = self.Treatment_system["nH2S_ads"].iloc[-1]
+        self.mol_H2O_ads = self.Treatment_system["nH2O_ads"].iloc[-1]
+        self.Xglobal = self.Treatment_system["xGlobal"].iloc[-1]
+        
+        def Langmuir_model(t, qmax, K1, K2, W, mol_transfer):
+            q = (qmax * K1 * (mol_transfer))/(1+(K1*mol_transfer))
+            mol_ads_teo = W * (q**2 + K2 * t)/(1+ q * K2 * t)
+            return mol_ads_teo
+
+        def Langmuir_optimization (params, t, mol_ads_exp, W, mol_transfer):
+            def objective(x):
+                qmax, K1, K2 = x
+                mol_ads_pred = Langmuir_model(t, qmax, K1, K2, W, mol_transfer)
+                residuals = np.array(mol_ads_exp) - mol_ads_pred
+                return np.sum(residuals**2)
+
+            result = minimize(objective, [float(p) for p in params], method='Nelder-Mead')
+            return result
+        
+        t_exp = np.array(self.Treatment_system["time"].tolist())
+        Nabs_exp_H2O = np.array(self.Treatment_system["nH2O_ads"].tolist())
+        mol_transfer_H2O = np.array((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]))
+        Results_H2O = Langmuir_optimization (params = (self.qmax_H2O, self.K_H2O, self.K2_H2O), t = t_exp, mol_ads_exp = Nabs_exp_H2O, W = W_silica, mol_transfer = mol_transfer_H2O)
+        self.Optimized_parameters_filter_H2O = pd.DataFrame({"qmax_H2O": float(Results_H2O.x[0]),
+                                                             "K_H2O": float(Results_H2O.x[1]),
+                                                             "K2_H2O": float(Results_H2O.x[2])}, index=[0])
+        
+        
+        Nabs_exp_H2S = np.array(self.Treatment_system["nH2S_ads"].tolist())
+        mol_transfer_H2S = np.array((self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]).tolist())
+        Results_H2S = Langmuir_optimization(params = (self.qmax_H2S, self.K_H2S, self.K2_H2S), t = t_exp, mol_ads_exp = Nabs_exp_H2S, W = W_feSO4, mol_transfer = mol_transfer_H2S)
+        self.Optimized_parameters_filter_H2S = pd.DataFrame({"qmax_H2s": float(Results_H2S.x[0]),
+                                                             "K_H2S": float(Results_H2S.x[1]),
+                                                             "K2_H2S": float(Results_H2S.x[2])}, index=[0])
