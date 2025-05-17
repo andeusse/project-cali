@@ -2267,11 +2267,11 @@ class Training_offline:
         self.xCH4_V102 = self.DataPlant["x_CH4_V102"].iloc[-1]
         self.VCO2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_CO2_V102"].iloc[-1]/100)
         self.xCO2_V102 = self.DataPlant["x_CO2_V102"].iloc[-1]
-        self.VH2S_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2S_V102"].iloc[-1]/100)
+        self.VH2S_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2S_V102"].iloc[-1]/1000000)
         self.xH2S_V102 = self.DataPlant["x_H2S_V102"].iloc[-1]
         self.VO2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_O2_V102"].iloc[-1]/100)
         self.xO2_V102 = self.DataPlant["x_O2_V102"].iloc[-1]
-        self.VH2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2_V102"].iloc[-1]/100)
+        self.VH2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2_V102"].iloc[-1]/1000000)
         self.xH2_V102 = self.DataPlant["x_H2_V102"].iloc[-1]
         mol_biogas_Acum_dry_V102 = self.mol_acum_CH4_V102 + self.mol_acum_CO2_V102 + self.mol_acum_H2S_V102 + self.mol_acum_O2_V102 + self.mol_acum_H2_V102 + self.mol_acum_NH3_V102
         try:
