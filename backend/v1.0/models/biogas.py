@@ -6,7 +6,6 @@ from tools import DBManager
 import pandas as pd
 import os
 import json
-import math
 
 biogas_instances_online = {}
 biogas_instances_offline = {}
@@ -149,7 +148,7 @@ class Biogas(Resource):
       biogas_plant_online.V101model1_2()
       biogas_plant_online.V102model1_2()
       biogas_plant_online.V107model1_2()
-      biogas_plant_online.biogas_treatment_optimization(W_feSO4=154.46, W_silica=3997.79, qmax_NH3 = 0.0000101, W_carbon = 3510.32, K_NH3 = 0.0001361 , K2_NH3 = 1e-12)        
+      biogas_plant_online.biogas_treatment_optimization(W_feSO4=154.46, W_silica=3997.79)        
     
       # -------------Exit variables to front 
       # substrate conditions
@@ -202,7 +201,7 @@ class Biogas(Resource):
       biogas_output["StorageH2_V101moles"] = biogas_plant_online.mol_acum_H2_V101
       biogas_output["StorageNH3_V101Volume"] = biogas_plant_online.VNH3_acum_V101
       biogas_output["StorageNH3_V101Concentration"] = biogas_plant_online.xNH3_V101
-      biogas_output["StorageNH3_V101moles"] = biogas_plant_online.mol_acum_NH3_V101
+      biogas_output["StorageNH3_V101moles"] = biogas_plant_online.mol_acum_H2_V101
       biogas_output["moles_humidity_V101"] = biogas_plant_online.mol_acum_H2O_V101
       biogas_output["Relative_humidity_V101"] = biogas_plant_online.RH_V101
       biogas_output["StorageEnergy_V101"] = biogas_plant_online.Energy_V101/3600
@@ -262,9 +261,7 @@ class Biogas(Resource):
       biogas_output["ads_NH3_bt"] = biogas_plant_online.mol_NH3_ads
       biogas_output["ads_H2S_bt"] = biogas_plant_online.mol_H2S_ads
       biogas_output["ads_H2O_bt"] = biogas_plant_online.mol_H2O_ads
-      biogas_output["x_bt"] = (biogas_plant_online.Xglobal) * 100
-
-      biogas_output = {k: (0 if isinstance(v, float) and math.isnan(v) else v) for k, v in biogas_output.items()}
+      biogas_output["x_bt"] = biogas_plant_online.Xglobal * 100
 
       if TrainingState == True:
         biogas_plant_online.StorageData (name = user)
