@@ -1894,10 +1894,10 @@ class Training_offline:
                 else:
                     SV_R101.append(self.SV_R101)
                     
-                if math.isnan(self.Csus_ini_ST_R101_gl):
+                if math.isnan(self.Csus_ini_ST_R101):
                     Csus_ST.append(Csus_ST[-1])
                 else:
-                    Csus_ST.append(self.Csus_ini_ST_R101_gl)
+                    Csus_ST.append(self.Csus_ini_ST_R101)
                 
                 if math.isnan(self.ST_R101):
                     ST_R101.append(ST_R101[-1])
@@ -2240,7 +2240,7 @@ class Training_offline:
         self.xH2S_V101 = self.DataPlant["x_H2S_V101"].iloc[-1]
         self.VO2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_O2_V101"].iloc[-1]/100)
         self.xO2_V101 = self.DataPlant["x_O2_V101"].iloc[-1]
-        self.VH2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2_V101"].iloc[-1]/100)
+        self.VH2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2_V101"].iloc[-1]/1000000)
         self.xH2_V101 = self.DataPlant["x_H2_V101"].iloc[-1]
         mol_biogas_Acum_dry_V101 = self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101 + self.mol_acum_NH3_V101
         try:
@@ -2318,7 +2318,7 @@ class Training_offline:
         self.Energy_V107 = Energy_V107[1]/3600
         self.LHV_V107 = Energy_V107[0]
         
-    def biogas_treatment_optimization (self, W_feSO4, W_silica):
+    def biogas_treatment_optimization (self, W_feSO4, W_silica, qmax_NH3, W_carbon, K_NH3, K2_NH3):
         
         self.biogas_V101["mol_T"] = self.biogas_V101["mol_CH4"] + self.biogas_V101["mol_CO2"] + self.biogas_V101["mol_O2"] + self.biogas_V101["mol_H2S"] + self.biogas_V101["mol_H2"] + self.biogas_V101["mol_NH3"]
         self.biogas_V101["xCH4"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_CH4"] / self.biogas_V101["mol_T"])
@@ -2357,16 +2357,11 @@ class Training_offline:
         self.Treatment_system["time"] = self.biogas_V101["time"]
         self.Treatment_system["nH2O_ads"] = (self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]) - self.biogas_V107["mol_H2O"]
         self.Treatment_system["nH2S_ads"] = (self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]) - self.biogas_V107["mol_H2S"]
-        self.Treatment_system["nNH3_ads"] = (self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"]) - self.biogas_V107["mol_NH3"]
         self.Treatment_system["xH2O"] = ((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]) - self.biogas_V107["mol_H2O"])/(self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"])
         self.Treatment_system["xH2S"] = ((self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]) - self.biogas_V107["mol_H2S"])/(self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"])
-        self.Treatment_system["xNH3"] = ((self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"]) - self.biogas_V107["mol_NH3"])/(self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"])
-        self.Treatment_system["xGlobal"] = (self.Treatment_system["xH2O"] + self.Treatment_system["xH2S"] +self.Treatment_system["xNH3"])/3
-        
-        self.mol_NH3_ads = self.Treatment_system["nNH3_ads"].iloc[-1]
         self.mol_H2S_ads = self.Treatment_system["nH2S_ads"].iloc[-1]
         self.mol_H2O_ads = self.Treatment_system["nH2O_ads"].iloc[-1]
-        self.Xglobal = self.Treatment_system["xGlobal"].iloc[-1]
+        
         
         def Langmuir_model(t, qmax, K1, K2, W, mol_transfer):
             q = (qmax * K1 * (mol_transfer))/(1+(K1*mol_transfer))
@@ -2391,10 +2386,18 @@ class Training_offline:
                                                              "K_H2O": float(Results_H2O.x[1]),
                                                              "K2_H2O": float(Results_H2O.x[2])}, index=[0])
         
-        
         Nabs_exp_H2S = np.array(self.Treatment_system["nH2S_ads"].tolist())
         mol_transfer_H2S = np.array((self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]).tolist())
         Results_H2S = Langmuir_optimization(params = (self.qmax_H2S, self.K_H2S, self.K2_H2S), t = t_exp, mol_ads_exp = Nabs_exp_H2S, W = W_feSO4, mol_transfer = mol_transfer_H2S)
         self.Optimized_parameters_filter_H2S = pd.DataFrame({"qmax_H2s": float(Results_H2S.x[0]),
                                                              "K_H2S": float(Results_H2S.x[1]),
                                                              "K2_H2S": float(Results_H2S.x[2])}, index=[0])
+        
+        self.mol_NH3_ads_teo = Langmuir_model(t = t_exp, qmax = qmax_NH3, K1 = K_NH3, K2 = K2_NH3, W = W_carbon, mol_transfer=np.array((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"])))
+        self.Treatment_system["nNH3_ads"] = self.mol_NH3_ads_teo
+        self.mol_NH3_ads = self.Treatment_system["nNH3_ads"].iloc[-1]
+        self.biogas_V107.drop(columns=["mol_NH3"])
+        self.biogas_V107["mol_NH3"] = ((self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"]) - self.Treatment_system["nNH3_ads"])
+        self.Treatment_system["xNH3"] = (self.Treatment_system["nNH3_ads"])/(self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"])
+        self.Treatment_system["xGlobal"] = (self.Treatment_system["xH2O"] + self.Treatment_system["xH2S"] +self.Treatment_system["xNH3"])/3
+        self.Xglobal = self.Treatment_system["xGlobal"].iloc[-1]
