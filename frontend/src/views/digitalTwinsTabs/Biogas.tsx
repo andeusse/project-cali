@@ -609,6 +609,14 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.kineticFactorTower1}
+                        name="kineticFactorTower1"
+                        handleChange={handleChange}
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
+                    </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
                       <h3>Torre 2</h3>
                     </Grid>
@@ -636,6 +644,14 @@ const Biogas = () => {
                         disabled={system.disableParameters}
                       ></CustomNumberField>
                     </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.kineticFactorTower2}
+                        name="kineticFactorTower2"
+                        handleChange={handleChange}
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
+                    </Grid>
                     <Grid item xs={12} md={12} xl={12} sx={{ height: '72px' }}>
                       <h3>Torre 3</h3>
                     </Grid>
@@ -659,6 +675,14 @@ const Biogas = () => {
                       <CustomNumberField
                         variable={system.lengthTower3}
                         name="lengthTower3"
+                        handleChange={handleChange}
+                        disabled={system.disableParameters}
+                      ></CustomNumberField>
+                    </Grid>
+                    <Grid item xs={12} md={12} xl={12}>
+                      <CustomNumberField
+                        variable={system.kineticFactorTower3}
+                        name="kineticFactorTower3"
                         handleChange={handleChange}
                         disabled={system.disableParameters}
                       ></CustomNumberField>
@@ -1333,6 +1357,7 @@ const Biogas = () => {
             onClick={handleSaveSystem}
             startIcon={<FileDownloadIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={isPlaying}
           >
             Guardar
           </Button>
@@ -1342,6 +1367,7 @@ const Biogas = () => {
             color="info"
             startIcon={<FileUploadIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={isPlaying}
           >
             Cargar
             <input

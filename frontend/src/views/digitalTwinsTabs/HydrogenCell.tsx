@@ -700,6 +700,7 @@ const HydrogenCell = (props: Props) => {
             onClick={handleSaveSystem}
             startIcon={<FileDownloadIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={isPlaying}
           >
             Guardar
           </Button>
@@ -709,6 +710,7 @@ const HydrogenCell = (props: Props) => {
             color="info"
             startIcon={<FileUploadIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={isPlaying}
           >
             Cargar
             <input

@@ -90,12 +90,15 @@ export type BiogasParameters = CommonSystemParameter &
     difussionCoefficientTower1: InputType;
     adsorbentWeightTower1: InputType;
     lengthTower1: InputType;
+    kineticFactorTower1: InputType;
     difussionCoefficientTower2: InputType;
     adsorbentWeightTower2: InputType;
     lengthTower2: InputType;
+    kineticFactorTower2: InputType;
     difussionCoefficientTower3: InputType;
     adsorbentWeightTower3: InputType;
     lengthTower3: InputType;
+    kineticFactorTower3: InputType;
     initialAnalysisConditionsR101: BiogasInitialAnalysisConditions;
     initialAnalysisConditionsR102: BiogasInitialAnalysisConditions;
     inputSubstrateConditions: boolean;
@@ -266,6 +269,15 @@ export type BiogasOutput = {
   Pump102Flow: number;
   DailyBiogasPressure: number;
   DailyBiogasVolume: number;
+  qmax_H2O: number;
+  K_H2O: number;
+  K2_H2O: number;
+  qmax_H2S: number;
+  K_H2S: number;
+  K2_H2S: number;
+  qmax_NH3: number;
+  K_NH3: number;
+  K2_NH3: number;
 };
 
 export type BiogasOutputHistoric = CommonChartType & {
@@ -387,6 +399,15 @@ export type BiogasOutputHistoric = CommonChartType & {
   Pump102Flow: number[];
   DailyBiogasPressure: number[];
   DailyBiogasVolume: number[];
+  qmax_H2O: number[];
+  K_H2O: number[];
+  K2_H2O: number[];
+  qmax_H2S: number[];
+  K_H2S: number[];
+  K2_H2S: number[];
+  qmax_NH3: number[];
+  K_NH3: number[];
+  K2_NH3: number[];
 };
 
 export const BIOGAS: BiogasParameters = {
@@ -565,6 +586,14 @@ export const BIOGAS: BiogasParameters = {
     max: 5,
     step: 0.1,
   },
+  kineticFactorTower1: {
+    disabled: false,
+    value: 4.23e-12,
+    tooltip: 'Factor cinético para H2S',
+    unit: 'g/mol * s',
+    variableString: 'Factor cinético H2S',
+    step: 0.1,
+  },
   difussionCoefficientTower2: {
     disabled: false,
     value: 0.01361,
@@ -591,6 +620,14 @@ export const BIOGAS: BiogasParameters = {
     max: 5,
     step: 0.1,
   },
+  kineticFactorTower2: {
+    disabled: false,
+    value: 1e-8,
+    tooltip: 'Factor cinético para NH3',
+    unit: 'g/mol * s',
+    variableString: 'Factor cinético NH3',
+    step: 0.1,
+  },
   difussionCoefficientTower3: {
     disabled: false,
     value: 0.068,
@@ -615,6 +652,14 @@ export const BIOGAS: BiogasParameters = {
     variableString: 'qmax H2O',
     min: 0.1,
     max: 5,
+    step: 0.1,
+  },
+  kineticFactorTower3: {
+    disabled: false,
+    value: 2.13e-11,
+    tooltip: 'Factor cinético para H2O',
+    unit: 'g/mol * s',
+    variableString: 'Factor cinético H2O',
     step: 0.1,
   },
   initialAnalysisConditionsR101: {
@@ -2322,6 +2367,60 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
     x: 8400,
     y: 3700,
     scientificNotation: false,
+  },
+  {
+    name: 'Parámetro de adsorción máximo para humedad',
+    variable: 'qmax_H2O',
+    unit: 'mol/g',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro de Langmuir para humedad',
+    variable: 'K_H2O',
+    unit: 'psi⁻¹',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro cinético para adsorción de humedad',
+    variable: 'K2_H2O',
+    unit: 'mol/g*s',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro de adsorción máximo para sulfuro de hidrógeno',
+    variable: 'qmax_H2S',
+    unit: 'mol/g',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro de Langmuir para sulfuro de hidrógeno',
+    variable: 'K_H2S',
+    unit: 'psi⁻¹',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro cinético para adsorción de sulfuro de hidrógeno',
+    variable: 'K2_H2S',
+    unit: 'mol/g*s',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro de adsorción máximo para Amonio',
+    variable: 'qmax_NH3',
+    unit: 'mol/g',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro de Langmuir para Amonio',
+    variable: 'K_NH3',
+    unit: 'psi⁻¹',
+    isShown: false,
+  },
+  {
+    name: 'Parámetro cinético para adsorción de Amonio',
+    variable: 'K2_NH3',
+    unit: 'mol/g*s',
+    isShown: false,
   },
 ];
 

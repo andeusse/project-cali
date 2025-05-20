@@ -2998,6 +2998,7 @@ const BiochemicalMethanePotential = (props: Props) => {
             onClick={handleSaveSystem}
             startIcon={<FileDownloadIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={isPlaying}
           >
             Guardar
           </Button>
@@ -3007,6 +3008,7 @@ const BiochemicalMethanePotential = (props: Props) => {
             color="info"
             startIcon={<FileUploadIcon />}
             sx={{ width: '120px', margin: '5px' }}
+            disabled={isPlaying}
           >
             Cargar
             <input
