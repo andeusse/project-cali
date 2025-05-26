@@ -469,6 +469,7 @@ class Training_offline:
             
             #Sizing synchronous vectors (same lenght for Model)
             #Variable for V102
+            time = SameDimension(P_V101, time)
             TT_V102 = SameDimension(P_V101, T_V102)
             rh_V102 = SameDimension(P_V101, rh_V102)
             x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
