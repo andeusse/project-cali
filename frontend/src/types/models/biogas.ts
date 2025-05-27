@@ -1718,7 +1718,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Energía total almacenada_V101',
     variable: 'StorageEnergy_V101',
-    unit: 'Wh',
+    unit: 'J',
     isShown: true,
     diagramName: 'Energía',
     fixed: 2,
@@ -2017,7 +2017,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Energía total almacenada_V102',
     variable: 'StorageEnergy_V102',
-    unit: 'Wh',
+    unit: 'J',
     isShown: true,
     diagramName: 'Energía',
     fixed: 2,
@@ -2360,7 +2360,7 @@ export const BIOGAS_MODE1: DiagramVariableType[] = [
   {
     name: 'Energía total almacenada_V107',
     variable: 'StorageEnergy_V107',
-    unit: 'Wh',
+    unit: 'J',
     isShown: true,
     diagramName: 'Energía',
     fixed: 2,
