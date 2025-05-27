@@ -782,7 +782,7 @@ class Biogas(Resource):
         biogas_output["StorageNH3_V101moles"] = biogas_plant.molNH3_acum_V101
         biogas_output["moles_humidity_V101"] = biogas_plant.molH2O_acum_V101
         biogas_output["Relative_humidity_V101"] = biogas_plant.RH_V101
-        biogas_output["StorageEnergy_V101"] = biogas_plant.Energy_V101/3600
+        biogas_output["StorageEnergy_V101"] = biogas_plant.Energy_V101
         # V102
         biogas_output["AcumBiogasPressureV102"] = biogas_plant.Pacum_V102
         biogas_output["StorageBiogasPressureV102"] = biogas_plant.Pstorage_V102
@@ -808,7 +808,7 @@ class Biogas(Resource):
         biogas_output["StorageNH3_V102moles"] = biogas_plant.molNH3_acum_V102
         biogas_output["moles_humidity_V102"] = biogas_plant.molH2O_acum_V102
         biogas_output["Relative_humidity_V102"] = biogas_plant.RH_V102
-        biogas_output["StorageEnergy_V102"] = biogas_plant.Energy_V102/3600
+        biogas_output["StorageEnergy_V102"] = biogas_plant.Energy_V102
         # V107
         biogas_output["AcumBiogasPressureV107"] = biogas_plant.Pacum_V107
         biogas_output["StorageBiogasPressureV107"] = biogas_plant.Pstorage_V107
@@ -834,7 +834,7 @@ class Biogas(Resource):
         biogas_output["StorageNH3_V107moles"] = biogas_plant.molNH3_acum_V107
         biogas_output["moles_humidity_V107"] = biogas_plant.molH2O_acum_V107
         biogas_output["Relative_humidity_V107"] = biogas_plant.RH_V107
-        biogas_output["StorageEnergy_V107"] = biogas_plant.Energy_V107/3600
+        biogas_output["StorageEnergy_V107"] = biogas_plant.Energy_V107
         #biogasTreatment
         biogas_output["ads_NH3_bt"] = biogas_plant.mol_NH3_ads_acum
         biogas_output["ads_H2S_bt"] = biogas_plant.mol_H2S_ads_acum

@@ -712,7 +712,7 @@ class Training_offline:
                 self.DataPlant['x_H2_V101_filled'] = self.DataPlant.apply(lambda row: row['x_H2_V101_filled'] if row['x_H2_V101'] == 0 else row['x_H2_V101'], axis=1)
                 self.DataPlant['x_H2_V101_filled'] = self.DataPlant['x_H2_V101_filled'].fillna(0).astype(float)
                 self.DataPlant['x_H2_V101_filled'] = self.DataPlant['x_H2_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101_filled"].mask(self.DataPlant["x_H2_V101_filled"] > 100, np.nan)
+                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101_filled"].mask(self.DataPlant["x_H2_V101_filled"] > 1000000, np.nan)
                 self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101_filled"].ffill()
                 mean_value_xH2_V101 = self.DataPlant["x_H2_V101_filled"].mean()
                 self.DataPlant["x_H2_V101_filled"] = mean_value_xH2_V101
@@ -726,7 +726,7 @@ class Training_offline:
                 self.DataPlant['x_H2_V102_filled'] = self.DataPlant.apply(lambda row: row['x_H2_V102_filled'] if row['x_H2_V102'] == 0 else row['x_H2_V102'], axis=1)
                 self.DataPlant['x_H2_V102_filled'] = self.DataPlant['x_H2_V102_filled'].fillna(0).astype(float)
                 self.DataPlant['x_H2_V102_filled'] = self.DataPlant['x_H2_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102_filled"].mask(self.DataPlant["x_H2_V102_filled"] > 100, np.nan)
+                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102_filled"].mask(self.DataPlant["x_H2_V102_filled"] > 1000000, np.nan)
                 self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102_filled"].ffill()
                 mean_value_xH2_V102 = self.DataPlant["x_H2_V102_filled"].mean()
                 self.DataPlant["x_H2_V102_filled"] = mean_value_xH2_V102
@@ -740,7 +740,7 @@ class Training_offline:
                 self.DataPlant['x_H2_V107_filled'] = self.DataPlant.apply(lambda row: row['x_H2_V107_filled'] if row['x_H2_V107'] == 0 else row['x_H2_V107'], axis=1)
                 self.DataPlant['x_H2_V107_filled'] = self.DataPlant['x_H2_V107_filled'].fillna(0).astype(float)
                 self.DataPlant['x_H2_V107_filled'] = self.DataPlant['x_H2_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107_filled"].mask(self.DataPlant["x_H2_V107_filled"] > 100, np.nan)
+                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107_filled"].mask(self.DataPlant["x_H2_V107_filled"] > 1000000, np.nan)
                 self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107_filled"].ffill()
                 mean_value_xH2_V107 = self.DataPlant["x_H2_V107_filled"].mean()
                 self.DataPlant["x_H2_V107_filled"] = mean_value_xH2_V107
@@ -754,7 +754,7 @@ class Training_offline:
                 self.DataPlant['x_H2S_V101_filled'] = self.DataPlant.apply(lambda row: row['x_H2S_V101_filled'] if row['x_H2S_V101'] == 0 else row['x_H2S_V101'], axis=1)
                 self.DataPlant['x_H2S_V101_filled'] = self.DataPlant['x_H2S_V101_filled'].fillna(0).astype(float)
                 self.DataPlant['x_H2S_V101_filled'] = self.DataPlant['x_H2S_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101_filled"].mask(self.DataPlant["x_H2S_V101_filled"] > 100, np.nan)
+                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101_filled"].mask(self.DataPlant["x_H2S_V101_filled"] > 1000000, np.nan)
                 self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101_filled"].ffill()
                 mean_value_xH2S_V101 = self.DataPlant["x_H2S_V101_filled"].mean()
                 self.DataPlant["x_H2S_V101_filled"] = mean_value_xH2S_V101
@@ -768,7 +768,7 @@ class Training_offline:
                 self.DataPlant['x_H2S_V102_filled'] = self.DataPlant.apply(lambda row: row['x_H2S_V102_filled'] if row['x_H2S_V102'] == 0 else row['x_H2S_V102'], axis=1)
                 self.DataPlant['x_H2S_V102_filled'] = self.DataPlant['x_H2S_V102_filled'].fillna(0).astype(float)
                 self.DataPlant['x_H2S_V102_filled'] = self.DataPlant['x_H2S_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102_filled"].mask(self.DataPlant["x_H2S_V102_filled"] > 100, np.nan)
+                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102_filled"].mask(self.DataPlant["x_H2S_V102_filled"] > 1000000, np.nan)
                 self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102_filled"].ffill()
                 mean_value_xH2S_V102 = self.DataPlant["x_H2S_V102_filled"].mean()
                 self.DataPlant["x_H2S_V102_filled"] = mean_value_xH2S_V102
@@ -782,7 +782,7 @@ class Training_offline:
                 self.DataPlant['x_H2S_V107_filled'] = self.DataPlant.apply(lambda row: row['x_H2S_V107_filled'] if row['x_H2S_V107'] == 0 else row['x_H2S_V107'], axis=1)
                 self.DataPlant['x_H2S_V107_filled'] = self.DataPlant['x_H2S_V107_filled'].fillna(0).astype(float)
                 self.DataPlant['x_H2S_V107_filled'] = self.DataPlant['x_H2S_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107_filled"].mask(self.DataPlant["x_H2S_V107_filled"] > 100, np.nan)
+                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107_filled"].mask(self.DataPlant["x_H2S_V107_filled"] > 1000000, np.nan)
                 self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107_filled"].ffill()
                 mean_value_xH2S_V107 = self.DataPlant["x_H2S_V107_filled"].mean()
                 self.DataPlant["x_H2S_V107_filled"] = mean_value_xH2S_V107
@@ -2258,7 +2258,7 @@ class Training_offline:
         Absolute_humidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"].iloc[-1]/100, T = self.T_V101_actual)
         self.mol_acum_H2O_V101 = (Absolute_humidity_V101 * self.Vnorm_bio_sto_V101) / 18
         Energy_V101 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V101, molCO2=self.mol_acum_CO2_V101, molH2S=self.mol_acum_H2S_V101, molO2=self.mol_acum_O2_V101, molH2 = self.mol_acum_H2_V101)
-        self.Energy_V101 = Energy_V101[1]/3600
+        self.Energy_V101 = Energy_V101[1]
         self.LHV_V101 = Energy_V101[0]
 
     def V102model1_2 (self):
@@ -2287,7 +2287,7 @@ class Training_offline:
         Absolute_humidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"].iloc[-1]/100, T = self.T_V102_actual)
         self.mol_acum_H2O_V102 = (Absolute_humidity_V102 * self.Vnorm_bio_sto_V102) / 18
         Energy_V102 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V102, molCO2=self.mol_acum_CO2_V102, molH2S=self.mol_acum_H2S_V102, molO2=self.mol_acum_O2_V102, molH2 = self.mol_acum_H2_V102)
-        self.Energy_V102 = Energy_V102[1]/3600
+        self.Energy_V102 = Energy_V102[1]
         self.LHV_V102 = Energy_V102[0]
     
     def V107model1_2 (self):
@@ -2301,7 +2301,7 @@ class Training_offline:
         self.xH2S_V107 = self.DataPlant["x_H2S_V107"].iloc[-1]
         self.VO2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_O2_V107"].iloc[-1]/100)
         self.xO2_V107 = self.DataPlant["x_O2_V107"].iloc[-1]
-        self.VH2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_H2_V107"].iloc[-1]/100)
+        self.VH2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_H2_V107"].iloc[-1]/1000000)
         self.xH2_V107 = self.DataPlant["x_H2_V107"].iloc[-1]
         mol_biogas_Acum_dry_V107 = self.mol_acum_CH4_V107 + self.mol_acum_CO2_V107 + self.mol_acum_H2S_V107 + self.mol_acum_O2_V107 + self.mol_acum_H2_V107 + self.mol_acum_NH3_V107
         try:
@@ -2316,7 +2316,7 @@ class Training_offline:
         Absolute_humidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"].iloc[-1]/100, T = self.T_V107_actual)
         self.mol_acum_H2O_V107 = (Absolute_humidity_V107 * self.Vnorm_bio_sto_V107) / 18
         Energy_V107 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V107, molCO2=self.mol_acum_CO2_V107, molH2S=self.mol_acum_H2S_V107, molO2=self.mol_acum_O2_V107, molH2 = self.mol_acum_H2_V107)
-        self.Energy_V107 = Energy_V107[1]/3600
+        self.Energy_V107 = Energy_V107[1]
         self.LHV_V107 = Energy_V107[0]
         
     def biogas_treatment_optimization (self, W_feSO4, W_silica, qmax_NH3, W_carbon, K_NH3, K2_NH3):
