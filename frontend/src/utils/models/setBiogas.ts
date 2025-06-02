@@ -134,14 +134,11 @@ export const setBiogas = (
     }
 
     newState.difussionCoefficientTower1.disabled = newState.digitalTwinState;
-    newState.adsorbentWeightTower1.disabled = newState.digitalTwinState;
     newState.lengthTower1.disabled = newState.digitalTwinState;
-    newState.difussionCoefficientTower2.disabled = newState.digitalTwinState;
-    newState.adsorbentWeightTower2.disabled = newState.digitalTwinState;
-    newState.lengthTower2.disabled = newState.digitalTwinState;
+    newState.kineticFactorTower1.disabled = newState.digitalTwinState;
     newState.difussionCoefficientTower3.disabled = newState.digitalTwinState;
-    newState.adsorbentWeightTower3.disabled = newState.digitalTwinState;
     newState.lengthTower3.disabled = newState.digitalTwinState;
+    newState.kineticFactorTower3.disabled = newState.digitalTwinState;
   }
 
   if (e.target.name === 'operationModelType') {
