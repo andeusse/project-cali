@@ -124,7 +124,68 @@ class InfluxDBmodel:
             |> filter(fn: (r) => r["_field"] == "SE-107" or r["_field"] == "SE-108" or r["_field"] == "SE-109")
             |> last()
             '''
+        elif type == 8:
+            self.query = f'''
+                from(bucket: "{self.bucket}")
+                |> range(start: -{train_time}m, stop: now())
+                |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+                |> filter(fn: (r) => r["device"] == "interfaz")
+                |> filter(fn: (r) => 
+                    r["_field"] == "PAcumV101" or 
+                    r["_field"] == "PAcumV102" or 
+                    r["_field"] == "PAcumV107" or
+                    r["_field"] == "PacumGasesV102" or
+                    r["_field"] == "Volumen_bioV101" or
+                    r["_field"] == "Volumen_bioV102" or
+                    r["_field"] == "Volumen_bioV107" or
+                    r["_field"] == "LHV_bioV101" or
+                    r["_field"] == "LHV_bioV102" or
+                    r["_field"] == "LHV_bioV107" or
+                    r["_field"] == "LHV_bio_WhV101" or
+                    r["_field"] == "LHV_bio_WhV102" or
+                    r["_field"] == "LHV_bio_WhV107" or
+                    r["_field"] == "Energia_jouleV101" or
+                    r["_field"] == "Energia_jouleV102" or
+                    r["_field"] == "Energia_jouleV107" or
+                    r["_field"] == "MNS" or
+                    r["_field"] == "MP1" or
+                    r["_field"] == "MP2" or
+                    r["_field"] == "MP3" or
+                    r["_field"] == "MP4" or
+                    r["_field"] == "Md1" or
+                    r["_field"] == "Md2" or
+                    r["_field"] == "Md3" or
+                    r["_field"] == "Md4" or
+                    r["_field"] == "MST1" or
+                    r["_field"] == "MST2" or
+                    r["_field"] == "MST3" or
+                    r["_field"] == "MST4" or
+                    r["_field"] == "MSV1" or
+                    r["_field"] == "MSV2" or
+                    r["_field"] == "MSV3" or
+                    r["_field"] == "MSV4" or
+                    r["_field"] == "MCc1" or
+                    r["_field"] == "MCc2" or
+                    r["_field"] == "MCc3" or
+                    r["_field"] == "MCc4" or
+                    r["_field"] == "MCh1" or
+                    r["_field"] == "MCh2" or
+                    r["_field"] == "MCh3" or
+                    r["_field"] == "MCh4" or
+                    r["_field"] == "MCo1" or
+                    r["_field"] == "MCo2" or
+                    r["_field"] == "MCo3" or
+                    r["_field"] == "MCo4" or
+                    r["_field"] == "MCn1" or
+                    r["_field"] == "MCn2" or
+                    r["_field"] == "MCn3" or
+                    r["_field"] == "MCn4" or
+                    r["_field"] == "MCs1" or
+                    r["_field"] == "MCs2" or
+                    r["_field"] == "MCs3" or
+                    r["_field"] == "MCs4" 
+                )'''
         else:
             self.query = "Tipo de query inválido"
+        
         return self.query
-
