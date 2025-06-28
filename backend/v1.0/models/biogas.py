@@ -1050,7 +1050,11 @@ class Biogas(Resource):
         biogas_output["ads_H2O_bt"] = biogas_plant.mol_H2O_ads_acum
         biogas_output["x_bt"] = biogas_plant.Xglobal * 100
       
+<<<<<<< Updated upstream
       elif OperationMode == "Modo4":
+=======
+      elif OperationMode == "Modo4": 
+>>>>>>> Stashed changes
         biogas_plant = biogas_instances_offline[user]
         biogas_plant.Substrate_conditions(Cc = Cc, Ch = Ch, Co = Co, Cn = Cn, Cs = Cs, ST = ST, SV = SV, rho = rho)
         biogas_plant.Pump104(TRH=TRH, FT_P104=FT_P104, TTO_P104=TTO_P104, time_accelerator=time_accelator)
@@ -1059,6 +1063,7 @@ class Biogas(Resource):
         biogas_plant.Pump102(FT_P102=FT_P102, TTO_P102=TTO_P102, Q_P102=Q_P102)
         biogas_plant.Mixing_R102(FT_mixin_R102=FT_mixin_R102, TTO_mixing_R102=TTO_mixing_R102, RPM_R102=RPM_R102)
 
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
       elif OperationMode == "Modo4": 
         biogas_plant = biogas_instances_offline[user]
@@ -1069,11 +1074,14 @@ class Biogas(Resource):
         biogas_plant.Pump102(FT_P102=FT_P102, TTO_P102=TTO_P102, Q_P102=Q_P102)
         biogas_plant.Mixing_R102(FT_mixin_R102=FT_mixin_R102, TTO_mixing_R102=TTO_mixing_R102, RPM_R102=RPM_R102)
 
+=======
+>>>>>>> Stashed changes
         if Model == "Arrhenius":
           biogas_plant.Reactor101Simulation_ArrheniusModel(Operation=2, VR=VR1, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini,
                                                                  K=K_R101, Ea=Ea_R101, T=T_R101, pH = pH_R101, Qin_2=biogas_plant.Q_P102v, Csus_in2=biogas_plant.Csus_ini_R102)
           biogas_plant.Reactor102Simulation_ArrheniusModel(Operation=1, VR=VR2, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini_R101,
                                                                  K = K_R102, Ea=Ea_R102, T=T_R102, pH = pH_R102)
+<<<<<<< Updated upstream
 =======
         if Model == "Arrhenius":
           biogas_plant.Reactor101Simulation_ArrheniusModel(Operation=2, VR=VR1, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini,
@@ -1081,15 +1089,21 @@ class Biogas(Resource):
           biogas_plant.Reactor102Simulation_ArrheniusModel(Operation=1, VR=VR2, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini_R101,
                                                             K = K_R102, Ea=Ea_R102, T=T_R102, pH = pH_R102)
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
           biogas_output["K_R101"] = K_R101
           biogas_output["Ea_R101"] = Ea_R101
           biogas_output["K_R102"] = K_R102
           biogas_output["Ea_R102"] = Ea_R102
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         elif Model == "ADM1":
 =======
         if Model == "ADM1":
+>>>>>>> Stashed changes
+=======
+        elif Model == "ADM1":
 >>>>>>> Stashed changes
           biogas_plant.Reactor101Simulation_ADM1(Operation=2, VR=VR1, Qin_1=biogas_plant.Q_P104v, Csus_in1 = biogas_plant.Csus_ini, K=K_R101, Qin_2=biogas_plant.Q_P102v, Csus_in2=biogas_plant.Csus_ini_R102)
           biogas_plant.Reactor102Simulation_ADM1(Operation=1, VR=VR2, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini_R101, K=K_R102)
@@ -1098,9 +1112,13 @@ class Biogas(Resource):
           biogas_output["K_R102"] = K_R102
         
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         elif Model == "Gompertz":
 =======
         if Model == "Gompertz":
+>>>>>>> Stashed changes
+=======
+        elif Model == "Gompertz":
 >>>>>>> Stashed changes
           biogas_plant.Reactor101Simulation_Gompertz(Operation=2, ym = K_R101, U = Ea_R101, Lambda = L_R101, Qin_1=biogas_plant.Q_P104v, Qin_2=biogas_plant.Q_P102v)
           biogas_plant.Reactor102Simulation_Gompertz(Operation=1, ym = K_R102, U = Ea_R102, Lambda = L_R102, Qin_1 = biogas_plant.Q_P104v)
@@ -1112,6 +1130,7 @@ class Biogas(Resource):
           biogas_output["Ea_R102"] = Ea_R102
           biogas_output["Lambda_R102"] = L_R102
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         
         biogas_plant.V101_mode1(Pset = 50, Model = Model)
         biogas_plant.V102_mode2(Pset = 50)
@@ -1119,14 +1138,23 @@ class Biogas(Resource):
         biogas_plant.biogas_treatment_model1(W_fe2O3=154.46, K_H2S=5/14.6955, K_NH3=0.2/14.6955, K_H2O=(1/14.6955), w_carbon=3510.32, w_silica=3997.79, qmax_H2O=0.000167, qmax_H2S=0.00088, qmax_NH3=0.00101, k2_H2O=0.01)          
 =======
 
+=======
+        
+>>>>>>> Stashed changes
         biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
         biogas_plant.V102_mode2(Pset = Pset_V102)
         biogas_plant.V107_mode1(Pset = Pset_V107)
         biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)          
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
         biogas_plant.time_counter()
 
         #Exit Variables Mode 5
+=======
+        biogas_plant.time_counter()
+
+        #Exit Variables Mode 4
+>>>>>>> Stashed changes
         #TK100
         biogas_output["n"] = biogas_plant.n
         biogas_output["a"] = biogas_plant.a
