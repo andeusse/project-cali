@@ -1098,7 +1098,6 @@ class Biogas(Resource):
         biogas_plant.time_counter()
 
         #Exit Variables Mode 4
-
         #TK100
         biogas_output["n"] = biogas_plant.n
         biogas_output["a"] = biogas_plant.a
