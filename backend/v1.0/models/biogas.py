@@ -468,7 +468,7 @@ class Biogas(Resource):
         biogas_plant.V101_mode1(Pset=Pset_V101, Model=Model)
         biogas_plant.V102_mode1(Pset=Pset_V102)
         biogas_plant.V107_mode1(Pset=Pset_V107)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3, k2_H2O = K2_H2O, k2_NH3 = K2_NH3, k2_H2S = K2_H2S)
         biogas_plant.time_counter()
 
         #Exit Variables Mode 1
@@ -609,7 +609,7 @@ class Biogas(Resource):
         biogas_plant.V101_mode1(Pset=Pset_V101, Model=Model)
         biogas_plant.V102_mode1(Pset=Pset_V102)
         biogas_plant.V107_mode1(Pset=Pset_V107)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3, k2_H2O = K2_H2O, k2_NH3 = K2_NH3, k2_H2S = K2_H2S)
         biogas_plant.time_counter()
       
         #Exit Variables Mode 2
@@ -762,7 +762,7 @@ class Biogas(Resource):
         biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
         biogas_plant.V102_mode2(Pset = Pset_V102)
         biogas_plant.V107_mode1(Pset = Pset_V107)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3, k2_H2O = K2_H2O, k2_NH3 = K2_NH3, k2_H2S = K2_H2S)
         biogas_plant.time_counter()
 
         #Exit Variables Mode 3
@@ -925,7 +925,7 @@ class Biogas(Resource):
         biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
         biogas_plant.V102_mode2(Pset = Pset_V102)
         biogas_plant.V107_mode1(Pset = Pset_V107)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3, k2_H2O = K2_H2O, k2_NH3 = K2_NH3, k2_H2S = K2_H2S)
         biogas_plant.time_counter()
 
         #Exit Variables Mode 5
@@ -1094,7 +1094,7 @@ class Biogas(Resource):
         biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
         biogas_plant.V102_mode2(Pset = Pset_V102)
         biogas_plant.V107_mode1(Pset = Pset_V107)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)          
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3, k2_H2O = K2_H2O, k2_NH3 = K2_NH3, k2_H2S = K2_H2S)          
         biogas_plant.time_counter()
 
         #Exit Variables Mode 4
