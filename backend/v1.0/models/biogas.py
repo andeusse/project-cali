@@ -122,6 +122,26 @@ class Biogas(Resource):
       Volume_V101 = data["biogasTankVolume1"]["value"]
       Volume_V102 = data["biogasTankVolume2"]["value"]
       Volume_V107 = data["biogasTankVolume3"]["value"]
+
+      #Biogas filter parameters
+      #filter to H2S adsorptia
+      qmax_H2S = data["lengthTower1"]["value"]
+      K_H2S = data["difussionCoefficientTower1"]["value"]
+      K2_H2S = data["kineticFactorTower1"]["value"]
+      w_Fe = data["adsorbentWeightTower1"]["value"]
+
+      #filter to NH3 adsorptia
+      qmax_NH3 = data["lengthTower2"]["value"]
+      K_NH3 = data["difussionCoefficientTower2"]["value"]
+      K2_NH3 = data["kineticFactorTower2"]["value"]
+      w_Carbon = data["adsorbentWeightTower2"]["value"]
+
+      #filter to H2O adsorptia
+      qmax_H2O = data["lengthTower3"]["value"]
+      K_H2O = data["difussionCoefficientTower3"]["value"]
+      K2_H2O = data["kineticFactorTower3"]["value"]
+      w_silica = data["adsorbentWeightTower3"]["value"]
+
       if user not in biogas_instances_online:
         biogas_instances_online[user] = TrainingModel.Training_offline(DB_IP = DB_IP, DB_Port = DB_Port, DB_Organization = DB_Organization, DB_Bucket = DB_Bucket, DB_Token = DB_Token,
                                                                     t_train = t_train, ST_ini_R101=ST_ini_R101, SV_ini_R101=SV_ini_R101, Cc_R101 = Cc_ini_R101, Ch_R101=Ch_ini_R101, Co_R101=Co_ini_R101, Cn_R101=Cn_ini_R101, Cs_R101=Cs_ini_R101, rho_R101=rho_ini_R101, Volume_V101 = Volume_V101,  
@@ -149,7 +169,7 @@ class Biogas(Resource):
       biogas_plant_online.V101model1_2()
       biogas_plant_online.V102model1_2()
       biogas_plant_online.V107model1_2()
-      biogas_plant_online.biogas_treatment_optimization(W_feSO4=154.46, W_silica=3997.79, qmax_NH3 = 0.0000101, W_carbon = 3510.32, K_NH3 = 0.0001361 , K2_NH3 = 1e-12)           
+      biogas_plant_online.biogas_treatment_optimization(W_feSO4=w_Fe, W_silica=w_silica, qmax_NH3 = qmax_NH3, W_carbon = w_Carbon, K_NH3 = K_NH3 , K2_NH3 = K2_NH3)           
     
       # -------------Exit variables to front 
       # substrate conditions
@@ -387,6 +407,30 @@ class Biogas(Resource):
       #PH R102
       pH_R102 = data["inputPHR102"]["value"]
 
+      #Pressure for biogas vessel
+      Pset_V101 = data["inputPressureTankV101"]["value"]
+      Pset_V102 = data["inputPressureTankV102"]["value"]
+      Pset_V107 = data["inputPressureTankV107"]["value"]
+
+      #Biogas filter parameters
+      #filter to H2S adsorptia
+      qmax_H2S = data["lengthTower1"]["value"]
+      K_H2S = data["difussionCoefficientTower1"]["value"]
+      K2_H2S = data["kineticFactorTower1"]["value"]
+      w_Fe = data["adsorbentWeightTower1"]["value"]
+
+      #filter to NH3 adsorptia
+      qmax_NH3 = data["lengthTower2"]["value"]
+      K_NH3 = data["difussionCoefficientTower2"]["value"]
+      K2_NH3 = data["kineticFactorTower2"]["value"]
+      w_Carbon = data["adsorbentWeightTower2"]["value"]
+
+      #filter to H2O adsorptia
+      qmax_H2O = data["lengthTower3"]["value"]
+      K_H2O = data["difussionCoefficientTower3"]["value"]
+      K2_H2O = data["kineticFactorTower3"]["value"]
+      w_silica = data["adsorbentWeightTower3"]["value"]
+
       if user not in biogas_instances_offline:
          biogas_instances_offline[user] = Biogas_Model_Simulation.BiogasPlantSimulation(VR1 = VR1, VR2 = VR2, VG1=VG1, VG2 = VG2, VG3 = VG3, tp = tp,
                                                                 ST_R101 = ST_ini_R101, SV_R101 = SV_ini_R101, Cc_R101 = Cc_ini_R101, Ch_R101 = Ch_ini_R101, Co_R101 = Co_ini_R101, Cn_R101 = Cn_ini_R101, Cs_R101 = Cs_ini_R101, rho_R101 = rho_ini_R101,
@@ -421,10 +465,10 @@ class Biogas(Resource):
           biogas_output["Ea_R101"] = Ea_R101
           biogas_output["Lambda_R101"] = L_R101
         
-        biogas_plant.V101_mode1(Pset=50, Model=Model)
-        biogas_plant.V102_mode1(Pset=50)
-        biogas_plant.V107_mode1(Pset=50)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=154.46, K_H2S=5/14.6955, K_NH3=0.2/14.6955, K_H2O=1/14.6955, w_carbon=3510.32, w_silica=3997.79, qmax_H2O=0.0167, qmax_H2S=0.00088, qmax_NH3=0.00101)
+        biogas_plant.V101_mode1(Pset=Pset_V101, Model=Model)
+        biogas_plant.V102_mode1(Pset=Pset_V102)
+        biogas_plant.V107_mode1(Pset=Pset_V107)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
         biogas_plant.time_counter()
 
         #Exit Variables Mode 1
@@ -562,10 +606,10 @@ class Biogas(Resource):
           biogas_output["Ea_R101"] = Ea_R101
           biogas_output["Lambda_R101"] = L_R101
         
-        biogas_plant.V101_mode1(Pset=50, Model=Model)
-        biogas_plant.V102_mode1(Pset=50)
-        biogas_plant.V107_mode1(Pset=50)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=154.46, K_H2S=5/14.6955, K_NH3=0.2/14.6955, K_H2O=1/14.6955, w_carbon=3510.32, w_silica=3997.79, qmax_H2O=0.0167, qmax_H2S=0.00088, qmax_NH3=0.00101)
+        biogas_plant.V101_mode1(Pset=Pset_V101, Model=Model)
+        biogas_plant.V102_mode1(Pset=Pset_V102)
+        biogas_plant.V107_mode1(Pset=Pset_V107)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
         biogas_plant.time_counter()
       
         #Exit Variables Mode 2
@@ -715,10 +759,10 @@ class Biogas(Resource):
             biogas_output["Ea_R102"] = Ea_R102
             biogas_output["Lambda_R102"] = L_R102
             
-        biogas_plant.V101_mode1(Pset = 50, Model = Model)
-        biogas_plant.V102_mode2(Pset = 50)
-        biogas_plant.V107_mode1(Pset = 50)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=154.46, K_H2S=5/14.6955, K_NH3=0.2/14.6955, K_H2O=(1/14.6955), w_carbon=3510.32, w_silica=3997.79, qmax_H2O=0.000167, qmax_H2S=0.00088, qmax_NH3=0.00101, k2_H2O=0.01)
+        biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
+        biogas_plant.V102_mode2(Pset = Pset_V102)
+        biogas_plant.V107_mode1(Pset = Pset_V107)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
         biogas_plant.time_counter()
 
         #Exit Variables Mode 3
@@ -878,10 +922,10 @@ class Biogas(Resource):
             biogas_output["Ea_R102"] = Ea_R102
             biogas_output["Lambda_R102"] = L_R102
             
-        biogas_plant.V101_mode1(Pset = 50, Model = Model)
-        biogas_plant.V102_mode2(Pset = 50)
-        biogas_plant.V107_mode1(Pset = 50)
-        biogas_plant.biogas_treatment_model1(W_fe2O3=154.46, K_H2S=5/14.6955, K_NH3=0.2/14.6955, K_H2O=(1/14.6955), w_carbon=3510.32, w_silica=3997.79, qmax_H2O=0.000167, qmax_H2S=0.00088, qmax_NH3=0.00101, k2_H2O=0.01)
+        biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
+        biogas_plant.V102_mode2(Pset = Pset_V102)
+        biogas_plant.V107_mode1(Pset = Pset_V107)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)
         biogas_plant.time_counter()
 
         #Exit Variables Mode 5
@@ -1005,7 +1049,17 @@ class Biogas(Resource):
         biogas_output["ads_H2S_bt"] = biogas_plant.mol_H2S_ads_acum
         biogas_output["ads_H2O_bt"] = biogas_plant.mol_H2O_ads_acum
         biogas_output["x_bt"] = biogas_plant.Xglobal * 100
+      
+      elif OperationMode == "Modo4":
+        biogas_plant = biogas_instances_offline[user]
+        biogas_plant.Substrate_conditions(Cc = Cc, Ch = Ch, Co = Co, Cn = Cn, Cs = Cs, ST = ST, SV = SV, rho = rho)
+        biogas_plant.Pump104(TRH=TRH, FT_P104=FT_P104, TTO_P104=TTO_P104, time_accelerator=time_accelator)
+        biogas_plant.Mixing_TK100(FT_mixin_TK100=FT_mixin_TK100, TTO_mixing_TK100 = TTO_mixing_TK100, RPM_TK100=RPM_TK100)
+        biogas_plant.Mixing_R101(FT_mixin_R101=FT_mixin_R101, TTO_mixing_R101=TTO_mixing_R101, RPM_R101=RPM_R101)
+        biogas_plant.Pump102(FT_P102=FT_P102, TTO_P102=TTO_P102, Q_P102=Q_P102)
+        biogas_plant.Mixing_R102(FT_mixin_R102=FT_mixin_R102, TTO_mixing_R102=TTO_mixing_R102, RPM_R102=RPM_R102)
 
+<<<<<<< Updated upstream
       elif OperationMode == "Modo4": 
         biogas_plant = biogas_instances_offline[user]
         biogas_plant.Substrate_conditions(Cc = Cc, Ch = Ch, Co = Co, Cn = Cn, Cs = Cs, ST = ST, SV = SV, rho = rho)
@@ -1020,19 +1074,34 @@ class Biogas(Resource):
                                                                  K=K_R101, Ea=Ea_R101, T=T_R101, pH = pH_R101, Qin_2=biogas_plant.Q_P102v, Csus_in2=biogas_plant.Csus_ini_R102)
           biogas_plant.Reactor102Simulation_ArrheniusModel(Operation=1, VR=VR2, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini_R101,
                                                                  K = K_R102, Ea=Ea_R102, T=T_R102, pH = pH_R102)
+=======
+        if Model == "Arrhenius":
+          biogas_plant.Reactor101Simulation_ArrheniusModel(Operation=2, VR=VR1, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini,
+                                                            K=K_R101, Ea=Ea_R101, T=T_R101, pH = pH_R101, Qin_2=biogas_plant.Q_P102v, Csus_in2=biogas_plant.Csus_ini_R102)
+          biogas_plant.Reactor102Simulation_ArrheniusModel(Operation=1, VR=VR2, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini_R101,
+                                                            K = K_R102, Ea=Ea_R102, T=T_R102, pH = pH_R102)
+>>>>>>> Stashed changes
           biogas_output["K_R101"] = K_R101
           biogas_output["Ea_R101"] = Ea_R101
           biogas_output["K_R102"] = K_R102
           biogas_output["Ea_R102"] = Ea_R102
 
+<<<<<<< Updated upstream
         elif Model == "ADM1":
+=======
+        if Model == "ADM1":
+>>>>>>> Stashed changes
           biogas_plant.Reactor101Simulation_ADM1(Operation=2, VR=VR1, Qin_1=biogas_plant.Q_P104v, Csus_in1 = biogas_plant.Csus_ini, K=K_R101, Qin_2=biogas_plant.Q_P102v, Csus_in2=biogas_plant.Csus_ini_R102)
           biogas_plant.Reactor102Simulation_ADM1(Operation=1, VR=VR2, Qin_1=biogas_plant.Q_P104v, Csus_in1=biogas_plant.Csus_ini_R101, K=K_R102)
 
           biogas_output["K_R101"] = K_R101
           biogas_output["K_R102"] = K_R102
         
+<<<<<<< Updated upstream
         elif Model == "Gompertz":
+=======
+        if Model == "Gompertz":
+>>>>>>> Stashed changes
           biogas_plant.Reactor101Simulation_Gompertz(Operation=2, ym = K_R101, U = Ea_R101, Lambda = L_R101, Qin_1=biogas_plant.Q_P104v, Qin_2=biogas_plant.Q_P102v)
           biogas_plant.Reactor102Simulation_Gompertz(Operation=1, ym = K_R102, U = Ea_R102, Lambda = L_R102, Qin_1 = biogas_plant.Q_P104v)
 
@@ -1042,11 +1111,19 @@ class Biogas(Resource):
           biogas_output["K_R102"] = K_R102
           biogas_output["Ea_R102"] = Ea_R102
           biogas_output["Lambda_R102"] = L_R102
+<<<<<<< Updated upstream
         
         biogas_plant.V101_mode1(Pset = 50, Model = Model)
         biogas_plant.V102_mode2(Pset = 50)
         biogas_plant.V107_mode1(Pset = 50)
         biogas_plant.biogas_treatment_model1(W_fe2O3=154.46, K_H2S=5/14.6955, K_NH3=0.2/14.6955, K_H2O=(1/14.6955), w_carbon=3510.32, w_silica=3997.79, qmax_H2O=0.000167, qmax_H2S=0.00088, qmax_NH3=0.00101, k2_H2O=0.01)          
+=======
+
+        biogas_plant.V101_mode1(Pset = Pset_V101, Model = Model)
+        biogas_plant.V102_mode2(Pset = Pset_V102)
+        biogas_plant.V107_mode1(Pset = Pset_V107)
+        biogas_plant.biogas_treatment_model1(W_fe2O3=w_Fe, K_H2S=K_H2S, K_NH3=K_NH3, K_H2O=K_H2O, w_carbon=w_Carbon, w_silica=w_silica, qmax_H2O=qmax_H2O, qmax_H2S=qmax_H2S, qmax_NH3=qmax_NH3)          
+>>>>>>> Stashed changes
         biogas_plant.time_counter()
 
         #Exit Variables Mode 5
