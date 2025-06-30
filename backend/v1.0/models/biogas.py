@@ -8,6 +8,7 @@ import os
 import json
 import math
 
+
 biogas_instances_online = {}
 biogas_instances_offline = {}
 users_instances_online = []
@@ -150,140 +151,142 @@ class Biogas(Resource):
       biogas_plant_online.LimitReagentCalculation()
       Model = data["operationModelType"]
       biogas_plant_online.StochoimetricExpenditure(Model=Model)
-      print(biogas_plant_online.TrainMode, flush=True)
+      #print(biogas_plant_online.TrainMode, flush=True)
       if Model == "Arrhenius":
         biogas_plant_online.OptimizationArrhenius(resolution = 5)
-        biogas_output["K_R101"] = abs(biogas_plant_online.K_mean_R101)
-        biogas_output["Ea_R101"] = abs(biogas_plant_online.Ea_mean_R101)
+        biogas_output["K_R101"] = abs(float(biogas_plant_online.K_mean_R101))
+        biogas_output["Ea_R101"] = abs(float(biogas_plant_online.Ea_mean_R101))
       if Model == "ADM1":
-        biogas_plant_online.OptimizationADM1(resolution = 140)
-        biogas_output["K_R101"] = abs(biogas_plant_online.K_ini_ADM1_R101)
-      # if Model == "Gompertz":
-      #   biogas_plant_online.OptimizationGompertz()
-      #   biogas_output["K_R101"] = biogas_plant_online.ym_R101
-      #   biogas_output["Ea_R101"] = biogas_plant_online.U_R101
-      #   biogas_output["Lambda_R101"] = biogas_plant_online.L_R101
+        biogas_plant_online.OptimizationADM1(resolution = 400)
+        biogas_output["K_R101"] = abs(float(biogas_plant_online.K_ini_ADM1_R101))
+      if Model == "Gompertz":
+        biogas_plant_online.Optimization_Gompertz()
+        biogas_output["K_R101"] = float(biogas_plant_online.ym_R101)
+        biogas_output["Ea_R101"] = float(biogas_plant_online.U_R101)
+        biogas_output["Lambda_R101"] = float(biogas_plant_online.L_R101)
 
-      # biogas_plant_online.biogas_treatment_optimization(W_feSO4=w_Fe, W_silica=w_silica, qmax_NH3 = qmax_NH3, W_carbon = w_Carbon, K_NH3 = K_NH3 , K2_NH3 = K2_NH3) 
-      # biogas_plant_online.exitVariablestoFrontEnd()          
+      biogas_plant_online.biogas_treatment_optimization(W_feSO4=w_Fe, W_silica=w_silica, qmax_NH3 = qmax_NH3, W_carbon = w_Carbon, K_NH3 = K_NH3 , K2_NH3 = K2_NH3) 
+      biogas_plant_online.exitVariablestoFrontEnd()          
     
-      # # -------------Exit variables to front 
-      # # substrate conditions
-      # #General Conditions
-      # biogas_output["operationMode"] = f"Modo{int(biogas_plant_online.Operation_mode)}"
-      # # TK-100
-      # biogas_output["n"] = biogas_plant_online.n
-      # biogas_output["a"] = biogas_plant_online.a
-      # biogas_output["b"] = biogas_plant_online.b
-      # biogas_output["c"] = biogas_plant_online.c
-      # biogas_output["d"] = biogas_plant_online.d
-      # biogas_output["Mix_Velocity_TK100"] = biogas_plant_online.Mix_Velocity_TK100
-      # biogas_output["C_sv"] = biogas_plant_online.Csv_sus_gl                            #gSV/L
-      # biogas_output["SV"] = biogas_plant_online.SV
-      # biogas_output["C_st"] = biogas_plant_online.Cst_sus_gl
-      # biogas_output["ST"] = biogas_plant_online.ST
-      # # P104
-      # biogas_output["Pump104Flow"] = biogas_plant_online.P104
-      # # R101
-      # biogas_output["Mix_Velocity_R101"] = biogas_plant_online.Mix_Velocity_R101
-      # biogas_output["pH_R101"] = biogas_plant_online.pH_R101
-      # biogas_output["Temp_R101"] = biogas_plant_online.T_R101
-      # biogas_output["C_sv_R101"] = biogas_plant_online.Csus_ini_SV_R101_gl-50
-      # biogas_output["SV_R101"] = (biogas_plant_online.SV_R101*100)-5
-      # biogas_output["C_st_R101"] = biogas_plant_online.Csus_ini_ST_R101_gl-50
-      # biogas_output["ST_R101"] = (biogas_plant_online.ST_R101*100)-5
-      # biogas_output["Organic_Charge_R101"] = biogas_plant_online.OC_R101
-      # biogas_output["x_R101"] = biogas_plant_online.x_R101*100
-      # # P101
-      # biogas_output["Pump101Flow"] = biogas_plant_online.P101
-      # # V101
-      # biogas_output["AcumBiogasPressureV101"] = biogas_plant_online.Pacum_V101
-      # biogas_output["StorageBiogasPressureV101"] = biogas_plant_online.P_V101
-      # biogas_output["AcumBiogasVolumenV101"] = biogas_plant_online.Vnorm_bio_V101
-      # biogas_output["StorageBiogasVolumeV101"] = biogas_plant_online.Vnorm_bio_sto_V101
-      # biogas_output["StorageCH4_V101Volume"] = biogas_plant_online.VCH4_acum_V101
-      # biogas_output["StorageCH4_V101Concentration"] = biogas_plant_online.xCH4_V101
-      # biogas_output["StorageCH4_V101moles"] = biogas_plant_online.mol_acum_CH4_V101
-      # biogas_output["StorageCO2_V101Volume"] = biogas_plant_online.VCO2_acum_V101
-      # biogas_output["StorageCO2_V101Concentration"] = biogas_plant_online.xCO2_V101
-      # biogas_output["StorageCO2_V101moles"] = biogas_plant_online.mol_acum_CO2_V101
-      # biogas_output["StorageH2S_V101Volume"] = biogas_plant_online.VH2S_acum_V101
-      # biogas_output["StorageH2S_V101Concentration"] = biogas_plant_online.xH2S_V101
-      # biogas_output["StorageH2S_V101moles"] = biogas_plant_online.mol_acum_H2S_V101
-      # biogas_output["StorageO2_V101Volume"] = biogas_plant_online.VO2_acum_V101
-      # biogas_output["StorageO2_V101Concentration"] = biogas_plant_online.xO2_V101
-      # biogas_output["StorageO2_V101moles"] = biogas_plant_online.mol_acum_O2_V101
-      # biogas_output["StorageH2_V101Volume"] = biogas_plant_online.VH2_acum_V101
-      # biogas_output["StorageH2_V101Concentration"] = biogas_plant_online.xH2_V101
-      # biogas_output["StorageH2_V101moles"] = biogas_plant_online.mol_acum_H2_V101
-      # biogas_output["StorageNH3_V101Volume"] = biogas_plant_online.VNH3_acum_V101
-      # biogas_output["StorageNH3_V101Concentration"] = biogas_plant_online.xNH3_V101
-      # biogas_output["StorageNH3_V101moles"] = biogas_plant_online.mol_acum_NH3_V101
-      # biogas_output["moles_humidity_V101"] = biogas_plant_online.mol_acum_H2O_V101
-      # biogas_output["Relative_humidity_V101"] = biogas_plant_online.RH_V101
-      # biogas_output["StorageEnergy_V101"] = biogas_plant_online.Energy_V101/3600
-      # # V102
-      # biogas_output["AcumBiogasPressureV102"] = biogas_plant_online.Pacum_V102
-      # biogas_output["StorageBiogasPressureV102"] = biogas_plant_online.P_V102
-      # biogas_output["AcumBiogasVolumenV102"] = biogas_plant_online.Vnorm_bio_V102
-      # biogas_output["StorageBiogasVolumeV102"] = biogas_plant_online.Vnorm_bio_sto_V102
-      # biogas_output["StorageCH4_V102Volume"] = biogas_plant_online.VCH4_acum_V102
-      # biogas_output["StorageCH4_V102Concentration"] = biogas_plant_online.xCH4_V102
-      # biogas_output["StorageCH4_V102moles"] = biogas_plant_online.mol_acum_CH4_V102
-      # biogas_output["StorageCO2_V102Volume"] = biogas_plant_online.VCO2_acum_V102
-      # biogas_output["StorageCO2_V102Concentration"] = biogas_plant_online.xCO2_V102
-      # biogas_output["StorageCO2_V102moles"] = biogas_plant_online.mol_acum_CO2_V102
-      # biogas_output["StorageH2S_V102Volume"] = biogas_plant_online.VH2S_acum_V102
-      # biogas_output["StorageH2S_V102Concentration"] = biogas_plant_online.xH2S_V102
-      # biogas_output["StorageH2S_V102moles"] = biogas_plant_online.mol_acum_H2S_V102
-      # biogas_output["StorageO2_V102Volume"] = biogas_plant_online.VO2_acum_V102
-      # biogas_output["StorageO2_V102Concentration"] = biogas_plant_online.xO2_V102
-      # biogas_output["StorageO2_V102moles"] = biogas_plant_online.mol_acum_O2_V102
-      # biogas_output["StorageH2_V102Volume"] = biogas_plant_online.VH2_acum_V102
-      # biogas_output["StorageH2_V102Concentration"] = biogas_plant_online.xH2_V102
-      # biogas_output["StorageH2_V102moles"] = biogas_plant_online.mol_acum_H2_V102
-      # biogas_output["StorageNH3_V102Volume"] = biogas_plant_online.VNH3_acum_V102
-      # biogas_output["StorageNH3_V102Concentration"] = biogas_plant_online.xNH3_V102
-      # biogas_output["StorageNH3_V102moles"] = biogas_plant_online.mol_acum_H2_V102
-      # biogas_output["moles_humidity_V102"] = biogas_plant_online.mol_acum_H2O_V102
-      # biogas_output["Relative_humidity_V102"] = biogas_plant_online.RH_V102
-      # biogas_output["StorageEnergy_V102"] = biogas_plant_online.Energy_V102/3600
-      # # V107
-      # biogas_output["AcumBiogasPressureV107"] = biogas_plant_online.Pacum_V107
-      # biogas_output["StorageBiogasPressureV107"] = biogas_plant_online.P_V107
-      # biogas_output["AcumBiogasVolumenV107"] = biogas_plant_online.Vnorm_bio_V107
-      # biogas_output["StorageBiogasVolumeV107"] = biogas_plant_online.Vnorm_bio_sto_V107
-      # biogas_output["StorageCH4_V107Volume"] = biogas_plant_online.VCH4_acum_V107
-      # biogas_output["StorageCH4_V107Concentration"] = biogas_plant_online.xCH4_V107
-      # biogas_output["StorageCH4_V107moles"] = biogas_plant_online.mol_acum_CH4_V107
-      # biogas_output["StorageCO2_V107Volume"] = biogas_plant_online.VCO2_acum_V107
-      # biogas_output["StorageCO2_V107Concentration"] = biogas_plant_online.xCO2_V107
-      # biogas_output["StorageCO2_V107moles"] = biogas_plant_online.mol_acum_CO2_V107
-      # biogas_output["StorageH2S_V107Volume"] = biogas_plant_online.VH2S_acum_V107
-      # biogas_output["StorageH2S_V107Concentration"] = biogas_plant_online.xH2S_V107
-      # biogas_output["StorageH2S_V107moles"] = biogas_plant_online.mol_acum_H2S_V107
-      # biogas_output["StorageO2_V107Volume"] = biogas_plant_online.VO2_acum_V107
-      # biogas_output["StorageO2_V107Concentration"] = biogas_plant_online.xO2_V107
-      # biogas_output["StorageO2_V107moles"] = biogas_plant_online.mol_acum_O2_V107
-      # biogas_output["StorageH2_V107Volume"] = biogas_plant_online.VH2_acum_V107
-      # biogas_output["StorageH2_V107Concentration"] = biogas_plant_online.xH2_V107
-      # biogas_output["StorageH2_V107moles"] = biogas_plant_online.mol_acum_H2_V107
-      # biogas_output["StorageNH3_V107Volume"] = biogas_plant_online.VNH3_acum_V107
-      # biogas_output["StorageNH3_V107Concentration"] = biogas_plant_online.xNH3_V107
-      # biogas_output["StorageNH3_V107moles"] = biogas_plant_online.mol_acum_NH3_V107
-      # biogas_output["moles_humidity_V107"] = biogas_plant_online.mol_acum_H2O_V107
-      # biogas_output["Relative_humidity_V107"] = biogas_plant_online.RH_V107
-      # biogas_output["StorageEnergy_V107"] = biogas_plant_online.Energy_V107/3600
+      # -------------Exit variables to front 
+      # substrate conditions
+      #General Conditions
+      biogas_output["operationMode"] = f"Modo{int(biogas_plant_online.Operation_mode)}"
+      # TK-100
+      biogas_output["n"] = float(biogas_plant_online.n)
+      biogas_output["a"] = float(biogas_plant_online.a)
+      biogas_output["b"] = float(biogas_plant_online.b)
+      biogas_output["c"] = float(biogas_plant_online.c)
+      biogas_output["d"] = float(biogas_plant_online.d)
+      biogas_output["Mix_Velocity_TK100"] = float(biogas_plant_online.Mix_Velocity_TK100)
+      biogas_output["C_sv"] = float(biogas_plant_online.Csv_sus_gl)                            #gSV/L
+      biogas_output["SV"] = float(biogas_plant_online.SV)
+      biogas_output["C_st"] = float(biogas_plant_online.Cst_sus_gl)
+      biogas_output["ST"] = float(biogas_plant_online.ST)
+      # P104
+      biogas_output["Pump104Flow"] = biogas_plant_online.P104
+      # R101
+      biogas_output["Mix_Velocity_R101"] = biogas_plant_online.Mix_Velocity_R101
+      biogas_output["pH_R101"] = biogas_plant_online.pH_R101
+      biogas_output["Temp_R101"] = biogas_plant_online.T_R101
+      biogas_output["C_sv_R101"] = float(biogas_plant_online.Csus_ini_SV_R101_gl)
+      biogas_output["SV_R101"] = (biogas_plant_online.SV_ini_R101*100)
+      biogas_output["C_st_R101"] = biogas_plant_online.Csus_ini_ST_R101_gl
+      biogas_output["ST_R101"] = (biogas_plant_online.ST_ini_R101*100)
+      biogas_output["Organic_Charge_R101"] = biogas_plant_online.OC_R101
+      biogas_output["x_R101"] = biogas_plant_online.x_R101_e*100
+      # P101
+      biogas_output["Pump101Flow"] = biogas_plant_online.P101
+      # P102
+      biogas_output["Pump102Flow"] = biogas_plant_online.P102
+      # V101
+      biogas_output["AcumBiogasPressureV101"] = biogas_plant_online.Pacum_V101_e
+      biogas_output["StorageBiogasPressureV101"] = biogas_plant_online.P_V101_e
+      biogas_output["AcumBiogasVolumenV101"] = biogas_plant_online.Vnorm_bio_V101
+      biogas_output["StorageBiogasVolumeV101"] = biogas_plant_online.Vnorm_bio_sto_V101
+      biogas_output["StorageCH4_V101Volume"] = biogas_plant_online.VCH4_acum_V101
+      biogas_output["StorageCH4_V101Concentration"] = biogas_plant_online.xCH4_V101_e
+      biogas_output["StorageCH4_V101moles"] = biogas_plant_online.mol_acum_CH4_V101
+      biogas_output["StorageCO2_V101Volume"] = biogas_plant_online.VCO2_acum_V101
+      biogas_output["StorageCO2_V101Concentration"] = biogas_plant_online.xCO2_V101_e
+      biogas_output["StorageCO2_V101moles"] = biogas_plant_online.mol_acum_CO2_V101
+      biogas_output["StorageH2S_V101Volume"] = biogas_plant_online.VH2S_acum_V101
+      biogas_output["StorageH2S_V101Concentration"] = biogas_plant_online.xH2S_V101_e
+      biogas_output["StorageH2S_V101moles"] = biogas_plant_online.mol_acum_H2S_V101
+      biogas_output["StorageO2_V101Volume"] = biogas_plant_online.VO2_acum_V101
+      biogas_output["StorageO2_V101Concentration"] = biogas_plant_online.xO2_V101_e
+      biogas_output["StorageO2_V101moles"] = biogas_plant_online.mol_acum_O2_V101
+      biogas_output["StorageH2_V101Volume"] = biogas_plant_online.VH2_acum_V101
+      biogas_output["StorageH2_V101Concentration"] = biogas_plant_online.xH2_V101_e
+      biogas_output["StorageH2_V101moles"] = biogas_plant_online.mol_acum_H2_V101
+      biogas_output["StorageNH3_V101Volume"] = biogas_plant_online.VNH3_acum_V101
+      biogas_output["StorageNH3_V101Concentration"] = biogas_plant_online.xNH3_V101_e
+      biogas_output["StorageNH3_V101moles"] = biogas_plant_online.mol_acum_NH3_V101
+      biogas_output["moles_humidity_V101"] = biogas_plant_online.mol_acum_H2O_V101
+      biogas_output["Relative_humidity_V101"] = biogas_plant_online.RH_V101_e
+      biogas_output["StorageEnergy_V101"] = biogas_plant_online.Energy_V101/1000
+      # V102
+      biogas_output["AcumBiogasPressureV102"] = biogas_plant_online.Pacum_V102_e
+      biogas_output["StorageBiogasPressureV102"] = biogas_plant_online.P_V102_e
+      biogas_output["AcumBiogasVolumenV102"] = biogas_plant_online.Vnorm_bio_V102
+      biogas_output["StorageBiogasVolumeV102"] = biogas_plant_online.Vnorm_bio_sto_V102
+      biogas_output["StorageCH4_V102Volume"] = biogas_plant_online.VCH4_acum_V102
+      biogas_output["StorageCH4_V102Concentration"] = biogas_plant_online.xCH4_V102_e
+      biogas_output["StorageCH4_V102moles"] = biogas_plant_online.mol_acum_CH4_V102
+      biogas_output["StorageCO2_V102Volume"] = biogas_plant_online.VCO2_acum_V102
+      biogas_output["StorageCO2_V102Concentration"] = biogas_plant_online.xCO2_V102_e
+      biogas_output["StorageCO2_V102moles"] = biogas_plant_online.mol_acum_CO2_V102
+      biogas_output["StorageH2S_V102Volume"] = biogas_plant_online.VH2S_acum_V102
+      biogas_output["StorageH2S_V102Concentration"] = biogas_plant_online.xH2S_V102_e
+      biogas_output["StorageH2S_V102moles"] = biogas_plant_online.mol_acum_H2S_V102
+      biogas_output["StorageO2_V102Volume"] = biogas_plant_online.VO2_acum_V102
+      biogas_output["StorageO2_V102Concentration"] = biogas_plant_online.xO2_V102_e
+      biogas_output["StorageO2_V102moles"] = biogas_plant_online.mol_acum_O2_V102
+      biogas_output["StorageH2_V102Volume"] = biogas_plant_online.VH2_acum_V102
+      biogas_output["StorageH2_V102Concentration"] = biogas_plant_online.xH2_V102_e
+      biogas_output["StorageH2_V102moles"] = biogas_plant_online.mol_acum_H2_V102
+      biogas_output["StorageNH3_V102Volume"] = biogas_plant_online.VNH3_acum_V102
+      biogas_output["StorageNH3_V102Concentration"] = biogas_plant_online.xNH3_V102_e
+      biogas_output["StorageNH3_V102moles"] = biogas_plant_online.mol_acum_NH3_V102
+      biogas_output["moles_humidity_V102"] = biogas_plant_online.mol_acum_H2O_V102
+      biogas_output["Relative_humidity_V102"] = biogas_plant_online.RH_V102_e
+      biogas_output["StorageEnergy_V102"] = biogas_plant_online.Energy_V102/1000
+      # V107
+      biogas_output["AcumBiogasPressureV107"] = biogas_plant_online.Pacum_V107_e
+      biogas_output["StorageBiogasPressureV107"] = biogas_plant_online.P_V107_e
+      biogas_output["AcumBiogasVolumenV107"] = biogas_plant_online.Vnorm_bio_V107
+      biogas_output["StorageBiogasVolumeV107"] = biogas_plant_online.Vnorm_bio_sto_V107
+      biogas_output["StorageCH4_V107Volume"] = biogas_plant_online.VCH4_acum_V107
+      biogas_output["StorageCH4_V107Concentration"] = biogas_plant_online.xCH4_V107_e
+      biogas_output["StorageCH4_V107moles"] = biogas_plant_online.mol_acum_CH4_V107
+      biogas_output["StorageCO2_V107Volume"] = biogas_plant_online.VCO2_acum_V107
+      biogas_output["StorageCO2_V107Concentration"] = biogas_plant_online.xCO2_V107_e
+      biogas_output["StorageCO2_V107moles"] = biogas_plant_online.mol_acum_CO2_V107
+      biogas_output["StorageH2S_V107Volume"] = biogas_plant_online.VH2S_acum_V107
+      biogas_output["StorageH2S_V107Concentration"] = biogas_plant_online.xH2S_V107_e
+      biogas_output["StorageH2S_V107moles"] = biogas_plant_online.mol_acum_H2S_V107
+      biogas_output["StorageO2_V107Volume"] = biogas_plant_online.VO2_acum_V107
+      biogas_output["StorageO2_V107Concentration"] = biogas_plant_online.xO2_V107_e
+      biogas_output["StorageO2_V107moles"] = biogas_plant_online.mol_acum_O2_V107
+      biogas_output["StorageH2_V107Volume"] = biogas_plant_online.VH2_acum_V107
+      biogas_output["StorageH2_V107Concentration"] = biogas_plant_online.xH2_V107_e
+      biogas_output["StorageH2_V107moles"] = biogas_plant_online.mol_acum_H2_V107
+      biogas_output["StorageNH3_V107Volume"] = biogas_plant_online.VNH3_acum_V107
+      biogas_output["StorageNH3_V107Concentration"] = biogas_plant_online.xNH3_V107_e
+      biogas_output["StorageNH3_V107moles"] = biogas_plant_online.mol_acum_NH3_V107
+      biogas_output["moles_humidity_V107"] = biogas_plant_online.mol_acum_H2O_V107
+      biogas_output["Relative_humidity_V107"] = biogas_plant_online.RH_V107_e
+      biogas_output["StorageEnergy_V107"] = biogas_plant_online.Energy_V107/1000
       # # Treatment biogas
-      # biogas_output["ads_NH3_bt"] = biogas_plant_online.mol_NH3_ads
-      # biogas_output["ads_H2S_bt"] = biogas_plant_online.mol_H2S_ads
-      # biogas_output["ads_H2O_bt"] = biogas_plant_online.mol_H2O_ads
-      # biogas_output["x_bt"] = (biogas_plant_online.Xglobal) * 100
+      biogas_output["ads_NH3_bt"] = biogas_plant_online.mol_NH3_ads
+      biogas_output["ads_H2S_bt"] = biogas_plant_online.mol_H2S_ads
+      biogas_output["ads_H2O_bt"] = biogas_plant_online.mol_H2O_ads
+      biogas_output["x_bt"] = (biogas_plant_online.Xglobal) * 100
 
-      # biogas_output = {k: (0 if isinstance(v, float) and math.isnan(v) else v) for k, v in biogas_output.items()}
+      biogas_output = {k: (0 if isinstance(v, float) and math.isnan(v) else v) for k, v in biogas_output.items()}
 
-      # if TrainingState == True:
-      #   biogas_plant_online.StorageData (name = user)
+      if TrainingState == True:
+        biogas_plant_online.StorageData (name = user)
       
       print(biogas_output, flush=True)
 
