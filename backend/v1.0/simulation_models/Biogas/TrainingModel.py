@@ -23,10 +23,10 @@ from math import gcd
 from simulation_models.Biogas import ThermoProperties
 import pandas as pd
 import numpy as np
-import math
 from scipy.integrate import odeint
 from scipy.optimize import minimize
 import statistics as st
+import time
 
 class Training_offline:
     def __init__ (self, DB_IP, DB_Port, DB_Organization, DB_Bucket, DB_Token,
@@ -43,7 +43,7 @@ class Training_offline:
         #------Initial conditions for R101
         self.ST_ini_R101 = ST_ini_R101/100         #Initial condition for reactor
         self.SV_ini_R101 = SV_ini_R101/100         #Initial condition for reactor
-        self.Cc_ini_R101 = Cc_R101             #Initial Concentration to charge R101
+        self.Cc_ini_R101 = Cc_R101                 #Initial Concentration to charge R101
         self.Ch_ini_R101 = Ch_R101           
         self.Co_ini_R101 = Co_R101
         self.Cn_ini_R101 = Cn_R101
@@ -96,7 +96,7 @@ class Training_offline:
             self.MW_inocum_ini_R101 = 18         #molecular weight of the water 
         
         else:
-            self.Csus_ini_ST_R101 = ((self.ST_ini_R101)*self.rho_ini_R101)/self.MW_inocum_ini_R101     #molST/L    
+            self.Csus_ini_ST_R101 = ((self.ST_ini_R101)*self.rho_ini_R101)/self.MW_inocum_ini_R101     #molST/L 
             self.Csus_ini_SV_R101 = ((self.SV_ini_R101)*self.rho_ini_R101)/self.MW_inocum_ini_R101     #molSV/L
             self.Csus_ini_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_SV_R101                   #molSF/L 
             self.Csus_ini_SV_R101_gl = ((self.SV_ini_R101)*self.rho_ini_R101)                          #gSV/L 
@@ -172,10 +172,12 @@ class Training_offline:
         self.Pacum_V107_i = 0
         
         #Initial values for Arrhenius and ADM1
-        self.K_mean_R101 = 1
-        self.Ea_mean_R101 = 1
-        self.K_mean_R102 = 1
-        self.Ea_mean_R102 = 1
+        self.K_ini_Arr_R101 = 100
+        self.K_ini_ADM1_R101 = 0.0000001
+        self.Ea_ini_R101 = 50000
+        self.K_ini_Arr_R102 = 100
+        self.K_ini_ADM1_R102 = 0.0000001
+        self.Ea_ini_R102 = 100000
         
         #Initial values for Gompertz
         self.ym_R101 = 0.02
@@ -194,7 +196,7 @@ class Training_offline:
         #Vessels for biogas storage
         #Thermodynamic model initilization
         self.Thermo = ThermoProperties.ThermoProperties()
-
+        
         #Biogas filters
         #hydrogen sulphide
         self.K_H2S = 0.34
@@ -204,9 +206,232 @@ class Training_offline:
         self.K_H2O = 0.068
         self.qmax_H2O = 0.0167
         self.K2_H2O = 0.01
-    
-    def getData (self):
 
+        #global time initial
+        self.global_time = 0
+    
+    def getData(self):
+        attempts = 1
+        while attempts <= 5:
+            try:
+                self.query1 = self.influxDB.QueryCreator(measurement="Planta_Biogas", device="interfaz", type=5)
+                self.Datainterfaz = pd.concat(self.influxDB.InfluxDBreader(query = self.query1), ignore_index=True)
+                # self.Datainterfaz = self.influxDB.InfluxDBreader(query = self.query1)
+                self.Datainterfaz.set_index("_field", inplace = True)
+                self.Operation_mode = self.Datainterfaz["_value"]["ciclo"]
+                self.Operation_mode = self.Operation_mode.iloc[-1]
+                break
+            except:
+                attempts += 1
+
+        attempts = 1
+        while attempts <= 5:
+            try:
+                self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(self.t_train), type=4)
+                print("acquiring Data from sensors...")
+                # DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
+                DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
+                print("Instrumentation Data acquired...")
+                DataPlant.set_index("_field", inplace = True)
+                self.DataPlanti = DataPlant
+                break
+            except:
+                attempts += 1
+        
+        #Get estimation Data
+        attempts = 1
+        while attempts <= 5:
+            try:
+                self.query3 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(self.t_train), type=8)
+                print("acquiring Data from estimations...")
+                Interfaz = self.influxDB.InfluxDBreader(query = self.query3)
+                print("Estimation Data acquired...")
+                Interfaz.set_index("_field", inplace = True)
+                self.interfaz = Interfaz
+                break
+            except:
+                attempts += 1
+        
+        #Genral time to train
+        time_date = DataPlant["_time"]["PT-103"]
+        time_date = pd.to_datetime(time_date, format = "mixed")
+        
+        #------Extract Series from Main DataFrame (influx) (all operation modes has these variables)
+        
+        #V101
+        Pacum_V101 = Interfaz.loc["PAcumV101", ["_time", "_value"]]
+        Vacum_V101 = Interfaz.loc["Volumen_bioV101", ["_time", "_value"]]
+        self.Energia_jouleV101 = Interfaz.loc["Energia_jouleV101", ["_time", "_value"]]
+        P_V101 = DataPlant.loc["PT-103", ["_time", "_value"]]
+        T_V101 = DataPlant.loc["TT-103", ["_time", "_value"]]
+        rh_V101 = DataPlant.loc["AT-103B", ["_time", "_value"]]
+        xCH4_V101 = DataPlant.loc["AT-103A-CH4", ["_time", "_value"]]
+        xCO2_V101 = DataPlant.loc["AT-103A-CO2", ["_time", "_value"]]
+        xO2_V101 = DataPlant.loc["AT-103A-O2", ["_time", "_value"]]
+        xH2S_V101 = DataPlant.loc["AT-103A-H2S", ["_time", "_value"]]
+        xH2_V101 = DataPlant.loc["AT-103A-H2", ["_time", "_value"]]
+        
+        #P104
+        P104 = DataPlant.loc["FE-104", ["_time", "_value"]]
+
+        #Historic for feeding
+        #substrate number
+        # MNS = Interfaz.loc["MNS", ["_time", "_value"]]
+        # MNS["_value"] = MNS["_value"].replace(0,np.nan)
+        # MNS['_value'] = MNS['_value'].bfill()
+        # ## Proportions
+        # # substrate 1
+        # MP1 = Interfaz.loc["MP1", ["_time", "_value"]]
+        # MP1["_value"] = MP1["_value"].replace(0,np.nan)
+        # MP1["_value"] = MP1["_value"].bfill()
+        # # substrate 2
+        # MP2 = Interfaz.loc["MP2", ["_time", "_value"]]
+        # MP2["_value"] = MP2["_value"].replace(0,np.nan)
+        # MP2["_value"] = MP2["_value"].bfill()
+        # # substrate 3
+        # MP3 = Interfaz.loc["MP3", ["_time", "_value"]]
+        # MP3["_value"] = MP3["_value"].replace(0,np.nan)
+        # MP3["_value"] = MP3["_value"].bfill()
+        # # substrate 4
+        # MP4 = Interfaz.loc["MP4", ["_time", "_value"]]
+        # MP4["_value"] = MP4["_value"].replace(0,np.nan)
+        # MP4["_value"] = MP4["_value"].bfill()
+        # ## densitys
+        # # substrate 1
+        # Md1 = Interfaz.loc["Md1", ["_time", "_value"]]
+        # Md1["_value"] = Md1["_value"].replace(0,np.nan)
+        # Md1["_value"] = Md1["_value"].bfill()
+        # # substrate 2
+        # Md2 = Interfaz.loc["Md2", ["_time", "_value"]]
+        # Md2["_value"] = Md2["_value"].replace(0,np.nan)
+        # Md2["_value"] = Md2["_value"].bfill()
+        # # substrate 3
+        # Md3 = Interfaz.loc["Md3", ["_time", "_value"]]
+        # Md3["_value"] = Md3["_value"].replace(0,np.nan)
+        # Md3["_value"] = Md3["_value"].bfill()
+        # # substrate 4
+        # Md4 = Interfaz.loc["Md4", ["_time", "_value"]]
+        # Md4["_value"] = Md4["_value"].replace(0,np.nan)
+        # Md4["_value"] = Md4["_value"].bfill()
+        # #Total solids (If there are changes in substrate feeding during the test it is possible consult the historic with the query)
+
+        #TK100
+        self.Mix_Velocity_TK100 = DataPlant.loc["SE-107",["_time", "_value"]]
+
+        #R101
+        self.Mix_Velocity_R101 = DataPlant.loc["SE-108", ["_time", "_value"]]
+        pH_R101 = DataPlant.loc["AT-101", ["_time", "_value"]]
+        L_R101 = DataPlant.loc["LT-101", ["_time", "_value"]]       #L: level
+        P_R101 = DataPlant.loc["PT-101", ["_time", "_value"]]
+        T1_R101 =  DataPlant.loc["TE-101A", ["_time", "_value"]]
+        T2_R101 = DataPlant.loc["TE-101B", ["_time", "_value"]]
+        Tprom_R101 = DataPlant.loc["TE-R101", ["_time", "_value"]]
+
+
+        #V102
+        try:
+            Pacum_V102 = Interfaz.loc["PAcumV102", ["_time", "_value"]]
+        except KeyError:
+            Pacum_V102 = Pacum_V101.copy()
+            Pacum_V102["_value"] = 0
+        try:
+            Vacum_V102 = Interfaz.loc["Volumen_bioV102", ["_time", "_value"]]
+        except KeyError:
+             Vacum_V102 = Vacum_V101.copy()
+             Vacum_V102["_value"] = 0
+        try:
+            self.Energia_jouleV102 = Interfaz.loc["Energia_jouleV102", ["_time", "_value"]]
+        except KeyError:
+            self.Energia_jouleV102 = 0
+        P_V102 = DataPlant.loc["PT-104", ["_time", "_value"]]
+        T_V102 = DataPlant.loc["TT-104", ["_time", "_value"]]
+        rh_V102 = DataPlant.loc["AT-103B", ["_time", "_value"]]        #rh: relative humidity
+        xCH4_V102 = DataPlant.loc["AT-104A-CH4", ["_time", "_value"]]
+        xCO2_V102 = DataPlant.loc["AT-104A-CO2", ["_time", "_value"]]
+        xO2_V102 = DataPlant.loc["AT-104A-O2", ["_time", "_value"]]
+        xH2S_V102 = DataPlant.loc["AT-104A-H2S", ["_time", "_value"]]
+        xH2_V102 = DataPlant.loc["AT-104A-H2", ["_time", "_value"]]
+        
+        #V107
+        Pacum_V107 = Interfaz.loc["PAcumV107", ["_time", "_value"]]
+        Vacum_V107 = Interfaz.loc["Volumen_bioV107", ["_time", "_value"]]
+        self.Energia_jouleV107 = Interfaz.loc["Energia_jouleV107", ["_time", "_value"]]
+        P_V107 = DataPlant.loc["PT-105", ["_time", "_value"]]
+        T_V107 = DataPlant.loc["TT-105", ["_time", "_value"]]
+        rh_V107 = DataPlant.loc["AT-105B", ["_time", "_value"]]        #rh: relative humidity
+        xCH4_V107 = DataPlant.loc["AT-105A-CH4", ["_time", "_value"]]
+        xCO2_V107 = DataPlant.loc["AT-105A-CO2", ["_time", "_value"]]
+        xO2_V107 = DataPlant.loc["AT-105A-O2", ["_time", "_value"]]
+        xH2S_V107 = DataPlant.loc["AT-105A-H2S", ["_time", "_value"]]
+        xH2_V107 = DataPlant.loc["AT-105A-H2", ["_time", "_value"]]
+
+        #Normalice asynchronous data
+        def asynchronousdata(timeSeries, AsyncSeries):
+            df1 = AsyncSeries["_time"]
+            df1 = pd.to_datetime(df1, format="mixed")
+            merge_df = pd.concat([timeSeries, df1], ignore_index=True)
+            merge_df = merge_df.sort_values().reset_index(drop=True)
+            merge_df = pd.merge(merge_df, AsyncSeries, on="_time", how="left")
+            merge_df = merge_df.fillna(0)
+            return merge_df
+        
+        #Two pumps
+        def concatAsync(series1, series2, name1, name2):
+            all_times = pd.concat([series1["_time"], series2["_time"]], ignore_index=True)
+            all_times = all_times.drop_duplicates().sort_values().reset_index(drop=True)
+            time_df = pd.DataFrame({"_time": all_times})
+            merged = pd.merge(time_df, series1, on="_time", how="left")
+            merged = pd.merge(merged, series2, on="_time", how="left")
+            merged = merged.rename(columns={"_value_x": name1, "_value_y":name2})
+            merged = merged.ffill()
+            return merged
+        
+        #Three pumps
+        def concatAsync2(series1, series2, series3, name1, name2, name3):
+            all_times = pd.concat([series1["_time"], series2["_time"], series3["_time"]], ignore_index=True)
+            all_times = all_times.drop_duplicates().sort_values().reset_index(drop=True)
+            time_df = pd.DataFrame({"_time": all_times})
+
+            # Rename _value columns before merging
+            series1_renamed = series1.rename(columns={"_value": name1})
+            series2_renamed = series2.rename(columns={"_value": name2})
+            series3_renamed = series3.rename(columns={"_value": name3})
+
+            # Merge all series on _time
+            merged = pd.merge(time_df, series1_renamed[["_time", name1]], on="_time", how="left")
+            merged = pd.merge(merged, series2_renamed[["_time", name2]], on="_time", how="left")
+            merged = pd.merge(merged, series3_renamed[["_time", name3]], on="_time", how="left")
+
+            # Fill missing values
+            merged = merged.ffill()
+
+            return merged
+        
+        #funtion to align Data series
+        def alignDimension (timeSeries, AsynSeries):
+            timeSeries = timeSeries.sort_values()
+            AsynSeries["_time"] = pd.to_datetime(AsynSeries["_time"], format = "mixed")
+            AsynSeries = AsynSeries.sort_values("_time")
+            merge_df = pd.merge_asof(timeSeries, AsynSeries, on = "_time", direction = 'backward')
+            merge_df["_value"] = replace_outliers_with_interpolation(merge_df["_value"])
+            merge_df = merge_df["_value"]
+            merge_df = merge_df.fillna(0)
+            return merge_df
+
+        #function to make treatment of outliers
+        def replace_outliers_with_interpolation(series):
+            Q1 = series.quantile(0.25)
+            Q3 = series.quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            # Replace outliers with NaN
+            series_out = series.copy()
+            series_out[(series < lower_bound) | (series > upper_bound)] = pd.NA
+            # Interpolate linearly
+            series_out = series_out.interpolate(method='linear')
+            return series_out
+        
         #Function to normalice time
         def normaliceTime (time):
             #check the lenght of the vector
@@ -224,930 +449,654 @@ class Training_offline:
                 time_norm = []
                 time_norm.append(0)
             return time_norm
-        
-        #Get data from User input plant plant
-        attempts = 1
-        while attempts <= 5:
-            try:
-                self.query1 = self.influxDB.QueryCreator(measurement="Planta_Biogas", device="interfaz", type=5)
-                self.Datainterfaz = pd.concat(self.influxDB.InfluxDBreader(query = self.query1), ignore_index=True)
-                # self.Datainterfaz = self.influxDB.InfluxDBreader(query = self.query1)
-                self.Datainterfaz.set_index("_field", inplace = True)
-                self.Operation_mode = self.Datainterfaz["_value"]["ciclo"]
-                break
-            except:
-                attempts += 1
-        
-        #Get Asynchronous and synchronous Data
-        attempts = 1
-        while attempts <= 5:
-            try:
-                self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(self.t_train), type=4)
-                # DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
-                DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
-                DataPlant.set_index("_field", inplace = True)
-                self.DataPlanti = DataPlant
-                break
-            except:
-                attempts += 1
-        
-        #get Mixers Data
-        attempts = 1
-        while attempts <= 5:
-            try:
-                self.query3 = self.influxDB.QueryCreator(measurement="Planta_Biogas", type=7)
-                self.Mixers_df = self.influxDB.InfluxDBreader(query = self.query3)
-                self.Mixers_df.set_index("_field", inplace = True)
-                self.Mix_Velocity_TK100 = self.Mixers_df["_value"]["SE-107"]
-                self.Mix_Velocity_R101 = self.Mixers_df["_value"]["SE-108"]
-                self.Mix_Velocity_R102 = self.Mixers_df["_value"]["SE_109"]
-                break
-            except:
-                attempts += 1
-        
-        #function to verify the lenght of synchronous vector
-        def SameDimension(V1, V2):   #V1 is always pressure in the tank 
-            try:
-                if len(V1) != len(V2):
-                    print("lengths not equal... normalice the variables")
-                    if len(V2)>len(V1):
-                        V2 = V2[:len(V1)]
-                        return V2
-                    else:
-                        V2 = V2 + [np.nan] * (len(V1)-len(V2))
-                        return V2
-                else:
-                    return V2
-            except TypeError as e:
-                return V2
-        
-        #Organice data with the same lenght according with operation Mode
+            
+        #DataFrame Generation for operation Mode 1
         if self.Operation_mode == 1:
-            # ----- Synchronous Data
+            #Synchronyze Data
+            P104 = asynchronousdata(time_date, P104)
+            #Defining time
+            time_definitive = Pumps["_time"]
+            normal_time = normaliceTime(time_definitive)
             #V101
-            time = DataPlant["_time"]["PT-103"]
-            time = pd.to_datetime(time)
-            P_V101 = DataPlant["_value"]["PT-103"]
-            T_V101 = DataPlant["_value"]["TT-103"]
-            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
-            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
-            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
-            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
-            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
-            
+            Pacum_V101 = alignDimension(time_definitive, Pacum_V101)
+            Vacum_V101 = alignDimension(time_definitive, Vacum_V101)
+            P_V101 = alignDimension(time_definitive, P_V101)
+            T_V101 = alignDimension(time_definitive, T_V101)
+            rh_V101 = alignDimension(time_definitive, rh_V101)
+            xCH4_V101 = alignDimension(time_definitive, xCH4_V101)
+            xCO2_V101 = alignDimension(time_definitive, xCO2_V101)
+            xO2_V101 = alignDimension(time_definitive, xO2_V101)
+            xH2S_V101 = alignDimension(time_definitive, xH2S_V101)
+            xH2_V101 = alignDimension(time_definitive, xH2_V101)
             #R101
-            PH_R101 = DataPlant["_value"]["AT-101"]        
-            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
-            P_R101 = DataPlant["_value"]["PT-101"]
-            T1_R101 =  DataPlant["_value"]["TE-101A"]
-            T2_R101 = DataPlant["_value"]["TE-101B"]
-            Tprom_R101 = DataPlant["_value"]["TE-R101"]
-            
+            pH_R101 = alignDimension(time_definitive, pH_R101)
+            L_R101 = alignDimension(time_definitive, L_R101)       #L: level
+            P_R101 = alignDimension(time_definitive, P_R101)
+            T1_R101 =  alignDimension(time_definitive, T1_R101)
+            T2_R101 = alignDimension(time_definitive, T2_R101)
+            Tprom_R101 = alignDimension(time_definitive, Tprom_R101)
             #V102
-            P_V102 = DataPlant["_value"]["PT-104"]
-            T_V102 = DataPlant["_value"]["TT-104"]
-            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
-            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
-            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
-            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
-            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
-            
+            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            P_V102 = alignDimension(time_definitive, P_V102)
+            T_V102 = alignDimension(time_definitive, T_V102)
+            rh_V102 = alignDimension(time_definitive, rh_V102)
+            xCH4_V102 = alignDimension(time_definitive, xCH4_V102)
+            xCO2_V102 = alignDimension(time_definitive, xCO2_V102)
+            xO2_V102 = alignDimension(time_definitive, xO2_V102)
+            xH2S_V102 = alignDimension(time_definitive, xH2S_V102)
+            xH2_V102 = alignDimension(time_definitive, xH2_V102)
             #V107
-            P_V107 = DataPlant["_value"]["PT-105"]
-            T_V107 = DataPlant["_value"]["TT-105"]
-            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
-            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
-            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
-            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
-            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
-            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]  
+            Pacum_V107 = alignDimension(time_definitive, Pacum_V107)
+            Vacum_V107 = alignDimension(time_definitive, Vacum_V107)
+            P_V107 = alignDimension(time_definitive, P_V107)
+            T_V107 = alignDimension(time_definitive, T_V107)
+            rh_V107 = alignDimension(time_definitive, rh_V107)
+            xCH4_V107 = alignDimension(time_definitive, xCH4_V107)
+            xCO2_V107 = alignDimension(time_definitive, xCO2_V107)
+            xO2_V107 = alignDimension(time_definitive, xO2_V107)
+            xH2S_V107 = alignDimension(time_definitive, xH2S_V107)
+            xH2_V107 = alignDimension(time_definitive, xH2_V107)
+            #feeding data
+            # MNS = alignDimension(time_definitive, MNS)
+
                         
-            #Sizing synchronous vectors (same lenght for Model)
-            #Variable for V101
-            TT_V101 = SameDimension(P_V101, T_V101)
-            rh_V101 = SameDimension(P_V101, rh_V101)
-            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
-            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
-            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
-            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
-            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
+            self.DataPlant = pd.DataFrame({"time": time_definitive,
+                                           "normal_time": normal_time,
+                                           "P104": Pumps["P104"],
+                                           "Pacum_V101": Pacum_V101,
+                                           "Vacum_V101": Vacum_V101,
+                                           "P_V101": P_V101,
+                                           "T_V101": T_V101,
+                                           "rh_V101": rh_V101,
+                                           "xCH4_V101": xCH4_V101,
+                                           "xCO2_V101": xCO2_V101,
+                                           "xO2_V101": xO2_V101,
+                                           "xH2S_V101": xH2S_V101,
+                                           "xH2_V101": xH2_V101,
+                                           "pH_R101": pH_R101,
+                                           "L_R101": L_R101,
+                                           "P_R101": P_R101,
+                                           "T1_R101": T1_R101,
+                                           "T2_R101": T2_R101,
+                                           "Tprom_R101": Tprom_R101,
+                                           "Pacum_V102": Pacum_V102,
+                                           "Vacum_V102": Vacum_V102,
+                                           "P_V102": P_V102,
+                                           "T_V102": T_V102,
+                                           "rh_V102": rh_V102,
+                                           "xCH4_V102": xCH4_V102,
+                                           "xCO2_V102": xCO2_V102,
+                                           "xO2_V102": xO2_V102,
+                                           "xH2S_V102": xH2S_V102,
+                                           "xH2_V102": xH2_V102,
+                                           "Pacum_V107": Pacum_V107,
+                                           "Vacum_V107": Vacum_V107,
+                                           "P_V107": P_V107,
+                                           "T_V107": T_V107,
+                                           "rh_V107": rh_V107,
+                                           "xCH4_V107": xCH4_V107,
+                                           "xCO2_V107": xCO2_V107,
+                                           "xO2_V107": xO2_V107,
+                                           "xH2S_V107": xH2S_V107,
+                                           "xH2_V107": xH2_V107
+                                           })
             
-            #Variables for R101
-            T1_R101 = SameDimension(P_V101, T1_R101)
-            T2_R101 = SameDimension(P_V101, T2_R101)
-            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
-            PH_R101 = SameDimension(P_V101, PH_R101)
-            V_R101 = SameDimension(P_V101, L_R101)
-            P_R101 = SameDimension(P_V101, P_R101)
-            
-            #Variable for V102
-            TT_V102 = SameDimension(P_V101, T_V102)
-            rh_V102 = SameDimension(P_V101, rh_V102)
-            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
-            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
-            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
-            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
-            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
-            
-            #Variable for V107
-            TT_V107 = SameDimension(P_V101, T_V107)
-            rh_V107 = SameDimension(P_V101, rh_V107)
-            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
-            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
-            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
-            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
-            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
-            
-            #Create DataFrame with Synchronous Data                                   
-            self.DataPlant = pd.DataFrame({
-                "_time":time,
-                "P_V101":P_V101.tolist(),
-                "T_V101":TT_V101.tolist(),
-                "rh_V101": rh_V101.tolist(),
-                "x_CH4_V101": x_CH4_V101.tolist(),
-                "x_CO2_V101": x_CO2_V101.tolist(),
-                "x_O2_V101": x_O2_V101.tolist(),
-                "x_H2S_V101": x_H2S_V101.tolist(),
-                "x_H2_V101": x_H2_V101.tolist(),
-                "T1_R101": T1_R101.tolist(),
-                "T2_R101": T2_R101.tolist(),
-                "Tprom_R101": Tprom_R101.tolist(),
-                "PH_R101": PH_R101.tolist(),
-                "V_R101": V_R101.tolist(),
-                "P_R101": P_R101.tolist(),
-                "P_V102":P_V102.tolist(),
-                "T_V102":TT_V102.tolist(),
-                "rh_V102": rh_V102.tolist(),
-                "x_CH4_V102": x_CH4_V102.tolist(),
-                "x_CO2_V102": x_CO2_V102.tolist(),
-                "x_O2_V102": x_O2_V102.tolist(),
-                "x_H2S_V102": x_H2S_V102.tolist(),
-                "x_H2_V102": x_H2_V102.tolist(),
-                "P_V107":P_V107.tolist(),
-                "T_V107":TT_V107.tolist(),
-                "rh_V107": rh_V107.tolist(),
-                "x_CH4_V107": x_CH4_V107.tolist(),
-                "x_CO2_V107": x_CO2_V107.tolist(),
-                "x_O2_V107": x_O2_V107.tolist(),
-                "x_H2S_V107": x_H2S_V107.tolist(),
-                "x_H2_V107": x_H2_V107.tolist()               
-            })
-
-            #add asynchronous data Pumps
-            P104_df = DataPlant.loc["FE-104",["_time", "_value"]]
-            P104_df["_time"]=pd.to_datetime(P104_df["_time"])
-            P104_df = P104_df.rename(columns={"_value": "FE-104"})
-            self.DataPlant = pd.merge(self.DataPlant, P104_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
-
-            self.DataPlant["V_R101"] = self.DataPlant["V_R101"].fillna(self.DataPlant["V_R101"].mean())
-            self.DataPlant["T_V101"] = self.DataPlant["T_V101"].fillna(self.DataPlant["T_V101"].mean())
-            
-            self.DataPlant.fillna(0, inplace = True)
-
-            #normalice time in Dataplant
-            time_norm = normaliceTime(self.DataPlant["_time"])
-            self.DataPlant["normTime"] = time_norm
-
-            if (self.DataPlant.iloc[0, 1:] == 0).all():
-                self.DataPlant = self.DataPlant[1:].reset_index(drop = True)
-
-            #Single values for frontend
-            #P-104
-            self.P104 = float(self.DataPlant["FE-104"].iloc[-1])
-            # R101
-            self.pH_R101 = float(self.DataPlant["PH_R101"].iloc[-1])
-            self.T_R101 = float(self.DataPlant["Tprom_R101"].iloc[-1])
-
+        
+        #DataFrame Generation for operation Mode 2
         elif self.Operation_mode == 2:
-            # ----- Synchronous Data
+            #Adding varaibles for this operation mode
+            P101 = DataPlant.loc["P-101", ["_time", "_value"]]
+            #Synchronyze Data
+            P104 = asynchronousdata(time_date, P104)
+            P101 = asynchronousdata(time_date, P101)
+            Pumps = concatAsync(P104, P101, "P104", "P101")
+            #Defining time
+            time_definitive = Pumps["_time"]
+            normal_time = normaliceTime(time_definitive)
             #V101
-            time = DataPlant["_time"]["PT-103"]
-            time = pd.to_datetime(time)
-            P_V101 = DataPlant["_value"]["PT-103"]
-            T_V101 = DataPlant["_value"]["TT-103"]
-            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
-            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
-            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
-            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
-            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
-            
+            Pacum_V101 = alignDimension(time_definitive, Pacum_V101)
+            Vacum_V101 = alignDimension(time_definitive, Vacum_V101)
+            P_V101 = alignDimension(time_definitive, P_V101)
+            T_V101 = alignDimension(time_definitive, T_V101)
+            rh_V101 = alignDimension(time_definitive, rh_V101)
+            xCH4_V101 = alignDimension(time_definitive, xCH4_V101)
+            xCO2_V101 = alignDimension(time_definitive, xCO2_V101)
+            xO2_V101 = alignDimension(time_definitive, xO2_V101)
+            xH2S_V101 = alignDimension(time_definitive, xH2S_V101)
+            xH2_V101 = alignDimension(time_definitive, xH2_V101)
             #R101
-            PH_R101 = DataPlant["_value"]["AT-101"]        
-            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
-            P_R101 = DataPlant["_value"]["PT-101"]
-            T1_R101 =  DataPlant["_value"]["TE-101A"]
-            T2_R101 = DataPlant["_value"]["TE-101B"]
-            Tprom_R101 = DataPlant["_value"]["TE-R101"] 
-            
+            pH_R101 = alignDimension(time_definitive, pH_R101)
+            L_R101 = alignDimension(time_definitive, L_R101)       #L: level
+            P_R101 = alignDimension(time_definitive, P_R101)
+            T1_R101 =  alignDimension(time_definitive, T1_R101)
+            T2_R101 = alignDimension(time_definitive, T2_R101)
+            Tprom_R101 = alignDimension(time_definitive, Tprom_R101)
             #V102
-            P_V102 = DataPlant["_value"]["PT-104"]
-            T_V102 = DataPlant["_value"]["TT-104"]
-            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
-            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
-            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
-            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
-            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
-            
+            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            P_V102 = alignDimension(time_definitive, P_V102)
+            T_V102 = alignDimension(time_definitive, T_V102)
+            rh_V102 = alignDimension(time_definitive, rh_V102)
+            xCH4_V102 = alignDimension(time_definitive, xCH4_V102)
+            xCO2_V102 = alignDimension(time_definitive, xCO2_V102)
+            xO2_V102 = alignDimension(time_definitive, xO2_V102)
+            xH2S_V102 = alignDimension(time_definitive, xH2S_V102)
+            xH2_V102 = alignDimension(time_definitive, xH2_V102)
             #V107
-            P_V107 = DataPlant["_value"]["PT-105"]
-            T_V107 = DataPlant["_value"]["TT-105"]
-            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
-            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
-            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
-            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
-            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
-            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]  
-             
-            #Normalize the time for differential equation
-            time_norm = normaliceTime(time = time)
-            
-            #Sizing synchronous vectors (same lenght for Model)
-            #Variable for V102
-            time = SameDimension(P_V101, time)
-            TT_V102 = SameDimension(P_V101, T_V102)
-            rh_V102 = SameDimension(P_V101, rh_V102)
-            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
-            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
-            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
-            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
-            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
-            
-            #Variable for V107
-            TT_V107 = SameDimension(P_V101, T_V107)
-            rh_V107 = SameDimension(P_V101, rh_V107)
-            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
-            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
-            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
-            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
-            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
+            Pacum_V107 = alignDimension(time_definitive, Pacum_V107)
+            Vacum_V107 = alignDimension(time_definitive, Vacum_V107)
+            P_V107 = alignDimension(time_definitive, P_V107)
+            T_V107 = alignDimension(time_definitive, T_V107)
+            rh_V107 = alignDimension(time_definitive, rh_V107)
+            xCH4_V107 = alignDimension(time_definitive, xCH4_V107)
+            xCO2_V107 = alignDimension(time_definitive, xCO2_V107)
+            xO2_V107 = alignDimension(time_definitive, xO2_V107)
+            xH2S_V107 = alignDimension(time_definitive, xH2S_V107)
+            xH2_V107 = alignDimension(time_definitive, xH2_V107)
+            #feeding data
+            # MNS = alignDimension(time_definitive, MNS)
+
                         
-            #Variable for V101
-            TT_V101 = SameDimension(P_V101, T_V101)
-            rh_V101 = SameDimension(P_V101, rh_V101)
-            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
-            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
-            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
-            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
-            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
-            
-            #Variables for R101
-            T1_R101 = SameDimension(P_V101, T1_R101)
-            T2_R101 = SameDimension(P_V101, T2_R101)
-            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
-            PH_R101 = SameDimension(P_V101, PH_R101)
-            V_R101 = SameDimension(P_V101, L_R101)
-            P_R101 = SameDimension(P_V101, P_R101)   
-            
-            #Create DataFrame with Synchronous Data                             
-            self.DataPlant = pd.DataFrame({
-                "_time":time,
-                "P_V101":P_V101.tolist(),
-                "T_V101":TT_V101.tolist(),
-                "rh_V101": rh_V101.tolist(),
-                "x_CH4_V101": x_CH4_V101.tolist(),
-                "x_CO2_V101": x_CO2_V101.tolist(),
-                "x_O2_V101": x_O2_V101.tolist(),
-                "x_H2S_V101": x_H2S_V101.tolist(),
-                "x_H2_V101": x_H2_V101.tolist(),
-                "T1_R101": T1_R101.tolist(),
-                "T2_R101": T2_R101.tolist(),
-                "Tprom_R101": Tprom_R101.tolist(),
-                "PH_R101": PH_R101.tolist(),
-                "V_R101": V_R101.tolist(),
-                "P_R101": P_R101.tolist(),
-                "P_V102":P_V102.tolist(),
-                "T_V102":TT_V102.tolist(),
-                "rh_V102": rh_V102.tolist(),
-                "x_CH4_V102": x_CH4_V102.tolist(),
-                "x_CO2_V102": x_CO2_V102.tolist(),
-                "x_O2_V102": x_O2_V102.tolist(),
-                "x_H2S_V102": x_H2S_V102.tolist(),
-                "x_H2_V102": x_H2_V102.tolist(),
-                "P_V107":P_V107.tolist(),
-                "T_V107":TT_V107.tolist(),
-                "rh_V107": rh_V107.tolist(),
-                "x_CH4_V107": x_CH4_V107.tolist(),
-                "x_CO2_V107": x_CO2_V107.tolist(),
-                "x_O2_V107": x_O2_V107.tolist(),
-                "x_H2S_V107": x_H2S_V107.tolist(),
-                "x_H2_V107": x_H2_V107.tolist(),              
-            })
-        
-            # #### ----Asynchronous Data
-            #add asynchronous data Pumps
-            #P-104
-            P104_df = DataPlant.loc["FE-104",["_time", "_value"]]
-            P104_df["_time"]=pd.to_datetime(P104_df["_time"])
-            P104_df = P104_df.rename(columns={"_value": "FE-104"})
-            self.DataPlant = pd.merge(self.DataPlant, P104_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
-        
-            #P-101
-            P101_df = DataPlant.loc["P-101", ["_time","_value"]]
-            P101_df["_time"]=pd.to_datetime(P101_df["_time"])
-            P101_df = P101_df.rename(columns={"_value": "P-101"})
-            self.DataPlant = pd.merge(self.DataPlant, P101_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
-
-            self.DataPlant["V_R101"] = self.DataPlant["V_R101"].fillna(self.DataPlant["V_R101"].mean())
-            self.DataPlant["T_V101"] = self.DataPlant["T_V101"].fillna(self.DataPlant["T_V101"].mean())
-            
-            self.DataPlant.fillna(0, inplace = True)
-
-            #normalice time in Dataplant
-            time_norm = normaliceTime(self.DataPlant["_time"])
-            self.DataPlant["normTime"] = time_norm
-
-            if (self.DataPlant.iloc[0, 1:] == 0).all():
-                self.DataPlant = self.DataPlant[1:].reset_index(drop = True)
-
-            #Single values for frontend
-            #P-104
-            self.P104 = float(self.DataPlant["FE-104"].iloc[-1])
-            #P-101
-            self.P101 = float(self.DataPlant["P-101"].iloc[-1])
-            # R101
-            self.pH_R101 = float(self.DataPlant["PH_R101"].iloc[-1])
-            self.T_R101 = float(self.DataPlant["Tprom_R101"].iloc[-1])
-
-            #Correction of concentration
-            #Methane V101
-            if (self.DataPlant["x_CH4_V101"] != 0).any():
-                self.DataPlant["x_CH4_V101_filled"] = self.DataPlant["x_CH4_V101"].replace(0, np.nan)
-                self.DataPlant["x_CH4_V101_filled"] = self.DataPlant["x_CH4_V101_filled"].ffill()
-                self.DataPlant['x_CH4_V101_filled'] = self.DataPlant.apply(lambda row: row['x_CH4_V101_filled'] if row['x_CH4_V101'] == 0 else row['x_CH4_V101'], axis=1)
-                self.DataPlant['x_CH4_V101_filled'] = self.DataPlant['x_CH4_V101_filled'].fillna(0).astype(float)
-                self.DataPlant['x_CH4_V101_filled'] = self.DataPlant['x_CH4_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_CH4_V101_filled"] = self.DataPlant["x_CH4_V101_filled"].mask(self.DataPlant["x_CH4_V101_filled"] > 100, np.nan)
-                self.DataPlant["x_CH4_V101_filled"] = self.DataPlant["x_CH4_V101_filled"].ffill()
-                mean_value_xCH4_V101 = self.DataPlant["x_CH4_V101_filled"].mean()
-                self.DataPlant["x_CH4_V101_filled"] = mean_value_xCH4_V101
-            else:
-                self.DataPlant["x_CH4_V101_filled"] = self.DataPlant["x_CH4_V101"]
-                                
-            #Methane V102
-            if (self.DataPlant["x_CH4_V102"] != 0).any():
-                self.DataPlant["x_CH4_V102_filled"] = self.DataPlant["x_CH4_V102"].replace(0, np.nan)
-                self.DataPlant["x_CH4_V102_filled"] = self.DataPlant["x_CH4_V102_filled"].ffill()
-                self.DataPlant['x_CH4_V102_filled'] = self.DataPlant.apply(lambda row: row['x_CH4_V102_filled'] if row['x_CH4_V102'] == 0 else row['x_CH4_V102'], axis=1)
-                self.DataPlant['x_CH4_V102_filled'] = self.DataPlant['x_CH4_V102_filled'].fillna(0).astype(float)
-                self.DataPlant['x_CH4_V102_filled'] = self.DataPlant['x_CH4_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_CH4_V102_filled"] = self.DataPlant["x_CH4_V102_filled"].mask(self.DataPlant["x_CH4_V102_filled"] > 100, np.nan)
-                self.DataPlant["x_CH4_V102_filled"] = self.DataPlant["x_CH4_V102_filled"].ffill()
-                mean_value_xCH4_V102 = self.DataPlant["x_CH4_V102_filled"].mean()
-                self.DataPlant["x_CH4_V102_filled"] = mean_value_xCH4_V102
-            else:
-                self.DataPlant["x_CH4_V102_filled"] = self.DataPlant["x_CH4_V102"]
-                
-            #Methane V107
-            if (self.DataPlant["x_CH4_V107"] != 0).any():
-                self.DataPlant["x_CH4_V107_filled"] = self.DataPlant["x_CH4_V107"].replace(0, np.nan)
-                self.DataPlant["x_CH4_V107_filled"] = self.DataPlant["x_CH4_V107_filled"].ffill()
-                self.DataPlant['x_CH4_V107_filled'] = self.DataPlant.apply(lambda row: row['x_CH4_V107_filled'] if row['x_CH4_V107'] == 0 else row['x_CH4_V107'], axis=1)
-                self.DataPlant['x_CH4_V107_filled'] = self.DataPlant['x_CH4_V107_filled'].fillna(0).astype(float)
-                self.DataPlant['x_CH4_V107_filled'] = self.DataPlant['x_CH4_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_CH4_V107_filled"] = self.DataPlant["x_CH4_V107_filled"].mask(self.DataPlant["x_CH4_V107_filled"] > 100, np.nan)
-                self.DataPlant["x_CH4_V107_filled"] = self.DataPlant["x_CH4_V107_filled"].ffill()
-                mean_value_xCH4_V107 = self.DataPlant["x_CH4_V107_filled"].mean()
-                self.DataPlant["x_CH4_V107_filled"] = mean_value_xCH4_V107
-            else:
-                self.DataPlant["x_CH4_V107_filled"] = self.DataPlant["x_CH4_V107"]
-            
-            # Carbon dioxide V101
-            if (self.DataPlant["x_CO2_V101"] != 0).any():
-                self.DataPlant["x_CO2_V101_filled"] = self.DataPlant["x_CO2_V101"].replace(0, np.nan)
-                self.DataPlant["x_CO2_V101_filled"] = self.DataPlant["x_CO2_V101_filled"].ffill()
-                self.DataPlant['x_CO2_V101_filled'] = self.DataPlant.apply(lambda row: row['x_CO2_V101_filled'] if row['x_CO2_V101'] == 0 else row['x_CO2_V101'], axis=1)
-                self.DataPlant['x_CO2_V101_filled'] = self.DataPlant['x_CO2_V101_filled'].fillna(0).astype(float)
-                self.DataPlant['x_CO2_V101_filled'] = self.DataPlant['x_CO2_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_CO2_V101_filled"] = self.DataPlant["x_CO2_V101_filled"].mask(self.DataPlant["x_CO2_V101_filled"] > 100, np.nan)
-                self.DataPlant["x_CO2_V101_filled"] = self.DataPlant["x_CO2_V101_filled"].ffill()
-                mean_value_xCO2_V101 = self.DataPlant["x_CO2_V101_filled"].mean()
-                self.DataPlant["x_CO2_V101_filled"] = mean_value_xCO2_V101
-            else:
-                self.DataPlant["x_CO2_V101_filled"] = self.DataPlant["x_CO2_V101"]
-            
-            # Carbon dioxide V102
-            if (self.DataPlant["x_CO2_V102"] != 0).any():
-                self.DataPlant["x_CO2_V102_filled"] = self.DataPlant["x_CO2_V102"].replace(0, np.nan)
-                self.DataPlant["x_CO2_V102_filled"] = self.DataPlant["x_CO2_V102_filled"].ffill()
-                self.DataPlant['x_CO2_V102_filled'] = self.DataPlant.apply(lambda row: row['x_CO2_V102_filled'] if row['x_CO2_V102'] == 0 else row['x_CO2_V102'], axis=1)
-                self.DataPlant['x_CO2_V102_filled'] = self.DataPlant['x_CO2_V102_filled'].fillna(0).astype(float)
-                self.DataPlant['x_CO2_V102_filled'] = self.DataPlant['x_CO2_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_CO2_V102_filled"] = self.DataPlant["x_CO2_V102_filled"].mask(self.DataPlant["x_CO2_V102_filled"] > 100, np.nan)
-                self.DataPlant["x_CO2_V102_filled"] = self.DataPlant["x_CO2_V102_filled"].ffill()
-                mean_value_xCO2_V102 = self.DataPlant["x_CO2_V102_filled"].mean()
-                self.DataPlant["x_CO2_V102_filled"] = mean_value_xCO2_V102
-            else:
-                self.DataPlant["x_CO2_V102_filled"] = self.DataPlant["x_CO2_V102"]
-            
-            # Carbon dioxide V107
-            if (self.DataPlant["x_CO2_V107"] != 0).any():
-                self.DataPlant["x_CO2_V107_filled"] = self.DataPlant["x_CO2_V107"].replace(0, np.nan)
-                self.DataPlant["x_CO2_V107_filled"] = self.DataPlant["x_CO2_V107_filled"].ffill()
-                self.DataPlant['x_CO2_V107_filled'] = self.DataPlant.apply(lambda row: row['x_CO2_V107_filled'] if row['x_CO2_V107'] == 0 else row['x_CO2_V107'], axis=1)
-                self.DataPlant['x_CO2_V107_filled'] = self.DataPlant['x_CO2_V107_filled'].fillna(0).astype(float)
-                self.DataPlant['x_CO2_V107_filled'] = self.DataPlant['x_CO2_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_CO2_V107_filled"] = self.DataPlant["x_CO2_V107_filled"].mask(self.DataPlant["x_CO2_V107_filled"] > 100, np.nan)
-                self.DataPlant["x_CO2_V107_filled"] = self.DataPlant["x_CO2_V107_filled"].ffill()
-                mean_value_xCO2_V107 = self.DataPlant["x_CO2_V107_filled"].mean()
-                self.DataPlant["x_CO2_V107_filled"] = mean_value_xCO2_V107
-            else:
-                self.DataPlant["x_CO2_V107_filled"] = self.DataPlant["x_CO2_V107"]
-                
-            # OXYGEN V101
-            if (self.DataPlant["x_O2_V101"] != 0).any():
-                self.DataPlant["x_O2_V101_filled"] = self.DataPlant["x_O2_V101"].replace(0, np.nan)
-                self.DataPlant["x_O2_V101_filled"] = self.DataPlant["x_O2_V101_filled"].ffill()
-                self.DataPlant['x_O2_V101_filled'] = self.DataPlant.apply(lambda row: row['x_O2_V101_filled'] if row['x_O2_V101'] == 0 else row['x_O2_V101'], axis=1)
-                self.DataPlant['x_O2_V101_filled'] = self.DataPlant['x_O2_V101_filled'].fillna(0).astype(float)
-                self.DataPlant['x_O2_V101_filled'] = self.DataPlant['x_O2_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_O2_V101_filled"] = self.DataPlant["x_O2_V101_filled"].mask(self.DataPlant["x_O2_V101_filled"] > 100, np.nan)
-                self.DataPlant["x_O2_V101_filled"] = self.DataPlant["x_O2_V101_filled"].ffill()
-                mean_value_xO2_V101 = self.DataPlant["x_O2_V101_filled"].mean()
-                self.DataPlant["x_O2_V101_filled"] = mean_value_xO2_V101
-            else:
-                self.DataPlant["x_O2_V101_filled"] = self.DataPlant["x_O2_V101"]
-            
-            # OXYGEN V102
-            if (self.DataPlant["x_O2_V102"] != 0).any():
-                self.DataPlant["x_O2_V102_filled"] = self.DataPlant["x_O2_V102"].replace(0, np.nan)
-                self.DataPlant["x_O2_V102_filled"] = self.DataPlant["x_O2_V102_filled"].ffill()
-                self.DataPlant['x_O2_V102_filled'] = self.DataPlant.apply(lambda row: row['x_O2_V102_filled'] if row['x_O2_V102'] == 0 else row['x_O2_V102'], axis=1)
-                self.DataPlant['x_O2_V102_filled'] = self.DataPlant['x_O2_V102_filled'].fillna(0).astype(float)
-                self.DataPlant['x_O2_V102_filled'] = self.DataPlant['x_O2_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_O2_V102_filled"] = self.DataPlant["x_O2_V102_filled"].mask(self.DataPlant["x_O2_V102_filled"] > 100, np.nan)
-                self.DataPlant["x_O2_V102_filled"] = self.DataPlant["x_O2_V102_filled"].ffill()
-                mean_value_xO2_V102 = self.DataPlant["x_O2_V102_filled"].mean()
-                self.DataPlant["x_O2_V102_filled"] = mean_value_xO2_V102
-            else:
-                self.DataPlant["x_O2_V102_filled"] = self.DataPlant["x_O2_V102"]
-            
-            # OXYGEN V107
-            if (self.DataPlant["x_O2_V107"] != 0).any():
-                self.DataPlant["x_O2_V107_filled"] = self.DataPlant["x_O2_V107"].replace(0, np.nan)
-                self.DataPlant["x_O2_V107_filled"] = self.DataPlant["x_O2_V107_filled"].ffill()
-                self.DataPlant['x_O2_V107_filled'] = self.DataPlant.apply(lambda row: row['x_O2_V107_filled'] if row['x_O2_V107'] == 0 else row['x_O2_V107'], axis=1)
-                self.DataPlant['x_O2_V107_filled'] = self.DataPlant['x_O2_V107_filled'].fillna(0).astype(float)
-                self.DataPlant['x_O2_V107_filled'] = self.DataPlant['x_O2_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_O2_V107_filled"] = self.DataPlant["x_O2_V107_filled"].mask(self.DataPlant["x_O2_V107_filled"] > 100, np.nan)
-                self.DataPlant["x_O2_V107_filled"] = self.DataPlant["x_O2_V107_filled"].ffill()
-                mean_value_xO2_V107 = self.DataPlant["x_O2_V107_filled"].mean()
-                self.DataPlant["x_O2_V107_filled"] = mean_value_xO2_V107
-            else:
-                self.DataPlant["x_O2_V107_filled"] = self.DataPlant["x_O2_V107"]
-                
-            # Hydrogen V101
-            if (self.DataPlant["x_H2_V101"] != 0).any():
-                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101"].replace(0, np.nan)
-                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101_filled"].ffill()
-                self.DataPlant['x_H2_V101_filled'] = self.DataPlant.apply(lambda row: row['x_H2_V101_filled'] if row['x_H2_V101'] == 0 else row['x_H2_V101'], axis=1)
-                self.DataPlant['x_H2_V101_filled'] = self.DataPlant['x_H2_V101_filled'].fillna(0).astype(float)
-                self.DataPlant['x_H2_V101_filled'] = self.DataPlant['x_H2_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101_filled"].mask(self.DataPlant["x_H2_V101_filled"] > 1000000, np.nan)
-                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101_filled"].ffill()
-                mean_value_xH2_V101 = self.DataPlant["x_H2_V101_filled"].mean()
-                self.DataPlant["x_H2_V101_filled"] = mean_value_xH2_V101
-            else:
-                self.DataPlant["x_H2_V101_filled"] = self.DataPlant["x_H2_V101"]
-            
-            # Hydrogen V102
-            if (self.DataPlant["x_H2_V102"] != 0).any():
-                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102"].replace(0, np.nan)
-                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102_filled"].ffill()
-                self.DataPlant['x_H2_V102_filled'] = self.DataPlant.apply(lambda row: row['x_H2_V102_filled'] if row['x_H2_V102'] == 0 else row['x_H2_V102'], axis=1)
-                self.DataPlant['x_H2_V102_filled'] = self.DataPlant['x_H2_V102_filled'].fillna(0).astype(float)
-                self.DataPlant['x_H2_V102_filled'] = self.DataPlant['x_H2_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102_filled"].mask(self.DataPlant["x_H2_V102_filled"] > 1000000, np.nan)
-                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102_filled"].ffill()
-                mean_value_xH2_V102 = self.DataPlant["x_H2_V102_filled"].mean()
-                self.DataPlant["x_H2_V102_filled"] = mean_value_xH2_V102
-            else:
-                self.DataPlant["x_H2_V102_filled"] = self.DataPlant["x_H2_V102"]
-            
-            # Hydrogen V107
-            if (self.DataPlant["x_H2_V107"] != 0).any():
-                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107"].replace(0, np.nan)
-                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107_filled"].ffill()
-                self.DataPlant['x_H2_V107_filled'] = self.DataPlant.apply(lambda row: row['x_H2_V107_filled'] if row['x_H2_V107'] == 0 else row['x_H2_V107'], axis=1)
-                self.DataPlant['x_H2_V107_filled'] = self.DataPlant['x_H2_V107_filled'].fillna(0).astype(float)
-                self.DataPlant['x_H2_V107_filled'] = self.DataPlant['x_H2_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107_filled"].mask(self.DataPlant["x_H2_V107_filled"] > 1000000, np.nan)
-                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107_filled"].ffill()
-                mean_value_xH2_V107 = self.DataPlant["x_H2_V107_filled"].mean()
-                self.DataPlant["x_H2_V107_filled"] = mean_value_xH2_V107
-            else:
-                self.DataPlant["x_H2_V107_filled"] = self.DataPlant["x_H2_V107"]
-                
-            # Hydrogen sulphide V101
-            if (self.DataPlant["x_H2S_V101"] != 0).any():
-                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101"].replace(0, np.nan)
-                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101_filled"].ffill()
-                self.DataPlant['x_H2S_V101_filled'] = self.DataPlant.apply(lambda row: row['x_H2S_V101_filled'] if row['x_H2S_V101'] == 0 else row['x_H2S_V101'], axis=1)
-                self.DataPlant['x_H2S_V101_filled'] = self.DataPlant['x_H2S_V101_filled'].fillna(0).astype(float)
-                self.DataPlant['x_H2S_V101_filled'] = self.DataPlant['x_H2S_V101_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101_filled"].mask(self.DataPlant["x_H2S_V101_filled"] > 1000000, np.nan)
-                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101_filled"].ffill()
-                mean_value_xH2S_V101 = self.DataPlant["x_H2S_V101_filled"].mean()
-                self.DataPlant["x_H2S_V101_filled"] = mean_value_xH2S_V101
-            else:
-                self.DataPlant["x_H2S_V101_filled"] = self.DataPlant["x_H2S_V101"]
-            
-            # Hydrogen sulphide V102
-            if (self.DataPlant["x_H2S_V102"] != 0).any():
-                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102"].replace(0, np.nan)
-                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102_filled"].ffill()
-                self.DataPlant['x_H2S_V102_filled'] = self.DataPlant.apply(lambda row: row['x_H2S_V102_filled'] if row['x_H2S_V102'] == 0 else row['x_H2S_V102'], axis=1)
-                self.DataPlant['x_H2S_V102_filled'] = self.DataPlant['x_H2S_V102_filled'].fillna(0).astype(float)
-                self.DataPlant['x_H2S_V102_filled'] = self.DataPlant['x_H2S_V102_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102_filled"].mask(self.DataPlant["x_H2S_V102_filled"] > 1000000, np.nan)
-                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102_filled"].ffill()
-                mean_value_xH2S_V102 = self.DataPlant["x_H2S_V102_filled"].mean()
-                self.DataPlant["x_H2S_V102_filled"] = mean_value_xH2S_V102
-            else:
-                self.DataPlant["x_H2S_V102_filled"] = self.DataPlant["x_H2S_V102"]
-            
-            # Hydrogen sulphide V107
-            if (self.DataPlant["x_H2S_V107"] != 0).any():
-                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107"].replace(0, np.nan)
-                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107_filled"].ffill()
-                self.DataPlant['x_H2S_V107_filled'] = self.DataPlant.apply(lambda row: row['x_H2S_V107_filled'] if row['x_H2S_V107'] == 0 else row['x_H2S_V107'], axis=1)
-                self.DataPlant['x_H2S_V107_filled'] = self.DataPlant['x_H2S_V107_filled'].fillna(0).astype(float)
-                self.DataPlant['x_H2S_V107_filled'] = self.DataPlant['x_H2S_V107_filled'].replace(0, np.nan).bfill().ffill()
-                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107_filled"].mask(self.DataPlant["x_H2S_V107_filled"] > 1000000, np.nan)
-                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107_filled"].ffill()
-                mean_value_xH2S_V107 = self.DataPlant["x_H2S_V107_filled"].mean()
-                self.DataPlant["x_H2S_V107_filled"] = mean_value_xH2S_V107
-            else:
-                self.DataPlant["x_H2S_V107_filled"] = self.DataPlant["x_H2S_V107"]
-                
-            self.DataPlant.reset_index(drop=True, inplace=True)
+            self.DataPlant = pd.DataFrame({"time": time_definitive,
+                                           "normal_time": normal_time,
+                                           "P104": Pumps["P104"],
+                                           "P101": Pumps["P101"],
+                                           "Pacum_V101": Pacum_V101,
+                                           "Vacum_V101": Vacum_V101,
+                                           "P_V101": P_V101,
+                                           "T_V101": T_V101,
+                                           "rh_V101": rh_V101,
+                                           "xCH4_V101": xCH4_V101,
+                                           "xCO2_V101": xCO2_V101,
+                                           "xO2_V101": xO2_V101,
+                                           "xH2S_V101": xH2S_V101,
+                                           "xH2_V101": xH2_V101,
+                                           "pH_R101": pH_R101,
+                                           "L_R101": L_R101,
+                                           "P_R101": P_R101,
+                                           "T1_R101": T1_R101,
+                                           "T2_R101": T2_R101,
+                                           "Tprom_R101": Tprom_R101,
+                                           "Pacum_V102": Pacum_V102,
+                                           "Vacum_V102": Vacum_V102,
+                                           "P_V102": P_V102,
+                                           "T_V102": T_V102,
+                                           "rh_V102": rh_V102,
+                                           "xCH4_V102": xCH4_V102,
+                                           "xCO2_V102": xCO2_V102,
+                                           "xO2_V102": xO2_V102,
+                                           "xH2S_V102": xH2S_V102,
+                                           "xH2_V102": xH2_V102,
+                                           "Pacum_V107": Pacum_V107,
+                                           "Vacum_V107": Vacum_V107,
+                                           "P_V107": P_V107,
+                                           "T_V107": T_V107,
+                                           "rh_V107": rh_V107,
+                                           "xCH4_V107": xCH4_V107,
+                                           "xCO2_V107": xCO2_V107,
+                                           "xO2_V107": xO2_V107,
+                                           "xH2S_V107": xH2S_V107,
+                                           "xH2_V107": xH2_V107
+                                           })
             
         elif self.Operation_mode == 3:
-            # ----- Synchronous Data
-            #V101
-            time = DataPlant["_time"]["PT-103"]
-            time = pd.to_datetime(time)
-            P_V101 = DataPlant["_value"]["PT-103"]
-            T_V101 = DataPlant["_value"]["TT-103"]
-            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
-            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
-            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
-            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
-            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
-                        
-            #R101
-            PH_R101 = DataPlant["_value"]["AT-101"]        
-            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
-            P_R101 = DataPlant["_value"]["PT-101"]
-            T1_R101 =  DataPlant["_value"]["TE-101A"]
-            T2_R101 = DataPlant["_value"]["TE-101B"]
-            Tprom_R101 = DataPlant["_value"]["TE-R101"]
-             
-            #V102
-            P_V102 = DataPlant["_value"]["PT-104"]
-            T_V102 = DataPlant["_value"]["TT-104"]
-            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
-            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
-            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
-            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
-            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
-            
+            #Adding varaibles for this operation mode
+            # Pump 101
+            P101 = DataPlant.loc["P-101", ["_time", "_value"]]
             #R102
-            PH_R102 = DataPlant["_value"]["AT-102"]        
-            L_R102 = DataPlant["_value"]["LT-102"]       #L: level
-            P_R102 = DataPlant["_value"]["PT-102"]
-            T1_R102 =  DataPlant["_value"]["TE-102A"]
-            T2_R102 = DataPlant["_value"]["TE-102B"]
-            Tprom_R102 = DataPlant["_value"]["TE-R102"]
+            pH_R102 = DataPlant.loc["AT-102", ["_time", "_value"]]
+            L_R102 = DataPlant.loc["LT-102", ["_time", "_value"]]       #L: level
+            P_R102 = DataPlant.loc["PT-102", ["_time", "_value"]]
+            T1_R102 =  DataPlant.loc["TE-102A", ["_time", "_value"]]
+            T2_R102 = DataPlant.loc["TE-102B", ["_time", "_value"]]
+            Tprom_R102 = DataPlant.loc["TE-R102", ["_time", "_value"]]
             
-            #V107
-            P_V107 = DataPlant["_value"]["PT-105"]
-            T_V107 = DataPlant["_value"]["TT-105"]
-            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
-            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
-            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
-            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
-            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
-            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]  
-            
-            #Sizing synchronous vectors (same lenght for Model)
-            #Variable for V101
-            TT_V101 = SameDimension(P_V101, T_V101)
-            rh_V101 = SameDimension(P_V101, rh_V101)
-            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
-            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
-            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
-            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
-            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
-            
-            #Variables for R101
-            T1_R101 = SameDimension(P_V101, T1_R101)
-            T2_R101 = SameDimension(P_V101, T2_R101)
-            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
-            PH_R101 = SameDimension(P_V101, PH_R101)
-            V_R101 = SameDimension(P_V101, L_R101)
-            P_R101 = SameDimension(P_V101, P_R101)  
-            
-            #Variables for V102
-            TT_V102 = SameDimension(P_V101, T_V102)
-            rh_V102 = SameDimension(P_V101, rh_V102)
-            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
-            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
-            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
-            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
-            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
-            
-            #Variables for R102
-            T1_R102 = SameDimension(P_V101, T1_R102)
-            T2_R102 = SameDimension(P_V101, T2_R102)
-            Tprom_R102 = SameDimension(P_V101, Tprom_R102)
-            PH_R102 = SameDimension(P_V101, PH_R102)
-            V_R102 = SameDimension(P_V101, L_R102)
-            P_R102 = SameDimension(P_V101, P_R102)
-            
-            #Variable for V107
-            TT_V107 = SameDimension(P_V101, T_V107)
-            rh_V107 = SameDimension(P_V101, rh_V107)
-            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
-            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
-            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
-            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
-            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
-                                      
-            self.DataPlant = pd.DataFrame({
-                "_time": time_norm,
-                "P_V101":P_V101.tolist(),
-                "T_V101":TT_V101.tolist(),
-                "rh_V101": rh_V101.tolist(),
-                "x_CH4_V101": x_CH4_V101.tolist(),
-                "x_CO2_V101": x_CO2_V101.tolist(),
-                "x_O2_V101": x_O2_V101.tolist(),
-                "x_H2S_V101": x_H2S_V101.tolist(),
-                "x_H2_V101": x_H2_V101.tolist(),
-                "T1_R101": T1_R101.tolist(),
-                "T2_R101": T2_R101.tolist(),
-                "Tprom_R101": Tprom_R101.tolist(),
-                "PH_R101": PH_R101.tolist(),
-                "V_R101": V_R101.tolist(),
-                "P_R101": P_R101.tolist(),
-                "P_V102":P_V102.tolist(),
-                "T_V102":TT_V102.tolist(),
-                "rh_V102": rh_V102.tolist(),
-                "x_CH4_V102": x_CH4_V102.tolist(),
-                "x_CO2_V102": x_CO2_V102.tolist(),
-                "x_O2_V102": x_O2_V102.tolist(),
-                "x_H2S_V102": x_H2S_V102.tolist(),
-                "x_H2_V102": x_H2_V102.tolist(),
-                "T1_R102": T1_R102.tolist(),
-                "T2_R102": T2_R102.tolist(),
-                "Tprom_R102": Tprom_R102.tolist(),
-                "PH_R102": PH_R102.tolist(),
-                "V_R102": V_R102.tolist(),
-                "P_R102": P_R102.tolist(),
-                "P_V107":P_V107.tolist(),
-                "T_V107":TT_V107.tolist(),
-                "rh_V107": rh_V107.tolist(),
-                "x_CH4_V107": x_CH4_V107.tolist(),
-                "x_CO2_V107": x_CO2_V107.tolist(),
-                "x_O2_V107": x_O2_V107.tolist(),
-                "x_H2S_V107": x_H2S_V107.tolist(),
-                "x_H2_V107": x_H2_V107.tolist(),               
-            })
-        
-            # #### ----Asynchronous Data
-            #P-104
-            P104_df = DataPlant.loc["FE-104",["_time", "_value"]]
-            P104_df["_time"]=pd.to_datetime(P104_df["_time"])
-            P104_df = P104_df.rename(columns={"_value": "FE-104"})
-            self.DataPlant = pd.merge(self.DataPlant, P104_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
-
-            #P-101
-            P101_df = DataPlant.loc["P-101",["_time", "_value"]]
-            P101_df["_time"]=pd.to_datetime(P101_df["_time"])
-            P101_df = P101_df.rename(columns={"_value": "P-101"})
-            self.DataPlant = pd.merge(self.DataPlant, P101_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
-
-            self.DataPlant["V_R101"] = self.DataPlant["V_R101"].fillna(self.DataPlant["V_R101"].mean())
-            self.DataPlant["T_V101"] = self.DataPlant["T_V101"].fillna(self.DataPlant["T_V101"].mean())
-
-            self.DataPlant.fillna(0, inplace = True)
-
-            #normalice time in Dataplant
-            time_norm = normaliceTime(self.DataPlant["_time"])
-            self.DataPlant["normTime"] = time_norm
-
-            if (self.DataPlant.iloc[0, 1:] == 0).all():
-                self.DataPlant = self.DataPlant[1:].reset_index(drop = True)
-
-            #Single values for frontend
-            #P104
-            self.P104 = float(self.DataPlant["FE-104"].iloc[-1])
-            #P101
-            self.P101 = float(self.DataPlant["P-101"].iloc[-1])
-            # R101
-            self.pH_R101 = float(self.DataPlant["PH_R101"].iloc[-1])
-            self.T_R101 = float(self.DataPlant["Tprom_R101"].iloc[-1])
-
-        elif self.Operation_mode == 4 or self.Operation_mode == 5:
-            # ----- Synchronous Data
+            #Synchronyze Data
+            P104 = asynchronousdata(time_date, P104)
+            P101 = asynchronousdata(time_date, P101)
+            Pumps = concatAsync(P104, P101, "P104", "P101")
+            #Defining time
+            time_definitive = Pumps["_time"]
+            normal_time = normaliceTime(time_definitive)
             #V101
-            time = DataPlant["_time"]["PT-103"]
-            time = pd.to_datetime(time)
-            P_V101 = DataPlant["_value"]["PT-103"]
-            T_V101 = DataPlant["_value"]["TT-103"]
-            rh_V101 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V101 = DataPlant["_value"]["AT-103A-CH4"]
-            x_CO2_V101 = DataPlant["_value"]["AT-103A-CO2"]
-            x_O2_V101 = DataPlant["_value"]["AT-103A-O2"]
-            x_H2S_V101 = DataPlant["_value"]["AT-103A-H2S"]
-            x_H2_V101 = DataPlant["_value"]["AT-103A-H2"]
-                        
-            #R101
-            PH_R101 = DataPlant["_value"]["AT-101"]        
-            L_R101 = DataPlant["_value"]["LT-101"]       #L: level
-            P_R101 = DataPlant["_value"]["PT-101"]
-            T1_R101 =  DataPlant["_value"]["TE-101A"]
-            T2_R101 = DataPlant["_value"]["TE-101B"]
-            Tprom_R101 = DataPlant["_value"]["TE-R101"]
-             
+            Pacum_V101 = alignDimension(time_definitive, Pacum_V101)
+            Vacum_V101 = alignDimension(time_definitive, Vacum_V101)
+            P_V101 = alignDimension(time_definitive, P_V101)
+            T_V101 = alignDimension(time_definitive, T_V101)
+            rh_V101 = alignDimension(time_definitive, rh_V101)
+            xCH4_V101 = alignDimension(time_definitive, xCH4_V101)
+            xCO2_V101 = alignDimension(time_definitive, xCO2_V101)
+            xO2_V101 = alignDimension(time_definitive, xO2_V101)
+            xH2S_V101 = alignDimension(time_definitive, xH2S_V101)
+            xH2_V101 = alignDimension(time_definitive, xH2_V101)
             #V102
-            P_V102 = DataPlant["_value"]["PT-104"]
-            T_V102 = DataPlant["_value"]["TT-104"]
-            rh_V102 = DataPlant["_value"]["AT-103B"]        #rh: relative humidity
-            x_CH4_V102 = DataPlant["_value"]["AT-104A-CH4"]
-            x_CO2_V102 = DataPlant["_value"]["AT-104A-CO2"]
-            x_O2_V102 = DataPlant["_value"]["AT-104A-O2"]
-            x_H2S_V102 = DataPlant["_value"]["AT-104A-H2S"]
-            x_H2_V102 = DataPlant["_value"]["AT-104A-H2"]
-            
+            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            P_V102 = alignDimension(time_definitive, P_V102)
+            T_V102 = alignDimension(time_definitive, T_V102)
+            rh_V102 = alignDimension(time_definitive, rh_V102)
+            xCH4_V102 = alignDimension(time_definitive, xCH4_V102)
+            xCO2_V102 = alignDimension(time_definitive, xCO2_V102)
+            xO2_V102 = alignDimension(time_definitive, xO2_V102)
+            xH2S_V102 = alignDimension(time_definitive, xH2S_V102)
+            xH2_V102 = alignDimension(time_definitive, xH2_V102)
+            #R101
+            pH_R101 = alignDimension(time_definitive, pH_R101)
+            L_R101 = alignDimension(time_definitive, L_R101)       #L: level
+            P_R101 = alignDimension(time_definitive, P_R101)
+            T1_R101 =  alignDimension(time_definitive, T1_R101)
+            T2_R101 = alignDimension(time_definitive, T2_R101)
+            Tprom_R101 = alignDimension(time_definitive, Tprom_R101)
             #R102
-            PH_R102 = DataPlant["_value"]["AT-102"]        
-            L_R102 = DataPlant["_value"]["LT-102"]       #L: level
-            P_R102 = DataPlant["_value"]["PT-102"]
-            T1_R102 =  DataPlant["_value"]["TE-102A"]
-            T2_R102 = DataPlant["_value"]["TE-102B"]
-            Tprom_R102 = DataPlant["_value"]["TE-R102"]
-            
+            pH_R102 = alignDimension(time_definitive, pH_R102)
+            L_R102 = alignDimension(time_definitive, L_R102)       #L: level
+            P_R102 = alignDimension(time_definitive, P_R102)
+            T1_R102 =  alignDimension(time_definitive, T1_R102)
+            T2_R102 = alignDimension(time_definitive, T2_R102)
+            Tprom_R102 = alignDimension(time_definitive, Tprom_R102)
             #V107
-            P_V107 = DataPlant["_value"]["PT-105"]
-            T_V107 = DataPlant["_value"]["TT-105"]
-            rh_V107 = DataPlant["_value"]["AT-105B"]        #rh: relative humidity
-            x_CH4_V107 = DataPlant["_value"]["AT-105A-CH4"]
-            x_CO2_V107 = DataPlant["_value"]["AT-105A-CO2"]
-            x_O2_V107 = DataPlant["_value"]["AT-105A-O2"]
-            x_H2S_V107 = DataPlant["_value"]["AT-105A-H2S"]
-            x_H2_V107 = DataPlant["_value"]["AT-105A-H2"]
-            
-            #Sizing synchronous vectors (same lenght for Model)
-            #Variable for V101
-            TT_V101 = SameDimension(P_V101, T_V101)
-            rh_V101 = SameDimension(P_V101, rh_V101)
-            x_CH4_V101 = SameDimension(P_V101, x_CH4_V101)
-            x_CO2_V101 = SameDimension(P_V101, x_CO2_V101)
-            x_O2_V101 = SameDimension(P_V101, x_O2_V101)
-            x_H2S_V101 = SameDimension(P_V101, x_H2S_V101)
-            x_H2_V101 = SameDimension(P_V101, x_H2_V101)
-            
-            #Variables for R101
-            T1_R101 = SameDimension(P_V101, T1_R101)
-            T2_R101 = SameDimension(P_V101, T2_R101)
-            Tprom_R101 = SameDimension(P_V101, Tprom_R101)
-            PH_R101 = SameDimension(P_V101, PH_R101)
-            V_R101 = SameDimension(P_V101, L_R101)
-            P_R101 = SameDimension(P_V101, P_R101)  
-            
-            #Variables for V102
-            TT_V102 = SameDimension(P_V101, T_V102)
-            rh_V102 = SameDimension(P_V101, rh_V102)
-            x_CH4_V102 = SameDimension(P_V101, x_CH4_V102)
-            x_CO2_V102 = SameDimension(P_V101, x_CO2_V102)
-            x_O2_V102 = SameDimension(P_V101, x_O2_V102)
-            x_H2S_V102 = SameDimension(P_V101, x_H2S_V102)
-            x_H2_V102 = SameDimension(P_V101, x_H2_V102)
-            
-            #Variables for R102
-            T1_R102 = SameDimension(P_V101, T1_R102)
-            T2_R102 = SameDimension(P_V101, T2_R102)
-            Tprom_R102 = SameDimension(P_V101, Tprom_R102)
-            PH_R102 = SameDimension(P_V101, PH_R102)
-            V_R102 = SameDimension(P_V101, L_R102)
-            P_R102 = SameDimension(P_V101, P_R102)
-            
-            #Variable for V107
-            TT_V107 = SameDimension(P_V101, T_V107)
-            rh_V107 = SameDimension(P_V101, rh_V107)
-            x_CH4_V107 = SameDimension(P_V101, x_CH4_V107)
-            x_CO2_V107 = SameDimension(P_V101, x_CO2_V107)
-            x_O2_V107 = SameDimension(P_V101, x_O2_V107)
-            x_H2S_V107 = SameDimension(P_V101, x_H2S_V107)
-            x_H2_V107 = SameDimension(P_V101, x_H2_V107)
-                                      
-            self.DataPlant = pd.DataFrame({
-                "_time": time_norm,
-                "P_V101":P_V101.tolist(),
-                "T_V101":TT_V101.tolist(),
-                "rh_V101": rh_V101.tolist(),
-                "x_CH4_V101": x_CH4_V101.tolist(),
-                "x_CO2_V101": x_CO2_V101.tolist(),
-                "x_O2_V101": x_O2_V101.tolist(),
-                "x_H2S_V101": x_H2S_V101.tolist(),
-                "x_H2_V101": x_H2_V101.tolist(),
-                "T1_R101": T1_R101.tolist(),
-                "T2_R101": T2_R101.tolist(),
-                "Tprom_R101": Tprom_R101.tolist(),
-                "PH_R101": PH_R101.tolist(),
-                "V_R101": V_R101.tolist(),
-                "P_R101": P_R101.tolist(),
-                "P_V102":P_V102.tolist(),
-                "T_V102":TT_V102.tolist(),
-                "rh_V102": rh_V102.tolist(),
-                "x_CH4_V102": x_CH4_V102.tolist(),
-                "x_CO2_V102": x_CO2_V102.tolist(),
-                "x_O2_V102": x_O2_V102.tolist(),
-                "x_H2S_V102": x_H2S_V102.tolist(),
-                "x_H2_V102": x_H2_V102.tolist(),
-                "T1_R102": T1_R102.tolist(),
-                "T2_R102": T2_R102.tolist(),
-                "Tprom_R102": Tprom_R102.tolist(),
-                "PH_R102": PH_R102.tolist(),
-                "V_R102": V_R102.tolist(),
-                "P_R102": P_R102.tolist(),
-                "P_V107":P_V107.tolist(),
-                "T_V107":TT_V107.tolist(),
-                "rh_V107": rh_V107.tolist(),
-                "x_CH4_V107": x_CH4_V107.tolist(),
-                "x_CO2_V107": x_CO2_V107.tolist(),
-                "x_O2_V107": x_O2_V107.tolist(),
-                "x_H2S_V107": x_H2S_V107.tolist(),
-                "x_H2_V107": x_H2_V107.tolist(),                 
-            })
+            Pacum_V107 = alignDimension(time_definitive, Pacum_V107)
+            Vacum_V107 = alignDimension(time_definitive, Vacum_V107)
+            P_V107 = alignDimension(time_definitive, P_V107)
+            T_V107 = alignDimension(time_definitive, T_V107)
+            rh_V107 = alignDimension(time_definitive, rh_V107)
+            xCH4_V107 = alignDimension(time_definitive, xCH4_V107)
+            xCO2_V107 = alignDimension(time_definitive, xCO2_V107)
+            xO2_V107 = alignDimension(time_definitive, xO2_V107)
+            xH2S_V107 = alignDimension(time_definitive, xH2S_V107)
+            xH2_V107 = alignDimension(time_definitive, xH2_V107)
+            #feeding data
+            # MNS = alignDimension(time_definitive, MNS)
+           
+
+            self.DataPlant = pd.DataFrame({"time": time_definitive,
+                                           "normal_time": normal_time,
+                                           "P104": Pumps["P104"],
+                                           "P101": Pumps["P101"],
+                                           "Pacum_V101": Pacum_V101,
+                                           "Vacum_V101": Vacum_V101,
+                                           "P_V101": P_V101,
+                                           "T_V101": T_V101,
+                                           "rh_V101": rh_V101,
+                                           "xCH4_V101": xCH4_V101,
+                                           "xCO2_V101": xCO2_V101,
+                                           "xO2_V101": xO2_V101,
+                                           "xH2S_V101": xH2S_V101,
+                                           "xH2_V101": xH2_V101,
+                                           "pH_R101": pH_R101,
+                                           "L_R101": L_R101,
+                                           "P_R101": P_R101,
+                                           "T1_R101": T1_R101,
+                                           "T2_R101": T2_R101,
+                                           "Tprom_R101": Tprom_R101,
+                                           "pH_R102": pH_R102,
+                                           "L_R102": L_R102,
+                                           "P_R102": P_R102,
+                                           "T1_R102": T1_R102,
+                                           "T2_R102": T2_R102,
+                                           "Tprom_R102": Tprom_R102,
+                                           "Pacum_V102": Pacum_V102,
+                                           "Vacum_V102": Vacum_V102,
+                                           "P_V102": P_V102,
+                                           "T_V102": T_V102,
+                                           "rh_V102": rh_V102,
+                                           "xCH4_V102": xCH4_V102,
+                                           "xCO2_V102": xCO2_V102,
+                                           "xO2_V102": xO2_V102,
+                                           "xH2S_V102": xH2S_V102,
+                                           "xH2_V102": xH2_V102,
+                                           "Pacum_V107": Pacum_V107,
+                                           "Vacum_V107": Vacum_V107,
+                                           "P_V107": P_V107,
+                                           "T_V107": T_V107,
+                                           "rh_V107": rh_V107,
+                                           "xCH4_V107": xCH4_V107,
+                                           "xCO2_V107": xCO2_V107,
+                                           "xO2_V107": xO2_V107,
+                                           "xH2S_V107": xH2S_V107,
+                                           "xH2_V107": xH2_V107
+                                           })
         
-            # #### ----Asynchronous Data
-            #P-104
-            P104_df = DataPlant.loc["FE-104",["_time", "_value"]]
-            P104_df["_time"]=pd.to_datetime(P104_df["_time"])
-            P104_df = P104_df.rename(columns={"_value": "FE-104"})
-            self.DataPlant = pd.merge(self.DataPlant, P104_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
+        elif self.Operation_mode in [4, 5]:
+            #Adding varaibles for this operation mode
+            # Pump 101
+            P101 = DataPlant.loc["P-101", ["_time", "_value"]]
+            # Pump 102
+            P102 = DataPlant.loc["P-102", ["_time", "_value"]]
+            #R102
+            pH_R102 = DataPlant.loc["AT-102", ["_time", "_value"]]
+            L_R102 = DataPlant.loc["LT-102", ["_time", "_value"]]       #L: level
+            P_R102 = DataPlant.loc["PT-102", ["_time", "_value"]]
+            T1_R102 =  DataPlant.loc["TE-102A", ["_time", "_value"]]
+            T2_R102 = DataPlant.loc["TE-102B", ["_time", "_value"]]
+            Tprom_R102 = DataPlant.loc["TE-R102", ["_time", "_value"]]
 
-            #P-101
-            P101_df = DataPlant.loc["P-101",["_time", "_value"]]
-            P101_df["_time"]=pd.to_datetime(P101_df["_time"])
-            P101_df = P101_df.rename(columns={"_value": "P-101"})
-            self.DataPlant = pd.merge(self.DataPlant, P101_df, on="_time", how = "outer")
-            self.DataPlant = self.DataPlant.sort_values(by = "_time")
-            self.DataPlant.ffill(inplace=True)
+            #Synchronyze Data
+            P104 = asynchronousdata(time_date, P104)
+            P101 = asynchronousdata(time_date, P101)
+            P102 = asynchronousdata(time_date, P102)
+            Pumps = concatAsync2(P104, P101, P102, "P104", "P101", "P102")
+            #Defining time
+            time_definitive = Pumps["_time"]
+            normal_time = normaliceTime(time_definitive)
+            #V101
+            Pacum_V101 = alignDimension(time_definitive, Pacum_V101)
+            Vacum_V101 = alignDimension(time_definitive, Vacum_V101)
+            P_V101 = alignDimension(time_definitive, P_V101)
+            T_V101 = alignDimension(time_definitive, T_V101)
+            rh_V101 = alignDimension(time_definitive, rh_V101)
+            xCH4_V101 = alignDimension(time_definitive, xCH4_V101)
+            xCO2_V101 = alignDimension(time_definitive, xCO2_V101)
+            xO2_V101 = alignDimension(time_definitive, xO2_V101)
+            xH2S_V101 = alignDimension(time_definitive, xH2S_V101)
+            xH2_V101 = alignDimension(time_definitive, xH2_V101)
+            #V102
+            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            P_V102 = alignDimension(time_definitive, P_V102)
+            T_V102 = alignDimension(time_definitive, T_V102)
+            rh_V102 = alignDimension(time_definitive, rh_V102)
+            xCH4_V102 = alignDimension(time_definitive, xCH4_V102)
+            xCO2_V102 = alignDimension(time_definitive, xCO2_V102)
+            xO2_V102 = alignDimension(time_definitive, xO2_V102)
+            xH2S_V102 = alignDimension(time_definitive, xH2S_V102)
+            xH2_V102 = alignDimension(time_definitive, xH2_V102)
+            #R101
+            pH_R101 = alignDimension(time_definitive, pH_R101)
+            L_R101 = alignDimension(time_definitive, L_R101)       #L: level
+            P_R101 = alignDimension(time_definitive, P_R101)
+            T1_R101 =  alignDimension(time_definitive, T1_R101)
+            T2_R101 = alignDimension(time_definitive, T2_R101)
+            Tprom_R101 = alignDimension(time_definitive, Tprom_R101)
+            #R102
+            pH_R102 = alignDimension(time_definitive, pH_R102)
+            L_R102 = alignDimension(time_definitive, L_R102)       #L: level
+            P_R102 = alignDimension(time_definitive, P_R102)
+            T1_R102 =  alignDimension(time_definitive, T1_R102)
+            T2_R102 = alignDimension(time_definitive, T2_R102)
+            Tprom_R102 = alignDimension(time_definitive, Tprom_R102)
+            #V107
+            Pacum_V107 = alignDimension(time_definitive, Pacum_V107)
+            Vacum_V107 = alignDimension(time_definitive, Vacum_V107)
+            P_V107 = alignDimension(time_definitive, P_V107)
+            T_V107 = alignDimension(time_definitive, T_V107)
+            rh_V107 = alignDimension(time_definitive, rh_V107)
+            xCH4_V107 = alignDimension(time_definitive, xCH4_V107)
+            xCO2_V107 = alignDimension(time_definitive, xCO2_V107)
+            xO2_V107 = alignDimension(time_definitive, xO2_V107)
+            xH2S_V107 = alignDimension(time_definitive, xH2S_V107)
+            xH2_V107 = alignDimension(time_definitive, xH2_V107)
+            #feeding data
+            MNS = alignDimension(time_definitive, MNS)
+            print(MNS)
 
-            #P-102
-            P102_df = DataPlant.loc["P-102", ["_time", "_value"]]
-            P102_df["_time"]=pd.to_datetime(P102_df["_time"])
-            P102_df = P102_df.rename(columns={"_value": "P-102"})
-            self.DataPlant = pd.merge(self.DataPlant, P101_df, on="_time", how = "outer")
-            self.DataPlant.ffill(inplace=True)
+            self.DataPlant = pd.DataFrame({"time": time_definitive,
+                                        "normal_time": normal_time,
+                                        "P104": Pumps["P104"],
+                                        "P101": Pumps["P101"],
+                                        "P102": Pumps["P102"],
+                                        "Pacum_V101": Pacum_V101,
+                                        "Vacum_V101": Vacum_V101,
+                                        "P_V101": P_V101,
+                                        "T_V101": T_V101,
+                                        "rh_V101": rh_V101,
+                                        "xCH4_V101": xCH4_V101,
+                                        "xCO2_V101": xCO2_V101,
+                                        "xO2_V101": xO2_V101,
+                                        "xH2S_V101": xH2S_V101,
+                                        "xH2_V101": xH2_V101,
+                                        "pH_R101": pH_R101,
+                                        "L_R101": L_R101,
+                                        "P_R101": P_R101,
+                                        "T1_R101": T1_R101,
+                                        "T2_R101": T2_R101,
+                                        "Tprom_R101": Tprom_R101,
+                                        "pH_R102": pH_R102,
+                                        "L_R102": L_R102,
+                                        "P_R102": P_R102,
+                                        "T1_R102": T1_R102,
+                                        "T2_R102": T2_R102,
+                                        "Tprom_R102": Tprom_R102,
+                                        "Pacum_V102": Pacum_V102,
+                                        "Vacum_V102": Vacum_V102,
+                                        "P_V102": P_V102,
+                                        "T_V102": T_V102,
+                                        "rh_V102": rh_V102,
+                                        "xCH4_V102": xCH4_V102,
+                                        "xCO2_V102": xCO2_V102,
+                                        "xO2_V102": xO2_V102,
+                                        "xH2S_V102": xH2S_V102,
+                                        "xH2_V102": xH2_V102,
+                                        "Pacum_V107": Pacum_V107,
+                                        "Vacum_V107": Vacum_V107,
+                                        "P_V107": P_V107,
+                                        "T_V107": T_V107,
+                                        "rh_V107": rh_V107,
+                                        "xCH4_V107": xCH4_V107,
+                                        "xCO2_V107": xCO2_V107,
+                                        "xO2_V107": xO2_V107,
+                                        "xH2S_V107": xH2S_V107,
+                                        "xH2_V107": xH2_V107
+                                        })
 
-            self.DataPlant["V_R101"] = self.DataPlant["V_R101"].fillna(self.DataPlant["V_R101"].mean())
-            self.DataPlant["T_V101"] = self.DataPlant["T_V101"].fillna(self.DataPlant["T_V101"].mean())
-            self.DataPlant.fillna(0, inplace = True)
-
-            #normalice time in Dataplant
-            time_norm = normaliceTime(self.DataPlant["_time"])
-            self.DataPlant["normTime"] = time_norm
-
-            if (self.DataPlant.iloc[0, 1:] == 0).all():
-                self.DataPlant = self.DataPlant[1:].reset_index(drop = True)
-
-            #Single values for frontend
-            #P104
-            self.P104 = float(self.DataPlant["FE-104"].iloc[-1])
-            #P101
-            self.P101 = float(self.DataPlant["P-101"].iloc[-1])
-            # R101
-            self.pH_R101 = float(self.DataPlant["PH_R101"].iloc[-1])
-            self.T_R101 = float(self.DataPlant["Tprom_R101"].iloc[-1])
-            # P102
-            self.P102 = float(self.DataPlant["P-102"].iloc[-1])
+        #Normalice Data from biogas analyzer
+        #Correction of concentration
+        #Methane V101
+        if (self.DataPlant["xCH4_V101"] != 0).any():
+            self.DataPlant["xCH4_V101_filled"] = self.DataPlant["xCH4_V101"].replace(0, np.nan)
+            self.DataPlant["xCH4_V101_filled"] = self.DataPlant["xCH4_V101_filled"].ffill()
+            self.DataPlant['xCH4_V101_filled'] = self.DataPlant.apply(lambda row: row['xCH4_V101_filled'] if row['xCH4_V101'] == 0 else row['xCH4_V101'], axis=1)
+            self.DataPlant['xCH4_V101_filled'] = self.DataPlant['xCH4_V101_filled'].fillna(0).astype(float)
+            self.DataPlant['xCH4_V101_filled'] = self.DataPlant['xCH4_V101_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xCH4_V101_filled"] = self.DataPlant["xCH4_V101_filled"].mask(self.DataPlant["xCH4_V101_filled"] > 100, np.nan)
+            self.DataPlant["xCH4_V101_filled"] = self.DataPlant["xCH4_V101_filled"].ffill()
+            mean_value_xCH4_V101 = self.DataPlant["xCH4_V101_filled"]#.mean()
+            self.DataPlant["xCH4_V101_filled"] = mean_value_xCH4_V101
+        else:
+            self.DataPlant["xCH4_V101_filled"] = self.DataPlant["xCH4_V101"]
+        
+        #Methane V102
+        if (self.DataPlant["xCH4_V102"] != 0).any():
+            self.DataPlant["xCH4_V102_filled"] = self.DataPlant["xCH4_V102"].replace(0, np.nan)
+            self.DataPlant["xCH4_V102_filled"] = self.DataPlant["xCH4_V102_filled"].ffill()
+            self.DataPlant['xCH4_V102_filled'] = self.DataPlant.apply(lambda row: row['xCH4_V102_filled'] if row['xCH4_V102'] == 0 else row['xCH4_V102'], axis=1)
+            self.DataPlant['xCH4_V102_filled'] = self.DataPlant['xCH4_V102_filled'].fillna(0).astype(float)
+            self.DataPlant['xCH4_V102_filled'] = self.DataPlant['xCH4_V102_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xCH4_V102_filled"] = self.DataPlant["xCH4_V102_filled"].mask(self.DataPlant["xCH4_V102_filled"] > 100, np.nan)
+            self.DataPlant["xCH4_V102_filled"] = self.DataPlant["xCH4_V102_filled"].ffill()
+            mean_value_xCH4_V102 = self.DataPlant["xCH4_V102_filled"]#.mean()
+            self.DataPlant["xCH4_V102_filled"] = mean_value_xCH4_V102
+        else:
+            self.DataPlant["xCH4_V102_filled"] = self.DataPlant["xCH4_V102"]
+        
+        #Methane V107
+        if (self.DataPlant["xCH4_V107"] != 0).any():
+            self.DataPlant["xCH4_V107_filled"] = self.DataPlant["xCH4_V107"].replace(0, np.nan)
+            self.DataPlant["xCH4_V107_filled"] = self.DataPlant["xCH4_V107_filled"].ffill()
+            self.DataPlant['xCH4_V107_filled'] = self.DataPlant.apply(lambda row: row['xCH4_V107_filled'] if row['xCH4_V107'] == 0 else row['xCH4_V107'], axis=1)
+            self.DataPlant['xCH4_V107_filled'] = self.DataPlant['xCH4_V107_filled'].fillna(0).astype(float)
+            self.DataPlant['xCH4_V107_filled'] = self.DataPlant['xCH4_V107_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xCH4_V107_filled"] = self.DataPlant["xCH4_V107_filled"].mask(self.DataPlant["xCH4_V107_filled"] > 100, np.nan)
+            self.DataPlant["xCH4_V107_filled"] = self.DataPlant["xCH4_V107_filled"].ffill()
+            mean_value_xCH4_V107 = self.DataPlant["xCH4_V107_filled"]#.mean()
+            self.DataPlant["xCH4_V107_filled"] = mean_value_xCH4_V107
+        else:
+            self.DataPlant["xCH4_V107_filled"] = self.DataPlant["xCH4_V107"]
+        
+            # Carbon dioxide V101
+        if (self.DataPlant["xCO2_V101"] != 0).any():
+            self.DataPlant["xCO2_V101_filled"] = self.DataPlant["xCO2_V101"].replace(0, np.nan)
+            self.DataPlant["xCO2_V101_filled"] = self.DataPlant["xCO2_V101_filled"].ffill()
+            self.DataPlant['xCO2_V101_filled'] = self.DataPlant.apply(lambda row: row['xCO2_V101_filled'] if row['xCO2_V101'] == 0 else row['xCO2_V101'], axis=1)
+            self.DataPlant['xCO2_V101_filled'] = self.DataPlant['xCO2_V101_filled'].fillna(0).astype(float)
+            self.DataPlant['xCO2_V101_filled'] = self.DataPlant['xCO2_V101_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xCO2_V101_filled"] = self.DataPlant["xCO2_V101_filled"].mask(self.DataPlant["xCO2_V101_filled"] > 100, np.nan)
+            self.DataPlant["xCO2_V101_filled"] = self.DataPlant["xCO2_V101_filled"].ffill()
+            mean_value_xCO2_V101 = self.DataPlant["xCO2_V101_filled"]#.mean()
+            self.DataPlant["xCO2_V101_filled"] = mean_value_xCO2_V101
+        else:
+            self.DataPlant["xCO2_V101_filled"] = self.DataPlant["xCO2_V101"]
+        
+        # Carbon dioxide V102
+        if (self.DataPlant["xCO2_V102"] != 0).any():
+            self.DataPlant["xCO2_V102_filled"] = self.DataPlant["xCO2_V102"].replace(0, np.nan)
+            self.DataPlant["xCO2_V102_filled"] = self.DataPlant["xCO2_V102_filled"].ffill()
+            self.DataPlant['xCO2_V102_filled'] = self.DataPlant.apply(lambda row: row['xCO2_V102_filled'] if row['xCO2_V102'] == 0 else row['xCO2_V102'], axis=1)
+            self.DataPlant['xCO2_V102_filled'] = self.DataPlant['xCO2_V102_filled'].fillna(0).astype(float)
+            self.DataPlant['xCO2_V102_filled'] = self.DataPlant['xCO2_V102_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xCO2_V102_filled"] = self.DataPlant["xCO2_V102_filled"].mask(self.DataPlant["xCO2_V102_filled"] > 100, np.nan)
+            self.DataPlant["xCO2_V102_filled"] = self.DataPlant["xCO2_V102_filled"].ffill()
+            mean_value_xCO2_V102 = self.DataPlant["xCO2_V102_filled"]#.mean()
+            self.DataPlant["xCO2_V102_filled"] = mean_value_xCO2_V102
+        else:
+            self.DataPlant["xCO2_V102_filled"] = self.DataPlant["xCO2_V102"]
+        
+        # Carbon dioxide V107
+        if (self.DataPlant["xCO2_V107"] != 0).any():
+            self.DataPlant["xCO2_V107_filled"] = self.DataPlant["xCO2_V107"].replace(0, np.nan)
+            self.DataPlant["xCO2_V107_filled"] = self.DataPlant["xCO2_V107_filled"].ffill()
+            self.DataPlant['xCO2_V107_filled'] = self.DataPlant.apply(lambda row: row['xCO2_V107_filled'] if row['xCO2_V107'] == 0 else row['xCO2_V107'], axis=1)
+            self.DataPlant['xCO2_V107_filled'] = self.DataPlant['xCO2_V107_filled'].fillna(0).astype(float)
+            self.DataPlant['xCO2_V107_filled'] = self.DataPlant['xCO2_V107_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xCO2_V107_filled"] = self.DataPlant["xCO2_V107_filled"].mask(self.DataPlant["xCO2_V107_filled"] > 100, np.nan)
+            self.DataPlant["xCO2_V107_filled"] = self.DataPlant["xCO2_V107_filled"].ffill()
+            mean_value_xCO2_V107 = self.DataPlant["xCO2_V107_filled"]#.mean()
+            self.DataPlant["xCO2_V107_filled"] = mean_value_xCO2_V107
+        else:
+            self.DataPlant["xCO2_V107_filled"] = self.DataPlant["xCO2_V107"]
+        
+        # Oxygen V101
+        if (self.DataPlant["xO2_V101"] != 0).any():
+            self.DataPlant["xO2_V101_filled"] = self.DataPlant["xO2_V101"].replace(0, np.nan)
+            self.DataPlant["xO2_V101_filled"] = self.DataPlant["xO2_V101_filled"].ffill()
+            self.DataPlant['xO2_V101_filled'] = self.DataPlant.apply(lambda row: row['xO2_V101_filled'] if row['xO2_V101'] == 0 else row['xO2_V101'], axis=1)
+            self.DataPlant['xO2_V101_filled'] = self.DataPlant['xO2_V101_filled'].fillna(0).astype(float)
+            self.DataPlant['xO2_V101_filled'] = self.DataPlant['xO2_V101_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xO2_V101_filled"] = self.DataPlant["xO2_V101_filled"].mask(self.DataPlant["xO2_V101_filled"] > 100, np.nan)
+            self.DataPlant["xO2_V101_filled"] = self.DataPlant["xO2_V101_filled"].ffill()
+            mean_value_xO2_V101 = self.DataPlant["xO2_V101_filled"]#.mean()
+            self.DataPlant["xO2_V101_filled"] = mean_value_xO2_V101
+        else:
+            self.DataPlant["xO2_V101_filled"] = self.DataPlant["xO2_V101"]
+        
+        # Oxygen V102
+        if (self.DataPlant["xO2_V102"] != 0).any():
+            self.DataPlant["xO2_V102_filled"] = self.DataPlant["xO2_V102"].replace(0, np.nan)
+            self.DataPlant["xO2_V102_filled"] = self.DataPlant["xO2_V102_filled"].ffill()
+            self.DataPlant['xO2_V102_filled'] = self.DataPlant.apply(lambda row: row['xO2_V102_filled'] if row['xO2_V102'] == 0 else row['xO2_V102'], axis=1)
+            self.DataPlant['xO2_V102_filled'] = self.DataPlant['xO2_V102_filled'].fillna(0).astype(float)
+            self.DataPlant['xO2_V102_filled'] = self.DataPlant['xO2_V102_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xO2_V102_filled"] = self.DataPlant["xO2_V102_filled"].mask(self.DataPlant["xO2_V102_filled"] > 100, np.nan)
+            self.DataPlant["xO2_V102_filled"] = self.DataPlant["xO2_V102_filled"].ffill()
+            mean_value_xO2_V102 = self.DataPlant["xO2_V102_filled"]#.mean()
+            self.DataPlant["xO2_V102_filled"] = mean_value_xO2_V102
+        else:
+            self.DataPlant["xO2_V102_filled"] = self.DataPlant["xO2_V102"]
+        
+        # Oxygen V107
+        if (self.DataPlant["xO2_V107"] != 0).any():
+            self.DataPlant["xO2_V107_filled"] = self.DataPlant["xO2_V107"].replace(0, np.nan)
+            self.DataPlant["xO2_V107_filled"] = self.DataPlant["xO2_V107_filled"].ffill()
+            self.DataPlant['xO2_V107_filled'] = self.DataPlant.apply(lambda row: row['xO2_V107_filled'] if row['xO2_V107'] == 0 else row['xO2_V107'], axis=1)
+            self.DataPlant['xO2_V107_filled'] = self.DataPlant['xO2_V107_filled'].fillna(0).astype(float)
+            self.DataPlant['xO2_V107_filled'] = self.DataPlant['xO2_V107_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xO2_V107_filled"] = self.DataPlant["xO2_V107_filled"].mask(self.DataPlant["xO2_V107_filled"] > 100, np.nan)
+            self.DataPlant["xO2_V107_filled"] = self.DataPlant["xO2_V107_filled"].ffill()
+            mean_value_xO2_V107 = self.DataPlant["xO2_V107_filled"]#.mean()
+            self.DataPlant["xO2_V107_filled"] = mean_value_xO2_V107
+        else:
+            self.DataPlant["xO2_V107_filled"] = self.DataPlant["xO2_V107"]
             
+        # Hydrogen V101
+        if (self.DataPlant["xH2_V101"] != 0).any():
+            self.DataPlant["xH2_V101_filled"] = self.DataPlant["xH2_V101"].replace(0, np.nan)
+            self.DataPlant["xH2_V101_filled"] = self.DataPlant["xH2_V101_filled"].ffill()
+            self.DataPlant['xH2_V101_filled'] = self.DataPlant.apply(lambda row: row['xH2_V101_filled'] if row['xH2_V101'] == 0 else row['xH2_V101'], axis=1)
+            self.DataPlant['xH2_V101_filled'] = self.DataPlant['xH2_V101_filled'].fillna(0).astype(float)
+            self.DataPlant['xH2_V101_filled'] = self.DataPlant['xH2_V101_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xH2_V101_filled"] = self.DataPlant["xH2_V101_filled"].mask(self.DataPlant["xH2_V101_filled"] > 1000000, np.nan)
+            self.DataPlant["xH2_V101_filled"] = self.DataPlant["xH2_V101_filled"].ffill()
+            mean_value_xH2_V101 = self.DataPlant["xH2_V101_filled"]#.mean()
+            self.DataPlant["xH2_V101_filled"] = mean_value_xH2_V101
+        else:
+            self.DataPlant["xH2_V101_filled"] = self.DataPlant["xH2_V101"]
+        
+        # Hydrogen V102
+        if (self.DataPlant["xH2_V102"] != 0).any():
+            self.DataPlant["xH2_V102_filled"] = self.DataPlant["xH2_V102"].replace(0, np.nan)
+            self.DataPlant["xH2_V102_filled"] = self.DataPlant["xH2_V102_filled"].ffill()
+            self.DataPlant['xH2_V102_filled'] = self.DataPlant.apply(lambda row: row['xH2_V102_filled'] if row['xH2_V102'] == 0 else row['xH2_V102'], axis=1)
+            self.DataPlant['xH2_V102_filled'] = self.DataPlant['xH2_V102_filled'].fillna(0).astype(float)
+            self.DataPlant['xH2_V102_filled'] = self.DataPlant['xH2_V102_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xH2_V102_filled"] = self.DataPlant["xH2_V102_filled"].mask(self.DataPlant["xH2_V102_filled"] > 1000000, np.nan)
+            self.DataPlant["xH2_V102_filled"] = self.DataPlant["xH2_V102_filled"].ffill()
+            mean_value_xH2_V102 = self.DataPlant["xH2_V102_filled"]#.mean()
+            self.DataPlant["xH2_V102_filled"] = mean_value_xH2_V102
+        else:
+            self.DataPlant["xH2_V102_filled"] = self.DataPlant["xH2_V102"]
+        
+        # Hydrogen V107
+        if (self.DataPlant["xH2_V107"] != 0).any():
+            self.DataPlant["xH2_V107_filled"] = self.DataPlant["xH2_V107"].replace(0, np.nan)
+            self.DataPlant["xH2_V107_filled"] = self.DataPlant["xH2_V107_filled"].ffill()
+            self.DataPlant['xH2_V107_filled'] = self.DataPlant.apply(lambda row: row['xH2_V107_filled'] if row['xH2_V107'] == 0 else row['xH2_V107'], axis=1)
+            self.DataPlant['xH2_V107_filled'] = self.DataPlant['xH2_V107_filled'].fillna(0).astype(float)
+            self.DataPlant['xH2_V107_filled'] = self.DataPlant['xH2_V107_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xH2_V107_filled"] = self.DataPlant["xH2_V107_filled"].mask(self.DataPlant["xH2_V107_filled"] > 1000000, np.nan)
+            self.DataPlant["xH2_V107_filled"] = self.DataPlant["xH2_V107_filled"].ffill()
+            mean_value_xH2_V107 = self.DataPlant["xH2_V107_filled"]#.mean()
+            self.DataPlant["xH2_V107_filled"] = mean_value_xH2_V107
+        else:
+            self.DataPlant["xH2_V107_filled"] = self.DataPlant["xH2_V107"]
+        
+        # Hydrogen sulphide V101
+        if (self.DataPlant["xH2S_V101"] != 0).any():
+            self.DataPlant["xH2S_V101_filled"] = self.DataPlant["xH2S_V101"].replace(0, np.nan)
+            self.DataPlant["xH2S_V101_filled"] = self.DataPlant["xH2S_V101_filled"].ffill()
+            self.DataPlant['xH2S_V101_filled'] = self.DataPlant.apply(lambda row: row['xH2S_V101_filled'] if row['xH2S_V101'] == 0 else row['xH2S_V101'], axis=1)
+            self.DataPlant['xH2S_V101_filled'] = self.DataPlant['xH2S_V101_filled'].fillna(0).astype(float)
+            self.DataPlant['xH2S_V101_filled'] = self.DataPlant['xH2S_V101_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xH2S_V101_filled"] = self.DataPlant["xH2S_V101_filled"].mask(self.DataPlant["xH2S_V101_filled"] > 1000000, np.nan)
+            self.DataPlant["xH2S_V101_filled"] = self.DataPlant["xH2S_V101_filled"].ffill()
+            mean_value_xH2S_V101 = self.DataPlant["xH2S_V101_filled"]#.mean()
+            self.DataPlant["xH2S_V101_filled"] = mean_value_xH2S_V101
+        else:
+            self.DataPlant["xH2S_V101_filled"] = self.DataPlant["xH2S_V101"]
+        
+        # Hydrogen sulphide V102
+        if (self.DataPlant["xH2S_V102"] != 0).any():
+            self.DataPlant["xH2S_V102_filled"] = self.DataPlant["xH2S_V102"].replace(0, np.nan)
+            self.DataPlant["xH2S_V102_filled"] = self.DataPlant["xH2S_V102_filled"].ffill()
+            self.DataPlant['xH2S_V102_filled'] = self.DataPlant.apply(lambda row: row['xH2S_V102_filled'] if row['xH2S_V102'] == 0 else row['xH2S_V102'], axis=1)
+            self.DataPlant['xH2S_V102_filled'] = self.DataPlant['xH2S_V102_filled'].fillna(0).astype(float)
+            self.DataPlant['xH2S_V102_filled'] = self.DataPlant['xH2S_V102_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xH2S_V102_filled"] = self.DataPlant["xH2S_V102_filled"].mask(self.DataPlant["xH2S_V102_filled"] > 1000000, np.nan)
+            self.DataPlant["xH2S_V102_filled"] = self.DataPlant["xH2S_V102_filled"].ffill()
+            mean_value_xH2S_V102 = self.DataPlant["xH2S_V102_filled"]#.mean()
+            self.DataPlant["xH2S_V102_filled"] = mean_value_xH2S_V102
+        else:
+            self.DataPlant["xH2S_V102_filled"] = self.DataPlant["xH2S_V102"]
+        
+        # Hydrogen sulphide V107
+        if (self.DataPlant["xH2S_V107"] != 0).any():
+            self.DataPlant["xH2S_V107_filled"] = self.DataPlant["xH2S_V107"].replace(0, np.nan)
+            self.DataPlant["xH2S_V107_filled"] = self.DataPlant["xH2S_V107_filled"].ffill()
+            self.DataPlant['xH2S_V107_filled'] = self.DataPlant.apply(lambda row: row['xH2S_V107_filled'] if row['xH2S_V107'] == 0 else row['xH2S_V107'], axis=1)
+            self.DataPlant['xH2S_V107_filled'] = self.DataPlant['xH2S_V107_filled'].fillna(0).astype(float)
+            self.DataPlant['xH2S_V107_filled'] = self.DataPlant['xH2S_V107_filled'].replace(0, np.nan).bfill().ffill()
+            self.DataPlant["xH2S_V107_filled"] = self.DataPlant["xH2S_V107_filled"].mask(self.DataPlant["xH2S_V107_filled"] > 1000000, np.nan)
+            self.DataPlant["xH2S_V107_filled"] = self.DataPlant["xH2S_V107_filled"].ffill()
+            mean_value_xH2S_V107 = self.DataPlant["xH2S_V107_filled"]#.mean()
+            self.DataPlant["xH2S_V107_filled"] = mean_value_xH2S_V107
+        else:
+            self.DataPlant["xH2S_V107_filled"] = self.DataPlant["xH2S_V107"]
+    
     def LimitReagentCalculation(self):
-        self.SN = self.Datainterfaz["_value"]["MNS"]    #SN: substrate number
+        self.SN = self.Datainterfaz["_value"]["MNS"]
         #Water proportion
         self.MPH = self.Datainterfaz["_value"]["MPH"]    #MPH: Water proportion in the mix
-        
+
         if self.SN  == 4:    
             #Substrate 1 Characterization
             self.MST1 = self.Datainterfaz["_value"]["ST1"]   #ST1: Substrate 1 name
@@ -1384,640 +1333,727 @@ class Training_offline:
         self.Csv_sus_gl = (self.rho*(self.SV/100))
         self.Cfixed = self.Cst_sus - self.Csv_sus
     
-    def StochoimetricExpenditure(self, Model = "Arrhenius"):
+    def StochoimetricExpenditure(self, Model):
         '''
             quantify the methane produced : Note: If the training execution starts significantly later than the plant's operation
             (exceeding the training time), it will not be possible to quantify the methane produced by the plant before the training begins.
             Example: If the training time is 60 minutes but the plant starts operating 70 minutes earlier, there will be 10 minutes of methane 
             production that cannot be quantified by the digital twin.   
-            ''' 
-        #Time for gompertz model only
-        self.timeGompertz.append(self.total_time)
-        self.total_time = self.total_time + self.tp     #minutes
-        
+            '''
+        self.Model = Model
         #---------------------------------------------
         #--------- Variables to train Operation Mode 1 and 2
         if self.Operation_mode == 1 or self.Operation_mode == 2:
-            # Methane produce by R101 using V101 storage
-            #Set initial value from previuos layer
+            #Compounds by mol V101 
+            # Accumulated
+            self.biogas_mol_V101_acum = ((self.DataPlant["Pacum_V101"]*6894.76)*self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.nCH4_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCH4_V101_filled"]/100
+            self.nCO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCO2_V101_filled"]/100
+            self.nO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xO2_V101_filled"]/100
+            self.nH2S_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xH2S_V101_filled"]/1000000
+            self.nH2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xH2_V101_filled"]/1000000
+            self.nNH3_V101_acum = self.nCH4_V101_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V101_acum = self.nCH4_V101_acum * 16.04
+            self.wCO2_V101_acum = self.nCO2_V101_acum * 44.009
+            self.wO2_V101_acum = self.nO2_V101_acum * 32
+            self.wH2S_V101_acum = self.nH2S_V101_acum * 34.082
+            self.wH2_V101_acum = self.nH2_V101_acum * 2
+            self.wNH3_V101_acum = self.nNH3_V101_acum * 17.031
+            # Storaged
+            self.biogas_mol_V101 = ((self.DataPlant["P_V101"]*6894.76) * self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.nCH4_V101 = self.biogas_mol_V101 * self.DataPlant["xCH4_V101_filled"]/100
+            self.nCO2_V101 = self.biogas_mol_V101 * self.DataPlant["xCO2_V101_filled"]/100
+            self.nO2_V101 = self.biogas_mol_V101 * self.DataPlant["xO2_V101_filled"]/100
+            self.nH2S_V101 = self.biogas_mol_V101 * self.DataPlant["xH2S_V101_filled"]/1000000
+            self.nH2_V101 = self.biogas_mol_V101 * self.DataPlant["xH2_V101_filled"]/1000000
+            self.nNH3_V101 = self.nCH4_V101 * (self.s_NH3/self.s_CH4)
+            
+            #Compound by mol V102
+            #Accumulated (mol)
+            self.biogas_mol_V102_acum = ((self.DataPlant["Pacum_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.nCH4_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCH4_V102_filled"]/100
+            self.nCO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCO2_V102_filled"]/100
+            self.nO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xO2_V102_filled"]/100
+            self.nH2S_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xH2S_V102_filled"]/1000000
+            self.nH2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xH2_V102_filled"]/1000000
+            self.nNH3_V102_acum = self.nCH4_V102_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V102_acum = self.nCH4_V102_acum * 16.04
+            self.wCO2_V102_acum = self.nCO2_V102_acum * 44.009
+            self.wO2_V102_acum = self.nO2_V102_acum * 32
+            self.wH2S_V102_acum = self.nH2S_V102_acum * 34.082
+            self.wH2_V102_acum = self.nH2_V102_acum * 2
+            self.wNH3_V102_acum = self.nNH3_V102_acum * 17.031
+            #Storage
+            self.biogas_mol_V102 = ((self.DataPlant["P_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.nCH4_V102 = self.biogas_mol_V102 * self.DataPlant["xCH4_V102_filled"]/100
+            self.nCO2_V102 = self.biogas_mol_V102 * self.DataPlant["xCO2_V102_filled"]/100
+            self.nO2_V102 = self.biogas_mol_V102 * self.DataPlant["xO2_V102_filled"]/100
+            self.nH2S_V102 = self.biogas_mol_V102 * self.DataPlant["xH2S_V102_filled"]/1000000
+            self.nH2_V102 = self.biogas_mol_V102 * self.DataPlant["xH2_V102_filled"]/1000000
+            self.nNH3_V102 = self.nCH4_V102 * (self.s_NH3/self.s_CH4)
+
+            #compound by mol V107
+            #Accumulated
+            self.biogas_mol_V107_acum = ((self.DataPlant["Pacum_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.nCH4_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCH4_V107_filled"]/100
+            self.nCO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCO2_V107_filled"]/100
+            self.nO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xO2_V107_filled"]/100
+            self.nH2S_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xH2S_V107_filled"]/1000000
+            self.nH2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xH2_V107_filled"]/1000000
+            self.nNH3_V107_acum = self.nCH4_V107_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V107_acum = self.nCH4_V107_acum * 16.04
+            self.wCO2_V107_acum = self.nCO2_V107_acum * 44.009
+            self.wO2_V107_acum = self.nO2_V107_acum * 32
+            self.wH2S_V107_acum = self.nH2S_V107_acum * 34.082
+            self.wH2_V107_acum = self.nH2_V107_acum * 2
+            self.wNH3_V107_acum = self.nNH3_V107_acum * 17.031
+            #Storage
+            self.biogas_mol_V107 = ((self.DataPlant["P_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.nCH4_V107 = self.biogas_mol_V107 * self.DataPlant["xCH4_V107_filled"]/100
+            self.nCO2_V107 = self.biogas_mol_V107 * self.DataPlant["xCO2_V107_filled"]/100
+            self.nO2_V107 = self.biogas_mol_V107 * self.DataPlant["xO2_V107_filled"]/100
+            self.nH2S_V107 = self.biogas_mol_V107 * self.DataPlant["xH2S_V107_filled"]/1000000
+            self.nH2_V107 = self.biogas_mol_V107 * self.DataPlant["xH2_V107_filled"]/1000000
+            self.nNH3_V107 = self.nCH4_V107 * (self.s_NH3/self.s_CH4)
+
+            #R101 mol trnaformed
+            self.dnCH4_dt = self.nCH4_V101_acum.diff().fillna(0)
+            self.dnCO2_dt = self.nCO2_V101_acum.diff().fillna(0)
+            self.dnO2_dt = self.nO2_V101_acum.diff().fillna(0)
+            self.dnH2S_dt = self.nH2S_V101_acum.diff().fillna(0)
+            self.dnH2_dt = self.nH2_V101_acum.diff().fillna(0)
+            self.dnNH3_dt = self.nNH3_V101_acum.diff().fillna(0)
+            self.dnbio_dt = (self.dnCH4_dt + self.dnCO2_dt + self.dnO2_dt + self.dnH2S_dt + self.dnH2_dt + self.dnNH3_dt)
+            #R101 mass trnasformed (gram)
+            self.dwCH4_dt = self.wCH4_V101_acum.diff().fillna(0)
+            self.dwCO2_dt = self.wCO2_V101_acum.diff().fillna(0)
+            self.dwO2_dt = self.wO2_V101_acum.diff().fillna(0)
+            self.dwH2S_dt = self.wH2S_V101_acum.diff().fillna(0)
+            self.dwH2_dt = self.wH2_V101_acum.diff().fillna(0)
+            self.dwNH3_dt = self.wNH3_V101_acum.diff().fillna(0)
+            self.dwbio_dt = (self.dwCH4_dt + self.dwCO2_dt + self.dwO2_dt + self.dwH2S_dt + self.dwH2_dt + self.dwNH3_dt)
+
+            #Mass balance
+            #Initial value (mass inside reactor)
             try:
-                if self.Operation_mode == 1:
-                    if self.TrainMode1.empty:
-                        print("The DataFrame exists but is empty.")
-                        #initial values for biogas vessels
-                        #V101
-                        self.Pacum_V101_i = self.Pacum_V101_i
-                        self.Pi_V101 = self.Pi_V101
-                        self.Pacum_V101 = self.Pacum_V101
-                        #V102
-                        self.Pacum_V102_i = self.Pacum_V102_i
-                        self.Pi_V102 = self.Pi_V102
-                        self.Pacum_V102 = self.Pacum_V102
-                        #V107
-                        self.Pacum_V107_i = self.Pacum_V107_i
-                        self.Pi_V107 = self.Pi_V107
-                        self.Pacum_V107 = self.Pacum_V107
-                        #Initial values for substrate concentration
-                        self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
-                        self.Csus_ini_ST_R101 = self.Csus_ini_ST_R101
-                        self.Vsus_inj_total_R101 = self.Vsus_inj_total_R101
-                    
-                    else:
-
-                        self.Csus_ini_SV_R101 = self.TrainMode1["Csus_exp"].iloc[0]
-                        self.Csus_ini_ST_R101 = self.TrainMode1["Csus_exp_ST"].iloc[0]
-                        self.Vsus_inj_total_R101 = self.TrainMode1["Vsus_inj_R101"].iloc[0]
-                        #initial values for biogas vessels in the other iteration
-                        #V101
-                        self.Pacum_V101_i = self.TrainMode1["Pacum_V101_i"].iloc[1]
-                        self.Pi_V101 = self.TrainMode1["Pi_V101"].iloc[1]
-                        self.Pacum_V101 = self.TrainMode1["Pacum_V101"].iloc[1]
-                        #V102
-                        self.Pacum_V102_i = self.TrainMode1["Pacum_V102_i"].iloc[1]
-                        self.Pi_V102 = self.TrainMode1["Pi_V102"].iloc[1]
-                        self.Pacum_V102 = self.TrainMode1["Pacum_V102"].iloc[1]
-                        #V107
-                        self.Pacum_V107_i = self.TrainMode1["Pacum_V102_i"].iloc[1]
-                        self.Pi_V107 = self.TrainMode1["Pi_V107"].iloc[1]
-                        self.Pacum_V107 = self.TrainMode1["Pacum_V107"].iloc[1]
-                        
+                if self.TrainMode.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    self.SV_ini_R101 = self.SV_ini_R101
+                    self.ST_ini_R101 = self.ST_ini_R101
                 else:
-
-                    if self.TrainMode2.empty:
-                        print("The DataFrame exists but is empty.")
-                        #initial values for biogas vessels
-                        #V101
-                        self.Pacum_V101_i = self.Pacum_V101_i
-                        self.Pi_V101 = self.Pi_V101
-                        self.Pacum_V101 = self.Pacum_V101
-                        #V102
-                        self.Pacum_V102_i = self.Pacum_V102_i
-                        self.Pi_V102 = self.Pi_V102
-                        self.Pacum_V102 = self.Pacum_V102
-                        #V107
-                        self.Pacum_V107_i = self.Pacum_V107_i
-                        self.Pi_V107 = self.Pi_V107
-                        self.Pacum_V107 = self.Pacum_V107
-                        #Initial values for substrate concentration
-                        self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
-                        self.Csus_ini_ST_R101 = self.Csus_ini_ST_R101
-                        self.Vsus_inj_total_R101 = self.Vsus_inj_total_R101
-                        
-                    else:
-
-                        self.Csus_ini_SV_R101 = self.TrainMode2["Csus_exp"].iloc[0]  
-                        self.Csus_ini_ST_R101 = self.TrainMode2["Csus_exp_ST"].iloc[0] 
-                        self.Vsus_inj_total_R101 = self.TrainMode2["Vsus_inj_R101"].iloc[0]
-                        #initial values for biogas vessels in the other iteration
-                        #V101
-                        self.Pacum_V101_i = self.TrainMode2["Pacum_V101_i"].iloc[1]
-                        self.Pi_V101 = self.TrainMode2["Pi_V101"].iloc[1]
-                        self.Pacum_V101 = self.TrainMode2["Pacum_V101"].iloc[1]
-                        #V102
-                        self.Pacum_V102_i = self.TrainMode2["Pacum_V102_i"].iloc[1]
-                        self.Pi_V102 = self.TrainMode2["Pi_V102"].iloc[1]
-                        self.Pacum_V102 = self.TrainMode2["Pacum_V102"].iloc[1]
-                        #V107
-                        self.Pacum_V107_i = self.TrainMode2["Pacum_V102_i"].iloc[1]
-                        self.Pi_V107 = self.TrainMode2["Pi_V107"].iloc[1]
-                        self.Pacum_V107 = self.TrainMode2["Pacum_V107"].iloc[1]
+                    self.Csus_ini_SV_R101 = self.TrainMode["Csus_exp"].iloc[0]
+                    self.SV_ini_R101 = self.TrainMode["SV_exp_R101"].iloc[0]
+                    self.ST_ini_R101 = self.TrainMode["ST_exp_R101"].iloc[0]
 
             except AttributeError:
                     print("The DataFrame does not exist.")
             
-            # Create lists for TrainModel Dataframe 
-            # R101           
-            C_in_sus = []
-            V = []
-            Csus = []
-            Csus_SV = []
-            SV_R101 = []
-            Csus_ST = []
-            ST_R101 = []
-            Q_P104v = []
-            timev = []
-            SV_g_Gompertz = []
-            V_inj_R101 = []
-            x_R101 = []
-            OC_R101 = []
+            # dt
+            self.tp = self.DataPlant["normal_time"].diff().fillna(0)                       #min
+            # Vol inyected in L
+            self.Vol_inj_R101 = self.DataPlant["P104"] * (self.tp/60)                      #Liters
+            self.Vol_inj_R101 = self.Vol_inj_R101.cumsum()
+            # substrate_inoculum ratio
+            self.substrate_ratio = (self.Vol_inj_R101/30).clip(upper=1)
+            self.inoculum_ratio = 1 - self.substrate_ratio
+            # mass inyected in volatile solids
+            self.mass_inlet = self.DataPlant["P104"] * self.rho * (self.tp/60) * self.SV/100   #gSV (grams of volatile solids)
             
-            #Biogas storge
-            #V101
-            #Pressure
-            Pi_V101 = []
-            Pacum_V101_i = []
-            Pacum_V101 = []
-            V_norm_sto_V101 = []
-            V_norm_acum_V101 = []
-            #Biogas compounds
-            mol_acum_biogas_V101 = []
-            mol_acum_CH4_V101 = []
-            m_acum_CH4_V101 = []
-            mol_acum_CO2_V101 = []
-            m_acum_CO2_V101 = []
-            mol_acum_O2_V101 = []
-            m_acum_O2_V101 = []
-            mol_acum_H2S_V101 = []
-            m_acum_H2S_V101 = []
-            mol_acum_H2_V101 = []
-            m_acum_H2_V101 = []
-            mol_acum_NH3_V101 = []
-            m_acum_NH3_V101 = []
+            #Mass Balance
+            OM_int_SV = []
+            OM_in_SV = []
+            OM_int_ST = []
+            OM_in_ST = []
+            mol_int = []
+            mol_in = []
             
-            #V102
-            #Pressure
-            Pi_V102 = []
-            Pacum_V102_i = []
-            Pacum_V102 = []
-            V_norm_sto_V102 = []
-            V_norm_acum_V102 = []
-            #Biogas compounds
-            mol_acum_biogas_V102 = []
-            mol_acum_CH4_V102 = []
-            m_acum_CH4_V102 = []
-            mol_acum_CO2_V102 = []
-            m_acum_CO2_V102 = []
-            mol_acum_O2_V102 = []
-            m_acum_O2_V102 = []
-            mol_acum_H2S_V102 = []
-            m_acum_H2S_V102 = []
-            mol_acum_H2_V102 = []
-            m_acum_H2_V102 = []
-            mol_acum_NH3_V102 = []
-            m_acum_NH3_V102 = []
-            
-            #V107
-            #Pressure
-            Pi_V107 = []
-            Pacum_V107_i = []
-            Pacum_V107 = []
-            V_norm_sto_V107 = []
-            V_norm_acum_V107 = []
-            #Biogas compounds
-            mol_acum_biogas_V107 = []
-            mol_acum_CH4_V107 = []
-            m_acum_CH4_V107 = []
-            mol_acum_CO2_V107 = []
-            m_acum_CO2_V107 = []
-            mol_acum_O2_V107 = []
-            m_acum_O2_V107 = []
-            mol_acum_H2S_V107 = []
-            m_acum_H2S_V107 = []
-            mol_acum_H2_V107 = []
-            m_acum_H2_V107 = []
-            mol_acum_NH3_V107 = []
-            m_acum_NH3_V107 = []
-            
-            for i in range (len(self.DataPlant)):
-                self.P_V101 = self.DataPlant["P_V101"].iloc[i]
-                self.P_V102 = self.DataPlant["P_V102"].iloc[i]
-                self.P_V107 = self.DataPlant["P_V107"].iloc[i]
-                #conditions when the pressure inside V101 drop
-                if i > 0:
-                    if (i + 1) in self.DataPlant.index and i in self.DataPlant.index:
-                        tp = self.DataPlant["normTime"].iloc[i] - self.DataPlant["normTime"].iloc[i-1]
-                    else:
-                        tp = 0
-                    
-                    Q_P104 = (self.DataPlant["FE-104"][i-1])/60                        #Convert[L/h] to [LPM]
-                    #Conditions for estimation of accumulated pressure in V101
-                    if self.P_V101 > 2:
-                        if (self.P_V101*1.04) < (self.DataPlant["P_V101"].iloc[i-1]): 
-                            print("Pressure drop")      
-                            self.Pi_V101 = self.P_V101
-                            self.Pacum_V101_i = self.Pacum_V101
-                        
-                    #Conditions for estimation of accumulated pressure in V102
-                    if self.P_V102 > 2:
-                        if (self.P_V102*1.04) < (self.DataPlant["P_V102"].iloc[i-1]):
-                            self.Pi_V102 = self.P_V102
-                            self.Pacum_V102_i = self.Pacum_V102
-                    
-                    #Conditions for estimation of accumulated pressure in V107
-                    if self.P_V107 > 2:
-                        if (self.P_V107*1.04) < (self.DataPlant["P_V107"].iloc[i-1]):
-                            self.Pi_V107 = self.P_V107
-                            self.Pacum_V107_i = self.Pacum_V107
-                else:
-                    tp = 0
-                    Q_P104 = 0  #Flow of pump at the beginning
-                    
-                #Estimate the accumulated pressure
-                #V101
-                self.Pacum_V101 = self.Pacum_V101_i + (self.P_V101 - self.Pi_V101)
-                Pacum_V101.append(self.Pacum_V101)
-                Pi_V101.append(self.Pi_V101)
-                Pacum_V101_i.append(self.Pacum_V101_i)
-                #V102
-                self.Pacum_V102 = self.Pacum_V102_i + (self.P_V102 - self.Pi_V102)
-                Pacum_V102.append(self.Pacum_V102)
-                Pi_V102.append(self.Pi_V102)
-                Pacum_V102_i.append(self.Pacum_V102_i)
-                #V107
-                self.Pacum_V107 = self.Pacum_V107_i + (self.P_V107 - self.Pi_V107)
-                Pacum_V107.append(self.Pacum_V107)
-                Pi_V107.append(self.Pi_V107)
-                Pacum_V107_i.append(self.Pacum_V107_i)
+            for i in range (len(self.mass_inlet)):
+                #Mass balance in grams for volatile solids
+                self.mass_ini = (self.SV_ini_R101 * 30 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101))
+                self.mass_in = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl = (self.SV_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outg = self.dwbio_dt.iloc[i]
+                self.SV_ini_R101 = (self.mass_ini + self.mass_in - self.mass_outl - self.mass_outg)/30/(self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
+                self.Csus_ini_SV_R101_gl = self.SV_ini_R101 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
+                OM_int_SV.append(self.SV_ini_R101)
+                OM_in_SV.append(self.mass_in)
+                # Mass balance in grams for total solids
+                self.mass_ini_ST = (self.ST_ini_R101 * 30 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101))
+                self.mass_in_ST = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_ST = (self.ST_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outg_ST = self.dwbio_dt.iloc[i]
+                self.ST_ini_R101 = (self.mass_ini_ST + self.mass_in_ST - self.mass_outl_ST - self.mass_outg_ST)/30/(self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
+                OM_int_ST.append(self.ST_ini_R101)
+                OM_in_ST.append(self.mass_in_ST)
+                # Mass balance in mol volatile solids
+                self.mol_ini = (self.Csus_ini_SV_R101 * 30)
+                self.mol_in = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outl = (self.Csus_ini_SV_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outg = self.dnCH4_dt.iloc[i]*(1/(self.substrate_ratio.iloc[i]*self.s_CH4 + self.inoculum_ratio.iloc[i]*self.s_CH4_ini_R101))
+                self.Csus_ini_SV_R101 = (self.mol_ini + self.mol_in - self.mol_outl - self.mol_outg)/30
+                mol_in.append(self.mol_in)
+                mol_int.append(self.Csus_ini_SV_R101)
+                
+            self.TrainMode = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                        "SV_exp_R101": OM_int_SV,
+                                        "VS_in": OM_in_SV,
+                                        "ST_exp_R101": OM_int_ST,
+                                        "TS_in": OM_in_ST,
+                                        "Csus_exp": mol_int,
+                                        "mol_org_in": mol_in,
+                                        "mass_out": self.dwbio_dt,
+                                        "Q_P104":self.DataPlant["P104"],
+                                        "T_R101":self.DataPlant["Tprom_R101"]})
+            self.TrainMode["Vol"] = 30
+            self.TrainMode["Csus_in_R101"] = self.Csv_sus
+            self.x_R101 = (self.TrainMode["Csus_in_R101"] - self.TrainMode["Csus_exp"])/self.TrainMode["Csus_in_R101"]
 
-                #Estimate the Storage and accumulated mol of biogas
-                # ----------------------V101
-                # Storage biogas mol in V101
-                self.T_V101_actual = self.DataPlant["T_V101"].iloc[i]
-                if self.DataPlant["T_V101"].iloc[i] == 0:
-                    self.T_V101_actual = self.DataPlant["T_V101"].iloc[i+1]
-
-                self.n_biogas_sto_V101 = (((self.P_V101*6894.76) * (self.Volume_V101/1000))/
-                                          (8.314 * (self.T_V101_actual + 273.15)))           #mol
-                #Storage normal volume
-                self.V_norm_sto_V101 = (self.P_V101 * self.Volume_V101 * 273.15)/(14.503774 * (self.T_V101_actual + 273.15))      #L
-                
-                # Accumulated biogas mol in V101
-                self.n_biogas_acum_V101 = (((self.Pacum_V101*6894.76) * (self.Volume_V101/1000))/
-                                          (8.314 * (self.T_V101_actual + 273.15)))           #mol
-                # Accumulated normal volume
-                self.V_norm_acum_V101 = (self.Pacum_V101 * self.Volume_V101 * 273.15)/(14.503774 * (self.T_V101_actual + 273.15))  #NL
-                                
-                mol_acum_biogas_V101.append(self.n_biogas_acum_V101)
-                V_norm_sto_V101.append(self.V_norm_sto_V101)
-                V_norm_acum_V101.append(self.V_norm_acum_V101)
-                
-                #Estimate the storage and accumulated mol for component in biogas
-                #Storage compounds [mol]
-                self.mol_sto_CH4_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_CH4_V101_filled"].iloc[i]/100)      #mol
-                self.mol_sto_CO2_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_CO2_V101_filled"].iloc[i]/100)      #mol
-                self.mol_sto_O2_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_O2_V101_filled"].iloc[i]/100)        #mol
-                self.mol_sto_H2S_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_H2S_V101_filled"].iloc[i]/1000000)      #mol
-                self.mol_sto_H2_V101 = self.n_biogas_sto_V101 *  (self.DataPlant["x_H2_V101_filled"].iloc[i]/1000000)        #mol
-                self.mol_sto_NH3_V101 = self.mol_sto_CH4_V101 * (self.s_NH3/self.s_CH4)                                      #mol
-                #Storage compounds [g]
-                self.m_sto_CH4_V101 = self.mol_sto_CH4_V101 * 16.04256                                                         #g
-                self.m_sto_CO2_V101 = self.mol_sto_CO2_V101 * 44.0095                                                          #g
-                self.m_sto_O2_V101 = self.mol_sto_O2_V101 * 31.9988                                                            #g
-                self.m_sto_H2S_V101 = self.mol_sto_H2S_V101 * 34.08088                                                         #g
-                self.m_sto_H2_V101 =  self.mol_sto_H2_V101 *2.016                                                              #g
-                self.m_sto_NH3_V101 = self.mol_sto_NH3_V101 *  17.031                                                          #g 
-                
-                #Accumulated compounds [mol]
-                self.mol_acum_CH4_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_CH4_V101_filled"].iloc[i]/100)     #mol
-                self.mol_acum_CO2_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_CO2_V101_filled"].iloc[i]/100)      #mol
-                self.mol_acum_O2_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_O2_V101_filled"].iloc[i]/100)        #mol
-                self.mol_acum_H2S_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_H2S_V101_filled"].iloc[i]/1000000)      #mol
-                self.mol_acum_H2_V101 = self.n_biogas_acum_V101 *  (self.DataPlant["x_H2_V101_filled"].iloc[i]/1000000)       #mol
-                self.mol_acum_NH3_V101 = self.mol_acum_CH4_V101 * (self.s_NH3/self.s_CH4)                                      #mol
-                #storage values in list [mol]
-                mol_acum_CH4_V101.append(self.mol_acum_CH4_V101)
-                mol_acum_CO2_V101.append(self.mol_acum_CO2_V101)
-                mol_acum_O2_V101.append(self.mol_acum_O2_V101)
-                mol_acum_H2S_V101.append(self.mol_acum_H2S_V101)
-                mol_acum_H2_V101.append(self.mol_acum_H2_V101)
-                mol_acum_NH3_V101.append(self.mol_acum_NH3_V101)
-                #accumulated compounds [g]
-                self.m_acum_CH4_V101 = self.mol_acum_CH4_V101 * 16.04256                                                         #g
-                self.m_acum_CO2_V101 = self.mol_acum_CO2_V101 * 44.0095                                                          #g
-                self.m_acum_O2_V101 = self.mol_acum_O2_V101 * 31.9988                                                            #g
-                self.m_acum_H2S_V101 = self.mol_acum_H2S_V101 * 34.08088                                                         #g
-                self.m_acum_H2_V101 =  self.mol_acum_H2_V101 *2.016                                                              #g
-                self.m_acum_NH3_V101 = self.mol_acum_NH3_V101 *  17.031                                                          #g 
-                #storage values in list [g]
-                m_acum_CH4_V101.append(self.m_acum_CH4_V101)
-                m_acum_CO2_V101.append(self.m_acum_CO2_V101)
-                m_acum_O2_V101.append(self.m_acum_O2_V101)
-                m_acum_H2S_V101.append(self.m_acum_H2S_V101)
-                m_acum_H2_V101.append(self.m_acum_H2_V101)
-                m_acum_NH3_V101.append(self.m_acum_NH3_V101)
-                
-                # -------------------- V102
-                # Storage biogas mol in V102
-                self.T_V102_actual = self.DataPlant["T_V102"].iloc[i]
-                if self.DataPlant["T_V102"].iloc[i] == 0:
-                    self.T_V102_actual = self.DataPlant["T_V102"].iloc[i+1]
-
-                self.n_biogas_sto_V102 = (((self.P_V102*6894.76) * (self.Volume_V102/1000))/
-                                          (8.314 * (self.T_V102_actual + 273.15)))           #mol
-                #Storage normal volume
-                self.V_norm_sto_V102 = (self.P_V102 * self.Volume_V102 * 273.15)/(14.503774 * (self.T_V102_actual + 273.15))      #L
-                
-                # Accumulated biogas mol in V102
-                self.n_biogas_acum_V102 = (((self.Pacum_V102*6894.76) * (self.Volume_V102/1000))/
-                                          (8.314 * (self.T_V102_actual + 273.15)))           #mol
-                # Accumulated normal volume
-                self.V_norm_acum_V102 = (self.Pacum_V102 * self.Volume_V102 * 273.15)/(14.503774 * (self.T_V102_actual + 273.15))  #L
-                                
-                mol_acum_biogas_V102.append(self.n_biogas_acum_V102)
-                V_norm_sto_V102.append(self.V_norm_sto_V102)
-                V_norm_acum_V102.append(self.V_norm_acum_V102)
-                
-                #Estimate the storage and accumulated mol for component in biogas
-                #Storage compounds [mol]
-                self.mol_sto_CH4_V102 = self.n_biogas_sto_V102 *  (self.DataPlant["x_CH4_V102_filled"].iloc[i]/100)      #mol
-                self.mol_sto_CO2_V102 = self.n_biogas_sto_V102 *  (self.DataPlant["x_CO2_V102_filled"].iloc[i]/100)      #mol
-                self.mol_sto_O2_V102 = self.n_biogas_sto_V102 *  (self.DataPlant["x_O2_V102_filled"].iloc[i]/100)        #mol
-                self.mol_sto_H2S_V102 = self.n_biogas_sto_V102 *  (self.DataPlant["x_H2S_V102_filled"].iloc[i]/1000000)      #mol
-                self.mol_sto_H2_V102 = self.n_biogas_sto_V102 *  (self.DataPlant["x_H2_V102_filled"].iloc[i]/1000000)        #mol
-                self.mol_sto_NH3_V102 = self.mol_sto_CH4_V102 * (self.s_NH3/self.s_CH4)                                      #mol
-                #Storage compounds [g]
-                self.m_sto_CH4_V102 = self.mol_sto_CH4_V102 * 16.04256                                                         #g
-                self.m_sto_CO2_V102 = self.mol_sto_CO2_V102 * 44.0095                                                          #g
-                self.m_sto_O2_V102 = self.mol_sto_O2_V102 * 31.9988                                                            #g
-                self.m_sto_H2S_V102 = self.mol_sto_H2S_V102 * 34.08088                                                         #g
-                self.m_sto_H2_V102 =  self.mol_sto_H2_V102 *2.016                                                              #g
-                self.m_sto_NH3_V102 = self.mol_sto_NH3_V102 *  17.031                                                          #g 
-                
-                #Accumulated compounds [mol]
-                self.mol_acum_CH4_V102 = self.n_biogas_acum_V102 *  (self.DataPlant["x_CH4_V102_filled"].iloc[i]/100)     #mol
-                self.mol_acum_CO2_V102 = self.n_biogas_acum_V102 *  (self.DataPlant["x_CO2_V102_filled"].iloc[i]/100)      #mol
-                self.mol_acum_O2_V102 = self.n_biogas_acum_V102 *  (self.DataPlant["x_O2_V102_filled"].iloc[i]/100)        #mol
-                self.mol_acum_H2S_V102 = self.n_biogas_acum_V102 *  (self.DataPlant["x_H2S_V102_filled"].iloc[i]/1000000)      #mol
-                self.mol_acum_H2_V102 = self.n_biogas_acum_V102 *  (self.DataPlant["x_H2_V102_filled"].iloc[i]/1000000)       #mol
-                self.mol_acum_NH3_V102 = self.mol_acum_CH4_V102 * (self.s_NH3/self.s_CH4)                                      #mol
-                #storage values in list [mol]
-                mol_acum_CH4_V102.append(self.mol_acum_CH4_V102)
-                mol_acum_CO2_V102.append(self.mol_acum_CO2_V102)
-                mol_acum_O2_V102.append(self.mol_acum_O2_V102)
-                mol_acum_H2S_V102.append(self.mol_acum_H2S_V102)
-                mol_acum_H2_V102.append(self.mol_acum_H2_V102)
-                mol_acum_NH3_V102.append(self.mol_acum_NH3_V102)
-                #accumulated compounds [g]
-                self.m_acum_CH4_V102 = self.mol_acum_CH4_V102 * 16.04256                                                         #g
-                self.m_acum_CO2_V102 = self.mol_acum_CO2_V102 * 44.0095                                                          #g
-                self.m_acum_O2_V102 = self.mol_acum_O2_V102 * 31.9988                                                            #g
-                self.m_acum_H2S_V102 = self.mol_acum_H2S_V102 * 34.08088                                                         #g
-                self.m_acum_H2_V102 =  self.mol_acum_H2_V102 *2.016                                                              #g
-                self.m_acum_NH3_V102 = self.mol_acum_NH3_V102 *  17.031                                                          #g 
-                #storage values in list [g]
-                m_acum_CH4_V102.append(self.m_acum_CH4_V102)
-                m_acum_CO2_V102.append(self.m_acum_CO2_V102)
-                m_acum_O2_V102.append(self.m_acum_O2_V102)
-                m_acum_H2S_V102.append(self.m_acum_H2S_V102)
-                m_acum_H2_V102.append(self.m_acum_H2_V102)
-                m_acum_NH3_V102.append(self.m_acum_NH3_V102)
-                
-                # -------------------- V107
-                # Storage biogas mol in V107
-                self.T_V107_actual = self.DataPlant["T_V107"].iloc[i]
-                if self.DataPlant["T_V107"].iloc[i] == 0:
-                    self.T_V107_actual = self.DataPlant["T_V107"].iloc[i+1]
-
-                self.n_biogas_sto_V107 = (((self.P_V107*6894.76) * (self.Volume_V107/1000))/
-                                          (8.314 * (self.T_V107_actual + 273.15)))           #mol
-                #Storage normal volume
-                self.V_norm_sto_V107 = (self.P_V107 * self.Volume_V107 * 273.15)/(14.503774 * (self.T_V107_actual + 273.15))      #L
-                
-                # Accumulated biogas mol in V107
-                self.n_biogas_acum_V107 = (((self.Pacum_V107*6894.76) * (self.Volume_V107/1000))/
-                                          (8.314 * (self.T_V107_actual + 273.15)))           #mol
-                # Accumulated normal volume
-                self.V_norm_acum_V107 = (self.Pacum_V107 * self.Volume_V107 * 273.15)/(14.503774 * (self.T_V107_actual + 273.15))  #L
-                                
-                mol_acum_biogas_V107.append(self.n_biogas_acum_V107)
-                V_norm_sto_V107.append(self.V_norm_sto_V107)
-                V_norm_acum_V107.append(self.V_norm_acum_V107)
-                
-                #Estimate the storage and accumulated mol for component in biogas
-                #Storage compounds [mol]
-                self.mol_sto_CH4_V107 = self.n_biogas_sto_V107 *  (self.DataPlant["x_CH4_V107_filled"].iloc[i]/100)      #mol
-                self.mol_sto_CO2_V107 = self.n_biogas_sto_V107 *  (self.DataPlant["x_CO2_V107_filled"].iloc[i]/100)      #mol
-                self.mol_sto_O2_V107 = self.n_biogas_sto_V107 *  (self.DataPlant["x_O2_V107_filled"].iloc[i]/100)        #mol
-                self.mol_sto_H2S_V107 = self.n_biogas_sto_V107 *  (self.DataPlant["x_H2S_V107_filled"].iloc[i]/1000000)      #mol
-                self.mol_sto_H2_V107 = self.n_biogas_sto_V107 *  (self.DataPlant["x_H2_V107_filled"].iloc[i]/1000000)        #mol
-                self.mol_sto_NH3_V107 = self.mol_sto_CH4_V107 * (self.s_NH3/self.s_CH4)                                      #mol
-                #Storage compounds [g]
-                self.m_sto_CH4_V107 = self.mol_sto_CH4_V107 * 16.04256                                                         #g
-                self.m_sto_CO2_V107 = self.mol_sto_CO2_V107 * 44.0095                                                          #g
-                self.m_sto_O2_V107 = self.mol_sto_O2_V107 * 31.9988                                                            #g
-                self.m_sto_H2S_V107 = self.mol_sto_H2S_V107 * 34.08088                                                         #g
-                self.m_sto_H2_V107 =  self.mol_sto_H2_V107 *2.016                                                              #g
-                self.m_sto_NH3_V107 = self.mol_sto_NH3_V107 *  17.031                                                          #g 
-                
-                #Accumulated compounds [mol]
-                self.mol_acum_CH4_V107 = self.n_biogas_acum_V107 *  (self.DataPlant["x_CH4_V107_filled"].iloc[i]/100)     #mol
-                self.mol_acum_CO2_V107 = self.n_biogas_acum_V107 *  (self.DataPlant["x_CO2_V107_filled"].iloc[i]/100)      #mol
-                self.mol_acum_O2_V107 = self.n_biogas_acum_V107 *  (self.DataPlant["x_O2_V107_filled"].iloc[i]/100)        #mol
-                self.mol_acum_H2S_V107 = self.n_biogas_acum_V107 *  (self.DataPlant["x_H2S_V107_filled"].iloc[i]/1000000)      #mol
-                self.mol_acum_H2_V107 = self.n_biogas_acum_V107 *  (self.DataPlant["x_H2_V107_filled"].iloc[i]/1000000)       #mol
-                self.mol_acum_NH3_V107 = self.mol_acum_CH4_V107 * (self.s_NH3/self.s_CH4)                                      #mol
-                #storage values in list [mol]
-                mol_acum_CH4_V107.append(self.mol_acum_CH4_V107)
-                mol_acum_CO2_V107.append(self.mol_acum_CO2_V107)
-                mol_acum_O2_V107.append(self.mol_acum_O2_V107)
-                mol_acum_H2S_V107.append(self.mol_acum_H2S_V107)
-                mol_acum_H2_V107.append(self.mol_acum_H2_V107)
-                mol_acum_NH3_V107.append(self.mol_acum_NH3_V107)
-                #accumulated compounds [g]
-                self.m_acum_CH4_V107 = self.mol_acum_CH4_V107 * 16.04256                                                         #g
-                self.m_acum_CO2_V107 = self.mol_acum_CO2_V107 * 44.0095                                                          #g
-                self.m_acum_O2_V107 = self.mol_acum_O2_V107 * 31.9988                                                            #g
-                self.m_acum_H2S_V107 = self.mol_acum_H2S_V107 * 34.08088                                                         #g
-                self.m_acum_H2_V107 =  self.mol_acum_H2_V107 *2.016                                                              #g
-                self.m_acum_NH3_V107 = self.mol_acum_NH3_V107 *  17.031                                                          #g 
-                #storage values in list [g]
-                m_acum_CH4_V107.append(self.m_acum_CH4_V107)
-                m_acum_CO2_V107.append(self.m_acum_CO2_V107)
-                m_acum_O2_V107.append(self.m_acum_O2_V107)
-                m_acum_H2S_V107.append(self.m_acum_H2S_V107)
-                m_acum_H2_V107.append(self.m_acum_H2_V107)
-                m_acum_NH3_V107.append(self.m_acum_NH3_V107)
-                 
-                
-                #Stochoimetric expenditure
-                #fraction inoculum/substrate
-                self.Level_R101_actual = self.DataPlant["V_R101"].iloc[i]
-                
-                if self.Level_R101_actual == 0 or pd.isna(self.Level_R101_actual):
-                    self.Level_R101_actual = self.DataPlant["V_R101"].iloc[i+1]
-                
-                self.Vsus_inj_total_R101 = self.Vsus_inj_total_R101 + (Q_P104 * tp)
-                if self.Vsus_inj_total_R101 >= 30:
-                    x_substrate = 1
-                    x_inoculum = 0
-                else:
-                    x_substrate = self.Vsus_inj_total_R101 / 30
-                    x_inoculum = (1 - x_substrate)
-                    # print(x_inoculum)
-                    
-                #Volatile solids [mol]
-                mol_ini = self.Csus_ini_SV_R101 * (self.Level_R101_actual)                            #mol
-                mol_in_R101 = Q_P104 * tp * self.Csv_sus                                              #mol
-                if len(mol_acum_CH4_V101)<1:
-                    mol_expended = 0
-                else:
-                    mol_expended_CH4 = ((mol_acum_CH4_V101[i] - mol_acum_CH4_V101[i-1])) * (1/(x_substrate*self.s_CH4 + x_inoculum*self.s_CH4_ini_R101))            #mol
-                    mol_expended_CO2 = ((mol_acum_CO2_V101[i] - mol_acum_CO2_V101[i-1])) * (1/(x_substrate*self.s_CO2 + x_inoculum*self.s_CO2_ini_R101))            #mol
-                    mol_expended_NH3 = ((mol_acum_NH3_V101[i] - mol_acum_NH3_V101[i-1])) * (1/(x_substrate*self.s_NH3 + x_inoculum*self.s_NH3_ini_R101))            #mol
-                    try:
-                        mol_expended_H2S = ((mol_acum_H2S_V101[i] - mol_acum_H2S_V101[i-1])) * (1/(x_substrate*self.s_H2S + x_inoculum*self.s_H2S_ini_R101))            #mol
-                    except ZeroDivisionError:
-                        mol_expended_H2S = 0
-                    mol_expended = (mol_expended_CH4 + mol_expended_CO2 + mol_expended_NH3 + mol_expended_H2S)
-                mol_out_R101 = (Q_P104 * tp * self.Csus_ini_SV_R101)   
-                self.Csus_ini_SV_R101 = (mol_ini + mol_in_R101 - mol_out_R101 - mol_expended)/(self.Level_R101_actual)                                           #molSV/L
-                #Volatile solids [g]
-                self.Csus_ini_SV_R101_gl = self.Csus_ini_SV_R101 * (x_inoculum * self.MW_inocum_ini_R101 + x_substrate * self.MW_sustrato)                       #gSV/L
-                self.SV_R101 = self.Csus_ini_SV_R101_gl / (x_inoculum * self.rho_ini_R101 + x_substrate * self.rho)                                              #gTS/gT
-                self.SV_g = self.Csus_ini_SV_R101_gl * self.Level_R101_actual                                            #gSV
-                SV_g_Gompertz.append(self.SV_g)       
-                
-                #Total solids [g]
-                mol_ini_ST = self.Csus_ini_ST_R101 * (self.Level_R101_actual)                         #mol
-                mol_in_R101_ST = Q_P104 * tp * self.Cst_sus                                           #mol
-                mol_out_R101_ST = (Q_P104 * tp * self.Csus_ini_ST_R101)                               #mol
-                self.Csus_ini_ST_R101 = (mol_ini_ST + mol_in_R101_ST  - mol_out_R101_ST - mol_expended)/(self.Level_R101_actual)                               #molST/L
-                #Total Solids [g]
-                self.Csus_ini_ST_R101_gl = self.Csus_ini_ST_R101 * (x_inoculum * self.MW_inocum_ini_R101 + x_substrate * self.MW_sustrato)                     #gST/L
-                self.ST_R101 = (self.Csus_ini_ST_R101_gl / (x_inoculum * self.rho_ini_R101 + x_substrate * self.rho))                                            #gTS/gT 
-                self.ST_g = self.Csus_ini_ST_R101_gl * self.Level_R101_actual                                          #gST
-                
-                #convertion R101
-                try:
-                    self.x_R101 = (self.Csv_sus - self.Csus_ini_SV_R101)/self.Csv_sus
-                    self.OC_R101 = self.Csus_ini_SV_R101_gl/(self.DataPlant["normTime"].iloc[i]/1440)
-                except ZeroDivisionError:
-                    self.x_R101 = 0
-                    self.OC_R101 = 0
-                
-                timev.append(self.DataPlant["normTime"].iloc[i])
-                V.append(self.Level_R101_actual)
-                Q_P104v.append(Q_P104)   
-                C_in_sus.append(self.Csv_sus)
-                
-                if math.isnan(self.Csus_ini_SV_R101):
-                    Csus.append(Csus[-1])
-                else:
-                    Csus.append(self.Csus_ini_SV_R101)
-                
-                if math.isnan(self.Csus_ini_SV_R101_gl):
-                    Csus_SV.append(Csus_SV[-1])
-                else:
-                    Csus_SV.append(self.Csus_ini_SV_R101_gl)
-                
-                if math.isnan(self.SV_R101):
-                    SV_R101.append(SV_R101[-1])
-                else:
-                    SV_R101.append(self.SV_R101)
-                    
-                if math.isnan(self.Csus_ini_ST_R101):
-                    Csus_ST.append(Csus_ST[-1])
-                else:
-                    Csus_ST.append(self.Csus_ini_ST_R101)
-                
-                if math.isnan(self.ST_R101):
-                    ST_R101.append(ST_R101[-1])
-                else:
-                    ST_R101.append(self.ST_R101)
-                
-                if math.isnan(self.x_R101):
-                    x_R101.append(x_R101[-1])
-                else:
-                    x_R101.append(self.x_R101)
-                    
-                if math.isnan(self.OC_R101):
-                    OC_R101.append(OC_R101[-1])
-                else:
-                    OC_R101.append(self.OC_R101)
-                
-                V_inj_R101.append(self.Vsus_inj_total_R101)
-            
-            #DataFrame to realize optimization
-            if self.Operation_mode == 1:
-                self.TrainMode1 = pd.DataFrame({"time": timev,
-                                                "Vol": V,
-                                                "Q_P104": Q_P104v,
-                                                "Csus_in": C_in_sus,
-                                                "Csus_exp":Csus,
-                                                "Csus_exp_SV":Csus_SV,
-                                                "SV": SV_R101,
-                                                "Csus_exp_ST":Csus_ST,
-                                                "ST": ST_R101,
-                                                "x": x_R101,
-                                                "OC": OC_R101,
-                                                "Vsus_inj_R101":V_inj_R101,
-                                                "T_R101": self.DataPlant["Tprom_R101"],
-                                                "Pacum_V101_i": Pacum_V101_i,
-                                                "Pi_V101": Pi_V101,
-                                                "Pacum_V101": Pacum_V101,
-                                                "Pacum_V102_i": Pacum_V102_i,
-                                                "Pi_V102": Pi_V102,
-                                                "Pacum_V102": Pacum_V102,
-                                                "Pacum_V107_i": Pacum_V107_i,
-                                                "Pi_V107": Pi_V107,
-                                                "Pacum_V107": Pacum_V107
-                                                })
-            else:
-                self.TrainMode2 = pd.DataFrame({"time": timev,
-                                                "Vol": V,
-                                                "Q_P104": Q_P104v,
-                                                "Csus_in": C_in_sus,
-                                                "Csus_exp":Csus,
-                                                "Csus_exp_SV":Csus_SV,
-                                                "SV": SV_R101,
-                                                "Csus_exp_ST":Csus_ST,
-                                                "ST": ST_R101,
-                                                "x": x_R101,
-                                                "OC":OC_R101,
-                                                "Vsus_inj_R101":V_inj_R101,
-                                                "T_R101": self.DataPlant["Tprom_R101"],
-                                                "Q_P101": (self.DataPlant["P-101"]/60).tolist(),
-                                                "Pacum_V101_i": Pacum_V101_i,
-                                                "Pi_V101": Pi_V101,
-                                                "Pacum_V101": Pacum_V101,
-                                                "Pacum_V102_i": Pacum_V102_i,
-                                                "Pi_V102": Pi_V102,
-                                                "Pacum_V102": Pacum_V102,
-                                                "Pacum_V107_i": Pacum_V107_i,
-                                                "Pi_V107": Pi_V107,
-                                                "Pacum_V107": Pacum_V107
-                                                })
-            
-            self.biogas_V101 = pd.DataFrame({"time":timev,
-                                             "Pstorage": self.DataPlant["P_V101"],
-                                             "Vacum": V_norm_acum_V101,
-                                             "Vsto": V_norm_sto_V101,
-                                             "mol_biogas": mol_acum_biogas_V101,
-                                             "mol_CH4": mol_acum_CH4_V101,
-                                             "mol_CO2": mol_acum_CO2_V101,
-                                             "mol_O2": mol_acum_O2_V101,
-                                             "mol_H2S": mol_acum_H2S_V101,
-                                             "mol_H2": mol_acum_H2_V101,
-                                             "mol_NH3": mol_acum_NH3_V101})
-            
-            self.biogas_V102 = pd.DataFrame({"time":timev,
-                                             "Pstorage": self.DataPlant["P_V102"],
-                                             "Vacum": V_norm_acum_V102,
-                                             "Vsto": V_norm_sto_V102,
-                                             "mol_biogas": mol_acum_biogas_V102,
-                                             "mol_CH4": mol_acum_CH4_V102,
-                                             "mol_CO2": mol_acum_CO2_V102,
-                                             "mol_O2": mol_acum_O2_V102,
-                                             "mol_H2S": mol_acum_H2S_V102,
-                                             "mol_H2": mol_acum_H2_V102,
-                                             "mol_NH3": mol_acum_NH3_V102})
-            
-            self.biogas_V107 = pd.DataFrame({"time":timev,
-                                             "Pstorage": self.DataPlant["P_V107"],
-                                             "Vacum": V_norm_acum_V107,
-                                             "Vsto": V_norm_sto_V107,
-                                             "mol_biogas": mol_acum_biogas_V107,
-                                             "mol_CH4": mol_acum_CH4_V107,
-                                             "mol_CO2": mol_acum_CO2_V107,
-                                             "mol_O2": mol_acum_O2_V107,
-                                             "mol_H2S": mol_acum_H2S_V107,
-                                             "mol_H2": mol_acum_H2_V107,
-                                             "mol_NH3": mol_acum_NH3_V107})
-              
-            #Data to train Gompertz model in operation Model 1
-            self.Model = Model
             if self.Model == "Gompertz":
-                V_biogas_gompertz = []
-                V_normal = []
-                for i in range (len(mol_acum_biogas_V101)):
-                    V_bio = V_norm_acum_V101[i]/SV_g_Gompertz[i]        #Normal volume of biogas according to produce moles in V_101 (L/gSV)
-                    V_normal.append(V_norm_acum_V101[i])
-                    V_biogas_gompertz.append(V_bio)
-                self.TrainGompertzMode1 = pd.DataFrame({"time": timev,
-                                                        "V_norm_bio": V_normal,
-                                                        "y_t_exp": V_biogas_gompertz})
+                self.V_bio_Gompertz = self.DataPlant["Vacum_V101"]/self.mass_ini      #gompertz exit Lbio/gSV
+                self.TrainMode_gompertz = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                                        "y_t_exp": self.V_bio_Gompertz,
+                                                        "Vacum_V101": self.DataPlant["Vacum_V101"]})
+            
+            self.global_time = self.global_time + (10/1440)
+            self.OC_R101 = self.SV_ini_R101/self.global_time
+
+        elif self.Operation_mode in [3, 5]:
+            #Compounds by mol V101 
+            # Accumulated
+            self.biogas_mol_V101_acum = ((self.DataPlant["Pacum_V101"]*6894.76)*self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.nCH4_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCH4_V101_filled"]/100
+            self.nCO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCO2_V101_filled"]/100
+            self.nO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xO2_V101_filled"]/100
+            self.nH2S_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xH2S_V101_filled"]/1000000
+            self.nH2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xH2_V101_filled"]/1000000
+            self.nNH3_V101_acum = self.nCH4_V101_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V101_acum = self.nCH4_V101_acum * 16.04
+            self.wCO2_V101_acum = self.nCO2_V101_acum * 44.009
+            self.wO2_V101_acum = self.nO2_V101_acum * 32
+            self.wH2S_V101_acum = self.nH2S_V101_acum * 34.082
+            self.wH2_V101_acum = self.nH2_V101_acum * 2
+            self.wNH3_V101_acum = self.nNH3_V101_acum * 17.031
+             # Storaged
+            self.biogas_mol_V101 = ((self.DataPlant["P_V101"]*6894.76) * self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.nCH4_V101 = self.biogas_mol_V101 * self.DataPlant["xCH4_V101_filled"]/100
+            self.nCO2_V101 = self.biogas_mol_V101 * self.DataPlant["xCO2_V101_filled"]/100
+            self.nO2_V101 = self.biogas_mol_V101 * self.DataPlant["xO2_V101_filled"]/100
+            self.nH2S_V101 = self.biogas_mol_V101 * self.DataPlant["xH2S_V101_filled"]/1000000
+            self.nH2_V101 = self.biogas_mol_V101 * self.DataPlant["xH2_V101_filled"]/1000000
+            self.nNH3_V101 = self.nCH4_V101 * (self.s_NH3/self.s_CH4)
+            
+            #Compound by mol V102
+            #Accumulated (mol)
+            self.biogas_mol_V102_acum = ((self.DataPlant["Pacum_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.nCH4_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCH4_V102_filled"]/100
+            self.nCO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCO2_V102_filled"]/100
+            self.nO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xO2_V102_filled"]/100
+            self.nH2S_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xH2S_V102_filled"]/1000000
+            self.nH2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xH2_V102_filled"]/1000000
+            self.nNH3_V102_acum = self.nCH4_V102_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V102_acum = self.nCH4_V102_acum * 16.04
+            self.wCO2_V102_acum = self.nCO2_V102_acum * 44.009
+            self.wO2_V102_acum = self.nO2_V102_acum * 32
+            self.wH2S_V102_acum = self.nH2S_V102_acum * 34.082
+            self.wH2_V102_acum = self.nH2_V102_acum * 2
+            self.wNH3_V102_acum = self.nNH3_V102_acum * 17.031
+            #Storage
+            self.biogas_mol_V102 = ((self.DataPlant["P_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.nCH4_V102 = self.biogas_mol_V102 * self.DataPlant["xCH4_V102_filled"]/100
+            self.nCO2_V102 = self.biogas_mol_V102 * self.DataPlant["xCO2_V102_filled"]/100
+            self.nO2_V102 = self.biogas_mol_V102 * self.DataPlant["xO2_V102_filled"]/100
+            self.nH2S_V102 = self.biogas_mol_V102 * self.DataPlant["xH2S_V102_filled"]/1000000
+            self.nH2_V102 = self.biogas_mol_V102 * self.DataPlant["xH2_V102_filled"]/1000000
+            self.nNH3_V102 = self.nCH4_V102 * (self.s_NH3/self.s_CH4)
+
+            #compound by mol V107
+            #Accumulated
+            self.biogas_mol_V107_acum = ((self.DataPlant["Pacum_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.nCH4_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCH4_V107_filled"]/100
+            self.nCO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCO2_V107_filled"]/100
+            self.nO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xO2_V107_filled"]/100
+            self.nH2S_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xH2S_V107_filled"]/1000000
+            self.nH2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xH2_V107_filled"]/1000000
+            self.nNH3_V107_acum = self.nCH4_V107_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V107_acum = self.nCH4_V107_acum * 16.04
+            self.wCO2_V107_acum = self.nCO2_V107_acum * 44.009
+            self.wO2_V107_acum = self.nO2_V107_acum * 32
+            self.wH2S_V107_acum = self.nH2S_V107_acum * 34.082
+            self.wH2_V107_acum = self.nH2_V107_acum * 2
+            self.wNH3_V107_acum = self.nNH3_V107_acum * 17.031
+            #Storage
+            self.biogas_mol_V107 = ((self.DataPlant["P_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.nCH4_V107 = self.biogas_mol_V107 * self.DataPlant["xCH4_V107_filled"]/100
+            self.nCO2_V107 = self.biogas_mol_V107 * self.DataPlant["xCO2_V107_filled"]/100
+            self.nO2_V107 = self.biogas_mol_V107 * self.DataPlant["xO2_V107_filled"]/100
+            self.nH2S_V107 = self.biogas_mol_V107 * self.DataPlant["xH2S_V107_filled"]/1000000
+            self.nH2_V107 = self.biogas_mol_V107 * self.DataPlant["xH2_V107_filled"]/1000000
+            self.nNH3_V107 = self.nCH4_V107 * (self.s_NH3/self.s_CH4)
+
+            #R101 mol transformed
+            self.dnCH4_dt_R101 = self.nCH4_V101_acum.diff().fillna(0)
+            self.dnCO2_dt_R101 = self.nCO2_V101_acum.diff().fillna(0)
+            self.dnO2_dt_R101 = self.nO2_V101_acum.diff().fillna(0)
+            self.dnH2S_dt_R101 = self.nH2S_V101_acum.diff().fillna(0)
+            self.dnH2_dt_R101 = self.nH2_V101_acum.diff().fillna(0)
+            self.dnNH3_dt_R101 = self.nNH3_V101_acum.diff().fillna(0)
+            self.dnbio_dt_R101 = (self.dnCH4_dt + self.dnCO2_dt + self.dnO2_dt + self.dnH2S_dt + self.dnH2_dt + self.dnNH3_dt)
+            #R101 mass trnasformed (gram)
+            self.dwCH4_dt_R101 = self.wCH4_V101_acum.diff().fillna(0)
+            self.dwCO2_dt_R101 = self.wCO2_V101_acum.diff().fillna(0)
+            self.dwO2_dt_R101 = self.wO2_V101_acum.diff().fillna(0)
+            self.dwH2S_dt_R101 = self.wH2S_V101_acum.diff().fillna(0)
+            self.dwH2_dt_R101 = self.wH2_V101_acum.diff().fillna(0)
+            self.dwNH3_dt_R101 = self.wNH3_V101_acum.diff().fillna(0)
+            self.dwbio_dt_R101 = (self.dwCH4_dt_R101 + self.dwCO2_dt_R101 + self.dwO2_dt_R101 + self.dwH2S_dt_R101 + self.dwH2_dt_R101 + self.dwNH3_dt_R101)
+
+            #R102 mol transformed
+            self.dnCH4_dt_R102 = self.nCH4_V102_acum.diff().fillna(0)
+            self.dnCO2_dt_R102 = self.nCO2_V102_acum.diff().fillna(0)
+            self.dnO2_dt_R102 = self.nO2_V102_acum.diff().fillna(0)
+            self.dnH2S_dt_R102 = self.nH2S_V102_acum.diff().fillna(0)
+            self.dnH2_dt_R102 = self.nH2_V102_acum.diff().fillna(0)
+            self.dnNH3_dt_R102 = self.nNH3_V102_acum.diff().fillna(0)
+            self.dnbio_dt_R102 = (self.dnCH4_dt_R102 + self.dnCO2_dt_R102 + self.dnO2_dt_R102 + self.dnH2S_dt_R102 + self.dnH2_dt_R102 + self.dnNH3_dt_R102)
+            #R102 mass trnasformed (gram)
+            self.dwCH4_dt_R102 = self.wCH4_V102_acum.diff().fillna(0)
+            self.dwCO2_dt_R102 = self.wCO2_V102_acum.diff().fillna(0)
+            self.dwO2_dt_R102 = self.wO2_V102_acum.diff().fillna(0)
+            self.dwH2S_dt_R102 = self.wH2S_V102_acum.diff().fillna(0)
+            self.dwH2_dt_R102 = self.wH2_V102_acum.diff().fillna(0)
+            self.dwNH3_dt_R102 = self.wNH3_V102_acum.diff().fillna(0)
+            self.dwbio_dt_R102 = (self.dwCH4_dt_R102 + self.dwCO2_dt_R102 + self.dwO2_dt_R102 + self.dwH2S_dt_R102 + self.dwH2_dt_R102 + self.dwNH3_dt_R102)
+
+            #Mass balance
+            #Initial values (mass inside reactors)
+            try:
+                if self.TrainMode.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    self.SV_ini_R101 = self.SV_ini_R101
+                    self.ST_ini_R101 = self.ST_ini_R101
+                    
+                    self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                    self.SV_ini_R102 = self.SV_ini_R102
+                    self.ST_ini_R102 = self.ST_ini_R102 
+                else:
+                    self.Csus_ini_SV_R101 = self.TrainMode["Csus_exp_R101"].iloc[0]
+                    self.SV_ini_R101 = self.TrainMode["SV_exp_R101"].iloc[0]
+                    self.ST_ini_R101 = self.TrainMode["ST_exp_R101"].iloc[0]
+
+                    self.Csus_ini_SV_R102 = self.TrainMode["Csus_exp_R102"].iloc[0]
+                    self.SV_ini_R102 = self.TrainMode["SV_exp_R102"].iloc[0]
+                    self.ST_ini_R102 = self.TrainMode["ST_exp_R102"].iloc[0]
+            
+            except AttributeError:
+                    print("The DataFrame does not exist.")
+            
+            # dt
+            self.tp = self.DataPlant["normal_time"].diff().fillna(0)                       #min
+            # Vol inyected in L
+            self.Vol_inj_R101 = self.DataPlant["P104"] * (self.tp/60)                      #Liters
+            self.Vol_inj_R101 = self.Vol_inj_R101.cumsum()
+
+            self.Vol_inj_R102 = self.DataPlant["P101"] * (self.tp/60)                      #Liters
+            self.Vol_inj_R102 = self.Vol_inj_R102.cumsum()
+
+            # substrate_inoculum ratio
+            self.substrate_ratio_R101 = (self.Vol_inj_R101/30).clip(upper=1)
+            self.inoculum_ratio_R101 = 1 - self.substrate_ratio_R101
+
+            self.substrate_ratio_R102 = (self.Vol_inj_R102/70).clip(upper=1)
+            self.inoculum_ratio_R102 = 1 - self.substrate_ratio_R102 
+
+            # mass inyected to R101
+            self.mass_inlet = self.DataPlant["P104"] * self.rho * (self.tp/60) * self.SV/100   #gSV (grams of volatile solids)
+
+            #Mass Balance R101
+            OM_int_SV_R101 = []
+            OM_in_SV_R101 = []
+            OM_int_ST_R101 = []
+            OM_in_ST_R101 = []
+            mol_int_R101 = []
+            mol_in_R101 = []
+
+            #Mass Balance R102
+            OM_int_SV_R102 = []
+            OM_in_SV_R102 = []
+            OM_int_ST_R102 = []
+            OM_in_ST_R102 = []
+            mol_int_R102 = []
+            mol_in_R102 = []
+
+            for i in range (len(self.mass_inlet)):
+                # Mass balance in R101
+                #Mass balance in grams for volatile solids
+                self.mass_ini_R101 = (self.SV_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
+                self.mass_in_R101 = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_R101 = (self.SV_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)          #This mass in to R102
+                self.mass_outg_R101 = self.dwbio_dt_R101.iloc[i]
+                self.SV_ini_R101 = (self.mass_ini_R101 + self.mass_in_R101 - self.mass_outl_R101 - self.mass_outg_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                self.Csus_ini_SV_R101_gl = self.SV_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                OM_int_SV_R101.append(self.SV_ini_R101)
+                OM_in_SV_R101.append(self.mass_in_R101)
+                # Mass balance in grams for total solids
+                self.mass_ini_ST_R101 = (self.ST_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
+                self.mass_in_ST_R101 = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_ST_R101 = (self.ST_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outg_ST_R101 = self.dwbio_dt_R101.iloc[i]
+                self.ST_ini_R101 = (self.mass_ini_ST_R101 + self.mass_in_ST_R101 - self.mass_outl_ST_R101 - self.mass_outg_ST_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                OM_int_ST_R101.append(self.ST_ini_R101)
+                OM_in_ST_R101.append(self.mass_in_ST_R101)
+                # Mass balance in mol volatile solids
+                self.mol_ini_R101 = (self.Csus_ini_SV_R101 * 30)
+                self.mol_in_R101 = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outl_R101 = (self.Csus_ini_SV_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outg_R101 = self.dnCH4_dt_R101.iloc[i]*(1/(self.substrate_ratio_R101.iloc[i]*self.s_CH4 + self.inoculum_ratio_R101.iloc[i]*self.s_CH4_ini_R101))
+                self.Csus_ini_SV_R101 = (self.mol_ini_R101 + self.mol_in_R101 - self.mol_outl_R101 - self.mol_outg_R101)/30
+                mol_in_R101.append(self.mol_in_R101)
+                mol_int_R101.append(self.Csus_ini_SV_R101)
+
+                #Mass balance in R102
+                #Mass balance in grams for volatile solids
+                self.mass_ini_R102 = (self.SV_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
+                self.mass_in_R102 = ((self.SV_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_R102 = (self.SV_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)          #This mass in to R102
+                self.mass_outg_R102 = self.dwbio_dt_R102.iloc[i]
+                self.SV_ini_R102 = (self.mass_ini_R102 + self.mass_in_R102 - self.mass_outl_R102 - self.mass_outg_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
+                OM_int_SV_R102.append(self.SV_ini_R102)
+                OM_in_SV_R102.append(self.mass_in_R102)
+                # Mass balance in grams for total solids
+                self.mass_ini_ST_R102 = (self.ST_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
+                self.mass_in_ST_R102 = ((self.ST_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_ST_R102 = (self.ST_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outg_ST_R102 = self.dwbio_dt_R102.iloc[i]
+                self.ST_ini_R102 = (self.mass_ini_ST_R102 + self.mass_in_ST_R102 - self.mass_outl_ST_R102 - self.mass_outg_ST_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
+                OM_int_ST_R102.append(self.ST_ini_R102)
+                OM_in_ST_R102.append(self.mass_in_ST_R102)
+                # Mass balance in mol volatile solids
+                self.mol_ini_R102 = (self.Csus_ini_SV_R102 * 30)
+                self.mol_in_R102 = (self.Csus_ini_SV_R101 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outl_R102 = (self.Csus_ini_SV_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outg_R102 = self.dnCH4_dt_R102.iloc[i]*(1/(self.substrate_ratio_R102.iloc[i]*self.s_CH4 + self.inoculum_ratio_R102.iloc[i]*self.s_CH4_ini_R102))
+                self.Csus_ini_SV_R102 = (self.mol_ini_R102 + self.mol_in_R102 - self.mol_outl_R102 - self.mol_outg_R102)/30
+                mol_in_R102.append(self.mol_in_R102)
+                mol_int_R102.append(self.Csus_ini_SV_R102)
+
+            self.TrainMode = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                        "SV_exp_R101": OM_int_SV_R101,
+                                        "VS_in_R101": OM_in_SV_R101,
+                                        "ST_exp_R101": OM_int_ST_R101,
+                                        "TS_in_R101": OM_in_ST_R101,
+                                        "Csus_exp_R101": mol_int_R101,
+                                        "mol_org_in_exp": mol_in_R101,
+                                        "mass_out_R101": self.dwbio_dt_R101,
+                                        "T_R101":self.DataPlant["Tprom_R101"],
+                                        "SV_exp_R102": OM_int_SV_R102,
+                                        "VS_in_R102": OM_in_SV_R102,
+                                        "ST_exp_R102": OM_int_ST_R102,
+                                        "TS_in_R102": OM_in_ST_R102,
+                                        "Csus_exp_R102": mol_int_R102,
+                                        "mol_org_in_exp": mol_in_R102,
+                                        "mass_out_R102": self.dwbio_dt_R102,
+                                        "T_R102":self.DataPlant["Tprom_R102"],
+                                        "Q_P104":self.DataPlant["P104"],
+                                        "Q_P101":self.DataPlant["P101"],
+                                        })
+
+            self.TrainMode["Vol_R101"] = 30
+            self.TrainMode["Vol_R102"] = 70
+            self.TrainMode["Csus_in_R101"] = self.Csv_sus
+
+            self.x_R101 = (self.TrainMode["Csus_in_R101"] - self.TrainMode["Csus_exp_R101"])/self.TrainMode["Csus_in_R101"]
+
+            if self.Model == "Gompertz":
+                self.V_bio_Gompertz_R101 = self.DataPlant["Vacum_V101"]/self.mass_ini_R101      #gompertz exit Lbio/gSV
+                self.V_bio_gompertz_R102 = self.DataPlant["Vacum_V102"]/self.mass_ini_R102      #gompertz exit Lbio/gSV
+                self.TrainMode_gompertz = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                                        "y_t_exp_R101": self.V_bio_Gompertz_R101,
+                                                        "y_t_exp_R102": self.V_bio_Gompertz_R102,
+                                                        "Vacum_V101": self.DataPlant["Vacum_V101"],
+                                                        "Vacum_V102": self.DataPlant["Vacum_V101"]})
+            
+            self.global_time = self.global_time + (10/1440)
+            self.OC_R101 = self.SV_ini_R101/self.global_time
+                
+        else:   #Operation in mode 4
+            #Compounds by mol V101 
+            # Accumulated
+            self.biogas_mol_V101_acum = ((self.DataPlant["Pacum_V101"]*6894.76)*self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.nCH4_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCH4_V101_filled"]/100
+            self.nCO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCO2_V101_filled"]/100
+            self.nO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xO2_V101_filled"]/100
+            self.nH2S_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xH2S_V101_filled"]/1000000
+            self.nH2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xH2_V101_filled"]/1000000
+            self.nNH3_V101_acum = self.nCH4_V101_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V101_acum = self.nCH4_V101_acum * 16.04
+            self.wCO2_V101_acum = self.nCO2_V101_acum * 44.009
+            self.wO2_V101_acum = self.nO2_V101_acum * 32
+            self.wH2S_V101_acum = self.nH2S_V101_acum * 34.082
+            self.wH2_V101_acum = self.nH2_V101_acum * 2
+            self.wNH3_V101_acum = self.nNH3_V101_acum * 17.031
+             # Storaged
+            self.biogas_mol_V101 = ((self.DataPlant["P_V101"]*6894.76) * self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.nCH4_V101 = self.biogas_mol_V101 * self.DataPlant["xCH4_V101_filled"]/100
+            self.nCO2_V101 = self.biogas_mol_V101 * self.DataPlant["xCO2_V101_filled"]/100
+            self.nO2_V101 = self.biogas_mol_V101 * self.DataPlant["xO2_V101_filled"]/100
+            self.nH2S_V101 = self.biogas_mol_V101 * self.DataPlant["xH2S_V101_filled"]/1000000
+            self.nH2_V101 = self.biogas_mol_V101 * self.DataPlant["xH2_V101_filled"]/1000000
+            self.nNH3_V101 = self.nCH4_V101 * (self.s_NH3/self.s_CH4)
+            
+            #Compound by mol V102
+            #Accumulated (mol)
+            self.biogas_mol_V102_acum = ((self.DataPlant["Pacum_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.nCH4_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCH4_V102_filled"]/100
+            self.nCO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCO2_V102_filled"]/100
+            self.nO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xO2_V102_filled"]/100
+            self.nH2S_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xH2S_V102_filled"]/1000000
+            self.nH2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xH2_V102_filled"]/1000000
+            self.nNH3_V102_acum = self.nCH4_V102_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V102_acum = self.nCH4_V102_acum * 16.04
+            self.wCO2_V102_acum = self.nCO2_V102_acum * 44.009
+            self.wO2_V102_acum = self.nO2_V102_acum * 32
+            self.wH2S_V102_acum = self.nH2S_V102_acum * 34.082
+            self.wH2_V102_acum = self.nH2_V102_acum * 2
+            self.wNH3_V102_acum = self.nNH3_V102_acum * 17.031
+            #Storage
+            self.biogas_mol_V102 = ((self.DataPlant["P_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.nCH4_V102 = self.biogas_mol_V102 * self.DataPlant["xCH4_V102_filled"]/100
+            self.nCO2_V102 = self.biogas_mol_V102 * self.DataPlant["xCO2_V102_filled"]/100
+            self.nO2_V102 = self.biogas_mol_V102 * self.DataPlant["xO2_V102_filled"]/100
+            self.nH2S_V102 = self.biogas_mol_V102 * self.DataPlant["xH2S_V102_filled"]/1000000
+            self.nH2_V102 = self.biogas_mol_V102 * self.DataPlant["xH2_V102_filled"]/1000000
+            self.nNH3_V102 = self.nCH4_V102 * (self.s_NH3/self.s_CH4)
+
+            #compound by mol V107
+            #Accumulated
+            self.biogas_mol_V107_acum = ((self.DataPlant["Pacum_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.nCH4_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCH4_V107_filled"]/100
+            self.nCO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCO2_V107_filled"]/100
+            self.nO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xO2_V107_filled"]/100
+            self.nH2S_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xH2S_V107_filled"]/1000000
+            self.nH2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xH2_V107_filled"]/1000000
+            self.nNH3_V107_acum = self.nCH4_V107_acum * (self.s_NH3/self.s_CH4)
+            #Accumulated (g)
+            self.wCH4_V107_acum = self.nCH4_V107_acum * 16.04
+            self.wCO2_V107_acum = self.nCO2_V107_acum * 44.009
+            self.wO2_V107_acum = self.nO2_V107_acum * 32
+            self.wH2S_V107_acum = self.nH2S_V107_acum * 34.082
+            self.wH2_V107_acum = self.nH2_V107_acum * 2
+            self.wNH3_V107_acum = self.nNH3_V107_acum * 17.031
+            #Storage
+            self.biogas_mol_V107 = ((self.DataPlant["P_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.nCH4_V107 = self.biogas_mol_V107 * self.DataPlant["xCH4_V107_filled"]/100
+            self.nCO2_V107 = self.biogas_mol_V107 * self.DataPlant["xCO2_V107_filled"]/100
+            self.nO2_V107 = self.biogas_mol_V107 * self.DataPlant["xO2_V107_filled"]/100
+            self.nH2S_V107 = self.biogas_mol_V107 * self.DataPlant["xH2S_V107_filled"]/1000000
+            self.nH2_V107 = self.biogas_mol_V107 * self.DataPlant["xH2_V107_filled"]/1000000
+            self.nNH3_V107 = self.nCH4_V107 * (self.s_NH3/self.s_CH4)
+
+            #R101 mol transformed
+            self.dnCH4_dt_R101 = self.nCH4_V101_acum.diff().fillna(0)
+            self.dnCO2_dt_R101 = self.nCO2_V101_acum.diff().fillna(0)
+            self.dnO2_dt_R101 = self.nO2_V101_acum.diff().fillna(0)
+            self.dnH2S_dt_R101 = self.nH2S_V101_acum.diff().fillna(0)
+            self.dnH2_dt_R101 = self.nH2_V101_acum.diff().fillna(0)
+            self.dnNH3_dt_R101 = self.nNH3_V101_acum.diff().fillna(0)
+            self.dnbio_dt_R101 = (self.dnCH4_dt + self.dnCO2_dt + self.dnO2_dt + self.dnH2S_dt + self.dnH2_dt + self.dnNH3_dt)
+            #R101 mass trnasformed (gram)
+            self.dwCH4_dt_R101 = self.wCH4_V101_acum.diff().fillna(0)
+            self.dwCO2_dt_R101 = self.wCO2_V101_acum.diff().fillna(0)
+            self.dwO2_dt_R101 = self.wO2_V101_acum.diff().fillna(0)
+            self.dwH2S_dt_R101 = self.wH2S_V101_acum.diff().fillna(0)
+            self.dwH2_dt_R101 = self.wH2_V101_acum.diff().fillna(0)
+            self.dwNH3_dt_R101 = self.wNH3_V101_acum.diff().fillna(0)
+            self.dwbio_dt_R101 = (self.dwCH4_dt_R101 + self.dwCO2_dt_R101 + self.dwO2_dt_R101 + self.dwH2S_dt_R101 + self.dwH2_dt_R101 + self.dwNH3_dt_R101)
+
+            #R102 mol transformed
+            self.dnCH4_dt_R102 = self.nCH4_V102_acum.diff().fillna(0)
+            self.dnCO2_dt_R102 = self.nCO2_V102_acum.diff().fillna(0)
+            self.dnO2_dt_R102 = self.nO2_V102_acum.diff().fillna(0)
+            self.dnH2S_dt_R102 = self.nH2S_V102_acum.diff().fillna(0)
+            self.dnH2_dt_R102 = self.nH2_V102_acum.diff().fillna(0)
+            self.dnNH3_dt_R102 = self.nNH3_V102_acum.diff().fillna(0)
+            self.dnbio_dt_R102 = (self.dnCH4_dt_R102 + self.dnCO2_dt_R102 + self.dnO2_dt_R102 + self.dnH2S_dt_R102 + self.dnH2_dt_R102 + self.dnNH3_dt_R102)
+            #R102 mass trnasformed (gram)
+            self.dwCH4_dt_R102 = self.wCH4_V102_acum.diff().fillna(0)
+            self.dwCO2_dt_R102 = self.wCO2_V102_acum.diff().fillna(0)
+            self.dwO2_dt_R102 = self.wO2_V102_acum.diff().fillna(0)
+            self.dwH2S_dt_R102 = self.wH2S_V102_acum.diff().fillna(0)
+            self.dwH2_dt_R102 = self.wH2_V102_acum.diff().fillna(0)
+            self.dwNH3_dt_R102 = self.wNH3_V102_acum.diff().fillna(0)
+            self.dwbio_dt_R102 = (self.dwCH4_dt_R102 + self.dwCO2_dt_R102 + self.dwO2_dt_R102 + self.dwH2S_dt_R102 + self.dwH2_dt_R102 + self.dwNH3_dt_R102)
+
+            #Mass balance
+            #Initial values (mass inside reactors)
+            try:
+                if self.TrainMode.empty:
+                    print("The DataFrame exists but is empty.")
+                    self.Csus_ini_SV_R101 = self.Csus_ini_SV_R101
+                    self.SV_ini_R101 = self.SV_ini_R101
+                    self.ST_ini_R101 = self.ST_ini_R101
+                    
+                    self.Csus_ini_SV_R102 = self.Csus_ini_SV_R102
+                    self.SV_ini_R102 = self.SV_ini_R102
+                    self.ST_ini_R102 = self.ST_ini_R102 
+                else:
+                    self.Csus_ini_SV_R101 = self.TrainMode["Csus_exp_R101"].iloc[0]
+                    self.SV_ini_R101 = self.TrainMode["SV_exp_R101"].iloc[0]
+                    self.ST_ini_R101 = self.TrainMode["ST_exp_R101"].iloc[0]
+
+                    self.Csus_ini_SV_R102 = self.TrainMode["Csus_exp_R102"].iloc[0]
+                    self.SV_ini_R102 = self.TrainMode["SV_exp_R102"].iloc[0]
+                    self.ST_ini_R102 = self.TrainMode["ST_exp_R102"].iloc[0]
+            
+            except AttributeError:
+                    print("The DataFrame does not exist.")
+            
+            # dt
+            self.tp = self.DataPlant["normal_time"].diff().fillna(0)                       #min
+            # Vol inyected in L
+            self.Vol_injsus_R101 = self.DataPlant["P104"] * (self.tp/60)                      #Liters
+            self.Vol_injsus_R101 = self.Vol_injsus_R101.cumsum()
+            self.Vol_injrec_R101 = self.DataPlant["P102"] * (self.tp/60)
+            self.Vol_injrec_R101 = self.Vol_injrec_R101.cumsum()
+
+            self.Vol_inj_R102 = self.DataPlant["P101"] * (self.tp/60)
+            self.Vol_inj_R102 = self.Vol_inj_R102.cumsum()
+
+            # substrate_inoculum_recycling ratio
+            self.substrate_ratio_R101 = (self.Vol_injsus_R101/30).clip(upper=1)
+            self.inoculum_ratio_R101 = 1 - self.substrate_ratio_R101
+            
+            self.substrate_ratio_R102 = (self.Vol_inj_R102/70).clip(upper=1)
+            self.inoculum_ratio_R102 = 1 - self.substrate_ratio_R102
+
+            #Mass Balance R101
+            OM_int_SV_R101 = []
+            OM_in_SV_R101 = []
+            OM_int_ST_R101 = []
+            OM_in_ST_R101 = []
+            mol_int_R101 = []
+            mol_in_R101 = []
+
+            #Mass Balance R102
+            OM_int_SV_R102 = []
+            OM_in_SV_R102 = []
+            OM_int_ST_R102 = []
+            OM_in_ST_R102 = []
+            mol_int_R102 = []
+            mol_in_R102 = []
+
+            for i in range (len(self.DataPlant["time"])):
+                # Mass balance in R101
+                #Mass balance in grams for volatile solids
+                self.mass_ini_R101 = (self.SV_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
+                self.mass_in_R101 = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho) + ((self.SV_ini_R102) * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i]/60) * self.rho_ini_R102)
+                self.mass_outl_R101 = (self.SV_ini_R101 * (self.DataPlant["P104"].iloc[i] + self.DataPlant["P102"].iloc[i]) * (self.tp.iloc[i]/60) * self.rho)          
+                self.mass_outg_R101 = self.dwbio_dt_R101.iloc[i]
+                self.SV_ini_R101 = (self.mass_ini_R101 + self.mass_in_R101 - self.mass_outl_R101 - self.mass_outg_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                self.Csus_ini_SV_R101_gl = self.SV_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                OM_int_SV_R101.append(self.SV_ini_R101)
+                OM_in_SV_R101.append(self.mass_in_R101)
+                # Mass balance in grams for total solids
+                self.mass_ini_ST_R101 = (self.ST_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
+                self.mass_in_ST_R101 = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho) + ((self.ST_ini_R102) * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i]/60) * self.rho_ini_R102)
+                self.mass_outl_ST_R101 = (self.ST_ini_R101 * (self.DataPlant["P104"].iloc[i]+self.DataPlant["P102"]) * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outg_ST_R101 = self.dwbio_dt_R101.iloc[i]
+                self.ST_ini_R101 = (self.mass_ini_ST_R101 + self.mass_in_ST_R101 - self.mass_outl_ST_R101 - self.mass_outg_ST_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                self.Csus_ini_ST_R101_gl = self.ST_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                OM_int_ST_R101.append(self.ST_ini_R101)
+                OM_in_ST_R101.append(self.mass_in_ST_R101)
+                # Mass balance in mol volatile solids
+                self.mol_ini_R101 = (self.Csus_ini_SV_R101 * 30)
+                self.mol_in_R101 = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60)) + (self.Csus_ini_SV_R102 * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outl_R101 = (self.Csus_ini_SV_R101 * (self.DataPlant["P104"].iloc[i] + self.DataPlant["P101"].iloc[i]) * (self.tp.iloc[i]/60))
+                self.mol_outg_R101 = self.dnCH4_dt_R101.iloc[i]*(1/(self.substrate_ratio_R101.iloc[i]*self.s_CH4 + self.inoculum_ratio_R101.iloc[i]*self.s_CH4_ini_R101))
+                self.Csus_ini_SV_R101 = (self.mol_ini_R101 + self.mol_in_R101 - self.mol_outl_R101 - self.mol_outg_R101)/30
+                mol_in_R101.append(self.mol_in_R101)
+                mol_int_R101.append(self.Csus_ini_SV_R101)
+
+                #Mass balance in R102
+                #Mass balance in grams for volatile solids
+                self.mass_ini_R102 = (self.SV_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
+                self.mass_in_R102 = ((self.SV_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_R102 = (self.SV_ini_R102 * (self.DataPlant["P101"].iloc[i]) * (self.tp.iloc[i]/60) * self.rho)          #This mass in to R102
+                self.mass_outg_R102 = self.dwbio_dt_R102.iloc[i]
+                self.SV_ini_R102 = (self.mass_ini_R102 + self.mass_in_R102 - self.mass_outl_R102 - self.mass_outg_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
+                OM_int_SV_R102.append(self.SV_ini_R102)
+                OM_in_SV_R102.append(self.mass_in_R102)
+                # Mass balance in grams for total solids
+                self.mass_ini_ST_R102 = (self.ST_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
+                self.mass_in_ST_R102 = ((self.ST_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outl_ST_R102 = (self.ST_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_outg_ST_R102 = self.dwbio_dt_R102.iloc[i]
+                self.ST_ini_R102 = (self.mass_ini_ST_R102 + self.mass_in_ST_R102 - self.mass_outl_ST_R102 - self.mass_outg_ST_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
+                OM_int_ST_R102.append(self.ST_ini_R102)
+                OM_in_ST_R102.append(self.mass_in_ST_R102)
+                # Mass balance in mol volatile solids
+                self.mol_ini_R102 = (self.Csus_ini_SV_R102 * 30)
+                self.mol_in_R102 = (self.Csus_ini_SV_R101 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outl_R102 = (self.Csus_ini_SV_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_outg_R102 = self.dnCH4_dt_R102.iloc[i]*(1/(self.substrate_ratio_R102.iloc[i]*self.s_CH4 + self.inoculum_ratio_R102.iloc[i]*self.s_CH4_ini_R102))
+                self.Csus_ini_SV_R102 = (self.mol_ini_R102 + self.mol_in_R102 - self.mol_outl_R102 - self.mol_outg_R102)/30
+                mol_in_R102.append(self.mol_in_R102)
+                mol_int_R102.append(self.Csus_ini_SV_R102)
+            
+            self.TrainMode = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                        "SV_exp_R101": OM_int_SV_R101,
+                                        "VS_in_R101": OM_in_SV_R101,
+                                        "ST_exp_R101": OM_int_ST_R101,
+                                        "TS_in_R101": OM_in_ST_R101,
+                                        "Csus_exp_R101": mol_int_R101,
+                                        "mol_org_in_exp": mol_in_R101,
+                                        "mass_out_R101": self.dwbio_dt_R101,
+                                        "T_R101":self.DataPlant["Tprom_R101"],
+                                        "SV_exp_R102": OM_int_SV_R102,
+                                        "VS_in_R102": OM_in_SV_R102,
+                                        "ST_exp_R102": OM_int_ST_R102,
+                                        "TS_in_R102": OM_in_ST_R102,
+                                        "Csus_exp_R102": mol_int_R102,
+                                        "mol_org_in_exp": mol_in_R102,
+                                        "mass_out_R102": self.dwbio_dt_R102,
+                                        "T_R102":self.DataPlant["Tprom_R102"],
+                                        "Q_P104":self.DataPlant["P104"],
+                                        "Q_P101":self.DataPlant["P101"],
+                                        "Q_P102":self.DataPlant["P102"],
+                                        })
+
+            self.TrainMode["Vol_R101"] = 30
+            self.TrainMode["Vol_R102"] = 70
+            self.TrainMode["Csus_in_R101"] = self.Csv_sus
+
+            self.x_R101 = (self.TrainMode["Csus_in_R101"] - self.TrainMode["Csus_exp_R101"])/self.TrainMode["Csus_in_R101"]
+
+            if self.Model == "Gompertz":
+                self.V_bio_Gompertz_R101 = self.DataPlant["Vacum_V101"]/self.mass_ini_R101      #gompertz exit Lbio/gSV
+                self.V_bio_Gompertz_R102 = self.DataPlant["Vacum_V102"]/self.mass_ini_R102      #gompertz exit Lbio/gSV
+                self.TrainMode_gompertz = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                                        "y_t_exp_R101": self.V_bio_Gompertz_R101,
+                                                        "y_t_exp_R102": self.V_bio_Gompertz_R102,
+                                                        "Vacum_V101": self.DataPlant["Vacum_V101"],
+                                                        "Vacum_V102": self.DataPlant["Vacum_V101"]})
+            
+            self.global_time = self.global_time + (10/1440)
+            self.OC_R101 = self.SV_ini_R101/self.global_time
     
     def OptimizationArrhenius (self, resolution):
+        """
+        Perform parameter optimization for Arrhenius model (K, Ea) based on selected operation mode.
+        
+        Parameters:
+            Operation_mode (int): Mode of operation (1, 2, or 3).
+            resolution (int): Number of data points used in each optimization window.
+        """
         
         def model_Arrhenius(C, t, K, Ea, VR_in_func, T_func, Q_func_1, Q_func_2, Csus_in_func_1, Csus_in_func_2, Operation):
             R = 8.314
@@ -2058,15 +2094,17 @@ class Training_offline:
             result = minimize(objective, [K, Ea], method = 'Nelder-Mead')
             return result
         
-        if self.Operation_mode == 1:
-            t_exp = (self.TrainMode1["time"]*60).tolist()   #seconds
-            C_exp = self.TrainMode1["Csus_exp"].tolist()    #Kmol/m3 = mol/L
-            VR_exp = self.TrainMode1["Vol"].tolist()        #L 
-            Csus_in = self.TrainMode1["Csus_in"].to_list()  #mol/L
-            T_R101 = (self.TrainMode1["T_R101"]+273.15).tolist()  #K     
-            Q_P104 = (self.TrainMode1["Q_P104"]/60).tolist()    #L/s 
+        if self.Operation_mode == 1 or self.Operation_mode == 2:
+            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            C_exp = self.TrainMode["Csus_exp"].tolist()    #Kmol/m3 = mol/L
+            VR_exp = self.TrainMode["Vol"].tolist()        #L 
+            Csus_in = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
+            T_R101 = (self.TrainMode["T_R101"]+273.15).tolist()  #K     
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            
             K = []
             Ea = []
+            Error = []
             for i in range (len(t_exp)):
                 t_exp_opt = t_exp[i : i+resolution]
                 C_exp_opt = C_exp[i : i+resolution]
@@ -2076,49 +2114,153 @@ class Training_offline:
                 Csus_in_opt = Csus_in[i : i + resolution]
                 Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
                                                   temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101, Ea = self.Ea_mean_R101)
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
                 K.append(Opt_kinetic_params.x[0])
                 Ea.append(Opt_kinetic_params.x[1])
+                Error.append(Opt_kinetic_params.fun)
+                # self.K_ini_Arr_R101 = st.mean(K)
+                # self.Ea_ini_Arr_R101 = st.mean(Ea)
+                # print("Pre_exponentialfactor", Opt_kinetic_params.x[0], "Activation Energy", Opt_kinetic_params.x[1], "Error", Opt_kinetic_params.fun)
             
             self.K_mean_R101 = st.mean(K)
             self.Ea_mean_R101 = st.mean(Ea)
-            
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode2["time"],
-                                                      "K_R101": K,
-                                                      "Ea_R101": Ea})
+
         
-        elif self.Operation_mode == 2:
-            t_exp = (self.TrainMode2["time"]*60).tolist()   #seconds
-            C_exp = self.TrainMode2["Csus_exp"].tolist()    #Kmol/m3 = mol/L
-            VR_exp = self.TrainMode2["Vol"].tolist()        #L 
-            Csus_in = self.TrainMode2["Csus_in"].to_list()  #mol/L
-            T_R101 = (self.TrainMode2["T_R101"]+273.15).tolist()  #K     
-            Q_P104 = (self.TrainMode2["Q_P104"]/3600).tolist()    #L/s 
-            K = []
-            Ea = []
+            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+                                                    "K_R101": K,
+                                                    "Ea_R101": Ea,
+                                                    "Error": Error})
+        
+        elif self.Operation_mode in [3,5]:
+            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
+            VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
+            Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
+            C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()    #mol/L
+            VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L
+            T_R101 = (self.TrainMode["T_R101"]+273.15).tolist()  #K   
+            T_R102 = (self.TrainMode["T_R102"]+273.154).tolist() #K   
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
+
+            K_R101 = []
+            Ea_R101 = []
+            Error_R101 = []
+            
+            K_R102 = []
+            Ea_R102 = []
+            Error_R102 = []
+            
+
             for i in range (len(t_exp)):
                 t_exp_opt = t_exp[i : i+resolution]
-                C_exp_opt = C_exp[i : i+resolution]
-                VR_exp_opt = VR_exp[i : i+resolution]
-                T_R101_opt = T_R101[i : i+resolution]
+                C_exp_opt_R101 = C_exp_R101[i : i+resolution]
+                VR_exp_opt_R101 = VR_exp_R101[i : i+resolution]
+                Csus_in_opt_R101 = Csus_in_R101[i : i+resolution]
+                T_opt_R101 = T_R101[i : i+resolution]
                 Q_P104_opt = Q_P104[i : i+resolution]
-                Csus_in_opt = Csus_in[i : i + resolution]
-                Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
-                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101, Ea=self.Ea_mean_R101)
-                K.append(Opt_kinetic_params.x[0])
-                Ea.append(Opt_kinetic_params.x[1])
-                self.K_mean_R101 = Opt_kinetic_params.x[0]
-                self.Ea_mean_R101 = Opt_kinetic_params.x[1]
+                
+                C_exp_opt_R102 = C_exp_R102[i : i+resolution]
+                VR_exp_opt_R102 = VR_exp_R102[i : i+resolution]
+                T_opt_R102 = T_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101,
+                                                  temperatures = T_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
+                
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Ea_R101.append(Opt_kinetic_params_R101.x[1])
+                Error_R101.append(Opt_kinetic_params_R101.fun)
+
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102,
+                                                  temperatures = T_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R102, Ea = self.Ea_ini_R102)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Ea_R102.append(Opt_kinetic_params_R102.x[1])
+                Error_R102.append(Opt_kinetic_params_R102.fun)
             
-            self.K_mean_R101 = st.mean(K)
-            self.Ea_mean_R101 = st.mean(Ea)
+            self.K_mean_R101 = st.mean(K_R101)
+            self.Ea_mean_R101 = st.mean(Ea_R101)
+
+            self.K_mean_R102 = st.mean(K_R102)
+            self.Ea_mean_R102 = st.mean(Ea_R102)
+
+
+            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+                                                "K_R101": K_R101,
+                                                "Ea_R101": Ea_R101,
+                                                "Error_R101": Error_R101,
+                                                "K_R102": K_R102,
+                                                "Ea_R102": Ea_R102,
+                                                "Error_R102": Error_R102})
             
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode2["time"],
-                                                      "K_R101": K,
-                                                      "Ea_R101": Ea})
-    
-    def OptimizationADM1 (self, resolution):
+        else:  #Operation Mode 4
+            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
+            VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
+            Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
+            C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()    #mol/L
+            VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L
+            T_R101 = (self.TrainMode["T_R101"]+273.15).tolist()  #K   
+            T_R102 = (self.TrainMode["T_R102"]+273.154).tolist() #K   
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
+            Q_P102 = (self.TrainMode["Q_P102"]/60).tolist()    #L/s
+
+            K_R101 = []
+            Ea_R101 = []
+            Error_R101 = []
+
+            K_R102 = []
+            Ea_R102 = []
+            Error_R102 = []
+
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                C_exp_opt_R101 = C_exp_R101[i : i+resolution]
+                VR_exp_opt_R101 = VR_exp_R101[i : i+resolution]
+                Csus_in_opt_R101 = Csus_in_R101[i : i+resolution]
+                T_opt_R101 = T_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                Q_P102_opt = Q_P102[i : i+resolution]
+                
+                C_exp_opt_R102 = C_exp_R102[i : i+resolution]
+                VR_exp_opt_R102 = VR_exp_R102[i : i+resolution]
+                T_opt_R102 = T_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101,
+                                                  temperatures = T_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                  Qi2 = Q_P102_opt, Csus_in_i2 = C_exp_opt_R102, Operation = 2, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
+                
+
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Ea_R101.append(Opt_kinetic_params_R101.x[1])
+                Error_R101.append(Opt_kinetic_params_R101.fun)
+
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102,
+                                                  temperatures = T_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
+                                                  Qi2 = Q_P101_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R102, Ea = self.Ea_ini_R102)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Ea_R102.append(Opt_kinetic_params_R102.x[1])
+                Error_R102.append(Opt_kinetic_params_R102.fun)
+
+            self.K_ini_Arr_R101 = st.mean(K_R101)
+            self.Ea_ini_R102 = st.mean(Ea_R101)
+
+            self.K_ini_Arr_R102 = st.mean(K_R102)
+            self.Ea_ini_R102 = st.mean(Ea_R102)
+
+
+            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+                                                "K_R101": K_R101,
+                                                "Ea_R101": Ea_R101,
+                                                "K_R102": K_R102,
+                                                "Ea_R102": Ea_R102})
+    def OptimizationADM1(self, resolution):
         
         def model_ADM1(C, t, K, VR_in_func, Q_func_1, Q_func_2, Csus_in_func_1, Csus_in_func_2, Operation):
             Q_1=Q_func_1(t)
@@ -2155,55 +2297,143 @@ class Training_offline:
             result = minimize(objective, [K], method = 'Nelder-Mead')
             return result
         
-        if self.Operation_mode == 1:
-            t_exp = (self.TrainMode1["time"]*60).tolist()   #seconds
-            C_exp = self.TrainMode1["Csus_exp"].tolist()    #Kmol/m3 = mol/L
-            VR_exp = self.TrainMode1["Vol"].tolist()        #L 
-            Csus_in = self.TrainMode1["Csus_in"].to_list()  #mol/L
-            T_R101 = (self.TrainMode1["T_R101"]+273.15).tolist()  #K     
-            Q_P104 = (self.TrainMode1["Q_P104"]/3600).tolist()    #L/s 
+        if self.Operation_mode in [1,2]:
+            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            C_exp = self.TrainMode["Csus_exp"].tolist()    #Kmol/m3 = mol/L
+            VR_exp = self.TrainMode["Vol"].tolist()        #L 
+            Csus_in = self.TrainMode["Csus_in_R101"].to_list()  #mol/L     
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            
             K = []
+            Error = []
+            
             for i in range (len(t_exp)):
                 t_exp_opt = t_exp[i : i+resolution]
                 C_exp_opt = C_exp[i : i+resolution]
                 VR_exp_opt = VR_exp[i : i+resolution]
-                T_R101_opt = T_R101[i : i+resolution]
                 Q_P104_opt = Q_P104[i : i+resolution]
                 Csus_in_opt = Csus_in[i : i + resolution]
-                Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
-                                                  Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101)
-                K.append(Opt_kinetic_params.x[0])
+                # print("y0:", C_exp_opt[0])
+                # print("t:", t_exp[i : i+resolution])
+                # print("K:", self.K_ini_ADM1_R101)
+                # print("VR_func:", VR_exp_opt)
+                # print("Q_func1:", Q_P104_opt)
+                # print("Q_func2:", Q_P104_opt)
+                # print("Csus_in1:", Csus_in_opt)
+                # print("Csus_in2:", Csus_in_opt)
+                # print("Operation:", 1)
+                time.sleep(0.001)
+
+                Opt_kinetc_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt, 
+                                                 Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_ini_ADM1_R101)
+                
+                K.append(Opt_kinetc_params.x[0])
+                Error.append(Opt_kinetc_params.fun)
             
-            self.K_mean_R101 = st.mean(K)
+            self.K_ini_ADM1_R101 = float(st.mean(K))
+            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+                                                    "K_R101": K,
+                                                    "Error": Error})
         
-        elif self.Operation_mode == 2:
-            t_exp = (self.TrainMode2["time"]*60).tolist()   #seconds
-            C_exp = self.TrainMode2["Csus_exp"].tolist()    #Kmol/m3 = mol/L
-            VR_exp = self.TrainMode2["Vol"].tolist()        #L 
-            Csus_in = self.TrainMode2["Csus_in"].to_list()  #mol/L
-            T_R101 = (self.TrainMode2["T_R101"]+273.15).tolist()  #K     
-            Q_P104 = (self.TrainMode2["Q_P104"]/3600).tolist()    #L/s 
-            K = []
+        elif self.Operation_mode in [3, 5]:
+            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
+            VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
+            Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
+            C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()    #mol/L
+            VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L   
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
+
+            K_R101 = []
+            Error_R101 = []
+            
+            K_R102 = []
+            Error_R102 = []
+            
             for i in range (len(t_exp)):
                 t_exp_opt = t_exp[i : i+resolution]
-                C_exp_opt = C_exp[i : i+resolution]
-                VR_exp_opt = VR_exp[i : i+resolution]
-                T_R101_opt = T_R101[i : i+resolution]
+                C_exp_opt_R101 = C_exp_R101[i : i+resolution]
+                VR_exp_opt_R101 = VR_exp_R101[i : i+resolution]
+                Csus_in_opt_R101 = Csus_in_R101[i : i+resolution]
                 Q_P104_opt = Q_P104[i : i+resolution]
-                Csus_in_opt = Csus_in[i : i + resolution]
-                Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
-                                                  Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_mean_R101)
-                K.append(Opt_kinetic_params.x[0])
-                self.K_mean_R101 = Opt_kinetic_params.x[0]
+                
+                C_exp_opt_R102 = C_exp_R102[i : i+resolution]
+                VR_exp_opt_R102 = VR_exp_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                      Qi2 = Q_P104_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R101)
+                
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Error_R101.append(Opt_kinetic_params_R101.fun)
+
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
+                                                       Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R102)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Error_R102.append(Opt_kinetic_params_R102.fun)
             
-            self.K_mean_R101 = st.mean(K)
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode2["time"],
-                                                      "K_R101": K })
-    
-    def OptimizationGompertz(self, resolution):
-        
+            self.K_ini_ADM1_R101 = st.mean(K_R101)
+            self.K_ini_ADM1_R102 = st.mean(K_R102)
+
+            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+                                                    "K_R101": K_R101,
+                                                    "Error_R101": Error_R101,
+                                                    "K_R102": K_R102,
+                                                    "Error_R102": Error_R102})
+            
+        else:  #Operation Mode 4
+            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
+            VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
+            Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
+            C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()    #mol/L
+            VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
+            Q_P102 = (self.TrainMode["Q_P102"]/60).tolist()    #L/s
+
+            K_R101 = []
+            Error_R101 = []
+
+            K_R102 = []
+            Error_R102 = []
+
+            for i in range (len(t_exp)):
+                t_exp_opt = t_exp[i : i+resolution]
+                C_exp_opt_R101 = C_exp_R101[i : i+resolution]
+                VR_exp_opt_R101 = VR_exp_R101[i : i+resolution]
+                Csus_in_opt_R101 = Csus_in_R101[i : i+resolution]
+                Q_P104_opt = Q_P104[i : i+resolution]
+                Q_P102_opt = Q_P102[i : i+resolution]
+                
+                C_exp_opt_R102 = C_exp_R102[i : i+resolution]
+                VR_exp_opt_R102 = VR_exp_R102[i : i+resolution]
+                Q_P101_opt = Q_P101[i : i+resolution]
+
+                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                       Qi2 = Q_P102_opt, Csus_in_i2 = C_exp_opt_R102, Operation = 2, K = self.K_ini_ADM1_R101)
+                
+                K_R101.append(Opt_kinetic_params_R101.x[0])
+                Error_R101.append(Opt_kinetic_params_R101.fun)
+
+                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R101[0], Qi1 = Q_P101_opt, Csis_in_i1 = C_exp_opt_R101,
+                                                       Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R102)
+                
+                K_R102.append(Opt_kinetic_params_R102.x[0])
+                Error_R102.append(Opt_kinetic_params_R102.fun)
+            
+            self.K_ini_ADM1_R101 = st.mean(K_R101)
+            self.K_ini_ADM1_R102 = st.mean(K_R102)
+
+            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+                                                    "K_R101": K_R101,
+                                                    "Error_R101": Error_R101,
+                                                    "K_R102": K_R102,
+                                                    "Error_R102": Error_R102})
+            
+    def Optimization_Gompertz(self):
         def model_Gompertz(t, ym, U, L):
             t = np.array(t, dtype = float)
             y_t = ym * np.exp(-np.exp(((U*np.e)/ym)*(L-t)+1))
@@ -2220,149 +2450,61 @@ class Training_offline:
             return result
         
         if self.Operation_mode == 1 or self.Operation_mode == 2:
-            t_exp = self.TrainGompertzMode1["time"].tolist()
-            y_exp = self.TrainGompertzMode1["y_t_exp"].tolist()
+            t_exp = self.TrainMode_gompertz["time"].tolist()
+            y_exp = self.TrainMode_gompertz["y_t_exp"].tolist()
             Results = Optimization_Gompertz(params = (self.ym_R101, self.U_R101, self.L_R101), t = t_exp, y_exp = y_exp)
             self.Optimized_parameters = pd.DataFrame({"ym": Results.x[0],
                                                       "U": Results.x[1],
-                                                      "L": Results.x[2]}, index=[0])
-            self.ym_R101 = float(Results.x[0])
-            self.U_R101 = float(Results.x[1])
-            self.L_R101 = float(Results.x[2])   
-    
-    def V101model1_2 (self):
-        self.Vnorm_bio_V101 = ((self.Pacum_V101 * 6894.76) * self.Volume_V101 * 273.15)/(100000 * (self.T_V101_actual+273.15))
-        self.Vnorm_bio_sto_V101 = ((self.P_V101 * 6894.76) * self.Volume_V101 * 273.15)/(100000 * (self.T_V101_actual+273.15))
-        self.VCH4_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_CH4_V101"].iloc[-1]/100)
-        self.xCH4_V101 = self.DataPlant["x_CH4_V101"].iloc[-1]
-        self.VCO2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_CO2_V101"].iloc[-1]/100)
-        self.xCO2_V101 = self.DataPlant["x_CO2_V101"].iloc[-1]
-        self.VH2S_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2S_V101"].iloc[-1]/100)
-        self.xH2S_V101 = self.DataPlant["x_H2S_V101"].iloc[-1]
-        self.VO2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_O2_V101"].iloc[-1]/100)
-        self.xO2_V101 = self.DataPlant["x_O2_V101"].iloc[-1]
-        self.VH2_acum_V101 = self.Vnorm_bio_V101 * (self.DataPlant["x_H2_V101"].iloc[-1]/1000000)
-        self.xH2_V101 = self.DataPlant["x_H2_V101"].iloc[-1]
-        mol_biogas_Acum_dry_V101 = self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101 + self.mol_acum_NH3_V101
-        try:
-            if mol_biogas_Acum_dry_V101 > 0:
-                self.xNH3_V101 = (self.mol_acum_NH3_V101/mol_biogas_Acum_dry_V101)*1000000
-            else:
-                self.xNH3_V101 = 0
-        except ZeroDivisionError:
-            self.xNH3_V101 = 0
-        self.VNH3_acum_V101 = self.Vnorm_bio_V101 * self.xNH3_V101
-        mol_biogas_Acum_dry_V101 = self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101 + self.mol_acum_NH3_V101
-        self.xNH3_V101 = (self.mol_acum_NH3_V101/mol_biogas_Acum_dry_V101)*1000000
-        self.RH_V101 = self.DataPlant["rh_V101"].iloc[-1]
-        Absolute_humidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"].iloc[-1]/100, T = self.T_V101_actual)
-        self.mol_acum_H2O_V101 = (Absolute_humidity_V101 * self.Vnorm_bio_sto_V101) / 18
-        Energy_V101 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V101, molCO2=self.mol_acum_CO2_V101, molH2S=self.mol_acum_H2S_V101, molO2=self.mol_acum_O2_V101, molH2 = self.mol_acum_H2_V101)
-        self.Energy_V101 = Energy_V101[1]
-        self.LHV_V101 = Energy_V101[0]
+                                                      "L": Results.x[2],
+                                                      "Error": Results.fun}, index=[0])
+            self.ym_R101 = self.Optimized_parameters["ym"].iloc[0]
+            self.U_R101 = self.Optimized_parameters["U"].iloc[0]
+            self.L_R101 = self.Optimized_parameters["L"].iloc[0]        
+        else:
+            t_exp = self.TrainMode_gompertz["time"].tolist()
+            y_exp_R101 = self.TrainMode_gompertz["y_t_exp_R101"].tolist()
+            y_exp_R102 = self.TrainMode_gompertz["y_t_exp_R102"].tolist()
 
-    def V102model1_2 (self):
-        self.Vnorm_bio_V102 = ((self.Pacum_V102 * 6894.76) * self.Volume_V102 * 273.15)/(100000 * (self.T_V102_actual+273.15))
-        self.Vnorm_bio_sto_V102 = ((self.P_V102 * 6894.76) * self.Volume_V102 * 273.15)/(100000 * (self.T_V102_actual+273.15))
-        self.VCH4_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_CH4_V102"].iloc[-1]/100)
-        self.xCH4_V102 = self.DataPlant["x_CH4_V102"].iloc[-1]
-        self.VCO2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_CO2_V102"].iloc[-1]/100)
-        self.xCO2_V102 = self.DataPlant["x_CO2_V102"].iloc[-1]
-        self.VH2S_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2S_V102"].iloc[-1]/1000000)
-        self.xH2S_V102 = self.DataPlant["x_H2S_V102"].iloc[-1]
-        self.VO2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_O2_V102"].iloc[-1]/100)
-        self.xO2_V102 = self.DataPlant["x_O2_V102"].iloc[-1]
-        self.VH2_acum_V102 = self.Vnorm_bio_V102 * (self.DataPlant["x_H2_V102"].iloc[-1]/1000000)
-        self.xH2_V102 = self.DataPlant["x_H2_V102"].iloc[-1]
-        mol_biogas_Acum_dry_V102 = self.mol_acum_CH4_V102 + self.mol_acum_CO2_V102 + self.mol_acum_H2S_V102 + self.mol_acum_O2_V102 + self.mol_acum_H2_V102 + self.mol_acum_NH3_V102
-        try:
-            if mol_biogas_Acum_dry_V102 > 0:
-                self.xNH3_V102 = (self.mol_acum_NH3_V102/mol_biogas_Acum_dry_V102)*1000000
-            else:
-                self.xNH3_V102 = 0
-        except ZeroDivisionError:
-            self.xNH3_V102 = 0
-        self.VNH3_acum_V102 = self.Vnorm_bio_V102 * self.xNH3_V102
-        self.RH_V102 = self.DataPlant["rh_V102"].iloc[-1]
-        Absolute_humidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"].iloc[-1]/100, T = self.T_V102_actual)
-        self.mol_acum_H2O_V102 = (Absolute_humidity_V102 * self.Vnorm_bio_sto_V102) / 18
-        Energy_V102 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V102, molCO2=self.mol_acum_CO2_V102, molH2S=self.mol_acum_H2S_V102, molO2=self.mol_acum_O2_V102, molH2 = self.mol_acum_H2_V102)
-        self.Energy_V102 = Energy_V102[1]
-        self.LHV_V102 = Energy_V102[0]
+            Results_R101 = Optimization_Gompertz(params = (self.ym_R101, self.U_R101, self.L_R101), t = t_exp, y_exp = y_exp_R101)
+            Results_R102 = Optimization_Gompertz(params = (self.ym_R102, self.U_R102, self.L_R102), t = t_exp, y_exp = y_exp_R102)
+        
+            self.Optimized_parameters = pd.DataFrame({"ym_R101": Results_R101.x[0],
+                                                      "U_R101": Results_R101.x[1],
+                                                      "L_R101": Results_R101.x[2],
+                                                      "Error_R101": Results_R101.fun,
+                                                      "ym_R102": Results_R102.x[0],
+                                                      "U_R102": Results_R102.x[1],
+                                                      "L_R102": Results_R102.x[2],
+                                                      "Error_R102": Results_R102.fun}, index=[0])
+            
+            self.ym_R101 = self.Optimized_parameters["ym_R101"].iloc[0]
+            self.U_R101 = self.Optimized_parameters["U_R101"].iloc[0]
+            self.L_R101 = self.Optimized_parameters["L_R101"].iloc[0]
+
+            self.ym_R102 = self.Optimized_parameters["ym_R102"].iloc[0]
+            self.U_R102 = self.Optimized_parameters["U_R102"].iloc[0]
+            self.L_R102 = self.Optimized_parameters["L_R102"].iloc[0]
     
-    def V107model1_2 (self):
-        self.Vnorm_bio_V107 = ((self.Pacum_V107 * 6894.76) * self.Volume_V107 * 273.15)/(100000 * (self.T_V107_actual+273.15))
-        self.Vnorm_bio_sto_V107 = ((self.P_V107 * 6894.76) * self.Volume_V107 * 273.15)/(100000 * (self.T_V107_actual+273.15))
-        self.VCH4_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_CH4_V107"].iloc[-1]/100)
-        self.xCH4_V107 = self.DataPlant["x_CH4_V107"].iloc[-1]
-        self.VCO2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_CO2_V107"].iloc[-1]/100)
-        self.xCO2_V107 = self.DataPlant["x_CO2_V107"].iloc[-1]
-        self.VH2S_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_H2S_V107"].iloc[-1]/100)
-        self.xH2S_V107 = self.DataPlant["x_H2S_V107"].iloc[-1]
-        self.VO2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_O2_V107"].iloc[-1]/100)
-        self.xO2_V107 = self.DataPlant["x_O2_V107"].iloc[-1]
-        self.VH2_acum_V107 = self.Vnorm_bio_V107 * (self.DataPlant["x_H2_V107"].iloc[-1]/1000000)
-        self.xH2_V107 = self.DataPlant["x_H2_V107"].iloc[-1]
-        mol_biogas_Acum_dry_V107 = self.mol_acum_CH4_V107 + self.mol_acum_CO2_V107 + self.mol_acum_H2S_V107 + self.mol_acum_O2_V107 + self.mol_acum_H2_V107 + self.mol_acum_NH3_V107
-        try:
-            if mol_biogas_Acum_dry_V107 > 0:
-                self.xNH3_V107 = (self.mol_acum_NH3_V107/mol_biogas_Acum_dry_V107)*1000000
-            else:
-                self.xNH3_V107 = 0
-        except ZeroDivisionError:
-            self.xNH3_V107 = 0
-        self.VNH3_acum_V107 = self.Vnorm_bio_V107 * self.xNH3_V107
-        self.RH_V107 = self.DataPlant["rh_V107"].iloc[-1]
-        Absolute_humidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"].iloc[-1]/100, T = self.T_V107_actual)
-        self.mol_acum_H2O_V107 = (Absolute_humidity_V107 * self.Vnorm_bio_sto_V107) / 18
-        Energy_V107 = self.Thermo.LHV(molCH4=self.mol_acum_CH4_V107, molCO2=self.mol_acum_CO2_V107, molH2S=self.mol_acum_H2S_V107, molO2=self.mol_acum_O2_V107, molH2 = self.mol_acum_H2_V107)
-        self.Energy_V107 = Energy_V107[1]
-        self.LHV_V107 = Energy_V107[0]
-        
     def biogas_treatment_optimization (self, W_feSO4, W_silica, qmax_NH3, W_carbon, K_NH3, K2_NH3):
-        
-        self.biogas_V101["mol_T"] = self.biogas_V101["mol_CH4"] + self.biogas_V101["mol_CO2"] + self.biogas_V101["mol_O2"] + self.biogas_V101["mol_H2S"] + self.biogas_V101["mol_H2"] + self.biogas_V101["mol_NH3"]
-        self.biogas_V101["xCH4"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_CH4"] / self.biogas_V101["mol_T"])
-        self.biogas_V101["xCO2"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_CO2"] / self.biogas_V101["mol_T"])
-        self.biogas_V101["xO2"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_O2"] / self.biogas_V101["mol_T"])
-        self.biogas_V101["xH2S"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_H2S"] / self.biogas_V101["mol_T"])
-        self.biogas_V101["xH2"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_H2"] / self.biogas_V101["mol_T"])
-        self.biogas_V101["xNH3"] = np.where(self.biogas_V101["mol_T"] == 0, 0, self.biogas_V101["mol_NH3"] / self.biogas_V101["mol_T"])
-        self.biogas_V101["AbsoluteHumidity"] = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"], T = self.DataPlant["T_V101"])
-        self.biogas_V101["mol_H2O"] = (self.biogas_V101["AbsoluteHumidity"] * self.biogas_V101["Vacum"])/18 
-        self.biogas_V101.fillna(0, inplace=True)
-        
-        self.biogas_V102["mol_T"] = self.biogas_V102["mol_CH4"] + self.biogas_V102["mol_CO2"] + self.biogas_V102["mol_O2"] + self.biogas_V102["mol_H2S"] + self.biogas_V102["mol_H2"] + self.biogas_V102["mol_NH3"]
-        self.biogas_V102["xCH4"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_CH4"] / self.biogas_V102["mol_T"])
-        self.biogas_V102["xCO2"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_CO2"] / self.biogas_V102["mol_T"])
-        self.biogas_V102["xO2"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_O2"] / self.biogas_V102["mol_T"])
-        self.biogas_V102["xH2S"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_H2S"] / self.biogas_V102["mol_T"])
-        self.biogas_V102["xH2"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_H2"] / self.biogas_V102["mol_T"])
-        self.biogas_V102["xNH3"] = np.where(self.biogas_V102["mol_T"] == 0, 0, self.biogas_V102["mol_NH3"] / self.biogas_V102["mol_T"])
-        self.biogas_V102["AbsoluteHumidity"] = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"], T = self.DataPlant["T_V102"])
-        self.biogas_V102["mol_H2O"] = (self.biogas_V102["AbsoluteHumidity"] * self.biogas_V102["Vacum"])/18
-        self.biogas_V102.fillna(0, inplace=True)
-        
-        self.biogas_V107["mol_T"] = self.biogas_V107["mol_CH4"] + self.biogas_V107["mol_CO2"] + self.biogas_V107["mol_O2"] + self.biogas_V107["mol_H2S"] + self.biogas_V107["mol_H2"] + self.biogas_V107["mol_NH3"]
-        self.biogas_V107["xCH4"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_CH4"] / self.biogas_V107["mol_T"])
-        self.biogas_V107["xCO2"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_CO2"] / self.biogas_V107["mol_T"])
-        self.biogas_V107["xO2"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_O2"] / self.biogas_V107["mol_T"])
-        self.biogas_V107["xH2S"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_H2S"] / self.biogas_V107["mol_T"])
-        self.biogas_V107["xH2"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_H2"] / self.biogas_V107["mol_T"])
-        self.biogas_V107["xNH3"] = np.where(self.biogas_V107["mol_T"] == 0, 0, self.biogas_V107["mol_NH3"] / self.biogas_V107["mol_T"])
-        self.biogas_V107["AbsoluteHumidity"] = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"], T = self.DataPlant["T_V107"])
-        self.biogas_V107["mol_H2O"] = (self.biogas_V107["AbsoluteHumidity"] * self.biogas_V107["Vacum"])/18
-        self.biogas_V107.fillna(0, inplace=True)
-        
-        self.Treatment_system = pd.DataFrame() 
-        self.Treatment_system["time"] = self.biogas_V101["time"]
-        self.Treatment_system["nH2O_ads"] = (self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]) - self.biogas_V107["mol_H2O"]
-        self.Treatment_system["nH2S_ads"] = (self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]) - self.biogas_V107["mol_H2S"]
-        self.Treatment_system["xH2O"] = ((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]) - self.biogas_V107["mol_H2O"])/(self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"])
-        self.Treatment_system["xH2S"] = ((self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]) - self.biogas_V107["mol_H2S"])/(self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"])
-       
-        self.mol_H2S_ads = self.Treatment_system["nH2S_ads"].iloc[-1]
-        self.mol_H2O_ads = self.Treatment_system["nH2O_ads"].iloc[-1]
+        #V101
+        self.biogas_AbsoluteHumidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V101"], T = self.DataPlant["T_V101"])
+        self.mol_H2O_V101 = (self.biogas_AbsoluteHumidity_V101 * self.DataPlant["Vacum_V101"])/18
+
+        #V102
+        self.biogas_AbsoluteHumidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V102"], T = self.DataPlant["T_V102"])
+        self.mol_H2O_V102 = (self.biogas_AbsoluteHumidity_V102 * self.DataPlant["Vacum_V102"])/18
+
+        #V107
+        self.biogas_AbsoluteHumidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.DataPlant["rh_V107"], T = self.DataPlant["T_V107"])
+        self.mol_H2O_V107 = (self.biogas_AbsoluteHumidity_V107 * self.DataPlant["Vacum_V107"])/18
+
+        #Adsorptia estimation
+        mol_in_H2O = (self.mol_H2O_V101 + self.mol_H2O_V102)
+        mol_in_H2S = (self.nH2S_V101_acum + self.nH2S_V102_acum)
+        delta_H2O = (self.mol_H2O_V101 + self.mol_H2O_V102) - self.mol_H2O_V107
+        self.nH2O_ads = delta_H2O.where(delta_H2O > 0, 0)  
+        delta_H2S = (self.nH2S_V101_acum + self.nH2S_V102_acum) - self.nH2S_V107_acum
+        self.nH2S_ads = delta_H2S.where(delta_H2S > 0, 0)
         
         def Langmuir_model(t, qmax, K1, K2, W, mol_transfer):
             q = (qmax * K1 * (mol_transfer))/(1+(K1*mol_transfer))
@@ -2379,26 +2521,221 @@ class Training_offline:
             result = minimize(objective, [float(p) for p in params], method='Nelder-Mead')
             return result
         
-        t_exp = np.array(self.Treatment_system["time"].tolist())
-        Nabs_exp_H2O = np.array(self.Treatment_system["nH2O_ads"].tolist())
-        mol_transfer_H2O = np.array((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"]))
-        Results_H2O = Langmuir_optimization (params = (self.qmax_H2O, self.K_H2O, self.K2_H2O), t = t_exp, mol_ads_exp = Nabs_exp_H2O, W = W_silica, mol_transfer = mol_transfer_H2O)
+        self.Train_filters_data = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                                                "mol_in_H2O": mol_in_H2O,
+                                                "mol_out_H2O": self.mol_H2O_V107,
+                                                "mol_ads_H2O": self.nH2O_ads,
+                                                "mol_in_H2S": mol_in_H2S,
+                                                "mol_out_H2S": self.nH2S_V107_acum,
+                                                "mol_ads_H2S":self.nH2S_ads})
+        
+        Results_H2O = Langmuir_optimization (params = (self.qmax_H2O, self.K_H2O, self.K2_H2O), t = self.DataPlant["normal_time"], mol_ads_exp = self.nH2O_ads, W = W_silica, mol_transfer = mol_in_H2O)
+        Results_H2S = Langmuir_optimization(params = (self.qmax_H2S, self.K_H2S, self.K2_H2S), t = self.DataPlant["normal_time"], mol_ads_exp = self.nH2S_ads, W = W_feSO4, mol_transfer = mol_in_H2S)
+        
         self.Optimized_parameters_filter_H2O = pd.DataFrame({"qmax_H2O": float(Results_H2O.x[0]),
                                                              "K_H2O": float(Results_H2O.x[1]),
-                                                             "K2_H2O": float(Results_H2O.x[2])}, index=[0])
-    
-        Nabs_exp_H2S = np.array(self.Treatment_system["nH2S_ads"].tolist())
-        mol_transfer_H2S = np.array((self.biogas_V101["mol_H2S"] + self.biogas_V102["mol_H2S"]).tolist())
-        Results_H2S = Langmuir_optimization(params = (self.qmax_H2S, self.K_H2S, self.K2_H2S), t = t_exp, mol_ads_exp = Nabs_exp_H2S, W = W_feSO4, mol_transfer = mol_transfer_H2S)
-        self.Optimized_parameters_filter_H2S = pd.DataFrame({"qmax_H2s": float(Results_H2S.x[0]),
+                                                             "K2_H2O": float(Results_H2O.x[2]),
+                                                             "qmax_H2S": float(Results_H2S.x[0]),
                                                              "K_H2S": float(Results_H2S.x[1]),
-                                                             "K2_H2S": float(Results_H2S.x[2])}, index=[0])
+                                                             "K2_H2S": float(Results_H2S.x[2])}, index=[0],)
         
-        self.mol_NH3_ads_teo = Langmuir_model(t = t_exp, qmax = qmax_NH3, K1 = K_NH3, K2 = K2_NH3, W = W_carbon, mol_transfer=np.array((self.biogas_V101["mol_H2O"] + self.biogas_V102["mol_H2O"])))
-        self.Treatment_system["nNH3_ads"] = self.mol_NH3_ads_teo
-        self.mol_NH3_ads = self.Treatment_system["nNH3_ads"].iloc[-1]
-        self.biogas_V107.drop(columns=["mol_NH3"])
-        self.biogas_V107["mol_NH3"] = ((self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"]) - self.Treatment_system["nNH3_ads"])
-        self.Treatment_system["xNH3"] = (self.Treatment_system["nNH3_ads"])/(self.biogas_V101["mol_NH3"] + self.biogas_V102["mol_NH3"])
-        self.Treatment_system["xGlobal"] = (self.Treatment_system["xH2O"] + self.Treatment_system["xH2S"] +self.Treatment_system["xNH3"])/3
-        self.Xglobal = self.Treatment_system["xGlobal"].iloc[-1]
+        self.mol_NH3_ads_teo = Langmuir_model(t = self.DataPlant["normal_time"], qmax = qmax_NH3, K1 = K_NH3, K2 = K2_NH3, W = W_carbon, mol_transfer=np.array(self.nNH3_V101_acum + self.nNH3_V102_acum))
+        self.Train_filters_data["nNH3_ads"] = self.mol_NH3_ads_teo
+        self.nNH3_V107_acum = ((self.nNH3_V101_acum + self.nNH3_V102_acum) - self.mol_NH3_ads_teo)
+
+        #Filter_effciency
+        try:
+            self.x_ads_H2O = self.Train_filters_data["mol_ads_H2O"]/self.Train_filters_data["mol_in_H2O"]
+            self.x_ads_H2S = self.Train_filters_data["mol_ads_H2S"]/self.Train_filters_data["mol_in_H2S"]
+            self.x_ads_NH3 = self.Train_filters_data["nNH3_ads"]/(self.nNH3_V101_acum + self.nNH3_V102_acum)
+        except ZeroDivisionError:
+            self.x_ads_H2O = 0
+            self.x_ads_H2S = 0
+            self.x_ads_NH3 = 0
+
+    def exitVariablestoFrontEnd(self):
+        #TK100
+        """
+        substrate variables are declares in Limit Reagent Estimation function
+        """
+        self.Mix_Velocity_TK100 = float(self.Mix_Velocity_TK100["_value"].iloc[-1])
+
+        #Pump 104 flow
+        last_10_P104 = self.DataPlant["P104"].tail(10)
+        if last_10_P104.iloc[0] != 0:
+            self.P104 = float(last_10_P104.iloc[0])
+        else:
+            self.P104 = float(self.DataPlant["P104"].iloc[-1])
+        
+        #R101
+        self.Mix_Velocity_R101 = float(self.Mix_Velocity_R101["_value"].iloc[-1])
+        self.pH_R101 = float(self.DataPlant["pH_R101"].iloc[-1])
+        self.T_R101 = float(self.DataPlant["Tprom_R101"].iloc[-1])
+        self.x_R101_e = float(self.x_R101.iloc[-1])
+
+        #P101
+        if self.Operation_mode == 1:
+            self.P101 = 0
+        else:
+            last_10_P101 = self.DataPlant["P101"].tail(10)
+            if last_10_P101.iloc[0] != 0:
+                self.P101 = float(last_10_P101.iloc[0])
+            else:
+                self.P101 = float(self.DataPlant["P101"].iloc[-1])
+        
+        #P102
+        if self.Operation_mode in [1,2,3]:
+            self.P102 = 0
+        else:
+            last_10_P102 = self.DataPlant["P102"].tail(10)
+            if last_10_P102.iloc[0] != 0:
+                self.P102 = float(last_10_P102.iloc[0])
+            else:
+                self.P102 = float(self.DataPlant["P102"].iloc[-1])
+
+        #V101
+        self.Pacum_V101_e = float(self.DataPlant["Pacum_V101"].iloc[-1])
+        self.P_V101_e = float(self.DataPlant["P_V101"].iloc[-1])
+        self.Vnorm_bio_V101 = float(self.DataPlant["Vacum_V101"].iloc[-1])
+        self.T_V101_e = float(self.DataPlant["T_V101"].iloc[-1])
+        self.Vnorm_bio_sto_V101 = float((self.P_V101_e*6.8947 * 15 * 273.15)/(100 * (self.T_V101_e + 273.15)))
+        self.xCH4_V101_e = float(self.DataPlant["xCH4_V101"].iloc[-1])
+        self.VCH4_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xCH4_V101_e/100)
+        self.mol_acum_CH4_V101 = float(self.nCH4_V101_acum.iloc[-1])
+        self.xCO2_V101_e = float(self.DataPlant["xCO2_V101"].iloc[-1])
+        self.VCO2_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xCO2_V101_e/100)
+        self.mol_acum_CO2_V101 = float(self.nCO2_V101_acum.iloc[-1])
+        self.xH2S_V101_e = float(self.DataPlant["xH2S_V101"].iloc[-1])
+        self.VH2S_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xH2S_V101_e/1000000)
+        self.mol_acum_H2S_V101 = float(self.nH2S_V101_acum.iloc[-1])
+        self.xO2_V101_e = float(self.DataPlant["xO2_V101"].iloc[-1])
+        self.VO2_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xO2_V101_e/100)
+        self.mol_acum_O2_V101 = float(self.nO2_V101_acum.iloc[-1])
+        self.xH2_V101_e = float(self.DataPlant["xH2_V101"].iloc[-1])
+        self.VH2_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xH2_V101_e/1000000)
+        self.mol_acum_H2_V101 = float(self.nH2_V101_acum.iloc[-1])
+        try:
+            self.xNH3_V101_e = (float(self.nNH3_V101_acum.iloc[-1])/(float(self.nNH3_V101_acum.iloc[-1]) + self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101))*1000000
+        except ZeroDivisionError:
+            self.xNH3_V101_e = 0
+        self.VNH3_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xNH3_V101_e/1000000)
+        self.mol_acum_NH3_V101 = float(self.nNH3_V101_acum.iloc[-1])
+        self.RH_V101_e = float(self.DataPlant["rh_V101"].iloc[-1])
+        self.Energy_V101 = float(self.Energia_jouleV101["_value"].iloc[-1])
+        self.mol_acum_H2O_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.RH_V101_e/100, T = self.T_V101_e) * self.Vnorm_bio_V101
+
+        #V102
+        self.Pacum_V102_e = float(self.DataPlant["Pacum_V102"].iloc[-1])
+        self.P_V102_e = float(self.DataPlant["P_V102"].iloc[-1])
+        self.Vnorm_bio_V102 = float(self.DataPlant["Vacum_V102"].iloc[-1])
+        self.T_V102_e = float(self.DataPlant["T_V102"].iloc[-1])
+        self.Vnorm_bio_sto_V102 = float((self.P_V102_e*6.8947 * 15 * 273.15)/(100 * (self.T_V102_e + 273.15)))
+        self.xCH4_V102_e = float(self.DataPlant["xCH4_V102"].iloc[-1])
+        self.VCH4_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xCH4_V102_e/100)
+        self.mol_acum_CH4_V102 = float(self.nCH4_V102_acum.iloc[-1])
+        self.xCO2_V102_e = float(self.DataPlant["xCO2_V102"].iloc[-1])
+        self.VCO2_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xCO2_V102_e/100)
+        self.mol_acum_CO2_V102 = float(self.nCO2_V102_acum.iloc[-1])
+        self.xH2S_V102_e = float(self.DataPlant["xH2S_V102"].iloc[-1])
+        self.VH2S_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xH2S_V102_e/1000000)
+        self.mol_acum_H2S_V102 = float(self.nH2S_V102_acum.iloc[-1])
+        self.xO2_V102_e = float(self.DataPlant["xO2_V102"].iloc[-1])
+        self.VO2_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xO2_V102_e/100)
+        self.mol_acum_O2_V102 = float(self.nO2_V102_acum.iloc[-1])
+        self.xH2_V102_e = float(self.DataPlant["xH2_V102"].iloc[-1])
+        self.VH2_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xH2_V102_e/1000000)
+        self.mol_acum_H2_V102 = float(self.nH2_V102_acum.iloc[-1])
+        try:
+            self.xNH3_V102_e = (float(self.nNH3_V102_acum.iloc[-1])/(float(self.nNH3_V102_acum.iloc[-1]) + self.mol_acum_CH4_V102 + self.mol_acum_CO2_V102 + self.mol_acum_H2S_V102 + self.mol_acum_O2_V102 + self.mol_acum_H2_V102))*1000000
+        except ZeroDivisionError:
+            self.xNH3_V102_e = 0
+        self.VNH3_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xNH3_V102_e/1000000)
+        self.mol_acum_NH3_V102 = float(self.nNH3_V102_acum.iloc[-1])
+        self.RH_V102_e = float(self.DataPlant["rh_V102"].iloc[-1])
+        try:
+            self.Energy_V102 = float(self.Energia_jouleV102["_value"].iloc[-1])
+        except (TypeError, AttributeError, IndexError, KeyError) as e:
+            print(f"Error accessing energy value: {e}")
+            self.Energy_V102 = 0.0  # or None, or raise, depending on your use case
+        self.mol_acum_H2O_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.RH_V102_e/100, T = self.T_V102_e) * self.Vnorm_bio_V102
+
+        #V107
+        self.Pacum_V107_e = float(self.DataPlant["Pacum_V107"].iloc[-1])
+        self.P_V107_e = float(self.DataPlant["P_V107"].iloc[-1])
+        self.Vnorm_bio_V107 = float(self.DataPlant["Vacum_V107"].iloc[-1])
+        self.T_V107_e = float(self.DataPlant["T_V107"].iloc[-1])
+        self.Vnorm_bio_sto_V107 = float((self.P_V107_e*6.8947 * 15 * 273.15)/(100 * (self.T_V107_e + 273.15)))
+        self.xCH4_V107_e = float(self.DataPlant["xCH4_V107"].iloc[-1])
+        self.VCH4_acum_V107 = self.Vnorm_bio_sto_V107 * (self.xCH4_V107_e/100)
+        self.mol_acum_CH4_V107 = float(self.nCH4_V107_acum.iloc[-1])
+        self.xCO2_V107_e = float(self.DataPlant["xCO2_V107"].iloc[-1])
+        self.VCO2_acum_V107 = self.Vnorm_bio_sto_V107 * (self.xCO2_V107_e/100)
+        self.mol_acum_CO2_V107 = float(self.nCO2_V107_acum.iloc[-1])
+        self.xH2S_V107_e = float(self.DataPlant["xH2S_V107"].iloc[-1])
+        self.VH2S_acum_V107 = self.Vnorm_bio_sto_V107 * (self.xH2S_V107_e/1000000)
+        self.mol_acum_H2S_V107 = float(self.nH2S_V107_acum.iloc[-1])
+        self.xO2_V107_e = float(self.DataPlant["xO2_V107"].iloc[-1])
+        self.VO2_acum_V107 = self.Vnorm_bio_sto_V107 * (self.xO2_V107_e/100)
+        self.mol_acum_O2_V107 = float(self.nO2_V107_acum.iloc[-1])
+        self.xH2_V107_e = float(self.DataPlant["xH2_V107"].iloc[-1])
+        self.VH2_acum_V107 = self.Vnorm_bio_sto_V107 * (self.xH2_V107_e/1000000)
+        self.mol_acum_H2_V107 = float(self.nH2_V107_acum.iloc[-1])
+        try:
+            self.xNH3_V107_e = (float(self.nNH3_V107_acum.iloc[-1])/(float(self.nNH3_V107_acum.iloc[-1]) + self.mol_acum_CH4_V107 + self.mol_acum_CO2_V107 + self.mol_acum_H2S_V107 + self.mol_acum_O2_V107 + self.mol_acum_H2_V107))*1000000
+        except ZeroDivisionError:
+            self.xNH3_V107_e = 0
+        self.VNH3_acum_V107 = self.Vnorm_bio_sto_V107 * (self.xNH3_V107_e/1000000)
+        self.mol_acum_NH3_V107 = float(self.nNH3_V107_acum.iloc[-1])
+        self.RH_V107_e = float(self.DataPlant["rh_V107"].iloc[-1])
+        try:
+            self.Energy_V107 = float(self.Energia_jouleV107["_value"].iloc[-1])
+        except (TypeError, AttributeError, IndexError, KeyError) as e:
+            print(f"Error accessing energy value: {e}")
+            self.Energy_V107 = 0.0  # or None, or raise, depending on your use case
+        self.Energy_V107 = float(self.Energia_jouleV107["_value"].iloc[-1])
+        self.mol_acum_H2O_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.RH_V107_e/100, T = self.T_V107_e) * self.Vnorm_bio_V107
+
+        #Biogas Treatment
+        self.mol_NH3_ads = self.mol_NH3_ads_teo.iloc[-1]
+        self.mol_H2S_ads = self.nH2S_ads.iloc[-1]
+        self.mol_H2O_ads = self.nH2O_ads.iloc[-1]
+        self.Xglobal = (self.x_ads_H2O.iloc[-1] + self.x_ads_H2S.iloc[-1] + self.x_ads_NH3.iloc[-1])/3
+
+    def StorageData (self, name):
+        timestamp = self.DataPlant["_time"].iloc[-1]  # Convert to nanoseconds
+        
+        if self.Model == "Arrhenius" and (self.Operation_mode == 1 or self.Operation_mode == 2):
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101)), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = abs(float(self.Ea_mean_R101)), timestamp=timestamp)  
+        
+        elif self.Model == "ADM1" and (self.Operation_mode == 1 or self.Operation_mode == 2):
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
+                                                    model = self.Model, variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101)), timestamp=timestamp)
+        
+        elif self.Model == "Gompertz" and (self.Operation_mode == 1 or self.Operation_mode == 2):
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?U_R101?{name}', value = float(self.U_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R101?{name}', value = float(self.L_R101), timestamp=timestamp)
+
+        elif self.Model == "Arrhenius" and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101)), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = abs(float(self.Ea_mean_R101)), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = abs(float(self.K_mean_R102)), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = abs(float(self.Ea_mean_R102)), timestamp=timestamp)
+        
+        elif self.Model == "ADM1"  and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101)), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R102?{name}', value = abs(float(self.K_ini_ADM1_R102)), timestamp=timestamp)
+        
+        elif self.Model == "Gompertz" and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?U_R101?{name}', value = float(self.U_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R101?{name}', value = float(self.L_R101), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R102?{name}', value = float(self.ym_R102), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?U_R102?{name}', value = float(self.U_R102), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R102?{name}', value = float(self.L_R102), timestamp=timestamp)
+        
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_H2S_abs?{name}', value=self.mol_H2S_ads, timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_NH3_abs?{name}', value=self.mol_NH3_ads, timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_H2O_abs?{name}', value=self.mol_H2O_ads, timestamp=timestamp)
+

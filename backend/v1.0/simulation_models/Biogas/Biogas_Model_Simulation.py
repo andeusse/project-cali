@@ -384,7 +384,7 @@ class BiogasPlantSimulation:
                     seconds = int(self.tp*self.time_accelerator)
                     for i in range (seconds):
                         if i < self.TTO_P102*60:
-                            self.Q_P102v.append(self.Q_P102)
+                            self.Q_P102v.append(self.Q_P102/3600)
                         else:
                             self.Q_P102v.append(0)
                 else:
@@ -454,9 +454,7 @@ class BiogasPlantSimulation:
 
             if self.TimeCounterMixer_R102>=self.TurnOnDailyStep_Mixing_R102*3600:
                 self.TimeCounterMixer_R102 = 0
-                
-    
-        
+                   
     def Reactor101Simulation_ArrheniusModel (self, Operation, VR, Qin_1, Csus_in1,
                                             K, Ea, T, pH, Qin_2=[0], Csus_in2 = 0.0):
         
@@ -583,7 +581,7 @@ class BiogasPlantSimulation:
                 dCsus_dt = (Q1 * Csus_in1)/VR + (Q2 * Csus_in2)/VR - ((Q1+Q2)*C)/VR - (C * K) / VR
             return dCsus_dt
     
-        if len(Qin_1)>1:
+        if len(Qin_1)>1 or len(Qin_2)>1:
             seconds = int(self.tp*self.time_accelerator)
             time = np.linspace(self.GlobalTime, self.GlobalTime + (self.tp*self.time_accelerator), seconds)
             y0 = self.Csus_ini_R101
@@ -1464,6 +1462,5 @@ class BiogasPlantSimulation:
             self.mol_H2O_transfertoV107 = 0
             self.mol_H2_transfertoV107 = 0
             
-
     def time_counter (self):
         self.GlobalTime = self.GlobalTime + (self.tp*self.time_accelerator)
