@@ -1383,10 +1383,6 @@ class Biogas(Resource):
         biogas_plant.Mixing_TK100(FT_mixin_TK100 = FT_mixin_TK100, TTO_mixing_TK100 = TTO_mixing_TK100, RPM_TK100 = RPM_TK100)
         biogas_plant.Mixing_R101(FT_mixin_R101 = FT_mixin_R101, TTO_mixing_R101 = TTO_mixing_R101, RPM_R101 = RPM_R101)
 
-      
-      
-    
-
     return {"model": biogas_output}, 200
 
 
