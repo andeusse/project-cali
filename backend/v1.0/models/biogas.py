@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource
 from simulation_models.Biogas import TrainingModel
 from simulation_models.Biogas import Biogas_Model_Simulation
+from simulation_models.Biogas import Off_On_Model_Simulation
 from tools import DBManager
 import pandas as pd
 import os
@@ -11,8 +12,10 @@ import math
 
 biogas_instances_online = {}
 biogas_instances_offline = {}
+biogas_instances_offline_online = {}
 users_instances_online = []
 users_instances_offline = []
+users_instances_offline_online = []
 
 class Biogas(Resource):
 
@@ -180,9 +183,9 @@ class Biogas(Resource):
       biogas_output["d"] = float(biogas_plant_online.d)
       biogas_output["Mix_Velocity_TK100"] = float(biogas_plant_online.Mix_Velocity_TK100)
       biogas_output["C_sv"] = float(biogas_plant_online.Csv_sus_gl)                            #gSV/L
-      biogas_output["SV"] = float(biogas_plant_online.SV)
+      biogas_output["SV"] = float(biogas_plant_online.SV*100)
       biogas_output["C_st"] = float(biogas_plant_online.Cst_sus_gl)
-      biogas_output["ST"] = float(biogas_plant_online.ST)
+      biogas_output["ST"] = float(biogas_plant_online.ST*100)
       # P104
       biogas_output["Pump104Flow"] = biogas_plant_online.P104
       # R101
@@ -281,7 +284,7 @@ class Biogas(Resource):
       biogas_output["ads_NH3_bt"] = biogas_plant_online.mol_NH3_ads
       biogas_output["ads_H2S_bt"] = biogas_plant_online.mol_H2S_ads
       biogas_output["ads_H2O_bt"] = biogas_plant_online.mol_H2O_ads
-      biogas_output["x_bt"] = (biogas_plant_online.Xglobal) * 100
+      biogas_output["x_bt"] = biogas_plant_online.Xglobal * 100
 
       biogas_output = {k: (0 if isinstance(v, float) and math.isnan(v) else v) for k, v in biogas_output.items()}
 
@@ -303,7 +306,7 @@ class Biogas(Resource):
             print(f'User {key} deleted', flush=True)
             users_instances_offline.remove(key)
         users_instances_offline.append(user)
-      print("biogas instances_offline", biogas_instances_offline, flush=True)
+      #print("biogas instances_offline", biogas_instances_offline, flush=True)
       
       #Operación planta
       VR1 = data["anaerobicReactorVolume1"]["value"]
@@ -1218,7 +1221,162 @@ class Biogas(Resource):
         biogas_output["ads_H2O_bt"] = biogas_plant.mol_H2O_ads_acum
         biogas_output["x_bt"] = biogas_plant.Xglobal * 100
             
+    
+  
+    elif (Online == False and OfflineEntranceVariables == False):  #Modo Offline and variables from plant
+
+      user = data["name"]
+      iteration = data["iteration"]
+      #Create object to run the model
+      if iteration == 1:   
+        for key in users_instances_offline_online:
+          if key in biogas_instances_offline_online:
+            del biogas_instances_offline_online[key]
+            print(f'User {key} deleted', flush=True)
+            users_instances_offline_online.remove(key)
+        users_instances_offline_online.append(f'{user}1')
+        users_instances_offline_online.append(f'{user}2')
+      
+      #Operación planta
+      VR1 = data["anaerobicReactorVolume1"]["value"]
+      VR2 = data["anaerobicReactorVolume2"]["value"]
+      OperationMode = data["inputOperationMode"]
+      Model = data["operationModelType"]
+
+      #Tanques biogás
+      VG1 = data["biogasTankVolume1"]["value"]        #1.6 factor de corrección de planta (biogás perdido en tuberías y reservorios)
+      VG2 = data["biogasTankVolume1"]["value"]
+      VG3 = data["biogasTankVolume3"]["value"]
+
+      #paso de tiempo
+      tp = data["digitalTwinStepTime"]["value"]
+      #Acelerador de la simulacion
+      time_accelator = data["timeMultiplier"]["value"]
+      #TraininData = data["selectedTrainingData"]["value"] Con el retorno del front entrenar la red en el init
+      
+      # Kinetics parameters for R101
+      K_R101 = data["exponentialFactorR101"]["value"]
+      Ea_R101 = data["activationEnergyR101"]["value"]
+      L_R101 = data["lambdaR101"]["value"]
+      pH_R101 = data["inputPHR101"]["value"]
+
+      #Kinetics parameters for R102
+      K_R102 = data["exponentialFactorR102"]["value"]
+      Ea_R102 = data["activationEnergyR102"]["value"]
+      L_R102 = data["lambdaR102"]["value"]
+
+      #initial conditions from frontEnd for R101
+      ST_ini_R101 = data["initialAnalysisConditionsR101"]["totalSubstrateSolids"]["value"]
+      SV_ini_R101 = data["initialAnalysisConditionsR101"]["volatileSubstrateSolids"]["value"]
+      Cc_ini_R101 = data["initialAnalysisConditionsR101"]["atomicCarbonSubstrateConcetration"]["value"]
+      Ch_ini_R101 = data["initialAnalysisConditionsR101"]["atomicHydrogenSubstrateConcetration"]["value"]
+      Co_ini_R101 = data["initialAnalysisConditionsR101"]["atomicOxygenSubstrateConcetration"]["value"]
+      Cn_ini_R101 = data["initialAnalysisConditionsR101"]["atomicNitrogenSubstrateConcetration"]["value"]
+      Cs_ini_R101 = data["initialAnalysisConditionsR101"]["atomicSulfurSubstrateConcetration"]["value"]
+      rho_ini_R101 = data["initialAnalysisConditionsR101"]["substrateDensity"]["value"]
+      Temp_R101 = data["inputTemperatureR101"]["value"]
+
+      #initial conditions from frontEnd for R102
+      ST_ini_R102 = data["initialAnalysisConditionsR102"]["totalSubstrateSolids"]["value"]
+      SV_ini_R102 = data["initialAnalysisConditionsR102"]["volatileSubstrateSolids"]["value"]
+      Cc_ini_R102 = data["initialAnalysisConditionsR102"]["atomicCarbonSubstrateConcetration"]["value"]
+      Ch_ini_R102 = data["initialAnalysisConditionsR102"]["atomicHydrogenSubstrateConcetration"]["value"]
+      Co_ini_R102 = data["initialAnalysisConditionsR102"]["atomicOxygenSubstrateConcetration"]["value"]
+      Cn_ini_R102 = data["initialAnalysisConditionsR102"]["atomicNitrogenSubstrateConcetration"]["value"]
+      Cs_ini_R102 = data["initialAnalysisConditionsR102"]["atomicSulfurSubstrateConcetration"]["value"]
+      rho_ini_R102 = data["initialAnalysisConditionsR102"]["substrateDensity"]["value"]
+
+      #substrate conditions
+      Cc = data["inputElementalAnalysisCarbonContent"]["value"]
+      Ch = data["inputElementalAnalysisHydrogenContent"]["value"]
+      Co = data["inputElementalAnalysisOxygenContent"]["value"]
+      Cn = data["inputElementalAnalysisNitrogenContent"]["value"]
+      Cs = data["inputElementalAnalysisSulfurContent"]["value"]
+      rho = data["inputProximateAnalysisDensity"]["value"]
+      ST = data["inputProximateAnalysisTotalSolids"]["value"]
+      SV = data["inputProximateAnalysisVolatileSolids"]["value"]
+
+      #pump 104 conditions
+      TRH = data["inputPump104HydraulicRetentionTime"]["value"]
+      FT_P104 = data["inputPump104StartsPerDay"]["value"]
+      TTO_P104 = data["inputPump104StartTime"]["value"]
+
+      #Pump 101 conditions
+      FT_P101 = data["inputPump101StartsPerDay"]["value"]
+      TTO_P101 = data["inputPump101StartTime"]["value"]
+      Q_P101 = data["inputPump101Flow"]["value"]
+
+      #Pump 102 conditions
+      FT_P102 = data["inputPump102StartsPerDay"]["value"]
+      TTO_P102 = data["inputPump102StartTime"]["value"]
+      Q_P102 = data["inputPump102Flow"]["value"]
+
+      #Mixer TK100
+      FT_mixin_TK100 = data["inputStartsPerDayMixTK100"]["value"]
+      TTO_mixing_TK100 = data["inputStartTimeMixTK100"]["value"]
+      RPM_TK100 = data["inputSpeedMixTK100"]["value"]
+
+      #Mixer R101
+      FT_mixin_R101 = data["inputStartsPerDayMixR101"]["value"]
+      TTO_mixing_R101 = data["inputStartTimeMixR101"]["value"]
+      RPM_R101 = data["inputSpeedMixR101"]["value"]
+
+      #Mixer R102
+      FT_mixin_R102 = data["inputStartsPerDayMixR102"]["value"]
+      TTO_mixing_R102 = data["inputStartTimeMixR102"]["value"]
+      RPM_R102 = data["inputSpeedMixR102"]["value"]
+
+      #Temperature R101
+      T_R101 = data["inputTemperatureR101"]["value"]
+
+      #PH R101
+      pH_R101 = data["inputPHR101"]["value"]
+
+      #Temperature R102
+      T_R102 = data["inputTemperatureR101"]["value"]
+
+      #PH R102
+      pH_R102 = data["inputPHR102"]["value"]
+
+      #Pressure for biogas vessel
+      Pset_V101 = data["inputPressureTankV101"]["value"]
+      Pset_V102 = data["inputPressureTankV102"]["value"]
+      Pset_V107 = data["inputPressureTankV107"]["value"]
+
+      #Biogas filter parameters
+      #filter to H2S adsorptia
+      qmax_H2S = data["lengthTower1"]["value"]
+      K_H2S = data["difussionCoefficientTower1"]["value"]
+      K2_H2S = data["kineticFactorTower1"]["value"]
+      w_Fe = data["adsorbentWeightTower1"]["value"]
+
+      #filter to NH3 adsorptia
+      qmax_NH3 = data["lengthTower2"]["value"]
+      K_NH3 = data["difussionCoefficientTower2"]["value"]
+      K2_NH3 = data["kineticFactorTower2"]["value"]
+      w_Carbon = data["adsorbentWeightTower2"]["value"]
+
+      #filter to H2O adsorptia
+      qmax_H2O = data["lengthTower3"]["value"]
+      K_H2O = data["difussionCoefficientTower3"]["value"]
+      K2_H2O = data["kineticFactorTower3"]["value"]
+      w_silica = data["adsorbentWeightTower3"]["value"]
+
+      if user not in biogas_instances_offline_online:
+         biogas_instances_offline_online[f'{user}1'] = Biogas_Model_Simulation.BiogasPlantSimulation(VR1 = VR1, VR2 = VR2, VG1=VG1, VG2 = VG2, VG3 = VG3, tp = tp,
+                                                                ST_R101 = ST_ini_R101, SV_R101 = SV_ini_R101, Cc_R101 = Cc_ini_R101, Ch_R101 = Ch_ini_R101, Co_R101 = Co_ini_R101, Cn_R101 = Cn_ini_R101, Cs_R101 = Cs_ini_R101, rho_R101 = rho_ini_R101,
+                                                                ST_R102 = ST_ini_R102, SV_R102 = SV_ini_R102, Cc_R102 = Cc_ini_R102, Ch_R102 = Ch_ini_R102, Co_R102 = Co_ini_R102, Cn_R102 = Cn_ini_R102, Cs_R102 = Cs_ini_R102, rho_R102 = rho_ini_R102,
+                                                                OperationMode = OperationMode)
+         biogas_instances_offline_online[f'{user}2'] = Off_On_Model_Simulation.Biogas_Plant_prediction(plant = biogas_instances_offline_online[f'{user}1'], DB_IP = DB_IP, DB_Port = DB_Port, DB_Organization = DB_Organization, DB_Bucket = DB_Bucket, DB_Token = DB_Token,
+                                                                                                       VG1 = VG1, VG2 = VG2, VG3=VG3)
+         
+         print(biogas_instances_offline_online[f'{user}2'])
+      
+    
+
     return {"model": biogas_output}, 200
+
+
 
 
     
