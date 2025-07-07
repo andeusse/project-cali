@@ -1369,8 +1369,21 @@ class Biogas(Resource):
                                                                 OperationMode = OperationMode)
          biogas_instances_offline_online[f'{user}2'] = Off_On_Model_Simulation.Biogas_Plant_prediction(plant = biogas_instances_offline_online[f'{user}1'], DB_IP = DB_IP, DB_Port = DB_Port, DB_Organization = DB_Organization, DB_Bucket = DB_Bucket, DB_Token = DB_Token,
                                                                                                        VG1 = VG1, VG2 = VG2, VG3=VG3)
-         
-         print(biogas_instances_offline_online[f'{user}2'])
+
+      if OperationMode == "Modo1":
+        
+        biogas_plant = biogas_instances_offline_online[user]
+        
+        if iteration == 1:
+          biogas_plant.get_data()
+          biogas_plant.ProcessData()
+
+        biogas_plant.Substrate_conditions(Cc = Cc, Ch = Ch, Co = Co, Cn = Cn, Cs = Cs, ST = ST, SV = SV, rho = rho)
+        biogas_plant.Pump104(TRH = TRH, FT_P104 = FT_P104, TTO_P104 = TTO_P104, time_accelerator=time_accelator)
+        biogas_plant.Mixing_TK100(FT_mixin_TK100 = FT_mixin_TK100, TTO_mixing_TK100 = TTO_mixing_TK100, RPM_TK100 = RPM_TK100)
+        biogas_plant.Mixing_R101(FT_mixin_R101 = FT_mixin_R101, TTO_mixing_R101 = TTO_mixing_R101, RPM_R101 = RPM_R101)
+
+      
       
     
 
