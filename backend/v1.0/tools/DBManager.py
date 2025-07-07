@@ -146,44 +146,7 @@ class InfluxDBmodel:
                     r["_field"] == "LHV_bio_WhV107" or
                     r["_field"] == "Energia_jouleV101" or
                     r["_field"] == "Energia_jouleV102" or
-                    r["_field"] == "Energia_jouleV107" or
-                    r["_field"] == "MNS" or
-                    r["_field"] == "MP1" or
-                    r["_field"] == "MP2" or
-                    r["_field"] == "MP3" or
-                    r["_field"] == "MP4" or
-                    r["_field"] == "Md1" or
-                    r["_field"] == "Md2" or
-                    r["_field"] == "Md3" or
-                    r["_field"] == "Md4" or
-                    r["_field"] == "MST1" or
-                    r["_field"] == "MST2" or
-                    r["_field"] == "MST3" or
-                    r["_field"] == "MST4" or
-                    r["_field"] == "MSV1" or
-                    r["_field"] == "MSV2" or
-                    r["_field"] == "MSV3" or
-                    r["_field"] == "MSV4" or
-                    r["_field"] == "MCc1" or
-                    r["_field"] == "MCc2" or
-                    r["_field"] == "MCc3" or
-                    r["_field"] == "MCc4" or
-                    r["_field"] == "MCh1" or
-                    r["_field"] == "MCh2" or
-                    r["_field"] == "MCh3" or
-                    r["_field"] == "MCh4" or
-                    r["_field"] == "MCo1" or
-                    r["_field"] == "MCo2" or
-                    r["_field"] == "MCo3" or
-                    r["_field"] == "MCo4" or
-                    r["_field"] == "MCn1" or
-                    r["_field"] == "MCn2" or
-                    r["_field"] == "MCn3" or
-                    r["_field"] == "MCn4" or
-                    r["_field"] == "MCs1" or
-                    r["_field"] == "MCs2" or
-                    r["_field"] == "MCs3" or
-                    r["_field"] == "MCs4" 
+                    r["_field"] == "Energia_jouleV107" 
                 )'''
         else:
             self.query = "Tipo de query inválido"

@@ -42,7 +42,9 @@ class Training_offline:
 
         #------Initial conditions for R101
         self.ST_ini_R101 = ST_ini_R101/100         #Initial condition for reactor
+        self.ST_ini_R101_res = ST_ini_R101/100
         self.SV_ini_R101 = SV_ini_R101/100         #Initial condition for reactor
+        self.SV_ini_R101_res = SV_ini_R101/100     #Iniital conditions if something wrong in the mass balance
         self.Cc_ini_R101 = Cc_R101                 #Initial Concentration to charge R101
         self.Ch_ini_R101 = Ch_R101           
         self.Co_ini_R101 = Co_R101
@@ -91,7 +93,7 @@ class Training_offline:
         if self.ST_ini_R101 == 0:
             self.Csus_ini_ST_R101 = 0
             self.Csus_ini_SV_R101 = 0
-            self.Csus_ini_SV_R101_i = 0
+            self.Csus_ini_SV_R101_res = 0
             self.Csus_ini_fixed_R101 = 0
             self.MW_inocum_ini_R101 = 18         #molecular weight of the water 
         
@@ -100,6 +102,7 @@ class Training_offline:
             self.Csus_ini_SV_R101 = ((self.SV_ini_R101)*self.rho_ini_R101)/self.MW_inocum_ini_R101     #molSV/L
             self.Csus_ini_fixed_R101 = self.Csus_ini_ST_R101 - self.Csus_ini_SV_R101                   #molSF/L 
             self.Csus_ini_SV_R101_gl = ((self.SV_ini_R101)*self.rho_ini_R101)                          #gSV/L 
+            self.Csus_ini_SV_R101_res =  self.Csus_ini_SV_R101
             self.Csus_ini_SV_R101_gl_i = ((self.SV_ini_R101)*self.rho_ini_R101) 
             self.Csus_ini_ST_R101_gl = ((self.ST_ini_R101)*self.rho_ini_R101)                          #gST/L 
         
@@ -112,7 +115,9 @@ class Training_offline:
 
         #-------Initial conditions for R102
         self.ST_ini_R102 = ST_ini_R102/100         #Initial condition for reactor
+        self.ST_ini_R102_res = ST_ini_R102/100
         self.SV_ini_R102 = SV_ini_R102/100         #Initial condition for reactor
+        self.SV_ini_R102_res = SV_ini_R102/100
         self.Cc_ini_R102 = Cc_R102             #Initial Concentration to charge R102
         self.Ch_ini_R102 = Ch_R102           
         self.Co_ini_R102 = Co_R102
@@ -172,10 +177,10 @@ class Training_offline:
         self.Pacum_V107_i = 0
         
         #Initial values for Arrhenius and ADM1
-        self.K_ini_Arr_R101 = 100
+        self.K_ini_Arr_R101 = 10
         self.K_ini_ADM1_R101 = 0.0000001
-        self.Ea_ini_R101 = 50000
-        self.K_ini_Arr_R102 = 100
+        self.Ea_ini_R101 = 100000
+        self.K_ini_Arr_R102 = 10
         self.K_ini_ADM1_R102 = 0.0000001
         self.Ea_ini_R102 = 100000
         
@@ -413,9 +418,9 @@ class Training_offline:
             AsynSeries["_time"] = pd.to_datetime(AsynSeries["_time"], format = "mixed")
             AsynSeries = AsynSeries.sort_values("_time")
             merge_df = pd.merge_asof(timeSeries, AsynSeries, on = "_time", direction = 'backward')
-            merge_df["_value"] = replace_outliers_with_interpolation(merge_df["_value"])
+            #merge_df["_value"] = replace_outliers_with_interpolation(merge_df["_value"])
             merge_df = merge_df["_value"]
-            merge_df = merge_df.fillna(0)
+            merge_df = merge_df.ffill()
             return merge_df
 
         #function to make treatment of outliers
@@ -828,8 +833,8 @@ class Training_offline:
             xH2S_V107 = alignDimension(time_definitive, xH2S_V107)
             xH2_V107 = alignDimension(time_definitive, xH2_V107)
             #feeding data
-            MNS = alignDimension(time_definitive, MNS)
-            print(MNS)
+            # MNS = alignDimension(time_definitive, MNS)
+            # print(MNS)
 
             self.DataPlant = pd.DataFrame({"time": time_definitive,
                                         "normal_time": normal_time,
@@ -1091,6 +1096,10 @@ class Training_offline:
             self.DataPlant["xH2S_V107_filled"] = mean_value_xH2S_V107
         else:
             self.DataPlant["xH2S_V107_filled"] = self.DataPlant["xH2S_V107"]
+        
+        self.DataPlant = self.DataPlant.drop_duplicates(subset = "time", keep = "first")
+        self.DataPlant.ffill(inplace=True)
+        self.DataPlant.bfill(inplace=True)
     
     def LimitReagentCalculation(self):
         self.SN = self.Datainterfaz["_value"]["MNS"]
@@ -1149,7 +1158,7 @@ class Training_offline:
             #Proximate analysis for mixture
             self.ST = (self.ST1*self.MP1 + self.ST2*self.MP2 + self.ST3*self.MP3 + self.ST4*self.MP4)/100
             self.SV = (self.SV1*self.MP1 + self.SV2*self.MP2 + self.SV3*self.MP3 + self.SV4*self.MP4)/100
-            self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + self.rho3*self.MP3 + self.rho4*self.MP4 + 1000*self.MPH)/100
+            self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + self.rho3*self.MP3 + self.rho4*self.MP4 + 1000*self.MPH)
             
             gCc1 = self.Cc1 * self.MP1 * self.ST1; gCc2 = self.Cc2 * self.MP2 * self.ST2; gCc3 = self.Cc3 * self.MP3 * self.ST3; gCc4 = self.Cc4 * self.MP4 * self.ST4    #Carbon content
             gCh1 = self.Ch1 * self.MP1 * self.ST1; gCh2 = self.Ch2 * self.MP2 * self.ST2; gCh3 = self.Ch3 * self.MP3 * self.ST3; gCh4 = self.Ch4 * self.MP4 * self.ST4    #hydrogen content
@@ -1204,7 +1213,7 @@ class Training_offline:
             #Proximate analysis for mixture
             self.ST = (self.ST1*self.MP1 + self.ST2*self.MP2 + self.ST3*self.MP3)/100
             self.SV = (self.SV1*self.MP1 + self.SV2*self.MP2 + self.SV3*self.MP3)/100
-            self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + self.rho3*self.MP3 + 1000*self.MPH)/100
+            self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + self.rho3*self.MP3 + 1000*self.MPH)
             
             gCc1 = self.Cc1 * self.MP1 * self.ST1; gCc2 = self.Cc2 * self.MP2 * self.ST2; gCc3 = self.Cc3 * self.MP3 * self.ST3    #Carbon content
             gCh1 = self.Ch1 * self.MP1 * self.ST1; gCh2 = self.Ch2 * self.MP2 * self.ST2; gCh3 = self.Ch3 * self.MP3 * self.ST3    #hydrogen content
@@ -1247,7 +1256,7 @@ class Training_offline:
             #Proximate analysis for mixture
             self.ST = (self.ST1*self.MP1 + self.ST2*self.MP2 )/100
             self.SV = (self.SV1*self.MP1 + self.SV2*self.MP2 )/100
-            self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + 1000*self.MPH)/100
+            self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + 1000*self.MPH)
             
             gCh1 = self.Ch1 * self.MP1 * self.ST1; gCh2 = self.Ch2 * self.MP2 * self.ST2    #hydrogen content
             gCc1 = self.Cc1 * self.MP1 * self.ST1; gCc2 = self.Cc2 * self.MP2 * self.ST2    #Carbon content
@@ -1278,7 +1287,7 @@ class Training_offline:
             #Proximate analysis for mixture
             self.ST = (self.ST1*self.MP1 )/100
             self.SV = (self.SV1*self.MP1 )/100
-            self.rho = (self.rho1*self.MP1 + 1000*self.MPH)/100
+            self.rho = (self.rho1*self.MP1 + 1000*self.MPH)
             
             gCh1 = self.Ch1 * self.MP1 * self.ST1   #hydrogen content
             gCc1 = self.Cc1 * self.MP1 * self.ST1   #Carbon content
@@ -1327,10 +1336,10 @@ class Training_offline:
         
         #sustrate
         self.MW_sustrato = self.n*12.01 + self.a*1.01 + self.b*16 + self.c*14 + self.d*32
-        self.Cst_sus = (self.rho*(self.ST/100))/self.MW_sustrato
-        self.Cst_sus_gl = (self.rho*(self.ST/100))
-        self.Csv_sus = (self.rho*(self.SV/100))/self.MW_sustrato
-        self.Csv_sus_gl = (self.rho*(self.SV/100))
+        self.Cst_sus = (self.rho*(self.ST))/self.MW_sustrato
+        self.Cst_sus_gl = (self.rho*(self.ST))
+        self.Csv_sus = (self.rho*(self.SV))/self.MW_sustrato
+        self.Csv_sus_gl = (self.rho*(self.SV))
         self.Cfixed = self.Cst_sus - self.Csv_sus
     
     def StochoimetricExpenditure(self, Model):
@@ -1347,6 +1356,12 @@ class Training_offline:
             #Compounds by mol V101 
             # Accumulated
             self.biogas_mol_V101_acum = ((self.DataPlant["Pacum_V101"]*6894.76)*self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.biogas_mol_V101_acum.ffill(inplace=True)
+            self.biogas_mol_V101_acum.bfill(inplace=True)
+            self.biogas_mol_V101_acum_NN = self.biogas_mol_V101_acum
+            if self.biogas_mol_V101_acum.iloc[0]>0:
+                nbiogas_max_value = max(self.biogas_mol_V101_acum)
+                self.biogas_mol_V101_acum = self.biogas_mol_V101_acum - nbiogas_max_value
             self.nCH4_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCH4_V101_filled"]/100
             self.nCO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCO2_V101_filled"]/100
             self.nO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xO2_V101_filled"]/100
@@ -1372,6 +1387,9 @@ class Training_offline:
             #Compound by mol V102
             #Accumulated (mol)
             self.biogas_mol_V102_acum = ((self.DataPlant["Pacum_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.biogas_mol_V102_acum.ffill(inplace=True)
+            self.biogas_mol_V102_acum.bfill(inplace = True)
+            self.biogas_mol_V102_acum_NN = self.biogas_mol_V102_acum
             self.nCH4_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCH4_V102_filled"]/100
             self.nCO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCO2_V102_filled"]/100
             self.nO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xO2_V102_filled"]/100
@@ -1397,6 +1415,8 @@ class Training_offline:
             #compound by mol V107
             #Accumulated
             self.biogas_mol_V107_acum = ((self.DataPlant["Pacum_V107"]*6894.76)*self.Volume_V107/1000)/(8.314*(self.DataPlant["T_V107"]+273.15))
+            self.biogas_mol_V107_acum.ffill(inplace=True)
+            self.biogas_mol_V107_acum.bfill(inplace=True)
             self.nCH4_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCH4_V107_filled"]/100
             self.nCO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xCO2_V107_filled"]/100
             self.nO2_V107_acum = self.biogas_mol_V107_acum * self.DataPlant["xO2_V107_filled"]/100
@@ -1464,59 +1484,121 @@ class Training_offline:
             self.mass_inlet = self.DataPlant["P104"] * self.rho * (self.tp/60) * self.SV/100   #gSV (grams of volatile solids)
             
             #Mass Balance
+            normal_time = []
             OM_int_SV = []
             OM_in_SV = []
             OM_int_ST = []
             OM_in_ST = []
             mol_int = []
             mol_in = []
+            Q_P104 = []
+            T_R101 = []
+            mass_out = []
             
-            for i in range (len(self.mass_inlet)):
+            for i in range (len(self.mass_inlet)-1):
                 #Mass balance in grams for volatile solids
                 self.mass_ini = (self.SV_ini_R101 * 30 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101))
-                self.mass_in = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl = (self.SV_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_in = ((self.SV) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl = (self.SV_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
                 self.mass_outg = self.dwbio_dt.iloc[i]
                 self.SV_ini_R101 = (self.mass_ini + self.mass_in - self.mass_outl - self.mass_outg)/30/(self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
                 self.Csus_ini_SV_R101_gl = self.SV_ini_R101 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
-                OM_int_SV.append(self.SV_ini_R101)
+                if not pd.isna(self.SV_ini_R101):
+                    OM_int_SV.append(self.SV_ini_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (SVR101).")
+                            OM_int_SV.append(self.SV_ini_R101_res)
+                        else:
+                            OM_int_SV.append(self.TrainMode["SV_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (SVR101).")
+                        OM_int_SV.append(self.SV_ini_R101_res)
                 OM_in_SV.append(self.mass_in)
                 # Mass balance in grams for total solids
                 self.mass_ini_ST = (self.ST_ini_R101 * 30 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101))
-                self.mass_in_ST = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_ST = (self.ST_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_in_ST = ((self.ST) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_ST = (self.ST_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
                 self.mass_outg_ST = self.dwbio_dt.iloc[i]
                 self.ST_ini_R101 = (self.mass_ini_ST + self.mass_in_ST - self.mass_outl_ST - self.mass_outg_ST)/30/(self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
-                OM_int_ST.append(self.ST_ini_R101)
+                self.Csus_ini_ST_R101_gl = self.ST_ini_R101 * (self.substrate_ratio.iloc[i]*self.rho + self.inoculum_ratio.iloc[i]*self.rho_ini_R101)
+                if not pd.isna(self.ST_ini_R101):
+                    OM_int_ST.append(self.ST_ini_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (ST_R101).")
+                            OM_int_ST.append(self.ST_ini_R101_res)
+                        else:
+                            OM_int_ST.append(self.TrainMode["ST_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (ST_R101).")
+                        OM_int_ST.append(self.ST_ini_R101_res)
                 OM_in_ST.append(self.mass_in_ST)
                 # Mass balance in mol volatile solids
                 self.mol_ini = (self.Csus_ini_SV_R101 * 30)
-                self.mol_in = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
-                self.mol_outl = (self.Csus_ini_SV_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_in = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60))
+                self.mol_outl = (self.Csus_ini_SV_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60))
                 self.mol_outg = self.dnCH4_dt.iloc[i]*(1/(self.substrate_ratio.iloc[i]*self.s_CH4 + self.inoculum_ratio.iloc[i]*self.s_CH4_ini_R101))
                 self.Csus_ini_SV_R101 = (self.mol_ini + self.mol_in - self.mol_outl - self.mol_outg)/30
+                if not pd.isna(self.Csus_ini_SV_R101):
+                    mol_int.append(self.Csus_ini_SV_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (ST_R101).")
+                            mol_int.append(self.Csus_ini_SV_R101_res)
+                        else:
+                            mol_int.append(self.TrainMode["ST_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (ST_R101).")
+                        mol_int.append(self.Csus_ini_SV_R101_res)
                 mol_in.append(self.mol_in)
-                mol_int.append(self.Csus_ini_SV_R101)
+                # Storage time to avoid dimenssion issues
+                normal_time.append(self.DataPlant["normal_time"].iloc[i])
+                mass_out.append(self.dwbio_dt.iloc[i])
+                Q_P104.append(self.DataPlant["P104"].iloc[i])
+                T_R101.append(self.DataPlant["Tprom_R101"].iloc[i])
                 
-            self.TrainMode = pd.DataFrame({"time": self.DataPlant["normal_time"],
+            print("mass_ini_SV: ",self.mass_ini) 
+            print("mass_in_SV: ", self.mass_in) 
+            print("mass_outl_SV: ", self.mass_outl)
+            print("mass_outg_SV: ", self.mass_outg)
+            print("rho_R101_SV: ", (self.substrate_ratio.iloc[-1]*self.rho + self.inoculum_ratio.iloc[-1]*self.rho_ini_R101))
+            print("SV_ini_R101: ", self.SV_ini_R101)
+
+            print("mass_ini_ST: ",self.mass_ini_ST) 
+            print("mass_in_ST: ", self.mass_in_ST) 
+            print("mass_outl_ST: ", self.mass_outl_ST)
+            print("mass_outg_ST: ", self.mass_outg_ST)
+            print("ST_ini_R101: ", self.ST_ini_R101)
+            
+            self.TrainMode = pd.DataFrame({"time": normal_time,
                                         "SV_exp_R101": OM_int_SV,
                                         "VS_in": OM_in_SV,
                                         "ST_exp_R101": OM_int_ST,
                                         "TS_in": OM_in_ST,
                                         "Csus_exp": mol_int,
                                         "mol_org_in": mol_in,
-                                        "mass_out": self.dwbio_dt,
-                                        "Q_P104":self.DataPlant["P104"],
-                                        "T_R101":self.DataPlant["Tprom_R101"]})
+                                        "mass_out": mass_out,
+                                        "Q_P104": Q_P104,
+                                        "T_R101": T_R101})
+            
             self.TrainMode["Vol"] = 30
             self.TrainMode["Csus_in_R101"] = self.Csv_sus
             self.x_R101 = (self.TrainMode["Csus_in_R101"] - self.TrainMode["Csus_exp"])/self.TrainMode["Csus_in_R101"]
 
             if self.Model == "Gompertz":
-                self.V_bio_Gompertz = self.DataPlant["Vacum_V101"]/self.mass_ini      #gompertz exit Lbio/gSV
+                V_acum_Gompertz = self.DataPlant["Vacum_V101"]
+                if V_acum_Gompertz.iloc[0] > 0:
+                    max_value_Vacum_gompertz = max(V_acum_Gompertz)
+                else:
+                    V_acum_Gompertz = V_acum_Gompertz - max_value_Vacum_gompertz
+                self.V_bio_Gompertz = V_acum_Gompertz/self.mass_ini      #gompertz exit Lbio/gSV
                 self.TrainMode_gompertz = pd.DataFrame({"time": self.DataPlant["normal_time"],
                                                         "y_t_exp": self.V_bio_Gompertz,
-                                                        "Vacum_V101": self.DataPlant["Vacum_V101"]})
+                                                        "Vacum_V101": V_acum_Gompertz})
             
             self.global_time = self.global_time + (10/1440)
             self.OC_R101 = self.SV_ini_R101/self.global_time
@@ -1525,6 +1607,12 @@ class Training_offline:
             #Compounds by mol V101 
             # Accumulated
             self.biogas_mol_V101_acum = ((self.DataPlant["Pacum_V101"]*6894.76)*self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.biogas_mol_V101_acum.ffill(inplace=True)
+            self.biogas_mol_V101_acum.bfill(inplace=True)
+            self.biogas_mol_V101_acum_NN = self.biogas_mol_V101_acum
+            if self.biogas_mol_V101_acum.iloc[0]>0:
+                nbiogas_max_value_V101 = max(self.biogas_mol_V101_acum)
+                self.biogas_mol_V101_acum = self.biogas_mol_V101_acum - nbiogas_max_value_V101
             self.nCH4_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCH4_V101_filled"]/100
             self.nCO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCO2_V101_filled"]/100
             self.nO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xO2_V101_filled"]/100
@@ -1550,6 +1638,11 @@ class Training_offline:
             #Compound by mol V102
             #Accumulated (mol)
             self.biogas_mol_V102_acum = ((self.DataPlant["Pacum_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.biogas_mol_V102_acum.ffill(inplace=True)
+            self.biogas_mol_V102_acum.bfill(inplace=True)
+            if self.biogas_mol_V102_acum.iloc[0]>0:
+                nbiogas_max_value_V102 = max(self.biogas_mol_V102_acum)
+                self.biogas_mol_V102_acum = self.biogas_mol_V102_acum - nbiogas_max_value_V102
             self.nCH4_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCH4_V102_filled"]/100
             self.nCO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCO2_V102_filled"]/100
             self.nO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xO2_V102_filled"]/100
@@ -1674,6 +1767,11 @@ class Training_offline:
             # mass inyected to R101
             self.mass_inlet = self.DataPlant["P104"] * self.rho * (self.tp/60) * self.SV/100   #gSV (grams of volatile solids)
 
+            #time, pumps and temperature
+            normal_time = []
+            Q_P104 = []
+            Q_P101 = []
+
             #Mass Balance R101
             OM_int_SV_R101 = []
             OM_in_SV_R101 = []
@@ -1681,6 +1779,8 @@ class Training_offline:
             OM_in_ST_R101 = []
             mol_int_R101 = []
             mol_in_R101 = []
+            T_R101 = []
+            mass_out_R101 = []
 
             #Mass Balance R102
             OM_int_SV_R102 = []
@@ -1689,80 +1789,159 @@ class Training_offline:
             OM_in_ST_R102 = []
             mol_int_R102 = []
             mol_in_R102 = []
+            T_R102 = []
+            mass_out_R102 = []
 
-            for i in range (len(self.mass_inlet)):
+            for i in range (len(self.mass_inlet - 1)):
                 # Mass balance in R101
                 #Mass balance in grams for volatile solids
                 self.mass_ini_R101 = (self.SV_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
-                self.mass_in_R101 = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_R101 = (self.SV_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)          #This mass in to R102
+                self.mass_in_R101 = ((self.SV) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_R101 = (self.SV_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)          #This mass in to R102
                 self.mass_outg_R101 = self.dwbio_dt_R101.iloc[i]
                 self.SV_ini_R101 = (self.mass_ini_R101 + self.mass_in_R101 - self.mass_outl_R101 - self.mass_outg_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
                 self.Csus_ini_SV_R101_gl = self.SV_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
-                OM_int_SV_R101.append(self.SV_ini_R101)
+                if not pd.isna(self.SV_ini_R101):
+                    OM_int_SV_R101.append(self.SV_ini_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (SVR101).")
+                            OM_int_SV_R101.append(self.SV_ini_R101_res)
+                        else:
+                            OM_int_SV_R101.append(self.TrainMode["SV_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (SVR101).")
+                        OM_int_SV_R101.append(self.SV_ini_R101_res)
                 OM_in_SV_R101.append(self.mass_in_R101)
                 # Mass balance in grams for total solids
                 self.mass_ini_ST_R101 = (self.ST_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
-                self.mass_in_ST_R101 = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_ST_R101 = (self.ST_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_in_ST_R101 = ((self.ST) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_ST_R101 = (self.ST_ini_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
                 self.mass_outg_ST_R101 = self.dwbio_dt_R101.iloc[i]
                 self.ST_ini_R101 = (self.mass_ini_ST_R101 + self.mass_in_ST_R101 - self.mass_outl_ST_R101 - self.mass_outg_ST_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
-                OM_int_ST_R101.append(self.ST_ini_R101)
+                self.Csus_ini_ST_R101_gl = self.ST_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
+                if not pd.isna(self.ST_ini_R101):
+                    OM_int_ST_R101.append(self.ST_ini_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR101).")
+                            OM_int_ST_R101.append(self.ST_ini_R101_res)
+                        else:
+                            OM_int_ST_R101.append(self.TrainMode["ST_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR101).")
+                        OM_int_ST_R101.append(self.ST_ini_R101_res)
                 OM_in_ST_R101.append(self.mass_in_ST_R101)
                 # Mass balance in mol volatile solids
                 self.mol_ini_R101 = (self.Csus_ini_SV_R101 * 30)
-                self.mol_in_R101 = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
-                self.mol_outl_R101 = (self.Csus_ini_SV_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_in_R101 = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60))
+                self.mol_outl_R101 = (self.Csus_ini_SV_R101 * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60))
                 self.mol_outg_R101 = self.dnCH4_dt_R101.iloc[i]*(1/(self.substrate_ratio_R101.iloc[i]*self.s_CH4 + self.inoculum_ratio_R101.iloc[i]*self.s_CH4_ini_R101))
                 self.Csus_ini_SV_R101 = (self.mol_ini_R101 + self.mol_in_R101 - self.mol_outl_R101 - self.mol_outg_R101)/30
+                if not pd.isna(self.Csus_ini_SV_R101):
+                    mol_int_R101.append(self.Csus_ini_SV_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR101).")
+                            mol_int_R101.append(self.Csus_ini_SV_R101_res)
+                        else:
+                            mol_int_R101.append(self.TrainMode["Csus_exp"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR101).")
+                        mol_int_R101.append(self.ST_ini_R101_res)
                 mol_in_R101.append(self.mol_in_R101)
-                mol_int_R101.append(self.Csus_ini_SV_R101)
-
+        
                 #Mass balance in R102
                 #Mass balance in grams for volatile solids
                 self.mass_ini_R102 = (self.SV_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
-                self.mass_in_R102 = ((self.SV_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_R102 = (self.SV_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)          #This mass in to R102
+                self.mass_in_R102 = ((self.SV_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_R102 = (self.SV_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)          #This mass in to R102
                 self.mass_outg_R102 = self.dwbio_dt_R102.iloc[i]
                 self.SV_ini_R102 = (self.mass_ini_R102 + self.mass_in_R102 - self.mass_outl_R102 - self.mass_outg_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
-                OM_int_SV_R102.append(self.SV_ini_R102)
+                if not pd.isna(self.SV_ini_R102):
+                    OM_int_SV_R102.append(self.SV_ini_R102)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (SVR102).")
+                            OM_int_SV_R102.append(self.SV_ini_R102_res)
+                        else:
+                            OM_int_SV_R102.append(self.TrainMode["SV_exp_R102"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (SVR102).")
+                        OM_int_SV_R102.append(self.SV_ini_R102_res)
                 OM_in_SV_R102.append(self.mass_in_R102)
                 # Mass balance in grams for total solids
                 self.mass_ini_ST_R102 = (self.ST_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
-                self.mass_in_ST_R102 = ((self.ST_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_ST_R102 = (self.ST_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_in_ST_R102 = ((self.ST_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_ST_R102 = (self.ST_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
                 self.mass_outg_ST_R102 = self.dwbio_dt_R102.iloc[i]
                 self.ST_ini_R102 = (self.mass_ini_ST_R102 + self.mass_in_ST_R102 - self.mass_outl_ST_R102 - self.mass_outg_ST_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
-                OM_int_ST_R102.append(self.ST_ini_R102)
+                if not pd.isna(self.ST_ini_R102):
+                    OM_int_ST_R102.append(self.ST_ini_R102)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR102).")
+                            OM_int_ST_R102.append(self.ST_ini_R102_res)
+                        else:
+                            OM_int_ST_R102.append(self.TrainMode["ST_exp_R102"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR102).")
+                        OM_int_ST_R102.append(self.ST_ini_R102_res)
                 OM_in_ST_R102.append(self.mass_in_ST_R102)
                 # Mass balance in mol volatile solids
                 self.mol_ini_R102 = (self.Csus_ini_SV_R102 * 30)
-                self.mol_in_R102 = (self.Csus_ini_SV_R101 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
-                self.mol_outl_R102 = (self.Csus_ini_SV_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_in_R102 = (self.Csus_ini_SV_R101 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60))
+                self.mol_outl_R102 = (self.Csus_ini_SV_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60))
                 self.mol_outg_R102 = self.dnCH4_dt_R102.iloc[i]*(1/(self.substrate_ratio_R102.iloc[i]*self.s_CH4 + self.inoculum_ratio_R102.iloc[i]*self.s_CH4_ini_R102))
                 self.Csus_ini_SV_R102 = (self.mol_ini_R102 + self.mol_in_R102 - self.mol_outl_R102 - self.mol_outg_R102)/30
+                if not pd.isna(self.Csus_ini_SV_R102):
+                    mol_int_R102.append(self.Csus_ini_SV_R102)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR102).")
+                            mol_int_R102.append(self.Csus_ini_SV_R102_res)
+                        else:
+                            mol_int_R102.append(self.TrainMode["Csus_exp"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR102).")
+                        mol_int_R102.append(self.ST_ini_R102_res)
                 mol_in_R102.append(self.mol_in_R102)
-                mol_int_R102.append(self.Csus_ini_SV_R102)
 
-            self.TrainMode = pd.DataFrame({"time": self.DataPlant["normal_time"],
+                #Rest of variable for match lenght
+                normal_time.append(self.DataPlant["normal_time"].iloc[i])
+                T_R101.append(self.DataPlant["Tprom_R101"].iloc[i])
+                T_R102.append(self.DataPlant["Tprom_R102"].iloc[i])
+                Q_P104.append(self.DataPlant["P104"].iloc[i])
+                Q_P101.append(self.DataPlant["P101"].iloc[i])
+                mass_out_R101.append(self.dwbio_dt_R101.iloc[i])
+                mass_out_R102.append(self.dwbio_dt_R102.iloc[i])
+
+
+            self.TrainMode = pd.DataFrame({"time": normal_time,
                                         "SV_exp_R101": OM_int_SV_R101,
                                         "VS_in_R101": OM_in_SV_R101,
                                         "ST_exp_R101": OM_int_ST_R101,
                                         "TS_in_R101": OM_in_ST_R101,
                                         "Csus_exp_R101": mol_int_R101,
                                         "mol_org_in_exp": mol_in_R101,
-                                        "mass_out_R101": self.dwbio_dt_R101,
-                                        "T_R101":self.DataPlant["Tprom_R101"],
+                                        "mass_out_R101": mass_out_R101,
+                                        "T_R101": T_R101,
                                         "SV_exp_R102": OM_int_SV_R102,
                                         "VS_in_R102": OM_in_SV_R102,
                                         "ST_exp_R102": OM_int_ST_R102,
                                         "TS_in_R102": OM_in_ST_R102,
                                         "Csus_exp_R102": mol_int_R102,
                                         "mol_org_in_exp": mol_in_R102,
-                                        "mass_out_R102": self.dwbio_dt_R102,
-                                        "T_R102":self.DataPlant["Tprom_R102"],
-                                        "Q_P104":self.DataPlant["P104"],
-                                        "Q_P101":self.DataPlant["P101"],
+                                        "mass_out_R102": mass_out_R102,
+                                        "T_R102":T_R102,
+                                        "Q_P104":Q_P104,
+                                        "Q_P101":Q_P101
                                         })
 
             self.TrainMode["Vol_R101"] = 30
@@ -1770,15 +1949,25 @@ class Training_offline:
             self.TrainMode["Csus_in_R101"] = self.Csv_sus
 
             self.x_R101 = (self.TrainMode["Csus_in_R101"] - self.TrainMode["Csus_exp_R101"])/self.TrainMode["Csus_in_R101"]
+            self.x_R102 = (self.TrainMode["Csus_exp_R101"] - self.TrainMode["Csus_exp_R102"])/self.TrainMode["Csus_exp_R101"]
 
             if self.Model == "Gompertz":
-                self.V_bio_Gompertz_R101 = self.DataPlant["Vacum_V101"]/self.mass_ini_R101      #gompertz exit Lbio/gSV
-                self.V_bio_gompertz_R102 = self.DataPlant["Vacum_V102"]/self.mass_ini_R102      #gompertz exit Lbio/gSV
+                V_acum_Gompertz_V101 = self.DataPlant["Vacum_V101"]
+                if V_acum_Gompertz_V101.iloc[0]>0:
+                    max_value_Vacum_gompertz_V101 = max(V_acum_Gompertz_V101)
+                    V_acum_Gompertz_V101 = V_acum_Gompertz_V101 - max_value_Vacum_gompertz_V101
+                V_acum_Gompertz_V102 = self.DataPlant["Vacum_V102"]
+                if V_acum_Gompertz_V102.iloc[0]>0:
+                    max_value_Vacum_gompertz_V102 = max(V_acum_Gompertz_V102)
+                    V_acum_Gompertz_V102 = V_acum_Gompertz_V102 - max_value_Vacum_gompertz_V102
+
+                self.V_bio_Gompertz_R101 = V_acum_Gompertz_V101/self.mass_ini_R101      #gompertz exit Lbio/gSV
+                self.V_bio_Gompertz_R102 = V_acum_Gompertz_V102/self.mass_ini_R102      #gompertz exit Lbio/gSV
                 self.TrainMode_gompertz = pd.DataFrame({"time": self.DataPlant["normal_time"],
                                                         "y_t_exp_R101": self.V_bio_Gompertz_R101,
                                                         "y_t_exp_R102": self.V_bio_Gompertz_R102,
-                                                        "Vacum_V101": self.DataPlant["Vacum_V101"],
-                                                        "Vacum_V102": self.DataPlant["Vacum_V101"]})
+                                                        "Vacum_V101": V_acum_Gompertz_V101,
+                                                        "Vacum_V102": V_acum_Gompertz_V102})
             
             self.global_time = self.global_time + (10/1440)
             self.OC_R101 = self.SV_ini_R101/self.global_time
@@ -1787,6 +1976,12 @@ class Training_offline:
             #Compounds by mol V101 
             # Accumulated
             self.biogas_mol_V101_acum = ((self.DataPlant["Pacum_V101"]*6894.76)*self.Volume_V101/1000)/(8.314*(self.DataPlant["T_V101"]+273.15))
+            self.biogas_mol_V101_acum.ffill(inplace=True)
+            self.biogas_mol_V101_acum.bfill(inplace=True)
+            self.biogas_mol_V101_acum_NN = self.biogas_mol_V101_acum
+            if self.biogas_mol_V101_acum.iloc[0]>0:
+                nbiogas_max_value_V101 = max(self.biogas_mol_V101_acum)
+                self.biogas_mol_V101_acum = self.biogas_mol_V101_acum - nbiogas_max_value_V101
             self.nCH4_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCH4_V101_filled"]/100
             self.nCO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xCO2_V101_filled"]/100
             self.nO2_V101_acum = self.biogas_mol_V101_acum * self.DataPlant["xO2_V101_filled"]/100
@@ -1812,6 +2007,12 @@ class Training_offline:
             #Compound by mol V102
             #Accumulated (mol)
             self.biogas_mol_V102_acum = ((self.DataPlant["Pacum_V102"]*6894.76)*self.Volume_V102/1000)/(8.314*(self.DataPlant["T_V102"]+273.15))
+            self.biogas_mol_V102_acum.ffill(inplace=True)
+            self.biogas_mol_V102_acum.bfill(inplace=True)
+            self.biogas_mol_V102_acum_NN = self.biogas_mol_V102_acum
+            if self.biogas_mol_V102_acum.iloc[0]>0:
+                nbiogas_max_value_V102 = max(self.biogas_mol_V102_acum)
+                self.biogas_mol_V102_acum = self.biogas_mol_V102_acum - nbiogas_max_value_V102
             self.nCH4_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCH4_V102_filled"]/100
             self.nCO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xCO2_V102_filled"]/100
             self.nO2_V102_acum = self.biogas_mol_V102_acum * self.DataPlant["xO2_V102_filled"]/100
@@ -1935,6 +2136,12 @@ class Training_offline:
             self.substrate_ratio_R102 = (self.Vol_inj_R102/70).clip(upper=1)
             self.inoculum_ratio_R102 = 1 - self.substrate_ratio_R102
 
+            #Time
+            normal_time = []
+            Q_P104 = []
+            Q_P101 = []
+            Q_P102 = []
+
             #Mass Balance R101
             OM_int_SV_R101 = []
             OM_in_SV_R101 = []
@@ -1942,6 +2149,8 @@ class Training_offline:
             OM_in_ST_R101 = []
             mol_int_R101 = []
             mol_in_R101 = []
+            T_R101 = []
+            mass_out_R101 = []
 
             #Mass Balance R102
             OM_int_SV_R102 = []
@@ -1950,82 +2159,160 @@ class Training_offline:
             OM_in_ST_R102 = []
             mol_int_R102 = []
             mol_in_R102 = []
+            T_R102 = []
+            mass_out_R102 = []
 
-            for i in range (len(self.DataPlant["time"])):
+            for i in range (len(self.DataPlant["time"] - 1)):
                 # Mass balance in R101
                 #Mass balance in grams for volatile solids
                 self.mass_ini_R101 = (self.SV_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
-                self.mass_in_R101 = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho) + ((self.SV_ini_R102) * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i]/60) * self.rho_ini_R102)
-                self.mass_outl_R101 = (self.SV_ini_R101 * (self.DataPlant["P104"].iloc[i] + self.DataPlant["P102"].iloc[i]) * (self.tp.iloc[i]/60) * self.rho)          
+                self.mass_in_R101 = ((self.SV/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho) + ((self.SV_ini_R102) * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho_ini_R102)
+                self.mass_outl_R101 = (self.SV_ini_R101 * (self.DataPlant["P104"].iloc[i] + self.DataPlant["P102"].iloc[i]) * (self.tp.iloc[i+1]/60) * self.rho)          
                 self.mass_outg_R101 = self.dwbio_dt_R101.iloc[i]
                 self.SV_ini_R101 = (self.mass_ini_R101 + self.mass_in_R101 - self.mass_outl_R101 - self.mass_outg_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
                 self.Csus_ini_SV_R101_gl = self.SV_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
-                OM_int_SV_R101.append(self.SV_ini_R101)
+                if not pd.isna(self.SV_ini_R101):
+                    OM_int_SV_R101.append(self.SV_ini_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (SVR101).")
+                            OM_int_SV_R101.append(self.SV_ini_R101_res)
+                        else:
+                            OM_int_SV_R101.append(self.TrainMode["SV_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (SVR101).")
+                        OM_int_SV_R101.append(self.SV_ini_R101_res)
                 OM_in_SV_R101.append(self.mass_in_R101)
                 # Mass balance in grams for total solids
                 self.mass_ini_ST_R101 = (self.ST_ini_R101 * 30 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101))
-                self.mass_in_ST_R101 = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60) * self.rho) + ((self.ST_ini_R102) * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i]/60) * self.rho_ini_R102)
-                self.mass_outl_ST_R101 = (self.ST_ini_R101 * (self.DataPlant["P104"].iloc[i]+self.DataPlant["P102"]) * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_in_ST_R101 = ((self.ST/100) * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho) + ((self.ST_ini_R102) * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho_ini_R102)
+                self.mass_outl_ST_R101 = (self.ST_ini_R101 * (self.DataPlant["P104"].iloc[i]+self.DataPlant["P102"]) * (self.tp.iloc[i+1]/60) * self.rho)
                 self.mass_outg_ST_R101 = self.dwbio_dt_R101.iloc[i]
                 self.ST_ini_R101 = (self.mass_ini_ST_R101 + self.mass_in_ST_R101 - self.mass_outl_ST_R101 - self.mass_outg_ST_R101)/30/(self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
                 self.Csus_ini_ST_R101_gl = self.ST_ini_R101 * (self.substrate_ratio_R101.iloc[i]*self.rho + self.inoculum_ratio_R101.iloc[i]*self.rho_ini_R101)
-                OM_int_ST_R101.append(self.ST_ini_R101)
+                if not pd.isna(self.ST_ini_R101):
+                    OM_int_ST_R101.append(self.ST_ini_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR101).")
+                            OM_int_ST_R101.append(self.ST_ini_R101_res)
+                        else:
+                            OM_int_ST_R101.append(self.TrainMode["ST_exp_R101"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR101).")
+                        OM_int_ST_R101.append(self.ST_ini_R101_res)
                 OM_in_ST_R101.append(self.mass_in_ST_R101)
                 # Mass balance in mol volatile solids
                 self.mol_ini_R101 = (self.Csus_ini_SV_R101 * 30)
-                self.mol_in_R101 = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i]/60)) + (self.Csus_ini_SV_R102 * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i]/60))
-                self.mol_outl_R101 = (self.Csus_ini_SV_R101 * (self.DataPlant["P104"].iloc[i] + self.DataPlant["P101"].iloc[i]) * (self.tp.iloc[i]/60))
+                self.mol_in_R101 = (self.Csv_sus * self.DataPlant["P104"].iloc[i] * (self.tp.iloc[i+1]/60)) + (self.Csus_ini_SV_R102 * self.DataPlant["P102"].iloc[i] * (self.tp.iloc[i+1]/60))
+                self.mol_outl_R101 = (self.Csus_ini_SV_R101 * (self.DataPlant["P104"].iloc[i] + self.DataPlant["P101"].iloc[i]) * (self.tp.iloc[i+1]/60))
                 self.mol_outg_R101 = self.dnCH4_dt_R101.iloc[i]*(1/(self.substrate_ratio_R101.iloc[i]*self.s_CH4 + self.inoculum_ratio_R101.iloc[i]*self.s_CH4_ini_R101))
                 self.Csus_ini_SV_R101 = (self.mol_ini_R101 + self.mol_in_R101 - self.mol_outl_R101 - self.mol_outg_R101)/30
-                mol_in_R101.append(self.mol_in_R101)
+                if not pd.isna(self.Csus_ini_SV_R101):
+                    mol_int_R101.append(self.Csus_ini_SV_R101)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR101).")
+                            mol_int_R101.append(self.Csus_ini_SV_R101_res)
+                        else:
+                            mol_int_R101.append(self.TrainMode["Csus_exp"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR101).")
+                        mol_int_R101.append(self.ST_ini_R101_res)
                 mol_int_R101.append(self.Csus_ini_SV_R101)
 
                 #Mass balance in R102
                 #Mass balance in grams for volatile solids
                 self.mass_ini_R102 = (self.SV_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
-                self.mass_in_R102 = ((self.SV_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_R102 = (self.SV_ini_R102 * (self.DataPlant["P101"].iloc[i]) * (self.tp.iloc[i]/60) * self.rho)          #This mass in to R102
+                self.mass_in_R102 = ((self.SV_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_R102 = (self.SV_ini_R102 * (self.DataPlant["P101"].iloc[i]) * (self.tp.iloc[i+1]/60) * self.rho)          #This mass in to R102
                 self.mass_outg_R102 = self.dwbio_dt_R102.iloc[i]
                 self.SV_ini_R102 = (self.mass_ini_R102 + self.mass_in_R102 - self.mass_outl_R102 - self.mass_outg_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
-                OM_int_SV_R102.append(self.SV_ini_R102)
+                if not pd.isna(self.SV_ini_R102):
+                    OM_int_SV_R102.append(self.SV_ini_R102)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (SVR102).")
+                            OM_int_SV_R102.append(self.SV_ini_R102_res)
+                        else:
+                            OM_int_SV_R102.append(self.TrainMode["SV_exp_R102"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (SVR102).")
+                        OM_int_SV_R102.append(self.SV_ini_R102_res)
                 OM_in_SV_R102.append(self.mass_in_R102)
                 # Mass balance in grams for total solids
                 self.mass_ini_ST_R102 = (self.ST_ini_R102 * 30 * (self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102))
-                self.mass_in_ST_R102 = ((self.ST_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
-                self.mass_outl_ST_R102 = (self.ST_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60) * self.rho)
+                self.mass_in_ST_R102 = ((self.ST_ini_R101) * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
+                self.mass_outl_ST_R102 = (self.ST_ini_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60) * self.rho)
                 self.mass_outg_ST_R102 = self.dwbio_dt_R102.iloc[i]
                 self.ST_ini_R102 = (self.mass_ini_ST_R102 + self.mass_in_ST_R102 - self.mass_outl_ST_R102 - self.mass_outg_ST_R102)/30/(self.substrate_ratio_R102.iloc[i]*self.rho + self.inoculum_ratio_R102.iloc[i]*self.rho_ini_R102)
-                OM_int_ST_R102.append(self.ST_ini_R102)
+                if not pd.isna(self.ST_ini_R102):
+                    OM_int_ST_R102.append(self.ST_ini_R102)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR102).")
+                            OM_int_ST_R102.append(self.ST_ini_R102_res)
+                        else:
+                            OM_int_ST_R102.append(self.TrainMode["ST_exp_R102"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR102).")
+                        OM_int_ST_R102.append(self.ST_ini_R102_res)
                 OM_in_ST_R102.append(self.mass_in_ST_R102)
                 # Mass balance in mol volatile solids
                 self.mol_ini_R102 = (self.Csus_ini_SV_R102 * 30)
-                self.mol_in_R102 = (self.Csus_ini_SV_R101 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
-                self.mol_outl_R102 = (self.Csus_ini_SV_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i]/60))
+                self.mol_in_R102 = (self.Csus_ini_SV_R101 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60))
+                self.mol_outl_R102 = (self.Csus_ini_SV_R102 * self.DataPlant["P101"].iloc[i] * (self.tp.iloc[i+1]/60))
                 self.mol_outg_R102 = self.dnCH4_dt_R102.iloc[i]*(1/(self.substrate_ratio_R102.iloc[i]*self.s_CH4 + self.inoculum_ratio_R102.iloc[i]*self.s_CH4_ini_R102))
                 self.Csus_ini_SV_R102 = (self.mol_ini_R102 + self.mol_in_R102 - self.mol_outl_R102 - self.mol_outg_R102)/30
+                if not pd.isna(self.Csus_ini_SV_R102):
+                    mol_int_R102.append(self.Csus_ini_SV_R102)
+                else:
+                    try:
+                        if self.TrainMode.empty:
+                            print("Error with the calculos of interal concentration (STR102).")
+                            mol_int_R102.append(self.Csus_ini_SV_R102_res)
+                        else:
+                            mol_int_R102.append(self.TrainMode["Csus_exp"].iloc[0])
+                    except AttributeError:
+                        print("Error with the calculos of interal concentration (STR102).")
+                        mol_int_R102.append(self.ST_ini_R102_res)
                 mol_in_R102.append(self.mol_in_R102)
-                mol_int_R102.append(self.Csus_ini_SV_R102)
+
+                #Rest of variable for match lenght
+                normal_time.append(self.DataPlant["normal_time"].iloc[i])
+                T_R101.append(self.DataPlant["Tprom_R101"].iloc[i])
+                T_R102.append(self.DataPlant["Tprom_R102"].iloc[i])
+                Q_P104.append(self.DataPlant["P104"].iloc[i])
+                Q_P101.append(self.DataPlant["P101"].iloc[i])
+                Q_P102.append(self.DataPlant["P102"].iloc[i])
+                mass_out_R101.append(self.dwbio_dt_R101.iloc[i])
+                mass_out_R102.append(self.dwbio_dt_R102.iloc[i])
             
-            self.TrainMode = pd.DataFrame({"time": self.DataPlant["normal_time"],
+            self.TrainMode = pd.DataFrame({"time": normal_time,
                                         "SV_exp_R101": OM_int_SV_R101,
                                         "VS_in_R101": OM_in_SV_R101,
                                         "ST_exp_R101": OM_int_ST_R101,
                                         "TS_in_R101": OM_in_ST_R101,
                                         "Csus_exp_R101": mol_int_R101,
                                         "mol_org_in_exp": mol_in_R101,
-                                        "mass_out_R101": self.dwbio_dt_R101,
-                                        "T_R101":self.DataPlant["Tprom_R101"],
+                                        "mass_out_R101": mass_out_R101,
+                                        "T_R101":T_R101,
                                         "SV_exp_R102": OM_int_SV_R102,
                                         "VS_in_R102": OM_in_SV_R102,
                                         "ST_exp_R102": OM_int_ST_R102,
                                         "TS_in_R102": OM_in_ST_R102,
                                         "Csus_exp_R102": mol_int_R102,
                                         "mol_org_in_exp": mol_in_R102,
-                                        "mass_out_R102": self.dwbio_dt_R102,
-                                        "T_R102":self.DataPlant["Tprom_R102"],
-                                        "Q_P104":self.DataPlant["P104"],
-                                        "Q_P101":self.DataPlant["P101"],
-                                        "Q_P102":self.DataPlant["P102"],
+                                        "mass_out_R102": mass_out_R102,
+                                        "T_R102":T_R102,
+                                        "Q_P104":Q_P104,
+                                        "Q_P101":Q_P101,
+                                        "Q_P102":Q_P102,
                                         })
 
             self.TrainMode["Vol_R101"] = 30
@@ -2033,18 +2320,158 @@ class Training_offline:
             self.TrainMode["Csus_in_R101"] = self.Csv_sus
 
             self.x_R101 = (self.TrainMode["Csus_in_R101"] - self.TrainMode["Csus_exp_R101"])/self.TrainMode["Csus_in_R101"]
+            self.x_R102 = (self.TrainMode["Csus_exp_R101"] - self.TrainMode["Csus_exp_R102"])/self.TrainMode["Csus_exp_R101"]
 
             if self.Model == "Gompertz":
-                self.V_bio_Gompertz_R101 = self.DataPlant["Vacum_V101"]/self.mass_ini_R101      #gompertz exit Lbio/gSV
-                self.V_bio_Gompertz_R102 = self.DataPlant["Vacum_V102"]/self.mass_ini_R102      #gompertz exit Lbio/gSV
+                V_acum_Gompertz_V101 = self.DataPlant["Vacum_V101"]
+                if V_acum_Gompertz_V101.iloc[0]>0:
+                    max_value_Vacum_gompertz_V101 = max(V_acum_Gompertz_V101)
+                    V_acum_Gompertz_V101 = V_acum_Gompertz_V101 - max_value_Vacum_gompertz_V101
+                V_acum_Gompertz_V102 = self.DataPlant["Vacum_V102"]
+                if V_acum_Gompertz_V102.iloc[0]>0:
+                    max_value_Vacum_gompertz_V102 = max(V_acum_Gompertz_V102)
+                    V_acum_Gompertz_V102 = V_acum_Gompertz_V102 - max_value_Vacum_gompertz_V102
+                
+                self.V_bio_Gompertz_R101 = V_acum_Gompertz_V101/self.mass_ini_R101      #gompertz exit Lbio/gSV
+                self.V_bio_Gompertz_R102 = V_acum_Gompertz_V102/self.mass_ini_R102      #gompertz exit Lbio/gSV
                 self.TrainMode_gompertz = pd.DataFrame({"time": self.DataPlant["normal_time"],
                                                         "y_t_exp_R101": self.V_bio_Gompertz_R101,
                                                         "y_t_exp_R102": self.V_bio_Gompertz_R102,
-                                                        "Vacum_V101": self.DataPlant["Vacum_V101"],
-                                                        "Vacum_V102": self.DataPlant["Vacum_V101"]})
+                                                        "Vacum_V101": V_acum_Gompertz_V101,
+                                                        "Vacum_V102": V_acum_Gompertz_V102})
             
             self.global_time = self.global_time + (10/1440)
             self.OC_R101 = self.SV_ini_R101/self.global_time
+    
+    # def OptimizationArrhenius(self, resolution):
+    
+    #     def model_Arrhenius(C, t, K, Ea, t_array, VR_vec, T_vec, Q1_vec, Q2_vec, Csus1_vec, Csus2_vec, Operation):
+    #         idx = np.searchsorted(t_array, t, side='right') - 1
+    #         idx = max(min(idx, len(t_array) - 1), 0)
+    #         R = 8.314
+    #         T_val = T_vec[idx]
+    #         Q1_val = Q1_vec[idx]
+    #         Q2_val = Q2_vec[idx]
+    #         Csus1_val = Csus1_vec[idx]
+    #         Csus2_val = Csus2_vec[idx]
+    #         VR_val = VR_vec[idx]
+
+    #         if Operation == 1:
+    #             return ((Q1_val / VR_val) * (Csus1_val - C)) - (C * K * np.exp(-Ea / (R * T_val))) / VR_val
+    #         elif Operation == 2:
+    #             return (Q1_val * Csus1_val + Q2_val * Csus2_val - (Q1_val + Q2_val) * C - C * K * np.exp(-Ea / (R * T_val))) / VR_val
+    #         elif Operation == 3:
+    #             return (Q1_val * Csus1_val + Q2_val * C - Q1_val * C - C * K * np.exp(-Ea / (R * T_val))) / VR_val
+    #         return 0
+
+    #     def Optimization(t, C_exp, y0, VR, temperatures, Qi1, Csus_in_i1, Qi2, Csus_in_i2, Operation, K_init, Ea_init):
+    #         t = np.array(t)
+    #         C_exp = np.array(C_exp)
+    #         y0 = float(y0)
+
+    #         T_vec = np.interp(t, t, temperatures)
+    #         Q1_vec = np.interp(t, t, Qi1)
+    #         Q2_vec = np.interp(t, t, Qi2)
+    #         VR_vec = np.interp(t, t, VR)
+    #         Csus1_vec = np.interp(t, t, Csus_in_i1)
+    #         Csus2_vec = np.interp(t, t, Csus_in_i2)
+
+    #         def objective(params):
+    #             K, Ea = params
+    #             try:
+    #                 C_model = odeint(model_Arrhenius, y0, t, args=(K, Ea, t, VR_vec, T_vec, Q1_vec, Q2_vec, Csus1_vec, Csus2_vec, Operation)).flatten()
+    #                 return np.sum((C_exp - C_model) ** 2)
+    #             except Exception:
+    #                 return 1e10
+
+    #         bounds = [(1e-5, 1e5), (1000, 200000)]
+    #         result = minimize(objective, [K_init, Ea_init], method='L-BFGS-B', bounds=bounds)
+    #         return result
+
+    #     # Preparar datos comunes
+    #     t_exp = (self.TrainMode["time"] * 60).tolist()
+    #     T_R101 = (self.TrainMode["T_R101"] + 273.15).tolist()
+    #     Q_P104 = (self.TrainMode["Q_P104"] / 60).tolist()
+    #     K_R101, Ea_R101, Error_R101 = [], [], []
+
+    #     if self.Operation_mode in [1, 2]:
+    #         C_exp = self.TrainMode["Csus_exp"].tolist()
+    #         VR_exp = self.TrainMode["Vol"].tolist()
+    #         Csus_in = self.TrainMode["Csus_in_R101"].tolist()
+    #         for i in range(len(t_exp) - resolution + 1):
+    #             try:
+    #                 res = Optimization(
+    #                     t_exp[i:i+resolution], C_exp[i:i+resolution], C_exp[i],
+    #                     VR_exp[i:i+resolution], T_R101[i:i+resolution],
+    #                     Q_P104[i:i+resolution], Csus_in[i:i+resolution],
+    #                     Q_P104[i:i+resolution], Csus_in[i:i+resolution],
+    #                     1, self.K_ini_Arr_R101, self.Ea_ini_R101
+    #                 )
+    #                 K_R101.append(res.x[0])
+    #                 Ea_R101.append(res.x[1])
+    #                 Error_R101.append(res.fun)
+    #             except Exception:
+    #                 continue
+    #         self.K_mean_R101 = st.mean(K_R101)
+    #         self.Ea_mean_R101 = st.mean(Ea_R101)
+
+    #     elif self.Operation_mode in [3, 5, 4]:
+    #         C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()
+    #         VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()
+    #         Csus_in_R101 = self.TrainMode["Csus_in_R101"].tolist()
+    #         C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()
+    #         VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()
+    #         T_R102 = (self.TrainMode["T_R102"] + 273.15).tolist()
+    #         Q_P101 = (self.TrainMode["Q_P101"] / 60).tolist()
+    #         Q_P102 = (self.TrainMode["Q_P102"] / 60).tolist() if "Q_P102" in self.TrainMode.columns else Q_P101
+    #         K_R102, Ea_R102, Error_R102 = [], [], []
+
+    #         for i in range(len(t_exp) - resolution + 1):
+    #             # R101
+    #             try:
+    #                 res1 = Optimization(
+    #                     t_exp[i:i+resolution], C_exp_R101[i:i+resolution], C_exp_R101[i],
+    #                     VR_exp_R101[i:i+resolution], T_R101[i:i+resolution],
+    #                     Q_P104[i:i+resolution], Csus_in_R101[i:i+resolution],
+    #                     Q_P102[i:i+resolution] if self.Operation_mode == 4 else Q_P104[i:i+resolution],
+    #                     C_exp_R102[i:i+resolution] if self.Operation_mode == 4 else Csus_in_R101[i:i+resolution],
+    #                     2 if self.Operation_mode == 4 else 1,
+    #                     self.K_ini_Arr_R101, self.Ea_ini_R101
+    #                 )
+    #                 K_R101.append(res1.x[0])
+    #                 Ea_R101.append(res1.x[1])
+    #                 Error_R101.append(res1.fun)
+    #             except Exception:
+    #                 continue
+
+    #             # R102
+    #             try:
+    #                 res2 = Optimization(
+    #                     t_exp[i:i+resolution], C_exp_R102[i:i+resolution], C_exp_R102[i],
+    #                     VR_exp_R102[i:i+resolution], T_R102[i:i+resolution],
+    #                     Q_P101[i:i+resolution], C_exp_R101[i:i+resolution],
+    #                     Q_P101[i:i+resolution], Csus_in_R101[i:i+resolution],
+    #                     1, self.K_ini_Arr_R102, self.Ea_ini_R102
+    #                 )
+    #                 K_R102.append(res2.x[0])
+    #                 Ea_R102.append(res2.x[1])
+    #                 Error_R102.append(res2.fun)
+    #             except Exception:
+    #                 continue
+
+    #         self.K_mean_R101 = st.mean(K_R101)
+    #         self.Ea_mean_R101 = st.mean(Ea_R101)
+    #         self.K_mean_R102 = st.mean(K_R102)
+    #         self.Ea_mean_R102 = st.mean(Ea_R102)
+
+    #         # self.Optimized_parameters = pd.DataFrame({
+    #         #     "time": self.TrainMode["time"],
+    #         #     "K_R101": K_R101 + [None] * (len(self.TrainMode["time"]) - len(K_R101)),
+    #         #     "Ea_R101": Ea_R101 + [None] * (len(self.TrainMode["time"]) - len(Ea_R101)),
+    #         #     "K_R102": K_R102 + [None] * (len(self.TrainMode["time"]) - len(K_R102)),
+    #         #     "Ea_R102": Ea_R102 + [None] * (len(self.TrainMode["time"]) - len(Ea_R102))
+    #         # })
+
     
     def OptimizationArrhenius (self, resolution):
         """
@@ -2086,7 +2513,7 @@ class Training_offline:
                 Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
                 Csus_in2 = lambda t: np.interp(t, t_train, Csus_in_i2)
                 
-                C_model = odeint(model_Arrhenius, y0, t, args = (K, Ea, VR_func, T_func, Q_func1, Q_func2, Csus_in1, Csus_in2, Operation)).flatten()
+                C_model = odeint(model_Arrhenius, y0, t, args = (K, Ea, VR_func, T_func, Q_func1, Q_func2, Csus_in1, Csus_in2, Operation), rtol=1e-4, atol=1e-6).flatten()
 
                 squared_diff = np.sum((C_exp - C_model) ** 2)
                 return squared_diff
@@ -2095,12 +2522,12 @@ class Training_offline:
             return result
         
         if self.Operation_mode == 1 or self.Operation_mode == 2:
-            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            t_exp = (self.TrainMode["time"]).tolist()      #minutes
             C_exp = self.TrainMode["Csus_exp"].tolist()    #Kmol/m3 = mol/L
             VR_exp = self.TrainMode["Vol"].tolist()        #L 
             Csus_in = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
             T_R101 = (self.TrainMode["T_R101"]+273.15).tolist()  #K     
-            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/min 
             
             K = []
             Ea = []
@@ -2112,12 +2539,17 @@ class Training_offline:
                 T_R101_opt = T_R101[i : i+resolution]
                 Q_P104_opt = Q_P104[i : i+resolution]
                 Csus_in_opt = Csus_in[i : i + resolution]
-                Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
-                                                  temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
-                K.append(Opt_kinetic_params.x[0])
-                Ea.append(Opt_kinetic_params.x[1])
-                Error.append(Opt_kinetic_params.fun)
+
+                try:
+                    Opt_kinetic_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt,
+                                                    temperatures = T_R101_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt,
+                                                    Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
+                    K.append(Opt_kinetic_params.x[0])
+                    Ea.append(Opt_kinetic_params.x[1])
+                    Error.append(Opt_kinetic_params.fun)
+                except Exception as e:
+                    print(e)
+                    continue
                 # self.K_ini_Arr_R101 = st.mean(K)
                 # self.Ea_ini_Arr_R101 = st.mean(Ea)
                 # print("Pre_exponentialfactor", Opt_kinetic_params.x[0], "Activation Energy", Opt_kinetic_params.x[1], "Error", Opt_kinetic_params.fun)
@@ -2125,14 +2557,13 @@ class Training_offline:
             self.K_mean_R101 = st.mean(K)
             self.Ea_mean_R101 = st.mean(Ea)
 
-        
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
-                                                    "K_R101": K,
-                                                    "Ea_R101": Ea,
-                                                    "Error": Error})
+            # self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+            #                                         "K_R101": K,
+            #                                         "Ea_R101": Ea,
+            #                                         "Error": Error})
         
         elif self.Operation_mode in [3,5]:
-            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            t_exp = (self.TrainMode["time"]).tolist()                #minutes
             C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
             VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
             Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
@@ -2140,8 +2571,8 @@ class Training_offline:
             VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L
             T_R101 = (self.TrainMode["T_R101"]+273.15).tolist()  #K   
             T_R102 = (self.TrainMode["T_R102"]+273.154).tolist() #K   
-            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
-            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/min 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/min
 
             K_R101 = []
             Ea_R101 = []
@@ -2165,21 +2596,26 @@ class Training_offline:
                 T_opt_R102 = T_R102[i : i+resolution]
                 Q_P101_opt = Q_P101[i : i+resolution]
 
-                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101,
-                                                  temperatures = T_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
-                                                  Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
-                
-                K_R101.append(Opt_kinetic_params_R101.x[0])
-                Ea_R101.append(Opt_kinetic_params_R101.x[1])
-                Error_R101.append(Opt_kinetic_params_R101.fun)
-
-                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102,
-                                                  temperatures = T_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R102, Ea = self.Ea_ini_R102)
-                
-                K_R102.append(Opt_kinetic_params_R102.x[0])
-                Ea_R102.append(Opt_kinetic_params_R102.x[1])
-                Error_R102.append(Opt_kinetic_params_R102.fun)
+                try:
+                    Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = float(C_exp_opt_R101[0]), VR = VR_exp_opt_R101,
+                                                    temperatures = T_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                    Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
+                    
+                    K_R101.append(Opt_kinetic_params_R101.x[0])
+                    Ea_R101.append(Opt_kinetic_params_R101.x[1])
+                    Error_R101.append(Opt_kinetic_params_R101.fun)
+                except Exception as e:
+                    continue
+                try:
+                    Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102,
+                                                    temperatures = T_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
+                                                    Qi2 = Q_P101_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R102, Ea = self.Ea_ini_R102)
+                    
+                    K_R102.append(Opt_kinetic_params_R102.x[0])
+                    Ea_R102.append(Opt_kinetic_params_R102.x[1])
+                    Error_R102.append(Opt_kinetic_params_R102.fun)
+                except Exception as e:
+                    continue
             
             self.K_mean_R101 = st.mean(K_R101)
             self.Ea_mean_R101 = st.mean(Ea_R101)
@@ -2188,16 +2624,16 @@ class Training_offline:
             self.Ea_mean_R102 = st.mean(Ea_R102)
 
 
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
-                                                "K_R101": K_R101,
-                                                "Ea_R101": Ea_R101,
-                                                "Error_R101": Error_R101,
-                                                "K_R102": K_R102,
-                                                "Ea_R102": Ea_R102,
-                                                "Error_R102": Error_R102})
+            # self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+            #                                     "K_R101": K_R101,
+            #                                     "Ea_R101": Ea_R101,
+            #                                     "Error_R101": Error_R101,
+            #                                     "K_R102": K_R102,
+            #                                     "Ea_R102": Ea_R102,
+            #                                     "Error_R102": Error_R102})
             
         else:  #Operation Mode 4
-            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            t_exp = (self.TrainMode["time"]).tolist()   #seconds
             C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
             VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
             Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
@@ -2205,9 +2641,9 @@ class Training_offline:
             VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L
             T_R101 = (self.TrainMode["T_R101"]+273.15).tolist()  #K   
             T_R102 = (self.TrainMode["T_R102"]+273.154).tolist() #K   
-            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
-            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
-            Q_P102 = (self.TrainMode["Q_P102"]/60).tolist()    #L/s
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/min 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/min
+            Q_P102 = (self.TrainMode["Q_P102"]/60).tolist()    #L/min
 
             K_R101 = []
             Ea_R101 = []
@@ -2231,22 +2667,28 @@ class Training_offline:
                 T_opt_R102 = T_R102[i : i+resolution]
                 Q_P101_opt = Q_P101[i : i+resolution]
 
-                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101,
-                                                  temperatures = T_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
-                                                  Qi2 = Q_P102_opt, Csus_in_i2 = C_exp_opt_R102, Operation = 2, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
-                
+                try:
+                    Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101,
+                                                    temperatures = T_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                    Qi2 = Q_P102_opt, Csus_in_i2 = C_exp_opt_R102, Operation = 2, K = self.K_ini_Arr_R101, Ea = self.Ea_ini_R101)
+                    
 
-                K_R101.append(Opt_kinetic_params_R101.x[0])
-                Ea_R101.append(Opt_kinetic_params_R101.x[1])
-                Error_R101.append(Opt_kinetic_params_R101.fun)
-
-                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102,
-                                                  temperatures = T_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
-                                                  Qi2 = Q_P101_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R102, Ea = self.Ea_ini_R102)
+                    K_R101.append(Opt_kinetic_params_R101.x[0])
+                    Ea_R101.append(Opt_kinetic_params_R101.x[1])
+                    Error_R101.append(Opt_kinetic_params_R101.fun)
+                except Exception as e:
+                    continue
                 
-                K_R102.append(Opt_kinetic_params_R102.x[0])
-                Ea_R102.append(Opt_kinetic_params_R102.x[1])
-                Error_R102.append(Opt_kinetic_params_R102.fun)
+                try:
+                    Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102,
+                                                    temperatures = T_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
+                                                    Qi2 = Q_P101_opt, Csus_in_i2 = Csus_in_opt_R101, Operation = 1, K = self.K_ini_Arr_R102, Ea = self.Ea_ini_R102)
+                    
+                    K_R102.append(Opt_kinetic_params_R102.x[0])
+                    Ea_R102.append(Opt_kinetic_params_R102.x[1])
+                    Error_R102.append(Opt_kinetic_params_R102.fun)
+                except Exception as e:
+                    continue
 
             self.K_ini_Arr_R101 = st.mean(K_R101)
             self.Ea_ini_R102 = st.mean(Ea_R101)
@@ -2255,11 +2697,11 @@ class Training_offline:
             self.Ea_ini_R102 = st.mean(Ea_R102)
 
 
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
-                                                "K_R101": K_R101,
-                                                "Ea_R101": Ea_R101,
-                                                "K_R102": K_R102,
-                                                "Ea_R102": Ea_R102})
+            # self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+            #                                     "K_R101": K_R101,
+            #                                     "Ea_R101": Ea_R101,
+            #                                     "K_R102": K_R102,
+            #                                     "Ea_R102": Ea_R102})
     def OptimizationADM1(self, resolution):
         
         def model_ADM1(C, t, K, VR_in_func, Q_func_1, Q_func_2, Csus_in_func_1, Csus_in_func_2, Operation):
@@ -2280,7 +2722,7 @@ class Training_offline:
         def Optimization(t, C_exp, y0, VR, Qi1, Csus_in_i1, Qi2, Csus_in_i2, Operation, K=1): 
             # Define the objective function to minimize
             def objective(params):
-                K = params
+                K = params[0]
                 t_train = t
                 #interpol the vectors according to experimental time
                 Q_func1 = lambda t: np.interp(t, t_train, Qi1)
@@ -2298,11 +2740,11 @@ class Training_offline:
             return result
         
         if self.Operation_mode in [1,2]:
-            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            t_exp = (self.TrainMode["time"]).tolist()      #minutes
             C_exp = self.TrainMode["Csus_exp"].tolist()    #Kmol/m3 = mol/L
             VR_exp = self.TrainMode["Vol"].tolist()        #L 
             Csus_in = self.TrainMode["Csus_in_R101"].to_list()  #mol/L     
-            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/min 
             
             K = []
             Error = []
@@ -2324,26 +2766,29 @@ class Training_offline:
                 # print("Operation:", 1)
                 time.sleep(0.001)
 
-                Opt_kinetc_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt, 
-                                                 Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_ini_ADM1_R101)
+                try:
+                    Opt_kinetc_params = Optimization(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_exp_opt[0], VR = VR_exp_opt, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt, 
+                                                    Qi2 = Q_P104_opt, Csus_in_i2 = Csus_in_opt, Operation = 1, K = self.K_ini_ADM1_R101)
                 
-                K.append(Opt_kinetc_params.x[0])
-                Error.append(Opt_kinetc_params.fun)
+                    K.append(Opt_kinetc_params.x[0])
+                    Error.append(Opt_kinetc_params.fun)
+                except Exception as e:
+                    continue
             
             self.K_ini_ADM1_R101 = float(st.mean(K))
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
-                                                    "K_R101": K,
-                                                    "Error": Error})
+            # self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+            #                                         "K_R101": K,
+            #                                         "Error": Error})
         
         elif self.Operation_mode in [3, 5]:
-            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            t_exp = (self.TrainMode["time"]).tolist()                #minutes
             C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
             VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
             Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
             C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()    #mol/L
             VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L   
-            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
-            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/min 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/min
 
             K_R101 = []
             Error_R101 = []
@@ -2362,37 +2807,43 @@ class Training_offline:
                 VR_exp_opt_R102 = VR_exp_R102[i : i+resolution]
                 Q_P101_opt = Q_P101[i : i+resolution]
 
-                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
-                                                      Qi2 = Q_P104_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R101)
+                try:
+                    Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                        Qi2 = Q_P104_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R101)
+                    
+                    K_R101.append(Opt_kinetic_params_R101.x[0])
+                    Error_R101.append(Opt_kinetic_params_R101.fun)
+                except Exception as e:
+                    continue
                 
-                K_R101.append(Opt_kinetic_params_R101.x[0])
-                Error_R101.append(Opt_kinetic_params_R101.fun)
-
-                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
-                                                       Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R102)
-                
-                K_R102.append(Opt_kinetic_params_R102.x[0])
-                Error_R102.append(Opt_kinetic_params_R102.fun)
+                try:
+                    Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R102, Qi1 = Q_P101_opt, Csus_in_i1 = C_exp_opt_R101,
+                                                        Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R102)
+                    
+                    K_R102.append(Opt_kinetic_params_R102.x[0])
+                    Error_R102.append(Opt_kinetic_params_R102.fun)
+                except Exception as e:
+                    continue
             
             self.K_ini_ADM1_R101 = st.mean(K_R101)
             self.K_ini_ADM1_R102 = st.mean(K_R102)
 
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
-                                                    "K_R101": K_R101,
-                                                    "Error_R101": Error_R101,
-                                                    "K_R102": K_R102,
-                                                    "Error_R102": Error_R102})
+            # self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+            #                                         "K_R101": K_R101,
+            #                                         "Error_R101": Error_R101,
+            #                                         "K_R102": K_R102,
+            #                                         "Error_R102": Error_R102})
             
         else:  #Operation Mode 4
-            t_exp = (self.TrainMode["time"]*60).tolist()   #seconds
+            t_exp = (self.TrainMode["time"]).tolist()                #minutes
             C_exp_R101 = self.TrainMode["Csus_exp_R101"].tolist()    #Kmol/m3 = mol/L
             VR_exp_R101 = self.TrainMode["Vol_R101"].tolist()        #L 
             Csus_in_R101 = self.TrainMode["Csus_in_R101"].to_list()  #mol/L
             C_exp_R102 = self.TrainMode["Csus_exp_R102"].tolist()    #mol/L
             VR_exp_R102 = self.TrainMode["Vol_R102"].tolist()        #L
-            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()    #L/s 
-            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()    #L/s
-            Q_P102 = (self.TrainMode["Q_P102"]/60).tolist()    #L/s
+            Q_P104 = (self.TrainMode["Q_P104"]/60).tolist()          #L/min 
+            Q_P101 = (self.TrainMode["Q_P101"]/60).tolist()          #L/min
+            Q_P102 = (self.TrainMode["Q_P102"]/60).tolist()          #L/min
 
             K_R101 = []
             Error_R101 = []
@@ -2412,26 +2863,32 @@ class Training_offline:
                 VR_exp_opt_R102 = VR_exp_R102[i : i+resolution]
                 Q_P101_opt = Q_P101[i : i+resolution]
 
-                Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
-                                                       Qi2 = Q_P102_opt, Csus_in_i2 = C_exp_opt_R102, Operation = 2, K = self.K_ini_ADM1_R101)
+                try:
+                    Opt_kinetic_params_R101 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R101, y0 = C_exp_opt_R101[0], VR = VR_exp_opt_R101, Qi1 = Q_P104_opt, Csus_in_i1 = Csus_in_opt_R101,
+                                                        Qi2 = Q_P102_opt, Csus_in_i2 = C_exp_opt_R102, Operation = 2, K = self.K_ini_ADM1_R101)
+                    
+                    K_R101.append(Opt_kinetic_params_R101.x[0])
+                    Error_R101.append(Opt_kinetic_params_R101.fun)
+                except Exception as e:
+                    continue
                 
-                K_R101.append(Opt_kinetic_params_R101.x[0])
-                Error_R101.append(Opt_kinetic_params_R101.fun)
-
-                Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R101[0], Qi1 = Q_P101_opt, Csis_in_i1 = C_exp_opt_R101,
-                                                       Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R102)
-                
-                K_R102.append(Opt_kinetic_params_R102.x[0])
-                Error_R102.append(Opt_kinetic_params_R102.fun)
+                try:
+                    Opt_kinetic_params_R102 = Optimization(t = t_exp_opt, C_exp = C_exp_opt_R102, y0 = C_exp_opt_R102[0], VR = VR_exp_opt_R101[0], Qi1 = Q_P101_opt, Csis_in_i1 = C_exp_opt_R101,
+                                                        Qi2 = Q_P101_opt, Csus_in_i2 = C_exp_opt_R101, Operation = 1, K = self.K_ini_ADM1_R102)
+                    
+                    K_R102.append(Opt_kinetic_params_R102.x[0])
+                    Error_R102.append(Opt_kinetic_params_R102.fun)
+                except Exception as e:
+                    continue
             
             self.K_ini_ADM1_R101 = st.mean(K_R101)
             self.K_ini_ADM1_R102 = st.mean(K_R102)
 
-            self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
-                                                    "K_R101": K_R101,
-                                                    "Error_R101": Error_R101,
-                                                    "K_R102": K_R102,
-                                                    "Error_R102": Error_R102})
+            # self.Optimized_parameters = pd.DataFrame({"time": self.TrainMode["time"],
+            #                                         "K_R101": K_R101,
+            #                                         "Error_R101": Error_R101,
+            #                                         "K_R102": K_R102,
+            #                                         "Error_R102": Error_R102})
             
     def Optimization_Gompertz(self):
         def model_Gompertz(t, ym, U, L):
@@ -2499,6 +2956,20 @@ class Training_offline:
         self.mol_H2O_V107 = (self.biogas_AbsoluteHumidity_V107 * self.DataPlant["Vacum_V107"])/18
 
         #Adsorptia estimation
+        self.nCH4_V101_acum_f = self.biogas_mol_V101_acum_NN * self.DataPlant["xCH4_V101_filled"]/100
+        self.nCO2_V101_acum_f = self.biogas_mol_V101_acum_NN * self.DataPlant["xCO2_V101_filled"]/100
+        self.nO2_V101_acum_f = self.biogas_mol_V101_acum_NN * self.DataPlant["xO2_V101_filled"]/100
+        self.nH2S_V101_acum_f = self.biogas_mol_V101_acum_NN * self.DataPlant["xH2S_V101_filled"]/1000000
+        self.nH2_V101_acum_f = self.biogas_mol_V101_acum_NN * self.DataPlant["xH2_V101_filled"]/1000000
+        self.nNH3_V101_acum_f = self.nCH4_V101_acum_f * (self.s_NH3/self.s_CH4)
+
+        self.nCH4_V102_acum_f = self.biogas_mol_V102_acum_NN * self.DataPlant["xCH4_V102_filled"]/100
+        self.nCO2_V102_acum_f = self.biogas_mol_V102_acum_NN * self.DataPlant["xCO2_V102_filled"]/100
+        self.nO2_V102_acum_f = self.biogas_mol_V102_acum_NN * self.DataPlant["xO2_V102_filled"]/100
+        self.nH2S_V102_acum_f = self.biogas_mol_V102_acum_NN * self.DataPlant["xH2S_V102_filled"]/1000000
+        self.nH2_V102_acum_f = self.biogas_mol_V102_acum_NN * self.DataPlant["xH2_V102_filled"]/1000000
+        self.nNH3_V102_acum_f = self.nCH4_V102_acum_f * (self.s_NH3/self.s_CH4)
+
         mol_in_H2O = (self.mol_H2O_V101 + self.mol_H2O_V102)
         mol_in_H2S = (self.nH2S_V101_acum + self.nH2S_V102_acum)
         delta_H2O = (self.mol_H2O_V101 + self.mol_H2O_V102) - self.mol_H2O_V107
@@ -2528,7 +2999,9 @@ class Training_offline:
                                                 "mol_in_H2S": mol_in_H2S,
                                                 "mol_out_H2S": self.nH2S_V107_acum,
                                                 "mol_ads_H2S":self.nH2S_ads})
-        
+        #print(self.Train_filters_data)
+        self.Train_filters_data.ffill(inplace=True)
+        self.Train_filters_data.bfill(inplace=True)
         Results_H2O = Langmuir_optimization (params = (self.qmax_H2O, self.K_H2O, self.K2_H2O), t = self.DataPlant["normal_time"], mol_ads_exp = self.nH2O_ads, W = W_silica, mol_transfer = mol_in_H2O)
         Results_H2S = Langmuir_optimization(params = (self.qmax_H2S, self.K_H2S, self.K2_H2S), t = self.DataPlant["normal_time"], mol_ads_exp = self.nH2S_ads, W = W_feSO4, mol_transfer = mol_in_H2S)
         
@@ -2539,18 +3012,23 @@ class Training_offline:
                                                              "K_H2S": float(Results_H2S.x[1]),
                                                              "K2_H2S": float(Results_H2S.x[2])}, index=[0],)
         
-        self.mol_NH3_ads_teo = Langmuir_model(t = self.DataPlant["normal_time"], qmax = qmax_NH3, K1 = K_NH3, K2 = K2_NH3, W = W_carbon, mol_transfer=np.array(self.nNH3_V101_acum + self.nNH3_V102_acum))
+        self.mol_NH3_ads_teo = Langmuir_model(t = self.DataPlant["normal_time"], qmax = qmax_NH3, K1 = K_NH3, K2 = K2_NH3, W = W_carbon, mol_transfer=np.array(self.nNH3_V101_acum_f + self.nNH3_V102_acum_f))
         self.Train_filters_data["nNH3_ads"] = self.mol_NH3_ads_teo
-        self.nNH3_V107_acum = ((self.nNH3_V101_acum + self.nNH3_V102_acum) - self.mol_NH3_ads_teo)
+        total = self.nNH3_V101_acum_f + self.nNH3_V102_acum_f
+        self.nNH3_V107_acum = total.where(total <= self.mol_NH3_ads_teo, total - self.mol_NH3_ads_teo)
 
         #Filter_effciency
         try:
-            self.x_ads_H2O = self.Train_filters_data["mol_ads_H2O"]/self.Train_filters_data["mol_in_H2O"]
-            self.x_ads_H2S = self.Train_filters_data["mol_ads_H2S"]/self.Train_filters_data["mol_in_H2S"]
-            self.x_ads_NH3 = self.Train_filters_data["nNH3_ads"]/(self.nNH3_V101_acum + self.nNH3_V102_acum)
+            self.x_ads_H2O = (self.nH2O_ads)/self.Train_filters_data["mol_in_H2O"]
         except ZeroDivisionError:
             self.x_ads_H2O = 0
+        try:
+            self.x_ads_H2S = (self.nH2S_ads)/self.Train_filters_data["mol_in_H2S"]
+        except ZeroDivisionError:
             self.x_ads_H2S = 0
+        try:
+            self.x_ads_NH3 = (self.mol_NH3_ads_teo)/(self.nNH3_V101_acum + self.nNH3_V102_acum)
+        except ZeroDivisionError:
             self.x_ads_NH3 = 0
 
     def exitVariablestoFrontEnd(self):
@@ -2560,12 +3038,14 @@ class Training_offline:
         """
         self.Mix_Velocity_TK100 = float(self.Mix_Velocity_TK100["_value"].iloc[-1])
 
-        #Pump 104 flow
+       # Pump 104 flow
         last_10_P104 = self.DataPlant["P104"].tail(10)
-        if last_10_P104.iloc[0] != 0:
-            self.P104 = float(last_10_P104.iloc[0])
+        non_zero_P104 = last_10_P104[last_10_P104 != 0]
+
+        if not non_zero_P104.empty:
+            self.P104 = float(non_zero_P104.max())
         else:
-            self.P104 = float(self.DataPlant["P104"].iloc[-1])
+            self.P104 = 0.0  # Or another default value if all are zero
         
         #R101
         self.Mix_Velocity_R101 = float(self.Mix_Velocity_R101["_value"].iloc[-1])
@@ -2573,25 +3053,29 @@ class Training_offline:
         self.T_R101 = float(self.DataPlant["Tprom_R101"].iloc[-1])
         self.x_R101_e = float(self.x_R101.iloc[-1])
 
-        #P101
-        if self.Operation_mode == 1:
-            self.P101 = 0
-        else:
-            last_10_P101 = self.DataPlant["P101"].tail(10)
-            if last_10_P101.iloc[0] != 0:
-                self.P101 = float(last_10_P101.iloc[0])
+        # Pump 101 flow
+        if self.Operation_mode in [2,3,4,5]:
+            last_10_P101 = self.DataPlant["P101"].tail(5)
+            non_zero_P101 = last_10_P101[last_10_P101 != 0]
+
+            if not non_zero_P101.empty:
+                self.P101 = float(non_zero_P101.max())
             else:
-                self.P101 = float(self.DataPlant["P101"].iloc[-1])
+                self.P101 = 0.0  # Or another default value if all are zero
+        else:
+            self.P101 = 0.0
         
-        #P102
-        if self.Operation_mode in [1,2,3]:
-            self.P102 = 0
-        else:
-            last_10_P102 = self.DataPlant["P102"].tail(10)
-            if last_10_P102.iloc[0] != 0:
-                self.P102 = float(last_10_P102.iloc[0])
+        # Pump 102 flow
+        if self.Operation_mode in [4,5]:
+            last_10_P102 = self.DataPlant["P102"].tail(5)
+            non_zero_P102 = last_10_P102[last_10_P102 != 0]
+
+            if not non_zero_P102.empty:
+                self.P102 = float(non_zero_P102.max())
             else:
-                self.P102 = float(self.DataPlant["P102"].iloc[-1])
+                self.P102 = 0.0  # Or another default value if all are zero
+        else:
+            self.P102 = 0.0
 
         #V101
         self.Pacum_V101_e = float(self.DataPlant["Pacum_V101"].iloc[-1])
@@ -2601,21 +3085,21 @@ class Training_offline:
         self.Vnorm_bio_sto_V101 = float((self.P_V101_e*6.8947 * 15 * 273.15)/(100 * (self.T_V101_e + 273.15)))
         self.xCH4_V101_e = float(self.DataPlant["xCH4_V101"].iloc[-1])
         self.VCH4_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xCH4_V101_e/100)
-        self.mol_acum_CH4_V101 = float(self.nCH4_V101_acum.iloc[-1])
+        self.mol_acum_CH4_V101 = float(self.nCH4_V101_acum_f.iloc[-1])
         self.xCO2_V101_e = float(self.DataPlant["xCO2_V101"].iloc[-1])
         self.VCO2_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xCO2_V101_e/100)
-        self.mol_acum_CO2_V101 = float(self.nCO2_V101_acum.iloc[-1])
+        self.mol_acum_CO2_V101 = float(self.nCO2_V101_acum_f.iloc[-1])
         self.xH2S_V101_e = float(self.DataPlant["xH2S_V101"].iloc[-1])
         self.VH2S_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xH2S_V101_e/1000000)
-        self.mol_acum_H2S_V101 = float(self.nH2S_V101_acum.iloc[-1])
+        self.mol_acum_H2S_V101 = float(self.nH2S_V101_acum_f.iloc[-1])
         self.xO2_V101_e = float(self.DataPlant["xO2_V101"].iloc[-1])
         self.VO2_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xO2_V101_e/100)
-        self.mol_acum_O2_V101 = float(self.nO2_V101_acum.iloc[-1])
+        self.mol_acum_O2_V101 = float(self.nO2_V101_acum_f.iloc[-1])
         self.xH2_V101_e = float(self.DataPlant["xH2_V101"].iloc[-1])
         self.VH2_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xH2_V101_e/1000000)
-        self.mol_acum_H2_V101 = float(self.nH2_V101_acum.iloc[-1])
+        self.mol_acum_H2_V101 = float(self.nH2_V101_acum_f.iloc[-1])
         try:
-            self.xNH3_V101_e = (float(self.nNH3_V101_acum.iloc[-1])/(float(self.nNH3_V101_acum.iloc[-1]) + self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101))*1000000
+            self.xNH3_V101_e = (float(self.nNH3_V101_acum_f.iloc[-1])/(float(self.nNH3_V101_acum_f.iloc[-1]) + self.mol_acum_CH4_V101 + self.mol_acum_CO2_V101 + self.mol_acum_H2S_V101 + self.mol_acum_O2_V101 + self.mol_acum_H2_V101))*1000000
         except ZeroDivisionError:
             self.xNH3_V101_e = 0
         self.VNH3_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xNH3_V101_e/1000000)
@@ -2632,21 +3116,21 @@ class Training_offline:
         self.Vnorm_bio_sto_V102 = float((self.P_V102_e*6.8947 * 15 * 273.15)/(100 * (self.T_V102_e + 273.15)))
         self.xCH4_V102_e = float(self.DataPlant["xCH4_V102"].iloc[-1])
         self.VCH4_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xCH4_V102_e/100)
-        self.mol_acum_CH4_V102 = float(self.nCH4_V102_acum.iloc[-1])
+        self.mol_acum_CH4_V102 = float(self.nCH4_V102_acum_f.iloc[-1])
         self.xCO2_V102_e = float(self.DataPlant["xCO2_V102"].iloc[-1])
         self.VCO2_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xCO2_V102_e/100)
-        self.mol_acum_CO2_V102 = float(self.nCO2_V102_acum.iloc[-1])
+        self.mol_acum_CO2_V102 = float(self.nCO2_V102_acum_f.iloc[-1])
         self.xH2S_V102_e = float(self.DataPlant["xH2S_V102"].iloc[-1])
         self.VH2S_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xH2S_V102_e/1000000)
-        self.mol_acum_H2S_V102 = float(self.nH2S_V102_acum.iloc[-1])
+        self.mol_acum_H2S_V102 = float(self.nH2S_V102_acum_f.iloc[-1])
         self.xO2_V102_e = float(self.DataPlant["xO2_V102"].iloc[-1])
         self.VO2_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xO2_V102_e/100)
-        self.mol_acum_O2_V102 = float(self.nO2_V102_acum.iloc[-1])
+        self.mol_acum_O2_V102 = float(self.nO2_V102_acum_f.iloc[-1])
         self.xH2_V102_e = float(self.DataPlant["xH2_V102"].iloc[-1])
         self.VH2_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xH2_V102_e/1000000)
-        self.mol_acum_H2_V102 = float(self.nH2_V102_acum.iloc[-1])
+        self.mol_acum_H2_V102 = float(self.nH2_V102_acum_f.iloc[-1])
         try:
-            self.xNH3_V102_e = (float(self.nNH3_V102_acum.iloc[-1])/(float(self.nNH3_V102_acum.iloc[-1]) + self.mol_acum_CH4_V102 + self.mol_acum_CO2_V102 + self.mol_acum_H2S_V102 + self.mol_acum_O2_V102 + self.mol_acum_H2_V102))*1000000
+            self.xNH3_V102_e = (float(self.nNH3_V102_acum_f.iloc[-1])/(float(self.nNH3_V102_acum_f.iloc[-1]) + self.mol_acum_CH4_V102 + self.mol_acum_CO2_V102 + self.mol_acum_H2S_V102 + self.mol_acum_O2_V102 + self.mol_acum_H2_V102))*1000000
         except ZeroDivisionError:
             self.xNH3_V102_e = 0
         self.VNH3_acum_V102 = self.Vnorm_bio_sto_V102 * (self.xNH3_V102_e/1000000)
@@ -2699,18 +3183,52 @@ class Training_offline:
         self.mol_NH3_ads = self.mol_NH3_ads_teo.iloc[-1]
         self.mol_H2S_ads = self.nH2S_ads.iloc[-1]
         self.mol_H2O_ads = self.nH2O_ads.iloc[-1]
-        self.Xglobal = (self.x_ads_H2O.iloc[-1] + self.x_ads_H2S.iloc[-1] + self.x_ads_NH3.iloc[-1])/3
+        try:
+            mol_in_H2O = self.Train_filters_data["mol_in_H2O"].iloc[-1]
+            if mol_in_H2O != 0 and not pd.isna(mol_in_H2O):
+                x_ads_H2O = self.mol_H2O_ads / mol_in_H2O
+            else:
+                x_ads_H2O = 0
+            # print("mol_in_H2O:", mol_in_H2O)
+            # print("mol_H2O_ads:", self.mol_H2O_ads)
+            # print("x_ads_H2O:", x_ads_H2O)
+        except Exception as e:
+            print("Error calculating x_ads_H2O:", e)
+            x_ads_H2O = 0
+        try:
+            mol_in_H2S = self.Train_filters_data["mol_in_H2S"].iloc[-1]
+            if mol_in_H2S != 0 and not pd.isna(mol_in_H2S):
+                x_ads_H2S = self.mol_H2S_ads / mol_in_H2S
+            else:
+                x_ads_H2S = 0
+        except Exception as e:
+            print("Error calculating x_ads_H2S:", e)
+            x_ads_H2S = 0
+        try:
+            total_n_NH3 = self.nNH3_V101_acum.iloc[-1] + self.nNH3_V102_acum.iloc[-1]
+            if total_n_NH3 != 0 and not pd.isna(total_n_NH3):
+                x_ads_NH3 = self.mol_NH3_ads / total_n_NH3
+            else:
+                x_ads_NH3 = 0
 
+            # print("total_n_NH3:", total_n_NH3)
+            # print("mol_NH3_ads:", self.mol_NH3_ads)
+            # print("x_ads_NH3:", x_ads_NH3)
+        except Exception as e:
+            print("Error calculating x_ads_NH3:", e)
+            x_ads_NH3 = 0
+
+        self.Xglobal = ((x_ads_H2O + x_ads_H2S + x_ads_NH3)/3)
+        
     def StorageData (self, name):
-        timestamp = self.DataPlant["_time"].iloc[-1]  # Convert to nanoseconds
+        timestamp = self.DataPlant["time"].iloc[-1]  # Convert to nanoseconds
         
         if self.Model == "Arrhenius" and (self.Operation_mode == 1 or self.Operation_mode == 2):
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101)), timestamp=timestamp) 
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = abs(float(self.Ea_mean_R101)), timestamp=timestamp)  
         
         elif self.Model == "ADM1" and (self.Operation_mode == 1 or self.Operation_mode == 2):
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", mode=self.Operation_mode,
-                                                    model = self.Model, variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101)), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101)), timestamp=timestamp)
         
         elif self.Model == "Gompertz" and (self.Operation_mode == 1 or self.Operation_mode == 2):
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
@@ -2738,4 +3256,10 @@ class Training_offline:
         self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_H2S_abs?{name}', value=self.mol_H2S_ads, timestamp=timestamp)
         self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_NH3_abs?{name}', value=self.mol_NH3_ads, timestamp=timestamp)
         self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?N_H2O_abs?{name}', value=self.mol_H2O_ads, timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?qmax_H2O?{name}', value=float(self.Optimized_parameters_filter_H2O["qmax_H2O"].iloc[-1]) , timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?K_H2O?{name}', value=float(self.Optimized_parameters_filter_H2O["K_H2O"].iloc[-1]) , timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?K2_H2O?{name}', value=float(self.Optimized_parameters_filter_H2O["K2_H2O"].iloc[-1]) , timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?qmax_H2S?{name}', value=float(self.Optimized_parameters_filter_H2O["qmax_H2S"].iloc[-1]) , timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?K_H2S?{name}', value=float(self.Optimized_parameters_filter_H2O["K_H2S"].iloc[-1]) , timestamp=timestamp)
+        self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device="entrenamiento", variable=f'Modo{int(self.Operation_mode)}?{self.Model}?K2_H2S?{name}', value=float(self.Optimized_parameters_filter_H2O["K2_H2S"].iloc[-1]) , timestamp=timestamp)
 
