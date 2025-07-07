@@ -16,12 +16,14 @@ export const setBiogas = (
 
   if (e.target.name === 'digitalTwinState') {
     newState.digitalTwinState = !newState.digitalTwinState;
+
     if (newState.digitalTwinStepTime !== undefined) {
       newState.digitalTwinStepTime.disabled = newState.digitalTwinState;
     }
-    newState.digitalTwinForecastTime.disabled = !newState.digitalTwinState;
 
+    newState.digitalTwinForecastTime.disabled = !newState.digitalTwinState;
     newState.inputOfflineOperation = !newState.digitalTwinState;
+
     setInputOfflineOperation();
 
     switch (newState.operationModelType) {
@@ -429,10 +431,6 @@ export const setBiogas = (
 
     if (!newState.inputOfflineOperation && newState.digitalTwinState)
       newState.queryTime = Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
-
-    newState.queryTime = newState.inputOfflineOperation
-      ? Constants.QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS
-      : Constants.QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS;
 
     newState.inputSubstrateConditions = newState.inputOfflineOperation;
     (newState as BiogasParameters) = setSubstrateConditions(

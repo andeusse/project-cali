@@ -9,7 +9,7 @@ export default class Constants {
 
   public static QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS: number = 3000;
   public static QUERY_TIME_DIGITAL_TWIN_ON_OFFLINE_BIOGAS: number = 600000;
-  public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 600000;
+  public static QUERY_TIME_DIGITAL_TWIN_OFF_ONLINE_BIOGAS: number = 3000;
   public static QUERY_TIME_DIGITAL_TWIN_ON_ONLINE_BIOGAS: number = 600000;
 
   public static MAX_RETRIES_BEFORE_STOP: number = 5;
