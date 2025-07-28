@@ -77,9 +77,6 @@ const TimeGraph = (props: Props) => {
       },
       x: {
         type: 'time',
-        time: {
-          unit: 'second',
-        },
         ticks: {
           autoSkip: true,
           maxTicksLimit: 10,
