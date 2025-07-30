@@ -148,6 +148,24 @@ class InfluxDBmodel:
                     r["_field"] == "Energia_jouleV102" or
                     r["_field"] == "Energia_jouleV107" 
                 )'''
+        elif type == 9:
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: 0)
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) =>
+                r["device"] == "P104" or 
+                r["device"] == "P101" or 
+                r["device"] == "P102" or 
+                r["device"] == "R101" or 
+                r["device"] == "R102" or 
+                r["device"] == "V101" or 
+                r["device"] == "V102" or 
+                r["device"] == "V107" or 
+                r["device"] == "TK100"
+            )
+            |> last()
+            '''
         else:
             self.query = "Tipo de query inválido"
         
