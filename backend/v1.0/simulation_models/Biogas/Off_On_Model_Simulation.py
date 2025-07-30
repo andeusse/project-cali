@@ -12,13 +12,18 @@ import statistics as st
 import time
 
 class Biogas_Plant_prediction:
-    def __init__ (self, plant, DB_IP, DB_Port, DB_Organization, DB_Bucket, DB_Token,
-                  VG1, VG2, VG3):
+    def __init__ (self, DB_IP, DB_Port, DB_Organization, DB_Bucket, DB_Token,
+                  VR1, VR2, VG1, VG2, VG3, tp, ST_R101, SV_R101, Cc_R101, Ch_R101, Co_R101, Cn_R101, Cs_R101, rho_R101, ST_R102, SV_R102, Cc_R102, Ch_R102, Co_R102, Cn_R102, Cs_R102, rho_R102,
+                  OperationMode, inputSubstrateConditions, Cc, Ch, Co, Cn, Cs, ST, SV, rho):
+        
         self.influxDB = DBManager.InfluxDBmodel(server = 'http://' + DB_IP + ':' +  DB_Port + '/', org = DB_Organization, bucket = DB_Bucket, token = DB_Token)
         self.connectionState = self.influxDB.InfluxDBconnection()
         if not self.connectionState:
             raise ConnectionError(f"Database connection failed: {self.influxDB.ERROR_MESSAGE}")
-        self.plant = plant
+        self.plant = Biogas_Model_Simulation.BiogasPlantSimulation(VR1 = VR1, VR2 = VR2, VG1=VG1, VG2 = VG2, VG3 = VG3, tp = tp,
+                                                                   ST_R101 = ST_R101, SV_R101 = SV_R101, Cc_R101 = Cc_R101, Ch_R101 = Ch_R101 , Co_R101 = Co_R101, Cn_R101 = Cn_R101, Cs_R101 = Cs_R101, rho_R101 = rho_R101,
+                                                                   ST_R102 = ST_R102, SV_R102 = SV_R102, Cc_R102 = Cc_R102, Ch_R102 = Ch_R102, Co_R102 = Co_R102, Cn_R102 = Cn_R102, Cs_R102 = Cs_R102, rho_R102 = rho_R102,
+                                                                   OperationMode = OperationMode)
         self.Thermo = ThermoProperties.ThermoProperties()
         
         #Construction parameters
@@ -35,9 +40,10 @@ class Biogas_Plant_prediction:
         self.molH2O_acum_V107_i = 0
 
         #Global time
-        self.GlobalTime = 0
-    
-    def get_data(self):
+        self.GlobalTime = self.plant.GlobalTime
+        self.Iterator = 0
+
+        #Do the query once 
         attempts = 1
         while attempts <= 5:
             try:
@@ -54,7 +60,7 @@ class Biogas_Plant_prediction:
         attempts = 1
         while attempts <= 5:
             try:
-                self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", train_time=str(10), type=4)
+                self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", type = 9)
                 print("acquiring Data from sensors...")
                 # DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
                 DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
@@ -64,11 +70,8 @@ class Biogas_Plant_prediction:
                 break
             except:
                 attempts += 1
-        # print(self.Datainterfaz)
-        # self.DataPlanti.to_csv(r'.\test.csv')
         
-    def substrate_conditions (self, Cc, Ch, Co, Cn, Cs, ST, SV, rho, inputSubstrateConditions):
-        if inputSubstrateConditions == "True":
+        if inputSubstrateConditions == True:
             self.plant.Substrate_conditions(Cc = Cc, Ch = Ch, Co = Co, Cn = Cn, Cs = Cs, ST = ST, SV = SV, rho = rho)
         
             self.n = self.plant.n
@@ -88,11 +91,577 @@ class Biogas_Plant_prediction:
             self.Csus_ini = self.plant.Csus_ini                                 #[mol/L] 
             self.Csus_ini_ST = self.plant.Csus_ini_ST                         #[mol/L](self.rho*(self.ST/100))/self.MW_sustrato                         #[mol/L]
             self.Csus_fixed = self.plant.Csus_fixed                            #[mol/L] 
+            self.SV = self.plant.SV/100
+            self.ST = self.plant.ST/100
+            self.Csv_sus = self.plant.Csv
+            self.Cst_sus = self.plant.Cst
 
             self.Csv = self.plant.Csv                                           #[g/L] 
             self.Cst = self.plant.Cst                                            #[g/L] 
 
-        else:
+        elif inputSubstrateConditions == False:
+            self.SN = self.Datainterfaz["_value"]["MNS"]
+            #Water proportion
+            self.MPH = self.Datainterfaz["_value"]["MPH"]    #MPH: Water proportion in the mix
+
+            if self.SN  == 4:    
+                #Substrate 1 Characterization
+                self.MST1 = self.Datainterfaz["_value"]["ST1"]   #ST1: Substrate 1 name
+                self.MP1 = self.Datainterfaz["_value"]["MP1"]    #MP1: substrate 1 proportion in mix
+                self.ST1 = self.Datainterfaz["_value"]["MST1"]   #MST1: Total solids of substrate 1
+                self.SV1 = self.Datainterfaz["_value"]["MSV1"]   #MSV1: Volatile solids of substrate 1
+                self.Cc1 = self.Datainterfaz["_value"]["MCc1"]   #MCc1: Carbon concentration substrate 1
+                self.Ch1 = self.Datainterfaz["_value"]["MCh1"]   #MCh1: hydrogen concentration substrate 1 
+                self.Co1 = self.Datainterfaz["_value"]["MCo1"]   #MCo1: oxygen concentration substrate 1
+                self.Cn1 = self.Datainterfaz["_value"]["MCn1"]   #MCh1: nytrogen concentration substrate 1
+                self.Cs1 = self.Datainterfaz["_value"]["MCs1"]   #MCh1: sulfur concentration substrate 1
+                self.rho1 = self.Datainterfaz["_value"]["Md1"]   #Md1: substrate density
+                
+                #Substrate 2 Characterization
+                self.MST2 = self.Datainterfaz["_value"]["ST2"]   #ST2: Substrate 2 name
+                self.MP2 = self.Datainterfaz["_value"]["MP2"]    #MP2: substrate 2 proportion in mix
+                self.ST2 = self.Datainterfaz["_value"]["MST2"]   #MST2: Total solids of substrate 2
+                self.SV2 = self.Datainterfaz["_value"]["MSV2"]   #MSV2: Volatile solids of substrate 2
+                self.Cc2 = self.Datainterfaz["_value"]["MCc2"]   #MCc2: Carbon concentration substrate 2
+                self.Ch2 = self.Datainterfaz["_value"]["MCh2"]   #MCh2: hydrogen concentration substrate 2 
+                self.Co2 = self.Datainterfaz["_value"]["MCo2"]   #MCo2: oxygen concentration substrate 2
+                self.Cn2 = self.Datainterfaz["_value"]["MCn2"]   #MCh2: nytrogen concentration substrate 2
+                self.Cs2 = self.Datainterfaz["_value"]["MCs2"]   #MCh2: sulfur concentration substrate 2
+                self.rho2 = self.Datainterfaz["_value"]["Md2"]   #Md2: substrate density
+                
+                #Substrate 3 Characterization
+                self.MST3 = self.Datainterfaz["_value"]["ST3"]   #ST3: Substrate 3 name
+                self.MP3 = self.Datainterfaz["_value"]["MP3"]    #MP3: substrate 3 proportion in mix
+                self.ST3 = self.Datainterfaz["_value"]["MST3"]   #MST3: Total solids of substrate 3
+                self.SV3 = self.Datainterfaz["_value"]["MSV3"]   #MSV3: Volatile solids of substrate 3
+                self.Cc3 = self.Datainterfaz["_value"]["MCc3"]   #MCc3: Carbon concentration substrate 3
+                self.Ch3 = self.Datainterfaz["_value"]["MCh3"]   #MCh3: hydrogen concentration substrate 3 
+                self.Co3 = self.Datainterfaz["_value"]["MCo3"]   #MCo3: oxygen concentration substrate 3
+                self.Cn3 = self.Datainterfaz["_value"]["MCn3"]   #MCh3: nytrogen concentration substrate 3
+                self.Cs3 = self.Datainterfaz["_value"]["MCs3"]   #MCh3: sulfur concentration substrate 3
+                self.rho3 = self.Datainterfaz["_value"]["Md3"]   #Md3: substrate density
+                
+                #Substrate 4 Characterization
+                self.MST4 = self.Datainterfaz["_value"]["ST4"]   #ST4: Substrate 4 name
+                self.MP4 = self.Datainterfaz["_value"]["MP4"]    #MP4: substrate 4 proportion in mix
+                self.ST4 = self.Datainterfaz["_value"]["MST4"]   #MST4: Total solids of substrate 4
+                self.SV4 = self.Datainterfaz["_value"]["MSV4"]   #MSV4: Volatile solids of substrate 4
+                self.Cc4 = self.Datainterfaz["_value"]["MCc4"]   #MCc4: Carbon concentration substrate 4
+                self.Ch4 = self.Datainterfaz["_value"]["MCh4"]   #MCh4: hydrogen concentration substrate 4 
+                self.Co4 = self.Datainterfaz["_value"]["MCo4"]   #MCo4: oxygen concentration substrate 4
+                self.Cn4 = self.Datainterfaz["_value"]["MCn4"]   #MCh4: nytrogen concentration substrate 4
+                self.Cs4 = self.Datainterfaz["_value"]["MCs4"]   #MCh4: sulfur concentration substrate 4
+                self.rho4 = self.Datainterfaz["_value"]["Md4"]   #Md4: substrate density
+                
+                #Proximate analysis for mixture
+                self.ST = (self.ST1*self.MP1 + self.ST2*self.MP2 + self.ST3*self.MP3 + self.ST4*self.MP4)/100
+                self.SV = (self.SV1*self.MP1 + self.SV2*self.MP2 + self.SV3*self.MP3 + self.SV4*self.MP4)/100
+                self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + self.rho3*self.MP3 + self.rho4*self.MP4 + 1000*self.MPH)
+                
+                gCc1 = self.Cc1 * self.MP1 * self.ST1; gCc2 = self.Cc2 * self.MP2 * self.ST2; gCc3 = self.Cc3 * self.MP3 * self.ST3; gCc4 = self.Cc4 * self.MP4 * self.ST4    #Carbon content
+                gCh1 = self.Ch1 * self.MP1 * self.ST1; gCh2 = self.Ch2 * self.MP2 * self.ST2; gCh3 = self.Ch3 * self.MP3 * self.ST3; gCh4 = self.Ch4 * self.MP4 * self.ST4    #hydrogen content
+                gCo1 = self.Co1 * self.MP1 * self.ST1; gCo2 = self.Co2 * self.MP2 * self.ST2; gCo3 = self.Co3 * self.MP3 * self.ST3; gCo4 = self.Co4 * self.MP4 * self.ST4    #oxygen content
+                gCn1 = self.Cn1 * self.MP1 * self.ST1; gCn2 = self.Cn2 * self.MP2 * self.ST2; gCn3 = self.Cn3 * self.MP3 * self.ST3; gCn4 = self.Cn4 * self.MP4 * self.ST4    #nitrogen content
+                gCs1 = self.Cs1 * self.MP1 * self.ST1; gCs2 = self.Cs2 * self.MP2 * self.ST2; gCs3 = self.Cs3 * self.MP3 * self.ST3; gCs4 = self.Cs4 * self.MP4 * self.ST4    #sulfur content
+                
+                #Elemental analysis for mixture
+                self.Cc = ((gCc1 + gCc2 + gCc3 + gCc4) / self.ST)/100
+                self.Ch = ((gCh1 + gCh2 + gCh3 + gCh4) / self.ST)/100
+                self.Co = ((gCo1 + gCo2 + gCo3 + gCo4) / self.ST)/100
+                self.Cn = ((gCn1 + gCn2 + gCn3 + gCn4) / self.ST)/100
+                self.Cs = ((gCs1 + gCs2 + gCs3 + gCs4) / self.ST)/100
+                        
+            elif self.SN  == 3:
+                #Substrate 1 Characterization
+                self.MST1 = self.Datainterfaz["_value"]["ST1"]   #ST1: Substrate 1 name
+                self.MP1 = self.Datainterfaz["_value"]["MP1"]    #MP1: substrate 1 proportion in mix
+                self.ST1 = self.Datainterfaz["_value"]["MST1"]   #MST1: Total solids of substrate 1
+                self.SV1 = self.Datainterfaz["_value"]["MSV1"]   #MSV1: Volatile solids of substrate 1
+                self.Cc1 = self.Datainterfaz["_value"]["MCc1"]   #MCc1: Carbon concentration substrate 1
+                self.Ch1 = self.Datainterfaz["_value"]["MCh1"]   #MCh1: hydrogen concentration substrate 1 
+                self.Co1 = self.Datainterfaz["_value"]["MCo1"]   #MCo1: oxygen concentration substrate 1
+                self.Cn1 = self.Datainterfaz["_value"]["MCn1"]   #MCh1: nytrogen concentration substrate 1
+                self.Cs1 = self.Datainterfaz["_value"]["MCs1"]   #MCh1: sulfur concentration substrate 1
+                self.rho1 = self.Datainterfaz["_value"]["Md1"]   #Md1: substrate density
+                
+                #Substrate 2 Characterization
+                self.MST2 = self.Datainterfaz["_value"]["ST2"]   #ST2: Substrate 2 name
+                self.MP2 = self.Datainterfaz["_value"]["MP2"]    #MP2: substrate 2 proportion in mix
+                self.ST2 = self.Datainterfaz["_value"]["MST2"]   #MST2: Total solids of substrate 2
+                self.SV2 = self.Datainterfaz["_value"]["MSV2"]   #MSV2: Volatile solids of substrate 2
+                self.Cc2 = self.Datainterfaz["_value"]["MCc2"]   #MCc2: Carbon concentration substrate 2
+                self.Ch2 = self.Datainterfaz["_value"]["MCh2"]   #MCh2: hydrogen concentration substrate 2 
+                self.Co2 = self.Datainterfaz["_value"]["MCo2"]   #MCo2: oxygen concentration substrate 2
+                self.Cn2 = self.Datainterfaz["_value"]["MCn2"]   #MCh2: nytrogen concentration substrate 2
+                self.Cs2 = self.Datainterfaz["_value"]["MCs2"]   #MCh2: sulfur concentration substrate 2
+                self.rho2 = self.Datainterfaz["_value"]["Md2"]   #Md2: substrate density
+                
+                #Substrate 3 Characterization
+                self.MST3 = self.Datainterfaz["_value"]["ST3"]   #ST3: Substrate 3 name
+                self.MP3 = self.Datainterfaz["_value"]["MP3"]    #MP3: substrate 3 proportion in mix
+                self.ST3 = self.Datainterfaz["_value"]["MST3"]   #MST3: Total solids of substrate 3
+                self.SV3 = self.Datainterfaz["_value"]["MSV3"]   #MSV3: Volatile solids of substrate 3
+                self.Cc3 = self.Datainterfaz["_value"]["MCc3"]   #MCc3: Carbon concentration substrate 3
+                self.Ch3 = self.Datainterfaz["_value"]["MCh3"]   #MCh3: hydrogen concentration substrate 3 
+                self.Co3 = self.Datainterfaz["_value"]["MCo3"]   #MCo3: oxygen concentration substrate 3
+                self.Cn3 = self.Datainterfaz["_value"]["MCn3"]   #MCh3: nytrogen concentration substrate 3
+                self.Cs3 = self.Datainterfaz["_value"]["MCs3"]   #MCh3: sulfur concentration substrate 3
+                self.rho3 = self.Datainterfaz["_value"]["Md3"]   #Md3: substrate density
+                            
+                #Proximate analysis for mixture
+                self.ST = (self.ST1*self.MP1 + self.ST2*self.MP2 + self.ST3*self.MP3)/100
+                self.SV = (self.SV1*self.MP1 + self.SV2*self.MP2 + self.SV3*self.MP3)/100
+                self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + self.rho3*self.MP3 + 1000*self.MPH)
+                
+                gCc1 = self.Cc1 * self.MP1 * self.ST1; gCc2 = self.Cc2 * self.MP2 * self.ST2; gCc3 = self.Cc3 * self.MP3 * self.ST3    #Carbon content
+                gCh1 = self.Ch1 * self.MP1 * self.ST1; gCh2 = self.Ch2 * self.MP2 * self.ST2; gCh3 = self.Ch3 * self.MP3 * self.ST3    #hydrogen content
+                gCo1 = self.Co1 * self.MP1 * self.ST1; gCo2 = self.Co2 * self.MP2 * self.ST2; gCo3 = self.Co3 * self.MP3 * self.ST3    #oxygen content
+                gCn1 = self.Cn1 * self.MP1 * self.ST1; gCn2 = self.Cn2 * self.MP2 * self.ST2; gCn3 = self.Cn3 * self.MP3 * self.ST3    #nitrogen content
+                gCs1 = self.Cs1 * self.MP1 * self.ST1; gCs2 = self.Cs2 * self.MP2 * self.ST2; gCs3 = self.Cs3 * self.MP3 * self.ST3    #sulfur content
+                
+                #Elemental analysis for mixture
+                self.Cc = ((gCc1 + gCc2 + gCc3) / self.ST)/100
+                self.Ch = ((gCh1 + gCh2 + gCh3) / self.ST)/100
+                self.Co = ((gCo1 + gCo2 + gCo3) / self.ST)/100
+                self.Cn = ((gCn1 + gCn2 + gCn3) / self.ST)/100
+                self.Cs = ((gCs1 + gCs2 + gCs3) / self.ST)/100
+            
+            elif self.SN  == 2:
+                #Substrate 1 Characterization
+                self.MST1 = self.Datainterfaz["_value"]["ST1"]   #ST1: Substrate 1 name
+                self.MP1 = self.Datainterfaz["_value"]["MP1"]    #MP1: substrate 1 proportion in mix
+                self.ST1 = self.Datainterfaz["_value"]["MST1"]   #MST1: Total solids of substrate 1
+                self.SV1 = self.Datainterfaz["_value"]["MSV1"]   #MSV1: Volatile solids of substrate 1
+                self.Cc1 = self.Datainterfaz["_value"]["MCc1"]   #MCc1: Carbon concentration substrate 1
+                self.Ch1 = self.Datainterfaz["_value"]["MCh1"]   #MCh1: hydrogen concentration substrate 1 
+                self.Co1 = self.Datainterfaz["_value"]["MCo1"]   #MCo1: oxygen concentration substrate 1
+                self.Cn1 = self.Datainterfaz["_value"]["MCn1"]   #MCh1: nytrogen concentration substrate 1
+                self.Cs1 = self.Datainterfaz["_value"]["MCs1"]   #MCh1: sulfur concentration substrate 1
+                self.rho1 = self.Datainterfaz["_value"]["Md1"]   #Md1: substrate density
+                
+                #Substrate 2 Characterization
+                self.MST2 = self.Datainterfaz["_value"]["ST2"]   #ST2: Substrate 2 name
+                self.MP2 = self.Datainterfaz["_value"]["MP2"]    #MP2: substrate 2 proportion in mix
+                self.ST2 = self.Datainterfaz["_value"]["MST2"]   #MST2: Total solids of substrate 2
+                self.SV2 = self.Datainterfaz["_value"]["MSV2"]   #MSV2: Volatile solids of substrate 2
+                self.Cc2 = self.Datainterfaz["_value"]["MCc2"]   #MCc2: Carbon concentration substrate 2
+                self.Ch2 = self.Datainterfaz["_value"]["MCh2"]   #MCh2: hydrogen concentration substrate 2 
+                self.Co2 = self.Datainterfaz["_value"]["MCo2"]   #MCo2: oxygen concentration substrate 2
+                self.Cn2 = self.Datainterfaz["_value"]["MCn2"]   #MCh2: nytrogen concentration substrate 2
+                self.Cs2 = self.Datainterfaz["_value"]["MCs2"]   #MCh2: sulfur concentration substrate 2
+                self.rho2 = self.Datainterfaz["_value"]["Md2"]   #Md2: substrate density
+                                        
+                #Proximate analysis for mixture
+                self.ST = (self.ST1*self.MP1 + self.ST2*self.MP2 )/100
+                self.SV = (self.SV1*self.MP1 + self.SV2*self.MP2 )/100
+                self.rho = (self.rho1*self.MP1 + self.rho2*self.MP2 + 1000*self.MPH)
+                
+                gCh1 = self.Ch1 * self.MP1 * self.ST1; gCh2 = self.Ch2 * self.MP2 * self.ST2    #hydrogen content
+                gCc1 = self.Cc1 * self.MP1 * self.ST1; gCc2 = self.Cc2 * self.MP2 * self.ST2    #Carbon content
+                gCo1 = self.Co1 * self.MP1 * self.ST1; gCo2 = self.Co2 * self.MP2 * self.ST2    #oxygen content
+                gCn1 = self.Cn1 * self.MP1 * self.ST1; gCn2 = self.Cn2 * self.MP2 * self.ST2    #nitrogen content
+                gCs1 = self.Cs1 * self.MP1 * self.ST1; gCs2 = self.Cs2 * self.MP2 * self.ST2    #sulfur content
+                
+                #Elemental analysis for mixture
+                self.Cc = ((gCc1 + gCc2) / self.ST)/100
+                self.Ch = ((gCh1 + gCh2) / self.ST)/100
+                self.Co = ((gCo1 + gCo2) / self.ST)/100
+                self.Cn = ((gCn1 + gCn2) / self.ST)/100
+                self.Cs = ((gCs1 + gCs2) / self.ST)/100
+            
+            elif self.SN  == 1:
+                #Substrate 1 Characterization
+                self.MST1 = self.Datainterfaz["_value"]["ST1"]   #ST1: Substrate 1 name
+                self.MP1 = self.Datainterfaz["_value"]["MP1"]    #MP1: substrate 1 proportion in mix
+                self.ST1 = self.Datainterfaz["_value"]["MST1"]   #MST1: Total solids of substrate 1
+                self.SV1 = self.Datainterfaz["_value"]["MSV1"]   #MSV1: Volatile solids of substrate 1
+                self.Cc1 = self.Datainterfaz["_value"]["MCc1"]   #MCc1: Carbon concentration substrate 1
+                self.Ch1 = self.Datainterfaz["_value"]["MCh1"]   #MCh1: hydrogen concentration substrate 1 
+                self.Co1 = self.Datainterfaz["_value"]["MCo1"]   #MCo1: oxygen concentration substrate 1
+                self.Cn1 = self.Datainterfaz["_value"]["MCn1"]   #MCh1: nytrogen concentration substrate 1
+                self.Cs1 = self.Datainterfaz["_value"]["MCs1"]   #MCh1: sulfur concentration substrate 1
+                self.rho1 = self.Datainterfaz["_value"]["Md1"]   #Md1: substrate density
+                                                            
+                #Proximate analysis for mixture
+                self.ST = (self.ST1*self.MP1 )/100
+                self.SV = (self.SV1*self.MP1 )/100
+                self.rho = (self.rho1*self.MP1 + 1000*self.MPH)
+                
+                gCh1 = self.Ch1 * self.MP1 * self.ST1   #hydrogen content
+                gCc1 = self.Cc1 * self.MP1 * self.ST1   #Carbon content
+                gCo1 = self.Co1 * self.MP1 * self.ST1   #oxygen content
+                gCn1 = self.Cn1 * self.MP1 * self.ST1   #nitrogen content
+                gCs1 = self.Cs1 * self.MP1 * self.ST1   #sulfur content
+                
+                #Elemental analysis for mixture
+                self.Cc = ((gCc1) / self.ST)/100
+                self.Ch = ((gCh1) / self.ST)/100
+                self.Co = ((gCo1) / self.ST)/100
+                self.Cn = ((gCn1) / self.ST)/100
+                self.Cs = ((gCs1) / self.ST)/100
+            
+            self.molC = self.Cc*(1/12.01)
+            self.molH = self.Ch*(1/1.01)
+            self.molO = self.Co*(1/16)
+            self.molN = self.Cn*(1/14)
+            self.molS = self.Cs*(1/32)
+            
+            n = self.molC
+            a = self.molH
+            b = self.molO
+            c = self.molN
+            d = self.molS
+            
+            def lcm(a,b):
+                    return a * b // gcd(a, b)
+            
+            numbers = [n, a, b, c, d]
+            denominators = [Fraction(num).limit_denominator(10).denominator for num in numbers]
+            common_denominator = reduce(lcm, denominators)
+            self.subindex = [int(num * common_denominator) for num in numbers]
+
+            self.n = self.subindex[0]
+            self.a = self.subindex[1]
+            self.b = self.subindex[2]
+            self.c = self.subindex[3]
+            self.d = self.subindex[4]
+            
+            self.s_H2O = self.n-(self.a/4)-(self.b/2)+(3/4)*c+(self.d/2)
+            self.s_CH4 = (self.n/2)+(self.a/8)-(self.b/4)-(3/8)*self.c-(self.d/4)
+            self.s_CO2 = (self.n/2)-(self.a/8)+(self.b/4)+(3/8)*self.c-(self.d/4)
+            self.s_NH3 = self.c
+            self.s_H2S = self.d 
+            
+            #sustrate
+            self.MW_sustrato = self.n*12.01 + self.a*1.01 + self.b*16 + self.c*14 + self.d*32
+            self.Cst_sus = (self.rho*(self.ST))/self.MW_sustrato
+            self.Cst_sus_gl = (self.rho*(self.ST))
+            self.Csv_sus = (self.rho*(self.SV))/self.MW_sustrato
+            self.Csv_sus_gl = (self.rho*(self.SV))
+            self.Cfixed = self.Cst_sus - self.Csv_sus
+            self.plant.Substrate_conditions (Cc = self.Cc, Ch = self.Ch, Co = self.Co, Cn = self.Cn, Cs = self.Cs, ST = self.ST*100, SV = self.SV*100, rho = self.rho)
+            self.Csus_ini = self.plant.Csus_ini
+        
+        #Process data
+        #V101
+        try:
+            self.Pacum_V101 = self.Datainterfaz.loc["PAcumV101", ["_value"]]
+            self.Pacum_V101 = float(self.Pacum_V101 if isinstance(self.Pacum_V101, (int, float)) else self.Pacum_V101.iloc[-1])
+        except KeyError:
+            print("Presión V101 not found")
+            self.Pacum_V101 = 0
+        
+        try:
+            self.Pstorage_V101 = self.DataPlanti.loc["PT-103", ["_value"]]
+            self.Pstorage_V101 = float(self.Pstorage_V101 if isinstance(self.Pstorage_V101, (int, float)) else self.Pstorage_V101.iloc[-1])
+        except KeyError:
+            print("Presion sto V101, not found")
+            self.Pstorage_V101 = 0
+        
+        try:    
+            self.Vacum_V101 = self.Datainterfaz.loc["Volumen_bioV101", ["_value"]]
+            self.Vacum_V101 = float(self.Vacum_V101 if isinstance(self.Vacum_V101, (int, float)) else self.Vacum_V101.iloc[-1])
+        except KeyError:
+            print("Volumen Acum V101 not found")
+            self.Vacum_V101 = 0
+            
+        try:
+            self.T_V101 = self.DataPlanti.loc["TT-103", ["_value"]]
+            self.T_V101 = float(self.T_V101 if isinstance(self.T_V101, (int, float)) else self.T_V101.iloc[-1])
+        except KeyError:
+            print("Temperature V101 not found")
+            self.T_V101 = 22.0
+
+        try:
+            self.xCH4_V101 = self.DataPlanti.loc["AT-103A-CH4", ["_value"]]
+            self.xCH4_V101 = float(self.xCH4_V101 if isinstance(self.xCH4_V101, (int, float)) else self.xCH4_V101.iloc[-1])
+        except KeyError:
+            print("xCH4 V101 not found")
+            self.xCH4_V101 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+
+        try:
+            self.xCO2_V101 = self.DataPlanti.loc["AT-103A-CO2", ["_value"]]
+            self.xCO2_V101 = float(self.xCO2_V101 if isinstance(self.xCO2_V101, (int, float)) else self.xCO2_V101.iloc[-1])
+        except KeyError:
+            print("xCO2 V101 not found")
+            self.xCO2_V101 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+
+        try:
+            self.xO2_V101 = self.DataPlanti.loc["AT-103A-O2", ["_value"]]
+            self.xO2_V101 = float(self.xO2_V101 if isinstance(self.xO2_V101, (int, float)) else self.xO2_V101.iloc[-1])
+        except KeyError:
+            print("xO2 V101 not found")
+            self.xO2_V101 = self.xCH4_V101 * 0.01
+
+        try:
+            self.xH2_V101 = self.DataPlanti.loc["AT-103A-H2", ["_value"]]
+            self.xH2_V101 = float(self.xH2_V101 if isinstance(self.xH2_V101, (int, float)) else self.xH2_V101.iloc[-1])
+        except KeyError:
+            print("xH2 V101 not found")
+            self.xH2_V101 = self.xCH4_V101 * 0.0000001
+            
+        try:
+            self.xH2S_V101 = self.DataPlanti.loc["AT-103A-H2S", ["_value"]]
+            self.xH2S_V101 = float(self.xH2S_V101 if isinstance(self.xH2S_V101, (int, float)) else self.xH2S_V101.iloc[-1])
+        except KeyError:
+            print("xH2S V101 not found")
+            self.xH2S_V101 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+        
+        try:
+            self.HR_V101 = self.DataPlanti.loc["AT-103B", ["_value"]]
+            self.HR_V101 = float(self.HR_V101 if isinstance(self.HR_V101, (int, float)) else self.HR_V101.iloc[-1])
+        except KeyError:
+            print("HR V101 not found")
+            self.HR_V101 = 50
+
+        #Moles estimation
+        self.nbiogas_V101_acum_i = ((self.Pacum_V101*6894.76) * (self.VG1/1000))/(8.314*(self.T_V101+273.15))
+        self.nCH4_V101_acum_i = self.nbiogas_V101_acum_i * (self.xCH4_V101/100)
+        self.nCO2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xCO2_V101/100)
+        self.nO2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xO2_V101/100)
+        self.nH2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xH2_V101/1000000)
+        self.nH2S_V101_acum_i = self.nbiogas_V101_acum_i * (self.xH2S_V101/1000000)
+        self.nNH3_V101_acum_i = self.nCH4_V101_acum_i * (1/self.s_CH4)
+        #Water
+        AbsoluteHumidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V101/100, T=self.T_V101)
+        self.nH2O_V101_acum_i = AbsoluteHumidity_V101 * (self.Vacum_V101)
+        
+        #V102
+        try:
+            self.Pacum_V102 = self.Datainterfaz.loc["PAcumV102", ["_value"]]
+            self.Pacum_V102 = float(self.Pacum_V102 if isinstance(self.Pacum_V102, (int, float)) else self.Pacum_V102.iloc[-1])
+        except KeyError:
+            print("Presión V102 not found")
+            self.Pacum_V102 = 0
+        
+        try:
+            self.Pstorage_V102 = self.DataPlanti.loc["PT-104", ["_value"]]
+            self.Pstorage_V102 = float(self.Pstorage_V102 if isinstance(self.Pstorage_V102, (int, float)) else self.Pstorage_V102.iloc[-1])
+        except KeyError:
+            print("Presion sto V102, not found")
+            self.Pstorage_V102 = 0
+        
+        try:    
+            self.Vacum_V102 = self.Datainterfaz.loc["Volumen_bioV102", ["_value"]]
+            self.Vacum_V102 = float(self.Vacum_V102 if isinstance(self.Vacum_V102, (int, float)) else self.Vacum_V102.iloc[-1])
+        except KeyError:
+            print("Volumen Acum V102 not found")
+            self.Vacum_V102 = 0
+            
+        try:
+            self.T_V102 = self.DataPlanti.loc["TT-104", ["_value"]]
+            self.T_V102 = float(self.T_V102 if isinstance(self.T_V102, (int, float)) else self.T_V102.iloc[-1])
+        except KeyError:
+            print("Temperature V102 not found")
+            self.T_V102 = 22.0
+
+        try:
+            self.xCH4_V102 = self.DataPlanti.loc["AT-104A-CH4", ["_value"]]
+            self.xCH4_V102 = float(self.xCH4_V102 if isinstance(self.xCH4_V102, (int, float)) else self.xCH4_V102.iloc[-1])
+        except KeyError:
+            print("xCH4 V102 not found")
+            self.xCH4_V102 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+
+        try:
+            self.xCO2_V102 = self.DataPlanti.loc["AT-104A-CO2", ["_value"]]
+            self.xCO2_V102 = float(self.xCO2_V102 if isinstance(self.xCO2_V102, (int, float)) else self.xCO2_V102.iloc[-1])
+        except KeyError:
+            print("xCO2 V102 not found")
+            self.xCO2_V102 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+
+        try:
+            self.xO2_V102 = self.DataPlanti.loc["AT-104A-O2", ["_value"]]
+            self.xO2_V102 = float(self.xO2_V102 if isinstance(self.xO2_V102, (int, float)) else self.xO2_V102.iloc[-1])
+        except KeyError:
+            print("xO2 V102 not found")
+            self.xO2_V102 = self.xCH4_V102 * 0.01
+
+        try:
+            self.xH2_V102 = self.DataPlanti.loc["AT-104A-H2", ["_value"]]
+            self.xH2_V102 = float(self.xH2_V102 if isinstance(self.xH2_V102, (int, float)) else self.xH2_V102.iloc[-1])
+        except KeyError:
+            print("xH2 V102 not found")
+            self.xH2_V102 = self.xCH4_V102 * 0.0000001
+            
+        try:
+            self.xH2S_V102 = self.DataPlanti.loc["AT-104A-H2S", ["_value"]]
+            self.xH2S_V102 = float(self.xH2S_V102 if isinstance(self.xH2S_V102, (int, float)) else self.xH2S_V102.iloc[-1])
+        except KeyError:
+            print("xH2S V102 not found")
+            self.xH2S_V102 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+        
+        try:
+            self.HR_V102 = self.DataPlanti.loc["AT-104B", ["_value"]]
+            self.HR_V102 = float(self.HR_V102 if isinstance(self.HR_V102, (int, float)) else self.HR_V102.iloc[-1])
+        except KeyError:
+            print("HR V102 not found")
+            self.HR_V102 = 50
+        
+        #Moles estimation for V102
+        self.nbiogas_V102_acum_i = ((self.Pacum_V102*6894.76) * (self.VG2/1000))/(8.314*(self.T_V101+273.15))
+        self.nCH4_V102_acum_i = self.nbiogas_V102_acum_i * (self.xCH4_V102/100)
+        self.nCO2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xCO2_V102/100)
+        self.nO2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xO2_V102/100)
+        self.nH2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xH2_V102/1000000)
+        self.nH2S_V102_acum_i = self.nbiogas_V102_acum_i * (self.xH2S_V102/1000000)
+        self.nNH3_V102_acum_i = self.nCH4_V102_acum_i * (1/self.s_CH4)
+        #Water
+        AbsoluteHumidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V102/100, T=self.T_V102)
+        self.nH2O_V102_acum_i = AbsoluteHumidity_V102 * (self.Vacum_V102)
+        self.biogas_storage_mol_V102 = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nH2O_V102_acum_i
+        
+        #V107
+        try:
+            self.Pacum_V107 = self.Datainterfaz.loc["PAcumV107", ["_value"]]
+            self.Pacum_V107 = float(self.Pacum_V107 if isinstance(self.Pacum_V107, (int, float)) else self.Pacum_V107.iloc[-1])
+        except KeyError:
+            print("Presión V107 not found")
+            self.Pacum_V107 = 0
+        
+        try:
+            self.Pstorage_V107 = self.DataPlanti.loc["PT-105", ["_value"]]
+            self.Pstorage_V107 = float(self.Pstorage_V107 if isinstance(self.Pstorage_V107, (int, float)) else self.Pstorage_V107.iloc[-1])
+        except KeyError:
+            print("Presion sto V107, not found")
+            self.Pstorage_V107 = 0
+        
+        try:    
+            self.Vacum_V107 = self.Datainterfaz.loc["Volumen_bioV107", ["_value"]]
+            self.Vacum_V107 = float(self.Vacum_V107 if isinstance(self.Vacum_V107, (int, float)) else self.Vacum_V107.iloc[-1])
+        except KeyError:
+            print("Volumen Acum V107 not found")
+            self.Vacum_V107 = 0
+            
+        try:
+            self.T_V107 = self.DataPlanti.loc["TT-105", ["_value"]]
+            self.T_V107 = float(self.T_V107 if isinstance(self.T_V107, (int, float)) else self.T_V107.iloc[-1])
+        except KeyError:
+            print("Temperature V107 not found")
+            self.T_V107 = 22.0
+
+        try:
+            self.xCH4_V107 = self.DataPlanti.loc["AT-105A-CH4", ["_value"]]
+            self.xCH4_V107 = float(self.xCH4_V107 if isinstance(self.xCH4_V107, (int, float)) else self.xCH4_V107.iloc[-1])
+        except KeyError:
+            print("xCH4 V107 not found")
+            self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+
+        try:
+            self.xCO2_V107 = self.DataPlanti.loc["AT-105A-CO2", ["_value"]]
+            self.xCO2_V107 = float(self.xCO2_V107 if isinstance(self.xCO2_V107, (int, float)) else self.xCO2_V107.iloc[-1])
+        except KeyError:
+            print("xCO2 V107 not found")
+            self.xCO2_V107 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+
+        try:
+            self.xO2_V107 = self.DataPlanti.loc["AT-105A-O2", ["_value"]]
+            self.xO2_V107 = float(self.xO2_V107 if isinstance(self.xO2_V107, (int, float)) else self.xO2_V107.iloc[-1])
+        except KeyError:
+            print("xO2 V107 not found")
+            self.xO2_V107 = self.xCH4_V107 * 0.01
+
+        try:
+            self.xH2_V107 = self.DataPlanti.loc["AT-105A-H2", ["_value"]]
+            self.xH2_V107 = float(self.xH2_V107 if isinstance(self.xH2_V107, (int, float)) else self.xH2_V107.iloc[-1])
+        except KeyError:
+            print("xH2 V107 not found")
+            self.xH2_V107 = self.xCH4_V107 * 0.0000001
+            
+        try:
+            self.xH2S_V107 = self.DataPlanti.loc["AT-105A-H2S", ["_value"]]
+            self.xH2S_V107 = float(self.xH2S_V107 if isinstance(self.xH2S_V107, (int, float)) else self.xH2S_V107.iloc[-1])
+        except KeyError:
+            print("xH2S V107 not found")
+            self.xH2S_V107 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+        
+        try:
+            self.HR_V107 = self.DataPlanti.loc["AT-105B", ["_value"]]
+            self.HR_V107 = float(self.HR_V107 if isinstance(self.HR_V107, (int, float)) else self.HR_V107.iloc[-1])
+        except KeyError:
+            print("HR V107 not found")
+            self.HR_V107 = 50
+        
+        #Moles estimation for V107
+        self.nbiogas_V107_acum_i = ((self.Pacum_V107*6894.76) * (self.VG3/1000))/(8.314*(self.T_V101+273.15))
+        self.nCH4_V107_acum_i = self.nbiogas_V107_acum_i * (self.xCH4_V107/100)
+        self.nCO2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xCO2_V107/100)
+        self.nO2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xO2_V107/100)
+        self.nH2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xH2_V107/1000000)
+        self.nH2S_V107_acum_i = self.nbiogas_V107_acum_i * (self.xH2S_V107/1000000)
+        self.nNH3_V107_acum_i = self.nCH4_V107_acum_i * (1/self.s_CH4)
+        #Water
+        AbsoluteHumidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V107/100, T=self.T_V107)
+        self.nH2O_V107_acum_i = AbsoluteHumidity_V107 * (self.Vacum_V107)
+        self.biogas_storage_mol_V107 = self.nCH4_V107_acum_i + self.nCO2_V107_acum_i + self.nO2_V107_acum_i + self.nH2_V107_acum_i + self.nH2S_V107_acum_i + self.nNH3_V107_acum_i + self.nH2O_V107_acum_i
+
+        # print(self.Datainterfaz)
+        # self.DataPlanti.to_csv(r'.\test.csv')
+    def getdata(self, T_R101, pH_R101, T_R102, pH_R102):
+        
+        attempts = 0
+        while attempts <= 5:
+            try:
+                self.query2 = self.influxDB.QueryCreator(measurement="Planta_Biogas", type = 9)
+                print("acquiring Data from sensors...")
+                # DataPlant = pd.concat(self.influxDB.InfluxDBreader(query = self.query2), ignore_index=True)
+                DataPlant = self.influxDB.InfluxDBreader(query = self.query2)
+                print("Instrumentation Data acquired...")
+                DataPlant.set_index("_field", inplace = True)
+                self.DataPlanti = DataPlant
+                break
+            except:
+                attempts += 1
+        
+        try:
+            self.T_R101 = DataPlant.loc["TE-R101", ["_value"]]
+            self.T_R101 = float(self.T_R101 if isinstance(self.T_R101, (int, float)) else self.T_R101.iloc[-1])
+
+            self.pH_R101 = DataPlant.loc["AT-101", ["_value"]]
+            self.pH_R101 = float(self.pH_R101 if isinstance(self.pH_R101, (int, float)) else self.pH_R101.iloc[-1])
+
+            self.T_R102 = DataPlant.loc["TE-R102", ["_value"]]
+            self.T_R102 = float(self.T_R102 if isinstance(self.T_R102, (int, float)) else self.T_R102.iloc[-1])
+
+            self.pH_R102 = DataPlant.loc["AT-102", ["_value"]]
+            self.pH_R102 = float(self.pH_R102 if isinstance(self.pH_R102, (int, float)) else self.pH_R102.iloc[-1])
+
+        except KeyError:
+            self.T_R101 = T_R101
+            self.pH_R101 = pH_R101
+            self.T_R102 = T_R102
+            self.pH_R102 = pH_R102
+        
+    def substrate_conditions (self, Cc, Ch, Co, Cn, Cs, ST, SV, rho, inputSubstrateConditions):
+        
+        if inputSubstrateConditions == True:
+            self.plant.Substrate_conditions(Cc = Cc, Ch = Ch, Co = Co, Cn = Cn, Cs = Cs, ST = ST, SV = SV, rho = rho)
+        
+            self.n = self.plant.n
+            self.a = self.plant.a
+            self.b = self.plant.b
+            self.c = self.plant.c
+            self.d = self.plant.d
+        
+            self.s_H2O = self.plant.s_H2O
+            self.s_CH4 = self.plant.s_CH4
+            self.s_CO2 = self.plant.s_CO2
+            self.s_NH3 = self.plant.s_NH3
+            self.s_H2S = self.plant.s_H2S
+        
+            #molar concentration
+            self.MW_sustrato = self.plant.MW_sustrato                                 #[g/mol]
+            self.Csus_ini = self.plant.Csus_ini                                 #[mol/L] 
+            self.Csus_ini_ST = self.plant.Csus_ini_ST                         #[mol/L](self.rho*(self.ST/100))/self.MW_sustrato                         #[mol/L]
+            self.Csus_fixed = self.plant.Csus_fixed                            #[mol/L] 
+            self.SV = self.plant.SV/100
+            self.ST = self.plant.ST/100
+            self.Csv_sus = self.plant.Csv
+            self.Cst_sus = self.plant.Cst
+
+            self.Csv = self.plant.Csv                                           #[g/L] 
+            self.Cst = self.plant.Cst                                            #[g/L] 
+
+        elif inputSubstrateConditions == False:
             self.SN = self.Datainterfaz["_value"]["MNS"]
             #Water proportion
             self.MPH = self.Datainterfaz["_value"]["MPH"]    #MPH: Water proportion in the mix
@@ -335,113 +904,113 @@ class Biogas_Plant_prediction:
             self.plant.Substrate_conditions (Cc = self.Cc, Ch = self.Ch, Co = self.Co, Cn = self.Cn, Cs = self.Cs, ST = self.ST*100, SV = self.SV*100, rho = self.rho)
             self.Csus_ini = self.plant.Csus_ini
             
-    def ProcessData (self):    #runs once
-        #V101
-        try:
-            self.Pacum_V101 = float(self.Datainterfaz.loc["PAcumV101",["_value"]].iloc[-1])
-            self.Pstorage_V101 = float(self.DataPlanti.loc["PT-103", ["_value"]].iloc[-1].iloc[0])
-            self.Vacum_V101 = float(self.Datainterfaz.loc["Volumen_bioV101",["_value"]].iloc[-1])
-            self.T_V101 = float(self.DataPlanti.loc["TT-103", ["_value"]].iloc[-1].iloc[0])
-            self.xCH4_V101 = float(self.DataPlanti.loc["AT-103A-CH4", ["_value"]].iloc[-1].iloc[0])
-            self.xCO2_V101 = float(self.DataPlanti.loc["AT-103A-CO2", ["_value"]].iloc[-1].iloc[0])
-            self.xO2_V101 = float(self.DataPlanti.loc["AT-103A-O2", ["_value"]].iloc[-1].iloc[0])
-            self.xH2_V101 = float(self.DataPlanti.loc["AT-103A-H2", ["_value"]].iloc[-1].iloc[0])
-            self.xH2S_V101 = float(self.DataPlanti.loc["AT-103A-H2S", ["_value"]].iloc[-1].iloc[0])
-            self.HR_V101 = float(self.DataPlanti.loc["AT-103B", ["_value"]].iloc[-1].iloc[0])
-        except KeyError:
-            self.Pacum_V101 = 0
-            self.Vacum_V101 = 0
-            self.Pstorage_V102 = 0
-            self.T_V101 = 35.0
-            self.xCH4_V101 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.xCO2_V101 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.xO2_V101 = self.xCH4_V101 * 0.01
-            self.xH2_V101 = self.xCH4_V101 * 0.0000001
-            self.xH2S_V101 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.HR_V101 = 50
-        #Moles estimation
-        self.nbiogas_V101_acum_i = ((self.Pacum_V101*6894.76) * (self.VG1/1000))/(8.314*(self.T_V101+273.15))
-        self.nCH4_V101_acum_i = self.nbiogas_V101_acum_i * (self.xCH4_V101/100)
-        self.nCO2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xCO2_V101/100)
-        self.nO2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xO2_V101/100)
-        self.nH2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xH2_V101/1000000)
-        self.nH2S_V101_acum_i = self.nbiogas_V101_acum_i * (self.xH2S_V101/1000000)
-        self.nNH3_V101_acum_i = self.nCH4_V101_acum_i * (1/self.s_CH4)
-        #Water
-        AbsoluteHumidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V101/100, T=self.T_V101)
-        self.nH2O_V101_acum_i = AbsoluteHumidity_V101 * (self.Vacum_V101)
+    # def ProcessData (self):    #runs once
+    #     #V101
+    #     try:
+    #         self.Pacum_V101 = float(self.Datainterfaz.loc["PAcumV101",["_value"]].iloc[-1])
+    #         self.Pstorage_V101 = float(self.DataPlanti.loc["PT-103", ["_value"]].iloc[-1].iloc[0])
+    #         self.Vacum_V101 = float(self.Datainterfaz.loc["Volumen_bioV101",["_value"]].iloc[-1])
+    #         self.T_V101 = float(self.DataPlanti.loc["TT-103", ["_value"]].iloc[-1].iloc[0])
+    #         self.xCH4_V101 = float(self.DataPlanti.loc["AT-103A-CH4", ["_value"]].iloc[-1].iloc[0])
+    #         self.xCO2_V101 = float(self.DataPlanti.loc["AT-103A-CO2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xO2_V101 = float(self.DataPlanti.loc["AT-103A-O2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xH2_V101 = float(self.DataPlanti.loc["AT-103A-H2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xH2S_V101 = float(self.DataPlanti.loc["AT-103A-H2S", ["_value"]].iloc[-1].iloc[0])
+    #         self.HR_V101 = float(self.DataPlanti.loc["AT-103B", ["_value"]].iloc[-1].iloc[0])
+    #     except KeyError:
+    #         self.Pacum_V101 = 0
+    #         self.Vacum_V101 = 0
+    #         self.Pstorage_V102 = 0
+    #         self.T_V101 = 35.0
+    #         self.xCH4_V101 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.xCO2_V101 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.xO2_V101 = self.xCH4_V101 * 0.01
+    #         self.xH2_V101 = self.xCH4_V101 * 0.0000001
+    #         self.xH2S_V101 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.HR_V101 = 50
+    #     #Moles estimation
+    #     self.nbiogas_V101_acum_i = ((self.Pacum_V101*6894.76) * (self.VG1/1000))/(8.314*(self.T_V101+273.15))
+    #     self.nCH4_V101_acum_i = self.nbiogas_V101_acum_i * (self.xCH4_V101/100)
+    #     self.nCO2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xCO2_V101/100)
+    #     self.nO2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xO2_V101/100)
+    #     self.nH2_V101_acum_i = self.nbiogas_V101_acum_i * (self.xH2_V101/1000000)
+    #     self.nH2S_V101_acum_i = self.nbiogas_V101_acum_i * (self.xH2S_V101/1000000)
+    #     self.nNH3_V101_acum_i = self.nCH4_V101_acum_i * (1/self.s_CH4)
+    #     #Water
+    #     AbsoluteHumidity_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V101/100, T=self.T_V101)
+    #     self.nH2O_V101_acum_i = AbsoluteHumidity_V101 * (self.Vacum_V101)
         
-        #V102
-        try:
-            self.Pacum_V102 = float(self.Datainterfaz.loc["PAcumV102",["_value"]].iloc[-1])
-            self.Pstorage_V102 = float(self.DataPlanti.loc["PT-104", ["_value"]].iloc[-1].iloc[0])
-            self.Vacum_V102 = float(self.Datainterfaz.loc["Volumen_bioV102",["_value"]].iloc[-1])
-            self.T_V102 = float(self.DataPlanti.loc["TT-104", ["_value"]].iloc[-1].iloc[0])
-            self.xCH4_V102 = float(self.DataPlanti.loc["AT-104A-CH4", ["_value"]].iloc[-1].iloc[0])
-            self.xCO2_V102 = float(self.DataPlanti.loc["AT-104A-CO2", ["_value"]].iloc[-1].iloc[0])
-            self.xO2_V102 = float(self.DataPlanti.loc["AT-104A-O2", ["_value"]].iloc[-1].iloc[0])
-            self.xH2_V102 = float(self.DataPlanti.loc["AT-104A-H2", ["_value"]].iloc[-1].iloc[0])
-            self.xH2S_V102 = float(self.DataPlanti.loc["AT-104A-H2S", ["_value"]].iloc[-1].iloc[0])
-            self.HR_V102 = float(self.DataPlanti.loc["AT-104B", ["_value"]].iloc[-1].iloc[0])
-        except KeyError:
-            self.Pacum_V102 = 0
-            self.Vacum_V102 = 0
-            self.Pstorage_V102 = 0
-            self.T_V102 = 35.0
-            self.xCH4_V102 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.xCO2_V102 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.xO2_V102 = self.xCH4_V102 * 0.01
-            self.xH2_V102 = self.xCH4_V102 * 0.0000001
-            self.xH2S_V102 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.HR_V102 = 50
-        #Moles estimation
-        self.nbiogas_V102_acum_i = ((self.Pacum_V102*6894.76) * (self.VG2/1000))/(8.314*(self.T_V101+273.15))
-        self.nCH4_V102_acum_i = self.nbiogas_V102_acum_i * (self.xCH4_V102/100)
-        self.nCO2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xCO2_V102/100)
-        self.nO2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xO2_V102/100)
-        self.nH2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xH2_V102/1000000)
-        self.nH2S_V102_acum_i = self.nbiogas_V102_acum_i * (self.xH2S_V102/1000000)
-        self.nNH3_V102_acum_i = self.nCH4_V102_acum_i * (1/self.s_CH4)
-        #Water
-        AbsoluteHumidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V102/100, T=self.T_V102)
-        self.nH2O_V102_acum_i = AbsoluteHumidity_V102 * (self.Vacum_V102)
-        self.biogas_storage_mol_V102 = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nH2O_V102_acum_i
+    #     #V102
+    #     try:
+    #         self.Pacum_V102 = float(self.Datainterfaz.loc["PAcumV102",["_value"]].iloc[-1])
+    #         self.Pstorage_V102 = float(self.DataPlanti.loc["PT-104", ["_value"]].iloc[-1].iloc[0])
+    #         self.Vacum_V102 = float(self.Datainterfaz.loc["Volumen_bioV102",["_value"]].iloc[-1])
+    #         self.T_V102 = float(self.DataPlanti.loc["TT-104", ["_value"]].iloc[-1].iloc[0])
+    #         self.xCH4_V102 = float(self.DataPlanti.loc["AT-104A-CH4", ["_value"]].iloc[-1].iloc[0])
+    #         self.xCO2_V102 = float(self.DataPlanti.loc["AT-104A-CO2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xO2_V102 = float(self.DataPlanti.loc["AT-104A-O2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xH2_V102 = float(self.DataPlanti.loc["AT-104A-H2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xH2S_V102 = float(self.DataPlanti.loc["AT-104A-H2S", ["_value"]].iloc[-1].iloc[0])
+    #         self.HR_V102 = float(self.DataPlanti.loc["AT-104B", ["_value"]].iloc[-1].iloc[0])
+    #     except KeyError:
+    #         self.Pacum_V102 = 0
+    #         self.Vacum_V102 = 0
+    #         self.Pstorage_V102 = 0
+    #         self.T_V102 = 35.0
+    #         self.xCH4_V102 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.xCO2_V102 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.xO2_V102 = self.xCH4_V102 * 0.01
+    #         self.xH2_V102 = self.xCH4_V102 * 0.0000001
+    #         self.xH2S_V102 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.HR_V102 = 50
+    #     #Moles estimation
+    #     self.nbiogas_V102_acum_i = ((self.Pacum_V102*6894.76) * (self.VG2/1000))/(8.314*(self.T_V101+273.15))
+    #     self.nCH4_V102_acum_i = self.nbiogas_V102_acum_i * (self.xCH4_V102/100)
+    #     self.nCO2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xCO2_V102/100)
+    #     self.nO2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xO2_V102/100)
+    #     self.nH2_V102_acum_i = self.nbiogas_V102_acum_i * (self.xH2_V102/1000000)
+    #     self.nH2S_V102_acum_i = self.nbiogas_V102_acum_i * (self.xH2S_V102/1000000)
+    #     self.nNH3_V102_acum_i = self.nCH4_V102_acum_i * (1/self.s_CH4)
+    #     #Water
+    #     AbsoluteHumidity_V102 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V102/100, T=self.T_V102)
+    #     self.nH2O_V102_acum_i = AbsoluteHumidity_V102 * (self.Vacum_V102)
+    #     self.biogas_storage_mol_V102 = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nH2O_V102_acum_i
         
-        #V107
-        try:
-            self.Pacum_V107 = float(self.Datainterfaz.loc["PAcumV107",["_value"]].iloc[-1])
-            self.Pstorage_V107 = float(self.DataPlanti.loc["PT-105", ["_value"]].iloc[-1].iloc[0])
-            self.Vacum_V107 = float(self.Datainterfaz.loc["Volumen_bioV107",["_value"]].iloc[-1])
-            self.T_V107 = float(self.DataPlanti.loc["TT-105", ["_value"]].iloc[-1].iloc[0])
-            self.xCH4_V107 = float(self.DataPlanti.loc["AT-105A-CH4", ["_value"]].iloc[-1].iloc[0])
-            self.xCO2_V107 = float(self.DataPlanti.loc["AT-105A-CO2", ["_value"]].iloc[-1].iloc[0])
-            self.xO2_V107 = float(self.DataPlanti.loc["AT-105A-O2", ["_value"]].iloc[-1].iloc[0])
-            self.xH2_V107 = float(self.DataPlanti.loc["AT-105A-H2", ["_value"]].iloc[-1].iloc[0])
-            self.xH2S_V107 = float(self.DataPlanti.loc["AT-105A-H2S", ["_value"]].iloc[-1].iloc[0])
-            self.HR_V107 = float(self.DataPlanti.loc["AT-105B", ["_value"]].iloc[-1].iloc[0])
-        except KeyError:
-            self.Pacum_V107 = 0
-            self.Vacum_V107 = 0
-            self.Pstorage_V107 = 0
-            self.T_V107 = 35.0
-            self.xCH4_V107 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.xCO2_V107 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.xO2_V107 = self.xCH4_V107 * 0.01
-            self.xH2_V107 = self.xCH4_V107 * 0.0000001
-            self.xH2S_V107 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
-            self.HR_V107 = 50
-        #Moles estimation
-        self.nbiogas_V107_acum_i = ((self.Pacum_V107*6894.76) * (self.VG3/1000))/(8.314*(self.T_V101+273.15))
-        self.nCH4_V107_acum_i = self.nbiogas_V107_acum_i * (self.xCH4_V107/100)
-        self.nCO2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xCO2_V107/100)
-        self.nO2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xO2_V107/100)
-        self.nH2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xH2_V107/1000000)
-        self.nH2S_V107_acum_i = self.nbiogas_V107_acum_i * (self.xH2S_V107/1000000)
-        self.nNH3_V107_acum_i = self.nCH4_V107_acum_i * (1/self.s_CH4)
-        #Water
-        AbsoluteHumidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V107/100, T=self.T_V107)
-        self.nH2O_V107_acum_i = AbsoluteHumidity_V107 * (self.Vacum_V107)
-        self.biogas_storage_mol_V107 = self.nCH4_V107_acum_i + self.nCO2_V107_acum_i + self.nO2_V107_acum_i + self.nH2_V107_acum_i + self.nH2S_V107_acum_i + self.nNH3_V107_acum_i + self.nH2O_V107_acum_i
+    #     #V107
+    #     try:
+    #         self.Pacum_V107 = float(self.Datainterfaz.loc["PAcumV107",["_value"]].iloc[-1])
+    #         self.Pstorage_V107 = float(self.DataPlanti.loc["PT-105", ["_value"]].iloc[-1].iloc[0])
+    #         self.Vacum_V107 = float(self.Datainterfaz.loc["Volumen_bioV107",["_value"]].iloc[-1])
+    #         self.T_V107 = float(self.DataPlanti.loc["TT-105", ["_value"]].iloc[-1].iloc[0])
+    #         self.xCH4_V107 = float(self.DataPlanti.loc["AT-105A-CH4", ["_value"]].iloc[-1].iloc[0])
+    #         self.xCO2_V107 = float(self.DataPlanti.loc["AT-105A-CO2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xO2_V107 = float(self.DataPlanti.loc["AT-105A-O2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xH2_V107 = float(self.DataPlanti.loc["AT-105A-H2", ["_value"]].iloc[-1].iloc[0])
+    #         self.xH2S_V107 = float(self.DataPlanti.loc["AT-105A-H2S", ["_value"]].iloc[-1].iloc[0])
+    #         self.HR_V107 = float(self.DataPlanti.loc["AT-105B", ["_value"]].iloc[-1].iloc[0])
+    #     except KeyError:
+    #         self.Pacum_V107 = 0
+    #         self.Vacum_V107 = 0
+    #         self.Pstorage_V107 = 0
+    #         self.T_V107 = 35.0
+    #         self.xCH4_V107 = self.s_CH4/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.xCO2_V107 = self.s_CO2/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.xO2_V107 = self.xCH4_V107 * 0.01
+    #         self.xH2_V107 = self.xCH4_V107 * 0.0000001
+    #         self.xH2S_V107 = self.s_H2S/(self.s_CH4 + self.s_CO2 + self.s_H2O + self.s_NH3 + self.s_H2S)
+    #         self.HR_V107 = 50
+    #     #Moles estimation
+    #     self.nbiogas_V107_acum_i = ((self.Pacum_V107*6894.76) * (self.VG3/1000))/(8.314*(self.T_V101+273.15))
+    #     self.nCH4_V107_acum_i = self.nbiogas_V107_acum_i * (self.xCH4_V107/100)
+    #     self.nCO2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xCO2_V107/100)
+    #     self.nO2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xO2_V107/100)
+    #     self.nH2_V107_acum_i = self.nbiogas_V107_acum_i * (self.xH2_V107/1000000)
+    #     self.nH2S_V107_acum_i = self.nbiogas_V107_acum_i * (self.xH2S_V107/1000000)
+    #     self.nNH3_V107_acum_i = self.nCH4_V107_acum_i * (1/self.s_CH4)
+    #     #Water
+    #     AbsoluteHumidity_V107 = self.Thermo.BiogasAbsoluteHumidity(RH = self.HR_V107/100, T=self.T_V107)
+    #     self.nH2O_V107_acum_i = AbsoluteHumidity_V107 * (self.Vacum_V107)
+    #     self.biogas_storage_mol_V107 = self.nCH4_V107_acum_i + self.nCO2_V107_acum_i + self.nO2_V107_acum_i + self.nH2_V107_acum_i + self.nH2S_V107_acum_i + self.nNH3_V107_acum_i + self.nH2O_V107_acum_i
 
     def Pump104(self, TRH, FT_P104, TTO_P104, time_accelerator, inputPump104):
         if inputPump104 == True:
@@ -504,13 +1073,17 @@ class Biogas_Plant_prediction:
         else:
             try:
                 FT_mixin_TK100 = self.Datainterfaz["_value"]["FT_mixin_TK100"]
-                TTO_mixing_TK100 = self.Datainterfaz["_value"]["TTO_mixing_TK100"]
-                RPM_TK100 = self.Datainterfaz["_value"]["RPM_TK100"]
             except KeyError:
                 FT_mixin_TK100 = FT_mixin_TK100
+            try:
+                TTO_mixing_TK100 = self.Datainterfaz["_value"]["TTO_mixing_TK100"]
+            except KeyError:
                 TTO_mixing_TK100 = TTO_mixing_TK100
+            try:
+                RPM_TK100 = self.Datainterfaz["_value"]["RPM_TK100"]
+            except KeyError:
                 RPM_TK100 = RPM_TK100
-            self.plant.Mixing_TK100(FT_mixin_TK100 = FT_mixin_TK100, TTO_mixing_TK100 = TTO_mixing_TK100, RPM_R101 = RPM_TK100)
+            self.plant.Mixing_TK100(FT_mixin_TK100 = FT_mixin_TK100, TTO_mixing_TK100 = TTO_mixing_TK100, RPM_TK100 = RPM_TK100)
             self.RPM_TK100 = self.plant.RPM_TK100
 
     def Mixing_R101 (self, FT_mixin_R101, TTO_mixing_R101, RPM_R101, inputMixR101):
@@ -520,11 +1093,15 @@ class Biogas_Plant_prediction:
         else:
             try:
                 FT_mixin_R101 = self.Datainterfaz["_value"]["FT_mixin_R101"]
-                TTO_mixing_R101 = self.Datainterfaz["_value"]["TTO_mixing_R101"]
-                RPM_R101 = self.Datainterfaz["_value"]["RPM_R101"]
             except KeyError:
                 FT_mixin_R101 = FT_mixin_R101
+            try:
+                TTO_mixing_R101 = self.Datainterfaz["_value"]["TTO_mixing_R101"]
+            except KeyError:
                 TTO_mixing_R101 = TTO_mixing_R101
+            try:
+                RPM_R101 = self.Datainterfaz["_value"]["RPM_R101"]
+            except KeyError:
                 RPM_R101 = RPM_R101
             self.plant.Mixing_R101(FT_mixin_R101 = FT_mixin_R101, TTO_mixing_R101 = TTO_mixing_R101, RPM_R101 = RPM_R101)
             self.RPM_R101 = self.plant.RPM_R101
@@ -536,20 +1113,26 @@ class Biogas_Plant_prediction:
         else:
             try:
                 FT_mixin_R102 = self.Datainterfaz["_value"]["FT_mixin_R102"]
-                TTO_mixing_R102 = self.Datainterfaz["_value"]["TTO_mixing_R102"]
-                RPM_R102 = self.Datainterfaz["_value"]["RPM_R102"]
-                self.RPM_R102 = self.plant.RPM_R102
             except ZeroDivisionError:
-                FT_mixin_R102 = FT_mixin_R102 
+                FT_mixin_R102 = FT_mixin_R102
+            try:
+                TTO_mixing_R102 = self.Datainterfaz["_value"]["TTO_mixing_R102"]
+            except ZeroDivisionError:
                 TTO_mixing_R102 = TTO_mixing_R102
+            try:
+                RPM_R102 = self.Datainterfaz["_value"]["RPM_R102"]
+            except ZeroDivisionError:
                 RPM_R102 = RPM_R102
             self.plant.Mixing_R102(FT_mixin_R102 = FT_mixin_R102, TTO_mixing_R102 = TTO_mixing_R102, RPM_R102 = RPM_R102)
+            self.RPM_R102 = self.plant.RPM_R102
     
     def Reactor101Simulation_Arrhenius(self, Operation, VR, Qin_1, Csus_in1, K, Ea, T, pH, Qin_2=[0], Csus_in2 = 0.0):
 
         self.plant.Reactor101Simulation_ArrheniusModel(Operation, VR, Qin_1, Csus_in1, K, Ea, T, pH, Qin_2, Csus_in2)
         self.x_R101 = self.plant.x_R101
-        self.SV_R101_p = self.plant.self.SV_R101_p
+        self.SV_R101_p = self.plant.SV_R101_p
+        self.Organic_Charge_R101 = self.plant.Organic_Charge_R101
+
         self.molCH4_R101 = self.plant.molCH4_R101 
         self.molCO2_R101 = self.plant.molCO2_R101 
         self.molH2S_R101 = self.plant.molH2S_R101 
@@ -557,8 +1140,14 @@ class Biogas_Plant_prediction:
         self.molO2_R101 = self.plant.molO2_R101
         self.molH2_R101 = self.plant.molH2_R101 
         self.molH2O_R101 = self.plant.molH2O_R101
-
+        
         self.Csus_ini_R101 = self.plant.Csus_ini_R101
+        self.SV_R101_gl = self.plant.SV_R101_gl
+        self.SV_R101_p = self.plant.SV_R101_p
+        self.ST_R101_gl = self.plant.ST_R101_gl
+        self.ST_R101_p = self.plant.ST_R101_p
+        self.Organic_Charge_R101 = self.plant.Organic_Charge_R101
+        self.x_R101 = self.plant.x_R101
 
     def Reactor101Simulation_ADM1(self, Operation, VR, Qin_1, Csus_in1, K, Qin_2=[0], Csus_in2 = 0.0):
 
@@ -574,6 +1163,12 @@ class Biogas_Plant_prediction:
         self.molH2O_R101 = self.plant.molH2O_R101
 
         self.Csus_ini_R101 = self.plant.Csus_ini_R101
+        self.SV_R101_gl = self.plant.SV_R101_gl
+        self.SV_R101_p = self.plant.SV_R101_p
+        self.ST_R101_gl = self.plant.ST_R101_gl
+        self.ST_R101_p = self.plant.ST_R101_p
+        self.Organic_Charge_R101 = self.plant.Organic_Charge_R101
+        self.x_R101 = self.plant.x_R101
     
     def Reactor101Simulation_Gompertz(self, Operation, ym, U, Lambda, Qin_1, Qin_2 = [0]):
         
@@ -589,6 +1184,12 @@ class Biogas_Plant_prediction:
         self.molH2O_R101 = self.plant.molH2O_R101
 
         self.Csus_ini_R101 = self.plant.Csus_ini_R101
+        self.SV_R101_gl = self.plant.SV_R101_gl
+        self.SV_R101_p = self.plant.SV_R101_p
+        self.ST_R101_gl = self.plant.ST_R101_gl
+        self.ST_R101_p = self.plant.ST_R101_p
+        self.Organic_Charge_R101 = self.plant.Organic_Charge_R101
+        self.x_R101 = self.plant.x_R101
     
     def V101 (self, Pset=30):
         #Accumulated mol of coompounds by the time 
@@ -598,12 +1199,15 @@ class Biogas_Plant_prediction:
         self.nNH3_V101_acum_i = self.nNH3_V101_acum_i + self.molNH3_R101
         self.nH2O_V101_acum_i = self.nH2O_V101_acum_i  + self.molH2O_R101
         self.nO2_V101_acum_i = self.nO2_V101_acum_i + self.molO2_R101
-        self.nH2_V101_acum_i = self.nH2_V101_acum_i + self.molH2_R101 
+        self.nH2_V101_acum_i = self.nH2_V101_acum_i + self.molH2_R101
+        self.biogas_acum_V101_dry = self.nbiogas_V101_acum_i
+        self.nfree_V101 = self.biogas_acum_V101_dry - (self.nCH4_V101_acum_i + self.nCO2_V101_acum_i + self.nH2S_V101_acum_i + self.nNH3_V101_acum_i + self.nO2_V101_acum_i + self.nH2_V101_acum_i)
         
-        self.biogas_acum_V101_dry = self.nCH4_V101_acum_i + self.nCO2_V101_acum_i + self.nH2S_V101_acum_i + self.nNH3_V101_acum_i + self.nO2_V101_acum_i + self.nH2_V101_acum_i
+        self.biogas_acum_V101_dry = self.nCH4_V101_acum_i + self.nCO2_V101_acum_i + self.nH2S_V101_acum_i + self.nNH3_V101_acum_i + self.nO2_V101_acum_i + self.nH2_V101_acum_i + self.nfree_V101
         self.biogas_acum_V101_wet = self.biogas_acum_V101_dry + self.nH2O_V101_acum_i 
-        self.Energia_V101 = self.Thermo.LHV(molCH4=self.nCH4_V101_acum_i, molCO2=self.nCO2_V101_acum_i, molH2S=self.nH2S_V101_acum_i, molO2=self.nO2_V101_acum_i, molH2=self.nH2_V101_acum_i)[1]
-        
+        mol_ext_Energy_V101 = self.nfree_V101 + self.nNH3_V101_acum_i
+        self.Energy_V101 = self.Thermo.LHV(molCH4=self.nCH4_V101_acum_i, molCO2=self.nCO2_V101_acum_i, molH2S=self.nH2S_V101_acum_i, molO2=self.nO2_V101_acum_i, molH2=self.nH2_V101_acum_i, molExt=mol_ext_Energy_V101)[1]   
+
         #Biogas compound Concentration
         try: 
             if self.biogas_acum_V101_dry == 0:
@@ -639,8 +1243,8 @@ class Biogas_Plant_prediction:
             self.xO2_V101 = 0
             self.xH2_V101 = 0
         
-        self.Temperature = np.random.normal(25, 1)
-        p_i = (((self.biogas_acum_V101_wet * 8.314 * (self.Temperature+273.15))/(self.VG1/1000))/6894.76) - self.Pacum_V101 
+        self.Temperature = np.random.normal(25,3)
+        p_i = (((self.biogas_acum_V101_wet * 8.314 * (self.Temperature+273.15))/(self.VG1/1000))/6894.76) - self.Pacum_V101
         if self.Pacum_V101 < Pset:
             self.Pstorage_V101 = self.Pacum_V101
         else:
@@ -654,9 +1258,9 @@ class Biogas_Plant_prediction:
         self.Tstd = 273.15            #[K]
         self.Pstd = 14.5038           #[Psi]  
         #Standard volume estimation for accumulated biogas
-        self.Vacum_std_V101 = (self.Pacum_V101*self.VG1*self.Tstd)/(self.Pstd*(self.Temperature+273.15))
+        self.Vacum_std_V101 = (self.Pacum_V101*self.VG1*self.Tstd)/(self.Pstd*(self.Temperature+273.15))              #Fixed with absolute pressure
         #Standard colume estimation for storage biogas
-        self.Vstorage_std_V101 = (self.Pstorage_V101*self.VG1*self.Tstd)/(self.Pstd*(self.Temperature+273.15))
+        self.Vstorage_std_V101 = (self.Pstorage_V101*self.VG1*self.Tstd)/(self.Pstd*(self.Temperature+273.15))        #Fixed with absolute pressure
         
         #Accumulated volume of compounds by the time
         self.Vol_esp_CH4 = self.Thermo.Hgases(xCH4=1, xCO2=0, xH2O=0, xO2=0, xN2=0, xH2S=0, xH2=0, P=self.Pacum_V101, Patm=100, T=self.Temperature, xNH3=0)[2]
@@ -709,10 +1313,13 @@ class Biogas_Plant_prediction:
         self.nH2O_V102_acum_i = self.nH2O_V102_acum_i  + self.mol_H2O_transfertoV102
         self.nO2_V102_acum_i = self.nO2_V102_acum_i + self.mol_O2_transferToV102
         self.nH2_V102_acum_i = self.nH2_V102_acum_i + self.mol_H2_transfertoV102
-
-        self.biogas_acum_V102_dry = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i
-        self.biogas_acum_V102_wet = self.biogas_acum_V102_dry + self.nH2O_V102_acum_i
-        self.Energia_V102 = self.Thermo.LHV(molCH4=self.nCH4_V102_acum_i, molCO2=self.nCO2_V102_acum_i, molH2S=self.nH2S_V102_acum_i, molO2=self.nO2_V102_acum_i, molH2=self.nH2_V102_acum_i)[1]
+        self.biogas_acum_V102_dry = self.nbiogas_V102_acum_i
+        self.nfree_V102 = self.biogas_acum_V102_dry - (self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i)
+        
+        self.biogas_acum_V102_dry = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i + self.nfree_V102
+        self.biogas_acum_V102_wet = self.biogas_acum_V102_dry + self.nH2O_V102_acum_i 
+        mol_ext_Energy_V102 = self.nfree_V102 + self.nNH3_V102_acum_i
+        self.Energy_V102 = self.Thermo.LHV(molCH4=self.nCH4_V102_acum_i, molCO2=self.nCO2_V102_acum_i, molH2S=self.nH2S_V102_acum_i, molO2=self.nO2_V102_acum_i, molH2=self.nH2_V102_acum_i, molExt=mol_ext_Energy_V102)[1]   
        
         #Biogas compound Concentration
         try:
@@ -749,8 +1356,13 @@ class Biogas_Plant_prediction:
                 self.xO2_V102 = 0
                 self.xH2_V102 = 0
 
-        p_i = ((self.biogas_acum_V102_wet * 8.314 * (self.Temperature+273.15))/((self.VG2)/1000))/6894.76 - self.Pacum_V102
-        self.Pstorage_V102 = p_i + self.Pstorage_V102
+        if self.Iterator == 0:
+            self.Pacum_V101 = ((self.biogas_acum_V101_wet * 8.314 * (self.Temperature+273.15))/(self.VG1/1000))/6894.76     #psig
+        p_i = (((self.biogas_acum_V101_wet * 8.314 * (self.Temperature+273.15))/(self.VG1/1000))/6894.76) - self.Pacum_V101
+        if self.Pacum_V101 < Pset:
+            self.Pstorage_V101 = self.Pacum_V101
+        else:
+            self.Pstorage_V101 = p_i + self.Pstorage_V101   
         self.Pacum_V102 = ((self.biogas_acum_V102_wet * 8.314 * (self.Temperature+273.15))/((self.VG2)/1000))/6894.76
         
         #Storage biogas moles
@@ -814,11 +1426,13 @@ class Biogas_Plant_prediction:
         self.nH2O_V107_acum_i = self.nH2O_V107_acum_i  + self.mol_H2O_transfertoV107
         self.nO2_V107_acum_i = self.nO2_V107_acum_i + self.mol_O2_transferToV107
         self.nH2_V107_acum_i = self.nH2_V107_acum_i + self.mol_H2_transfertoV107
-        self.nfree = self.nbiogas_V107_acum_i * (1-self.xCH4_V107/100-self.xCO2_V107/100-self.xO2_V107/100-self.xH2_V107/1000000-self.xH2S_V107/1000000) - self.nNH3_V107_acum_i
+        self.biogas_acum_V107_dry = self.nbiogas_V107_acum_i
+        self.nfree_V107 = self.biogas_acum_V107_dry - (self.nCH4_V107_acum_i + self.nCO2_V107_acum_i + self.nH2S_V107_acum_i + self.nNH3_V107_acum_i + self.nO2_V107_acum_i + self.nH2_V107_acum_i)
         
-        self.biogas_acum_V107_dry = self.nCH4_V107_acum_i + self.nCO2_V107_acum_i + self.nH2S_V107_acum_i + self.nNH3_V107_acum_i + self.nO2_V107_acum_i + self.nH2_V107_acum_i
-        self.biogas_acum_V107_wet = self.biogas_acum_V107_dry + self.nH2O_V107_acum_i
-        self.Energia_V107 = self.Thermo.LHV(molCH4=self.nCH4_V107_acum_i, molCO2=self.nCO2_V107_acum_i, molH2S=self.nH2S_V107_acum_i, molO2=self.nO2_V107_acum_i, molH2=self.nH2_V107_acum_i)[1]
+        self.biogas_acum_V107_dry = self.nCH4_V107_acum_i + self.nCO2_V107_acum_i + self.nH2S_V107_acum_i + self.nNH3_V107_acum_i + self.nO2_V107_acum_i + self.nH2_V107_acum_i + self.nfree_V107
+        self.biogas_acum_V107_wet = self.biogas_acum_V107_dry + self.nH2O_V107_acum_i 
+        mol_ext_Energy_V107 = self.nfree_V107 + self.nNH3_V107_acum_i
+        self.Energy_V107 = self.Thermo.LHV(molCH4=self.nCH4_V107_acum_i, molCO2=self.nCO2_V107_acum_i, molH2S=self.nH2S_V107_acum_i, molO2=self.nO2_V107_acum_i, molH2=self.nH2_V107_acum_i, molExt=mol_ext_Energy_V107)[1]  
         
         try:
             if self.biogas_acum_V101_dry == 0:
@@ -829,6 +1443,15 @@ class Biogas_Plant_prediction:
                 self.xH2O_V107 = 0
                 self.xO2_V107 = 0
                 self.xH2_V107 = 0
+
+                self.xCH4_V107_wet = 0
+                self.xCO2_V107_wet = 0
+                self.xH2S_V107_wet = 0
+                self.xNH3_V107_wet = 0
+                self.xH2O_V107_wet = 0
+                self.xO2_V107_wet = 0
+                self.xH2_V107_wet = 0
+            
             else:
                 self.xCH4_V107_wet = self.nCH4_V107_acum_i/self.biogas_acum_V107_wet
                 self.xCO2_V107_wet = self.nCO2_V107_acum_i/self.biogas_acum_V107_wet
@@ -854,10 +1477,25 @@ class Biogas_Plant_prediction:
             self.xH2O_V107 = 0
             self.xO2_V107 = 0
             self.xH2_V107 = 0
+
+            self.xCH4_V107_wet = 0
+            self.xCO2_V107_wet = 0
+            self.xH2S_V107_wet = 0
+            self.xNH3_V107_wet = 0
+            self.xH2O_V107_wet = 0
+            self.xO2_V107_wet = 0
+            self.xH2_V107_wet = 0
         
-        p_i = ((((self.biogas_acum_V107_wet + self.nfree) * 8.314 * (self.Temperature+273.15))/((self.VG3)/1000))/6894.76) - self.Pacum_V107
+        if self.Iterator == 0:
+            self.Pacum_V101 = ((self.biogas_acum_V101_wet * 8.314 * (self.Temperature+273.15))/(self.VG1/1000))/6894.76     #psig
+        p_i = ((((self.biogas_acum_V107_wet) * 8.314 * (self.Temperature+273.15))/((self.VG3)/1000))/6894.76) - self.Pacum_V107
+        if self.Pacum_V101 < Pset:
+            self.Pstorage_V101 = self.Pacum_V101
+        else:
+            self.Pstorage_V101 = p_i + self.Pstorage_V101      
+        
         self.Pstorage_V107 = p_i + self.Pstorage_V107
-        self.Pacum_V107 = (((self.biogas_acum_V107_wet + self.nfree) * 8.314 * (self.Temperature+273.15))/((self.VG3)/1000))/6894.76
+        self.Pacum_V107 = (((self.biogas_acum_V107_wet) * 8.314 * (self.Temperature+273.15))/((self.VG3)/1000))/6894.76
 
         #Storage biogas moles
         self.biogas_storage_mol_V107 = ((self.Pstorage_V107*6894.76) * (self.VG3/1000))/(8.314*(self.Temperature+273.15))
@@ -930,6 +1568,34 @@ class Biogas_Plant_prediction:
         # self.mol_H2O_ads_acum = q_H2O * w_silica
         self.mol_H2O_transfertoV107_i = self.mol_H2O_ads_acum - self.mol_H2O_ads_acum_i 
         self.molH2O_acum_V107_i = self.molH2O_acum_V107_i + self.mol_H2O_transfertoV107_i
+
+        try:
+            if self.biogas_acum_V107_wet == 0:
+                x_H2O_V107 = 0
+            else:
+                x_H2O_V107 = self.molH2O_acum_V107_i/self.biogas_acum_V107_wet
+        except ZeroDivisionError:
+            x_H2O_V107 = 0
+        
+        self.RH_V107 = self.Thermo.BiogasRelativeHumidity(nH2O=self.biogas_storage_mol_V107*x_H2O_V107, VnormalTotal=self.Vstorage_std_V107/1000, T=self.Temperature, P=self.Pstorage_V107)
+                       
+        #Adsorptia percentage
+        if (self.nH2S_V101_acum_i + self.nH2S_V102_acum_i) > self.nH2S_V107_acum_i:
+            self.x_H2S_ads = ((self.nH2S_V101_acum_i + self.nH2S_V102_acum_i)-self.nH2S_V107_acum_i)/(self.nH2S_V101_acum_i + self.nH2S_V102_acum_i)
+        else: 
+            self.x_H2S_ads = 0
+        
+        if (self.nNH3_V101_acum_i + self.nNH3_V102_acum_i) > self.nNH3_V107_acum_i:
+            self.x_NH3_ads = ((self.nNH3_V101_acum_i + self.nNH3_V102_acum_i)-self.nNH3_V107_acum_i)/(self.nNH3_V101_acum_i + self.nNH3_V102_acum_i)
+        else: 
+            self.x_NH3_ads = 0
+        
+        if (self.nH2O_V101_acum_i + self.nH2O_V101_acum_i) > self.nH2O_V107_acum_i:
+            self.x_H2O_ads = ((self.nH2O_V101_acum_i + self.nH2O_V101_acum_i)-self.nH2O_V107_acum_i)/(self.nH2O_V101_acum_i + self.nH2O_V101_acum_i)
+        else: 
+            self.x_H2O_ads = 0
+        
+        self.Xglobal = (self.x_H2S_ads + self.x_NH3_ads + self.x_H2O_ads)/3 
     
     def Reactor102Simulation_Arrhenius(self, Operation, VR, Qin_1, Csus_in1,
                                             K, Ea, T, pH, Qin_2=[0], Csus_in2 = 0.0):
@@ -979,10 +1645,13 @@ class Biogas_Plant_prediction:
         self.nH2O_V102_acum_i = self.nH2O_V102_acum_i  + self.molH2O_R102 + self.mol_H2O_transfertoV102
         self.nO2_V102_acum_i = self.nO2_V102_acum_i + self.molO2_R102 + self.mol_O2_transferToV102
         self.nH2_V102_acum_i = self.nH2_V102_acum_i + self.molH2_R102 + self.mol_H2_transfertoV102
+        self.biogas_acum_V102_dry = self.nbiogas_V102_acum_i
+        self.nfree_V102 = self.biogas_acum_V102_dry - (self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i)
 
-        self.biogas_acum_V102_dry = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i
+        self.biogas_acum_V102_dry = self.nCH4_V102_acum_i + self.nCO2_V102_acum_i + self.nH2S_V102_acum_i + self.nNH3_V102_acum_i + self.nO2_V102_acum_i + self.nH2_V102_acum_i + self.nfree_V102
         self.biogas_acum_V102_wet = self.biogas_acum_V102_dry + self.nH2O_V102_acum_i 
-        self.Energia_V102 = self.Thermo.LHV(molCH4=self.nCH4_V102_acum_i, molCO2=self.nCO2_V102_acum_i, molH2S=self.nH2S_V102_acum_i, molO2=self.nO2_V102_acum_i, molH2=self.nH2_V102_acum_i)[1]
+        mol_ext_Energy_V102 = self.nfree_V102 + self.nNH3_V102_acum_i
+        self.Energy_V102 = self.Thermo.LHV(molCH4=self.nCH4_V102_acum_i, molCO2=self.nCO2_V102_acum_i, molH2S=self.nH2S_V102_acum_i, molO2=self.nO2_V102_acum_i, molH2=self.nH2_V102_acum_i, molExt=mol_ext_Energy_V102)[1]
 
         #Biogas compound Concentration
         try:
@@ -1077,4 +1746,7 @@ class Biogas_Plant_prediction:
             self.mol_H2_transfertoV107 = 0                                   
                                             
     def time_counter (self):
-        self.GlobalTime = self.GlobalTime + (self.plant.tp * self.plant.time_accelerator)
+        self.plant.time_counter()
+        self.GlobalTime = self.plant.GlobalTime
+        self.Iterator = self.Iterator+1
+        # self.GlobalTime = self.GlobalTime + (self.plant.tp * self.plant.time_accelerator)

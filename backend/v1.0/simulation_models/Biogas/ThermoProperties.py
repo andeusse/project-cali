@@ -264,9 +264,9 @@ class ThermoProperties:
 
         return self.RH
 
-    def LHV (self, molCH4, molCO2, molH2S, molO2, molH2):
+    def LHV (self, molCH4, molCO2, molH2S, molO2, molH2, molExt = 0):
          
-        molT = molCH4 + molCO2 + molH2S + molO2 + molH2
+        molT = molCH4 + molCO2 + molH2S + molO2 + molH2 + molExt
 
         if (molT>0):
             self.xCH4 = molCH4/molT
@@ -284,12 +284,13 @@ class ThermoProperties:
             self.hf_H2O = -241810    #[J/mol]
 
             n_CO2 = self.xCH4 + self.xCO2
-            n_H2O = (4*self.xCH4 + 2*self.xCO2 + 2*self.xH2)/2
+            n_H2O = (4*self.xCH4 + 2*self.xH2)/2
             alfa = (2*n_CO2 + n_H2O - 2*self.xCO2 - 2*self.xO2)/2
             n_N2 = alfa * 3.76
 
-            LHV = (self.xCH4*self.hf_CH4 + self.xCO2*self.hf_CO2 + self.xH2S*self.hf_H2S + self.xO2*self.hf_O2 + self.xH2*self.hf_H2) + (alfa*self.hf_O2 + 3.76*alfa*self.hf_N2) - (n_CO2 * self.hf_CO2 + n_H2O * self.hf_H2O + n_N2 * self.hf_N2)
-
+            LHV = ((self.xCH4*self.hf_CH4 + self.xCO2*self.hf_CO2 + self.xH2S*self.hf_H2S + self.xO2*self.hf_O2 + self.xH2*self.hf_H2) +
+                   (alfa*self.hf_O2 + 3.76*alfa*self.hf_N2) - (n_CO2 * self.hf_CO2 + n_H2O * self.hf_H2O + n_N2 * self.hf_N2))
+            
             Energia_J = LHV * molT
         
         else:
