@@ -92,10 +92,9 @@ export const setFormState = <T extends formType>(
   }
   if ('measurementMethodSideA' in oldState) {
     if (
-      name === 'stateSelectionSideA' ||
+      name === 'stateSelection' ||
       name === 'modelSelectionSideA' ||
       name === 'mixRuleSideA' ||
-      name === 'stateSelectionSideB' ||
       name === 'modelSelectionSideB' ||
       name === 'mixRuleSideB' ||
       name === 'trainingMode' ||

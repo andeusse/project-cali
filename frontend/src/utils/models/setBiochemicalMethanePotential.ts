@@ -1,3 +1,4 @@
+import Constants from '../../config/constants';
 import { OperationModelType, StepUnitType } from '../../types/common';
 import {
   BiochemicalMethanePotentialParameters,
@@ -11,15 +12,26 @@ export const setBiochemicalMethanePotential = (
   oldState: BiochemicalMethanePotentialParameters
 ): BiochemicalMethanePotentialParameters => {
   let newState = { ...oldState };
-  if (e.target.name === 'stateSelectionSideA') {
-    newState.stateSelectionSideA = !newState.stateSelectionSideA;
+  if (e.target.name === 'stateSelection') {
+    newState.stateSelection = !newState.stateSelection;
 
-    newState.testDurationSideA.disabled = !newState.stateSelectionSideA;
-    newState.TemperatureSideA.disabled = !newState.stateSelectionSideA;
-    newState.pHSideA.disabled = !newState.stateSelectionSideA;
-    newState.mixManualSideA = newState.stateSelectionSideA;
-    newState.feefManualSideA = newState.stateSelectionSideA;
-    newState.manualBiogasCompositionSideA = newState.stateSelectionSideA;
+    newState.queryTime = newState.stateSelection
+      ? Constants.QUERY_TIME_OFFLINE_BMP
+      : Constants.QUERY_TIME_ONLINE_BMP;
+
+    newState.testDurationSideA.disabled = !newState.stateSelection;
+    newState.TemperatureSideA.disabled = !newState.stateSelection;
+    newState.pHSideA.disabled = !newState.stateSelection;
+    newState.mixManualSideA = newState.stateSelection;
+    newState.feefManualSideA = newState.stateSelection;
+    newState.manualBiogasCompositionSideA = newState.stateSelection;
+
+    newState.testDurationSideB.disabled = !newState.stateSelection;
+    newState.TemperatureSideB.disabled = !newState.stateSelection;
+    newState.pHSideB.disabled = !newState.stateSelection;
+    newState.mixManualSideB = newState.stateSelection;
+    newState.feefManualSideB = newState.stateSelection;
+    newState.manualBiogasCompositionSideB = newState.stateSelection;
   }
   if (e.target.name === 'modelSelectionSideA') {
     newState.modelSelectionSideA = getKeyByValue(
@@ -130,16 +142,6 @@ export const setBiochemicalMethanePotential = (
         newState.waterCompositionSideA.unit = 'g';
         break;
     }
-  }
-  if (e.target.name === 'stateSelectionSideB') {
-    newState.stateSelectionSideB = !newState.stateSelectionSideB;
-
-    newState.testDurationSideB.disabled = !newState.stateSelectionSideB;
-    newState.TemperatureSideB.disabled = !newState.stateSelectionSideB;
-    newState.pHSideB.disabled = !newState.stateSelectionSideB;
-    newState.mixManualSideB = newState.stateSelectionSideB;
-    newState.feefManualSideB = newState.stateSelectionSideB;
-    newState.manualBiogasCompositionSideB = newState.stateSelectionSideB;
   }
   if (e.target.name === 'modelSelectionSideB') {
     newState.modelSelectionSideB = getKeyByValue(
@@ -253,22 +255,21 @@ export const setBiochemicalMethanePotential = (
   }
   if (e.target.name === 'trainingMode') {
     newState.trainingMode = e.target.checked;
-    newState.stateSelectionSideA = !newState.trainingMode;
+    newState.stateSelection = !newState.trainingMode;
 
-    newState.testDurationSideA.disabled = !newState.stateSelectionSideA;
-    newState.TemperatureSideA.disabled = !newState.stateSelectionSideA;
-    newState.pHSideA.disabled = !newState.stateSelectionSideA;
-    newState.mixManualSideA = newState.stateSelectionSideA;
-    newState.feefManualSideA = newState.stateSelectionSideA;
-    newState.manualBiogasCompositionSideA = newState.stateSelectionSideA;
+    newState.testDurationSideA.disabled = !newState.stateSelection;
+    newState.TemperatureSideA.disabled = !newState.stateSelection;
+    newState.pHSideA.disabled = !newState.stateSelection;
+    newState.mixManualSideA = newState.stateSelection;
+    newState.feefManualSideA = newState.stateSelection;
+    newState.manualBiogasCompositionSideA = newState.stateSelection;
 
-    newState.stateSelectionSideB = !newState.trainingMode;
-    newState.testDurationSideB.disabled = !newState.stateSelectionSideB;
-    newState.TemperatureSideB.disabled = !newState.stateSelectionSideB;
-    newState.pHSideB.disabled = !newState.stateSelectionSideB;
-    newState.mixManualSideB = newState.stateSelectionSideB;
-    newState.feefManualSideB = newState.stateSelectionSideB;
-    newState.manualBiogasCompositionSideB = newState.stateSelectionSideB;
+    newState.testDurationSideB.disabled = !newState.stateSelection;
+    newState.TemperatureSideB.disabled = !newState.stateSelection;
+    newState.pHSideB.disabled = !newState.stateSelection;
+    newState.mixManualSideB = newState.stateSelection;
+    newState.feefManualSideB = newState.stateSelection;
+    newState.manualBiogasCompositionSideB = newState.stateSelection;
   }
   if (e.target.name === 'inputProfileEnable') {
     newState.inputProfileEnable = e.target.checked;

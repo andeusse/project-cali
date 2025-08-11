@@ -105,10 +105,10 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
     biogasCompoundsSideB: DiagramCompoundUnitType;
     isSideAOn: boolean;
     isSideBOn: boolean;
+    stateSelection: boolean;
 
     rxnVolumeSideA: InputType;
     freeVolumeSideA: InputType;
-    stateSelectionSideA: boolean;
     kineticKSideA: InputType;
     kineticEaSideA: InputType;
     kineticLambdaSideA: InputType;
@@ -195,7 +195,6 @@ export type BiochemicalMethanePotentialParameters = CommonSystemParameter &
 
     rxnVolumeSideB: InputType;
     freeVolumeSideB: InputType;
-    stateSelectionSideB: boolean;
     kineticKSideB: InputType;
     kineticEaSideB: InputType;
     kineticLambdaSideB: InputType;
@@ -622,7 +621,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     step: 0.1,
   },
   stepUnit: StepUnitType.Hour,
-  queryTime: Constants.QUERY_TIME_DIGITAL_TWIN_OFF_OFFLINE_BIOGAS,
+  queryTime: Constants.QUERY_TIME_OFFLINE_BMP,
   disableParameters: false,
   timeMultiplier: {
     disabled: false,
@@ -651,11 +650,10 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   biogasVisualizationSideB: DiagramBiogasType.Stored,
   biogasVisualizationUnitsSideB: DiagramBiogasUnitType.NormalVolume,
   biogasCompoundsSideB: DiagramCompoundUnitType.Concentration,
-  stateSelectionSideA: true,
+  stateSelection: true,
   manualBiogasCompositionSideA: true,
   mixManualSideA: true,
   feefManualSideA: true,
-  stateSelectionSideB: true,
   manualBiogasCompositionSideB: true,
   mixManualSideB: true,
   feefManualSideB: true,

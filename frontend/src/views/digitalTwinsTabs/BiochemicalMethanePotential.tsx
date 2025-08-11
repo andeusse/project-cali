@@ -516,8 +516,8 @@ const BiochemicalMethanePotential = (props: Props) => {
                             sx={{ alignContent: 'center' }}
                           >
                             <CustomToggle
-                              value={system.stateSelectionSideA}
-                              name="stateSelectionSideA"
+                              value={system.stateSelection}
+                              name="stateSelection"
                               handleChange={handleChange}
                               trueString="Offline"
                               falseString="Online"
@@ -636,7 +636,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                           )}
                         </Grid>
                       </Grid>
-                      {!system.stateSelectionSideA && (
+                      {!system.stateSelection && (
                         <Grid item xs={12} md={12} xl={12}>
                           <Grid container spacing={2}>
                             <Grid
@@ -661,7 +661,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 handleChange={handleChange}
                                 disabled={
                                   system.disableParameters ||
-                                  system.stateSelectionSideA ||
+                                  system.stateSelection ||
                                   system.trainingMode
                                 }
                               ></CustomToggle>
@@ -1127,8 +1127,8 @@ const BiochemicalMethanePotential = (props: Props) => {
                             sx={{ alignContent: 'center' }}
                           >
                             <CustomToggle
-                              value={system.stateSelectionSideB}
-                              name="stateSelectionSideB"
+                              value={system.stateSelection}
+                              name="stateSelection"
                               handleChange={handleChange}
                               trueString="Offline"
                               falseString="Online"
@@ -1245,7 +1245,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                           )}
                         </Grid>
                       </Grid>
-                      {!system.stateSelectionSideB && (
+                      {!system.stateSelection && (
                         <Grid item xs={12} md={12} xl={12}>
                           <Grid container spacing={2}>
                             <Grid
@@ -1270,7 +1270,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                                 handleChange={handleChange}
                                 disabled={
                                   system.disableParameters ||
-                                  system.stateSelectionSideB
+                                  system.stateSelection
                                 }
                               ></CustomToggle>
                             </Grid>
@@ -3034,9 +3034,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.testDurationSideA}
                       name="testDurationSideA"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideA || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></ToggleCustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -3044,9 +3042,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.TemperatureSideA}
                       name="TemperatureSideA"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideA || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></ToggleCustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -3054,9 +3050,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.pHSideA}
                       name="pHSideA"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideA || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></ToggleCustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={6} xl={6}>
@@ -3073,9 +3067,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       value={system.mixManualSideA}
                       name="mixManualSideA"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideA || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -3117,9 +3109,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       value={system.feefManualSideA}
                       name="feefManualSideA"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideA || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={6} xl={12}>
@@ -3182,9 +3172,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.testDurationSideB}
                       name="testDurationSideB"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideB || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></ToggleCustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -3192,9 +3180,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.TemperatureSideB}
                       name="TemperatureSideB"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideB || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></ToggleCustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -3202,9 +3188,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       variable={system.pHSideB}
                       name="pHSideB"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideB || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></ToggleCustomNumberField>
                   </Grid>
                   <Grid item xs={12} md={6} xl={6}>
@@ -3221,9 +3205,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       value={system.mixManualSideB}
                       name="mixManualSideB"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideB || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={12} xl={12}>
@@ -3265,9 +3247,7 @@ const BiochemicalMethanePotential = (props: Props) => {
                       value={system.feefManualSideB}
                       name="feefManualSideB"
                       handleChange={handleChange}
-                      disabled={
-                        system.stateSelectionSideB || system.trainingMode
-                      }
+                      disabled={system.stateSelection || system.trainingMode}
                     ></CustomToggle>
                   </Grid>
                   <Grid item xs={12} md={6} xl={12}>
