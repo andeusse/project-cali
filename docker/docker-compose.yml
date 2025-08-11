@@ -32,29 +32,29 @@ services:
           cpus: '2'
           memory: 4G
 
-  grafana:
-    image: grafana-image
-    restart: always
-    ports:
-      - '3000:3000'
-    hostname: grafana
-    container_name: grafana
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    depends_on:
-      - influxdb
-    environment:
-      - GF_SECURITY_ALLOW_EMBEDDING=true
-    networks:
-      - laboratorio-default
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 3G
-        reservations:
-          cpus: '2'
-          memory: 2G
+  # grafana:
+  #   image: grafana-image
+  #   restart: always
+  #   ports:
+  #     - '3000:3000'
+  #   hostname: grafana
+  #   container_name: grafana
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #   depends_on:
+  #     - influxdb
+  #   environment:
+  #     - GF_SECURITY_ALLOW_EMBEDDING=true
+  #   networks:
+  #     - laboratorio-default
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '2'
+  #         memory: 3G
+  #       reservations:
+  #         cpus: '2'
+  #         memory: 2G
 
   frontend:
     build:
@@ -65,7 +65,7 @@ services:
       - '3001:3001'
     depends_on:
       - influxdb
-      - grafana
+      # - grafana
     networks:
       - laboratorio-default
     deploy:
@@ -86,7 +86,7 @@ services:
       - '5000:5000'
     depends_on:
       - influxdb
-      - grafana
+      # - grafana
     networks:
       - laboratorio-default
     deploy:

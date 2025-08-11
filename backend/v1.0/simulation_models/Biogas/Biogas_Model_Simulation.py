@@ -482,7 +482,7 @@ class BiogasPlantSimulation:
                     Q1 = np.interp(t, time, Qin_1)
                 else:
                     Q1 = Qin_1[-1]
-                dCsus_dt = ((Q1/VR) * (Csus_in1 - C)) - ((C * K * np.exp(-(Ea)/(R*T))) / VR)
+                dCsus_dt = ((Q1/VR) * (Csus_in1 - C)) - ((C * K * np.exp(-(Ea)/(R*(T+273.15)))) / VR)
             elif Operation == 2:
                 if len(Qin_1)>1:
                     Q1 = np.interp(t, time, Qin_1)
@@ -490,7 +490,7 @@ class BiogasPlantSimulation:
                 else:
                     Q1 = Qin_1[-1]
                     Q2 = Qin_2[-1]
-                dCsus_dt = (Q1 * Csus_in1)/VR + (Q2 * Csus_in2)/VR - ((Q1+Q2)*C)/VR - (C * K * np.exp(-Ea/(R*T))) / VR
+                dCsus_dt = (Q1 * Csus_in1)/VR + (Q2 * Csus_in2)/VR - ((Q1+Q2)*C)/VR - (C * K * np.exp(-Ea/(R*(T+273.15)))) / VR
             return dCsus_dt
     
         if len(Qin_1)>1:

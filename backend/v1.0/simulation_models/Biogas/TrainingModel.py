@@ -481,8 +481,14 @@ class Training_offline:
             T2_R101 = alignDimension(time_definitive, T2_R101)
             Tprom_R101 = alignDimension(time_definitive, Tprom_R101)
             #V102
-            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
-            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            try:
+                Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            except:
+                Pacum_V102 = Pacum_V102["_value"]
+            try: 
+                Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            except:
+                Vacum_V102 = Vacum_V102["_value"]
             P_V102 = alignDimension(time_definitive, P_V102)
             T_V102 = alignDimension(time_definitive, T_V102)
             rh_V102 = alignDimension(time_definitive, rh_V102)
@@ -578,8 +584,14 @@ class Training_offline:
             T2_R101 = alignDimension(time_definitive, T2_R101)
             Tprom_R101 = alignDimension(time_definitive, Tprom_R101)
             #V102
-            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
-            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            try:
+                Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            except:
+                Pacum_V102 = Pacum_V102["_value"]
+            try: 
+                Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            except:
+                Vacum_V102 = Vacum_V102["_value"]
             P_V102 = alignDimension(time_definitive, P_V102)
             T_V102 = alignDimension(time_definitive, T_V102)
             rh_V102 = alignDimension(time_definitive, rh_V102)
@@ -676,8 +688,14 @@ class Training_offline:
             xH2S_V101 = alignDimension(time_definitive, xH2S_V101)
             xH2_V101 = alignDimension(time_definitive, xH2_V101)
             #V102
-            Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
-            Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            try:
+                Pacum_V102 = alignDimension(time_definitive, Pacum_V102)
+            except:
+                Pacum_V102 = Pacum_V102["_value"]
+            try: 
+                Vacum_V102 = alignDimension(time_definitive, Vacum_V102)
+            except:
+                Vacum_V102 = Vacum_V102["_value"]
             P_V102 = alignDimension(time_definitive, P_V102)
             T_V102 = alignDimension(time_definitive, T_V102)
             rh_V102 = alignDimension(time_definitive, rh_V102)
@@ -3103,7 +3121,7 @@ class Training_offline:
         except ZeroDivisionError:
             self.xNH3_V101_e = 0
         self.VNH3_acum_V101 = self.Vnorm_bio_sto_V101 * (self.xNH3_V101_e/1000000)
-        self.mol_acum_NH3_V101 = float(self.nNH3_V101_acum.iloc[-1])
+        self.mol_acum_NH3_V101 = float(self.nNH3_V101_acum_f.iloc[-1])
         self.RH_V101_e = float(self.DataPlant["rh_V101"].iloc[-1])
         self.Energy_V101 = float(self.Energia_jouleV101["_value"].iloc[-1])
         self.mol_acum_H2O_V101 = self.Thermo.BiogasAbsoluteHumidity(RH = self.RH_V101_e/100, T = self.T_V101_e) * self.Vnorm_bio_V101
@@ -3205,7 +3223,7 @@ class Training_offline:
             print("Error calculating x_ads_H2S:", e)
             x_ads_H2S = 0
         try:
-            total_n_NH3 = self.nNH3_V101_acum.iloc[-1] + self.nNH3_V102_acum.iloc[-1]
+            total_n_NH3 = self.nNH3_V101_acum_f.iloc[-1] + self.nNH3_V102_acum_f.iloc[-1]
             if total_n_NH3 != 0 and not pd.isna(total_n_NH3):
                 x_ads_NH3 = self.mol_NH3_ads / total_n_NH3
             else:
@@ -3224,11 +3242,11 @@ class Training_offline:
         timestamp = self.DataPlant["time"].iloc[-1]  # Convert to nanoseconds
         
         if self.Model == "Arrhenius" and (self.Operation_mode == 1 or self.Operation_mode == 2):
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101)), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101/60)), timestamp=timestamp) 
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = abs(float(self.Ea_mean_R101)), timestamp=timestamp)  
         
         elif self.Model == "ADM1" and (self.Operation_mode == 1 or self.Operation_mode == 2):
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101)), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101/60)), timestamp=timestamp)
         
         elif self.Model == "Gompertz" and (self.Operation_mode == 1 or self.Operation_mode == 2):
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
@@ -3236,14 +3254,14 @@ class Training_offline:
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?L_R101?{name}', value = float(self.L_R101), timestamp=timestamp)
 
         elif self.Model == "Arrhenius" and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101)), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_mean_R101/60)), timestamp=timestamp) 
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R101?{name}', value = abs(float(self.Ea_mean_R101)), timestamp=timestamp)
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = abs(float(self.K_mean_R102)), timestamp=timestamp) 
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = abs(float(self.K_mean_R102/60)), timestamp=timestamp) 
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?Ea_R102?{name}', value = abs(float(self.Ea_mean_R102)), timestamp=timestamp)
         
         elif self.Model == "ADM1"  and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101)), timestamp=timestamp)
-            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R102?{name}', value = abs(float(self.K_ini_ADM1_R102)), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R101?{name}', value = abs(float(self.K_ini_ADM1_R101/60)), timestamp=timestamp)
+            self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?K_R102?{name}', value = abs(float(self.K_ini_ADM1_R102/60)), timestamp=timestamp)
         
         elif self.Model == "Gompertz" and (self.Operation_mode == 3 or self.Operation_mode == 4 or self.Operation_mode == 5):
             self.influxDB.InfluxDBwriter(measurement="Planta_Biogas", device = "entrenamiento", variable = f'Modo{int(self.Operation_mode)}?{self.Model}?ym_R101?{name}', value = float(self.ym_R101), timestamp=timestamp) 
