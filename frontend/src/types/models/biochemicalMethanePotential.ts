@@ -672,7 +672,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
     unit: 's',
     variableString: 'Paso de tiempo',
     min: 1,
-    max: 3600,
+    max: 360,
   },
   rxnVolumeSideA: {
     disabled: false,
