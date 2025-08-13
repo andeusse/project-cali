@@ -59,7 +59,7 @@ class InfluxDBmodel:
         self.influxDBclient.close()
 
     # %% InfluxDB query creator
-    def QueryCreator(self, measurement='', device='', variable='', location='', type=0, forecastTime=0, train_time = 0): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
+    def QueryCreator(self, measurement='', device='', variable='', location='', t_start_str='', t_end_str='', type=0, forecastTime=0, train_time = 0): #type 0: electrical last value, type 1: weather last value, type 2: electrical and weather forecast, type 3: next day forecast
         if type == 0:
             self.query = '''from(bucket: "''' + self.bucket + '''")
             |> range(start: 0)
@@ -166,6 +166,79 @@ class InfluxDBmodel:
             )
             |> last()
             '''
+        elif type == 12:
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: -{train_time}m)
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) =>
+                r["device"] == "R101" or 
+                r["device"] == "R102" or 
+                r["device"] == "R103" or 
+                r["device"] == "R104" or 
+                r["device"] == "R105")
+            |> last()
+            '''
+        
+        elif type == 13:
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: time(v: "{t_start_str}"), stop: time(v: "{t_end_str}"))
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) =>
+                r["device"] == "R101" or 
+                r["device"] == "R102" or 
+                r["device"] == "R103" or 
+                r["device"] == "R104" or 
+                r["device"] == "R105")
+            '''
+        elif type == 14:
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: -{train_time}m)
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) =>
+                r["device"] == "R106" or 
+                r["device"] == "R107" or 
+                r["device"] == "R108" or 
+                r["device"] == "R109" or 
+                r["device"] == "R110")
+            |> last()
+            '''
+        elif type == 15:
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: time(v: "{t_start_str}"), stop: time(v: "{t_end_str}"))
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) =>
+                r["device"] == "R106" or 
+                r["device"] == "R107" or 
+                r["device"] == "R108" or 
+                r["device"] == "R109" or 
+                r["device"] == "R110")
+            '''
+        elif type == 16:
+            self.query = f'''
+                from(bucket: "{self.bucket}")
+                |> range(start: -{train_time}m)
+                |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+                |> filter(fn: (r) => 
+                    r["device"] == "interfaz" or
+                    r["device"] == "dosificacion" or
+                    r["device"] == "piscina")
+                |> last()
+                '''
+        elif type == 17:
+            self.query = f'''
+            from(bucket: "{self.bucket}")
+            |> range(start: time(v: "{t_start_str}"), stop: time(v: "{t_end_str}"))
+            |> filter(fn: (r) => r["_measurement"] == "{measurement}")
+            |> filter(fn: (r) =>
+                r["device"] == "interfaz" or 
+                r["device"] == "dosificacion" or 
+                r["device"] == "piscina")
+            '''
+            
         else:
             self.query = "Tipo de query inválido"
         

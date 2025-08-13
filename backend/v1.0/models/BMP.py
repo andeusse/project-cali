@@ -1,11 +1,15 @@
 from flask import request
 from flask_restful import Resource
 from simulation_models.BMPModel import BMPOffline
+from simulation_models.BMPModel import BMPOnlineTrainMode
 from tools import DBManager
 import os
 import json
 
 bmp_instances = {}
+data_instances = {}
+
+bmp_instances_offline_SideA = {}
 
 class BMP(Resource):
   def get(self):
@@ -56,30 +60,328 @@ class BMP(Resource):
   def post(self):
     data = request.get_json()
     bmp_output = {}
-    
+
+    #Database parameters
+    DB_IP = os.getenv('DB_IP')
+    DB_Port = os.getenv('DB_Port')
+    DB_Bucket = os.getenv('DB_Bucket')
+    DB_Organization = os.getenv('DB_Organization')
+    DB_Token = os.getenv('DB_Token')
+
+    #Global twin
+    name = data["name"]
+    TrainingMode = data["trainingMode"]
     iteration = data["iteration"]
-    Side = data["plantOperation"]
-    user_id101 = data["name"] + "101"
-    user_id102 = data["name"] + "102"
-    user_id103 = data["name"] + "103"
-    user_id104 = data["name"] + "104"
-    user_id105 = data["name"] + "105"
-    user_id106 = data["name"] + "106"
-    user_id107 = data["name"] + "107"
-    user_id108 = data["name"] + "108"
-    user_id109 = data["name"] + "109"
-    user_id110 = data["name"] + "110"
+
+    # SideA 
+    # Operational Conditions
+    StateSideA = data["isSideAOn"]                               #True: Turning on, Fals: Truning off
+    stateSelectionSideA = data["stateSelectionSideA"]            #False: Online, True: offline
+    measurementMethodSideA =  data["measurementMethodSideA"]     #"Pressure, VolumeDisplaced"
+    ReactorVolumeSideA = data["rxnVolumeSideA"]                  #Reactor Volume (mL)   
+    InitialFreeVolumeSideA = data["freeVolumeSideA"]             #Free volume (mL)
+    ModelSideA = data["modelSelectionSideA"]                     #Arrhenius, Gompertz, ADM1
+    time_stepSideA = data["stepTime"]["value"]                   #Time step, seconds 
+    speed_time = data["timeMultiplier"]["value"]
+
+    #Model parameters
+    K = data["kineticKSideA"]["value"]
+    Ea = data["kineticEaSideA"]["value"]
+    L = data["kineticLambdaSideA"]["value"]
+    if ModelSideA == "Gompertz":
+      K = K*1000
+      Ea = Ea * 1000 * 86400
+      L = L/86400
+
+    #Mixing
+    MixManualSideA = data["mixManualSideA"]                      #True: manual, False:Auto
+    MixVelocitySideA = data["mixVelocitySideA"]["value"]
+    mixTimeSideA = data["mixTimeSideA"]["value"] 
+    mixDailySideA = data["mixDailySideA"]["value"] 
+
+    #Temperature control
+    TemperatureManualSideA = data["TemperatureManualSideA"]
+    TemperatureSideA = data["TemperatureSideA"]["value"]
+
+    #pHControl
+    pHManualSideA = data["pHManualSideA"]
+    pHSideA = data["pHSideA"]
+
+    #Initial conditions for substrate
+    SubstrateNumberSideA = data["amountOfSubstratesSideA"]["value"]   #Substrate number
+    MixRuleSideA = data["mixRuleSideA"]                               #Fraction, Volume, Weight
+
+    #Estimation by fraction
+    Fraction1SideA = data["substrate1CompositionSideA"]["value"]      #These could be Fraction, Volume or weight depending of mix rules
+    Fraction2SideA = data["substrate2CompositionSideA"]["value"]
+    Fraction3SideA = data["substrate3CompositionSideA"]["value"]
+    Fraction4SideA = data["substrate4CompositionSideA"]["value"]
+    WaterFractionSideA = data["waterCompositionSideA"]["value"]
+
+    #Substrate 1 properties
+    ST1SideA = data["totalSolidsSubstrate1SideA"]["value"]
+    SV1SideA = data["volatileSolidsSubstrate1SIdeA"]["value"]
+    rho1SideA = data["densitySubstrate1SideA"]["value"]
+    Cc1SideA = data["carbonContentSubstrate1SideA"]["value"]
+    Ch1SideA = data["hydrogenContentSubstrate1SideA"]["value"]
+    Co1SideA = data["oxygenContentSubstrate1SideA"]["value"]
+    Cn1SideA = data["nitrogenContentSubstrate1SideA"]["value"]
+    Cs1SideA = data["sulfurContentSubstrate1SideA"]["value"]
     
-    users_instances = [user_id101, user_id102, user_id103, user_id104, user_id105,
-                            user_id106, user_id107, user_id108, user_id109, user_id110]
+    #Substrate 2 properties
+    ST2SideA = data["totalSolidsSubstrate2SideA"]["value"]
+    SV2SideA = data["volatileSolidsSubstrate2SideA"]["value"]
+    rho2SideA = data["densitySubstrate2SideA"]["value"]
+    Cc2SideA = data["carbonContentSubstrate2SideA"]["value"]
+    Ch2SideA = data["hydrogenContentSubstrate2SideA"]["value"]
+    Co2SideA = data["oxygenContentSubstrate2SideA"]["value"]
+    Cn2SideA = data["nitrogenContentSubstrate2SideA"]["value"]
+    Cs2SideA = data["sulfurContentSubstrate2SideA"]["value"]
+
+    #Substrate 3 properties
+    ST3SideA = data["totalSolidsSubstrate3SideA"]["value"]
+    SV3SideA = data["volatileSolidsSubstrate3SideA"]["value"]
+    rho3SideA = data["densitySubstrate3SideA"]["value"]
+    Cc3SideA = data["carbonContentSubstrate3SideA"]["value"]
+    Ch3SideA = data["hydrogenContentSubstrate3SideA"]["value"]
+    Co3SideA = data["oxygenContentSubstrate3SideA"]["value"]
+    Cn3SideA = data["nitrogenContentSubstrate3SideA"]["value"]
+    Cs3SideA = data["sulfurContentSubstrate3SideA"]["value"]
+
+    #Substrate 4 properties
+    ST4SideA = data["totalSolidsSubstrate4SideA"]["value"]
+    SV4SideA = data["volatileSolidsSubstrate4SIdeA"]["value"]
+    rho4SideA = data["densitySubstrate4SideA"]["value"]
+    Cc4SideA = data["carbonContentSubstrate4SideA"]["value"]
+    Ch4SideA = data["hydrogenContentSubstrate4SideA"]["value"]
+    Co4SideA = data["oxygenContentSubstrate4SideA"]["value"]
+    Cn4SideA = data["nitrogenContentSubstrate4SideA"]["value"]
+    Cs4SideA = data["sulfurContentSubstrate4SideA"]["value"]
+
+    #Biogas compositions Manually
+    biogas = data["manualBiogasCompositionSideA"]            #False: Auto, True: Manual
+    
+    #R101
+    methaneR101 = data["methaneR101"]["value"]
+    carbonDioxideR101 = data["carbonDioxideR101"]["value"]
+    oxygenR101 = data["oxygenR101"]["value"]
+    sulfurHydrogenR101 = data["sulfurHydrogenR101"]["value"]
+    hydrogenR101 = data["hydrogenR101"]["value"]
+    #R102
+    methaneR102 = data["methaneR102"]["value"]
+    carbonDioxideR102 = data["carbonDioxideR102"]["value"]
+    oxygenR102 = data["oxygenR102"]["value"]
+    sulfurHydrogenR102 = data["sulfurHydrogenR102"]["value"]
+    hydrogenR102 = data["hydrogenR102"]["value"]
+    #R103
+    methaneR103 = data["methaneR103"]["value"]
+    carbonDioxideR103 = data["carbonDioxideR103"]["value"]
+    oxygenR103 = data["oxygenR103"]["value"]
+    sulfurHydrogenR103 = data["sulfurHydrogenR103"]["value"]
+    hydrogenR103 = data["hydrogenR103"]["value"]
+    
+    #Operation Method
+    OperationMethodSideA = data["dosificationTypeSideA"]                  #NoDosing, Time, Injection
+    dosificationVolumeSideA = data["dosificationVolumeSideA"]["value"]
+    dailyInyectionsSideA = data["dailyInyectionsSideA"]["value"]
+    TrainTimeSideA = data["testDurationSideA"]["value"] 
+    TrainTimeSideA = TrainTimeSideA * 24 * 60                               #trnasform days into minutes
+
+    # SideB 
+    # Operational Conditions
+    stateSelectionSideB = data["stateSelectionSideB"]            #False: Online, True: offline
+    measurementMethodSideB =  data["measurementMethodSideB"]     #"Pressure, VolumeDisplaced"
+    ReactorVolumeSideB = data["rxnVolumeSideB"]                  #Reactor Volume (mL)   
+    InitialFreeVolumeSideB = data["freeVolumeSideB"]             #Free volume (mL)
+    ModelSideB = data["modelSelectionSideB"]                     #Arrhenius, Gompertz, ADM1 
+
+    #Initial conditions for substrate
+    SubstrateNumberSideB = data["amountOfSubstratesSideB"]["value"]   #Substrate number
+    MixRuleSideB = data["mixRuleSideB"]                               #Fraction, Volume, Weight
+
+    #Estimation by fraction
+    Fraction1SideB = data["substrate1CompositionSideB"]["value"]      #These could be Fraction, Volume or weight depending of mix rules
+    Fraction2SideB = data["substrate2CompositionSideB"]["value"]
+    Fraction3SideB = data["substrate3CompositionSideB"]["value"]
+    Fraction4SideB = data["substrate4CompositionSideB"]["value"]
+    WaterFractionSideB = data["waterCompositionSideB"]["value"]
+
+    #Substrate 1 properties
+    ST1SideB = data["totalSolidsSubstrate1SideB"]["value"]
+    SV1SideB = data["volatileSolidsSubstrate1SIdeA"]["value"]
+    rho1SideB = data["densitySubstrate1SideB"]["value"]
+    Cc1SideB = data["carbonContentSubstrate1SideB"]["value"]
+    Ch1SideB = data["hydrogenContentSubstrate1SideB"]["value"]
+    Co1SideB = data["oxygenContentSubstrate1SideB"]["value"]
+    Cn1SideB = data["nitrogenContentSubstrate1SideB"]["value"]
+    Cs1SideB = data["sulfurContentSubstrate1SideB"]["value"]
+    
+    #Substrate 2 properties
+    ST2SideB = data["totalSolidsSubstrate2SideB"]["value"]
+    SV2SideB = data["volatileSolidsSubstrate2SideA"]["value"]
+    rho2SideB = data["densitySubstrate2SideB"]["value"]
+    Cc2SideB = data["carbonContentSubstrate2SideB"]["value"]
+    Ch2SideB = data["hydrogenContentSubstrate2SideB"]["value"]
+    Co2SideB = data["oxygenContentSubstrate2SideB"]["value"]
+    Cn2SideB = data["nitrogenContentSubstrate2SideB"]["value"]
+    Cs2SideB = data["sulfurContentSubstrate2SideB"]["value"]
+
+    #Substrate 3 properties
+    ST3SideB = data["totalSolidsSubstrate3SideB"]["value"]
+    SV3SideB = data["volatileSolidsSubstrate3SideA"]["value"]
+    rho3SideB = data["densitySubstrate3SideB"]["value"]
+    Cc3SideB = data["carbonContentSubstrate3SideB"]["value"]
+    Ch3SideB = data["hydrogenContentSubstrate3SideB"]["value"]
+    Co3SideB = data["oxygenContentSubstrate3SideB"]["value"]
+    Cn3SideB = data["nitrogenContentSubstrate3SideB"]["value"]
+    Cs3SideB = data["sulfurContentSubstrate3SideB"]["value"]
+
+    #Substrate 4 properties
+    ST4SideB = data["totalSolidsSubstrate4SideB"]["value"]
+    SV4SideB = data["volatileSolidsSubstrate4SIdeA"]["value"]
+    rho4SideB = data["densitySubstrate4SideB"]["value"]
+    Cc4SideB = data["carbonContentSubstrate4SideB"]["value"]
+    Ch4SideB = data["hydrogenContentSubstrate4SideB"]["value"]
+    Co4SideB = data["oxygenContentSubstrate4SideB"]["value"]
+    Cn4SideB = data["nitrogenContentSubstrate4SideB"]["value"]
+    Cs4SideB = data["sulfurContentSubstrate4SideB"]["value"]
+    
+    #Operation Method
+    OperationMethodSideB = data["dosificationTypeSideB"]     #NoDosing, Time, Injection
+    TrainTimeSideB = data["testDurationSideB"]["value"]   
+    
+    # ---- Side A - Working
+    if StateSideA == True:
+      if stateSelectionSideA == False and biogas == False and TrainingMode == True:    #Online, biogas compounds in auto
+        
+        # instances online
+        user_idSideA = name + "SideA"
+        user_idSideB = name + "SideB"
+
+        user_data_sideA = name + "sideAData" 
+        user_data_sideB = name + "sideBData"
+
+
+        user_instances = [user_idSideA, user_idSideB]
+        user_instances_data = [user_data_sideA, user_data_sideB]
+        
+        #Delete existing instances online
+        if iteration == 1:   
+          for key in user_instances:
+            if key in bmp_instances:
+              del bmp_instances[key]
+          
+          for key in user_instances_data:
+            if key in data_instances:
+              del data_instances[key]
+    
+        if user_idSideA not in bmp_instances:
+          bmp_instances[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideA, ReactorVolume=ReactorVolumeSideA, InitialFreeVolume=InitialFreeVolumeSideA, 
+                                                                      SubstrateNumber=SubstrateNumberSideA, MixRule=MixRuleSideA,
+                                                                      Fraction1=Fraction1SideA, Fraction2=Fraction2SideA, Fraction3=Fraction3SideA, Fraction4=Fraction4SideA, WaterFraction=WaterFractionSideA,
+                                                                      Volume1=Fraction1SideA, Volume2=Fraction2SideA, Volume3=Fraction3SideA, Volume4=Fraction4SideA, WaterVolume=WaterFractionSideA, 
+                                                                      Weight1=Fraction1SideA, Weight2=Fraction2SideA, Weight3=Fraction3SideA, Weight4=Fraction4SideA, WaterWeight=WaterFractionSideA,
+                                                                      ST1=ST1SideA, SV1=SV1SideA, rho1=rho1SideA, Cc1=Cc1SideA, Ch1=Ch1SideA, Co1=Co1SideA,Cn1=Cn1SideA, Cs1=Cs1SideA,
+                                                                      ST2=ST2SideA, SV2=SV2SideA, rho2=rho2SideA, Cc2=Cc2SideA, Ch2=Ch2SideA, Co2=Co2SideA,Cn2=Cn2SideA, Cs2=Cs2SideA,
+                                                                      ST3=ST3SideA, SV3=SV3SideA, rho3=rho3SideA, Cc3=Cc3SideA, Ch3=Ch3SideA, Co3=Co3SideA,Cn3=Cn3SideA, Cs3=Cs3SideA,
+                                                                      ST4=ST4SideA, SV4=SV4SideA, rho4=rho4SideA, Cc4=Cc4SideA, Ch4=Ch4SideA, Co4=Co4SideA,Cn4=Cn4SideA, Cs4=Cs4SideA,
+                                                                      OperationMethod = OperationMethodSideA, Model=ModelSideA)
+
+        SideA = bmp_instances[user_idSideA]
+        if user_data_sideA not in data_instances:
+          SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
+          DataSideA = SideA.PlantSideA
+          DataInterfaz = SideA.PlantEstimation
+          SideA.ProcessData(SideA = True, SideB = False, MeasureMethodSideA = measurementMethodSideA, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideA, DataPlantSideB = DataSideA,  
+                            DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideA)
+          R101 = SideA.R101_data
+          R102 = SideA.R102_data
+          R103 = SideA.R103_data
+          R104 = SideA.R104_data
+          R105 = SideA.R105_data
+
+          if SideA.OperationMethod in ["Time", "Injection"]:
+            SideA.SubstrateFeeding()
+          
+          R101 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R101", ReactorData = R101, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R102 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R102", ReactorData = R102, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R103 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R103", ReactorData = R103, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R104 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R104", ReactorData = R104, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R105 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R105", ReactorData = R105, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+
+          data_instances[user_data_sideA] = [R101, R102, R103, R104, R105]
+
+          print(data_instances, flush=True)
+      
+      elif stateSelectionSideA == False and biogas == True and TrainingMode == False:    #online with manual entrance of biogas compositions
+        pass
+
+      elif stateSelectionSideA == True:    #offline
+        user_id101 = data["name"] + "101"
+        user_id102 = data["name"] + "102"
+        user_id103 = data["name"] + "103"
+        user_id104 = data["name"] + "104"
+        user_id105 = data["name"] + "105"
+  
+        users_instances = [user_id101, user_id102, user_id103, user_id104, user_id105]   
+
+        if iteration == 1:   
+          for key in users_instances:
+            if key in bmp_instances_offline_SideA:
+              del bmp_instances_offline_SideA[key]
+
+        if user_id101 not in bmp_instances_offline_SideA:
+          bmp_instances_offline_SideA[user_id101] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideA, ReactorVolume = ReactorVolumeSideA, InitialFreeVolume = InitialFreeVolumeSideA,
+                                                                              SubstrateNumber = SubstrateNumberSideA, MixRule = MixRuleSideA, 
+                                                                              Fraction1 = Fraction1SideA, Fraction2 = Fraction2SideA, Fraction3 = Fraction3SideA, Fraction4 = Fraction4SideA, WaterFraction = WaterFractionSideA,
+                                                                              Volume1 = Fraction1SideA, Volume2 = Fraction2SideA, Volume3 = Fraction3SideA, Volume4 = Fraction4SideA, WaterVolume = WaterFractionSideA,
+                                                                              Weight1 = Fraction1SideA, Weight2 = Fraction2SideA, Weight3 = Fraction3SideA, Weight4 = Fraction4SideA, WaterWeight = WaterFractionSideA,
+                                                                              ST1 = ST1SideA, SV1 = SV1SideA, rho1 = rho1SideA, Cc1 = Cc1SideA, Ch1 = Ch1SideA, Co1 = Co1SideA, Cn1 = Cn1SideA, Cs1 = Cs1SideA,
+                                                                              ST2 = ST2SideA, SV2 = SV2SideA, rho2 = rho2SideA, Cc2 = Cc2SideA, Ch2 = Ch2SideA, Co2 = Co2SideA, Cn2 = Cn2SideA, Cs2 = Cs2SideA,
+                                                                              ST3 = ST3SideA, SV3 = SV3SideA, rho3 = rho3SideA, Cc3 = Cc3SideA, Ch3 = Ch3SideA, Co3 = Co3SideA, Cn3 = Cn3SideA, Cs3 = Cs3SideA,
+                                                                              ST4 = ST4SideA, SV4 = SV4SideA, rho4 = rho4SideA, Cc4 = Cc4SideA, Ch4 = Ch4SideA, Co4 = Co4SideA, Cn4 = Cn4SideA, Cs4 = Cs4SideA,
+                                                                              OperationMethod = OperationMethodSideA, tp = time_stepSideA)  
+        
+        R101 = bmp_instances_offline_SideA[user_id101]
+
+        #Mixing R101
+        R101.MixControl(MixVelocity = MixVelocitySideA, MixTime = mixTimeSideA, DailyMixing = mixDailySideA, speed_time = speed_time)
+        bmp_output["mixVelocityR101"] = R101.MixVelocity
+
+        if OperationMethodSideA in ["Time", "Injection"]:
+          R101.MixtureCalculationFeeding()
+        
+        R101.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
+        R101.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = K1, K2 = K2, speed_time=Speed_time)
+
+    
+          
+
+
+    # iteration = data["iteration"]
+    # Side = data["plantOperation"]
+    # user_id101 = data["name"] + "101"
+    # user_id102 = data["name"] + "102"
+    # user_id103 = data["name"] + "103"
+    # user_id104 = data["name"] + "104"
+    # user_id105 = data["name"] + "105"
+    # user_id106 = data["name"] + "106"
+    # user_id107 = data["name"] + "107"
+    # user_id108 = data["name"] + "108"
+    # user_id109 = data["name"] + "109"
+    # user_id110 = data["name"] + "110"
+    
+    # users_instances = [user_id101, user_id102, user_id103, user_id104, user_id105,
+    #                         user_id106, user_id107, user_id108, user_id109, user_id110]
     
     
-    if iteration == 1:   
-      for key in users_instances:
-        if key in bmp_instances:
-          del bmp_instances[key]
+    # if iteration == 1:   
+    #   for key in users_instances:
+    #     if key in bmp_instances:
+    #       del bmp_instances[key]
     
-    print(data, flush = True)
+    # print(data, flush = True)
             
     # # SIDE A -------------
     # #lado A condiciones condiciones generales
