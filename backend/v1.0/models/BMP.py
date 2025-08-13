@@ -294,26 +294,9 @@ class BMP(Resource):
           SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
           DataSideA = SideA.PlantSideA
           DataInterfaz = SideA.PlantEstimation
-          SideA.ProcessData(SideA = True, SideB = False, MeasureMethodSideA = measurementMethodSideA, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideA, DataPlantSideB = DataSideA,  
-                            DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideA)
-          R101 = SideA.R101_data
-          R102 = SideA.R102_data
-          R103 = SideA.R103_data
-          R104 = SideA.R104_data
-          R105 = SideA.R105_data
-
-          if SideA.OperationMethod in ["Time", "Injection"]:
-            SideA.SubstrateFeeding()
-          
-          R101 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R101", ReactorData = R101, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-          R102 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R102", ReactorData = R102, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-          R103 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R103", ReactorData = R103, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-          R104 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R104", ReactorData = R104, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-          R105 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R105", ReactorData = R105, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-
-          data_instances[user_data_sideA] = [R101, R102, R103, R104, R105]
-
-          print(data_instances, flush=True)
+          print(DataSideA, flush = True)
+          print(DataInterfaz, flush = True)
+        
       
       #%% Online Mode without training (just show the values from plant) without income from manual interface
       elif stateSelectionSideA == False and biogas == False and TrainingMode == False:    #online with manual entrance of biogas compositions
