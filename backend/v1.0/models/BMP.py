@@ -76,23 +76,19 @@ class BMP(Resource):
     # SideA 
     # Operational Conditions
     StateSideA = data["isSideAOn"]                               #True: Turning on, Fals: Truning off
-    stateSelectionSideA = data["stateSelectionSideA"]            #False: Online, True: offline
+    stateSelectionSideA = data["stateSelection"]            #False: Online, True: offline
     measurementMethodSideA =  data["measurementMethodSideA"]     #"Pressure, VolumeDisplaced"
-    ReactorVolumeSideA = data["rxnVolumeSideA"]                  #Reactor Volume (mL)   
-    InitialFreeVolumeSideA = data["freeVolumeSideA"]             #Free volume (mL)
+    ReactorVolumeSideA = data["rxnVolumeSideA"]["value"]         #Reactor Volume (mL)   
+    InitialFreeVolumeSideA = data["freeVolumeSideA"]["value"]    #Free volume (mL)
     ModelSideA = data["modelSelectionSideA"]                     #Arrhenius, Gompertz, ADM1
     time_stepSideA = data["stepTime"]["value"]                   #Time step, seconds 
     speed_time = data["timeMultiplier"]["value"]
 
     #Model parameters
-    K = data["kineticKSideA"]["value"]
-    Ea = data["kineticEaSideA"]["value"]
-    L = data["kineticLambdaSideA"]["value"]
-    if ModelSideA == "Gompertz":
-      K = K*1000
-      Ea = Ea * 1000 * 86400
-      L = L/86400
-
+    KSideA = data["kineticKSideA"]["value"]
+    EaSideA = data["kineticEaSideA"]["value"]
+    LSideA = data["kineticLambdaSideA"]["value"]
+   
     #Mixing
     MixManualSideA = data["mixManualSideA"]                      #True: manual, False:Auto
     MixVelocitySideA = data["mixVelocitySideA"]["value"]
@@ -100,12 +96,15 @@ class BMP(Resource):
     mixDailySideA = data["mixDailySideA"]["value"] 
 
     #Temperature control
-    TemperatureManualSideA = data["TemperatureManualSideA"]
+    TemperatureManualSideA = data["TemperatureSideA"]["disabled"]
     TemperatureSideA = data["TemperatureSideA"]["value"]
 
     #pHControl
-    pHManualSideA = data["pHManualSideA"]
-    pHSideA = data["pHSideA"]
+    pHManualSideA = data["pHSideA"]["disabled"]
+    pHSideA = data["pHSideA"]["value"]
+
+    #pressure control
+    pressureSetPointSideA = data["pressureSetPointSideA"]["value"]
 
     #Initial conditions for substrate
     SubstrateNumberSideA = data["amountOfSubstratesSideA"]["value"]   #Substrate number
@@ -189,7 +188,7 @@ class BMP(Resource):
 
     # SideB 
     # Operational Conditions
-    stateSelectionSideB = data["stateSelectionSideB"]            #False: Online, True: offline
+    stateSelectionSideB = data["stateSelection"]            #False: Online, True: offline
     measurementMethodSideB =  data["measurementMethodSideB"]     #"Pressure, VolumeDisplaced"
     ReactorVolumeSideB = data["rxnVolumeSideB"]                  #Reactor Volume (mL)   
     InitialFreeVolumeSideB = data["freeVolumeSideB"]             #Free volume (mL)
@@ -252,6 +251,8 @@ class BMP(Resource):
     
     # ---- Side A - Working
     if StateSideA == True:
+
+      #%% Online mode with Training and getting data from interface
       if stateSelectionSideA == False and biogas == False and TrainingMode == True:    #Online, biogas compounds in auto
         
         # instances online
@@ -274,7 +275,7 @@ class BMP(Resource):
           for key in user_instances_data:
             if key in data_instances:
               del data_instances[key]
-    
+
         if user_idSideA not in bmp_instances:
           bmp_instances[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
                                                                       MeasureMethod=measurementMethodSideA, ReactorVolume=ReactorVolumeSideA, InitialFreeVolume=InitialFreeVolumeSideA, 
@@ -314,9 +315,16 @@ class BMP(Resource):
 
           print(data_instances, flush=True)
       
-      elif stateSelectionSideA == False and biogas == True and TrainingMode == False:    #online with manual entrance of biogas compositions
+      #%% Online Mode without training (just show the values from plant) without income from manual interface
+      elif stateSelectionSideA == False and biogas == False and TrainingMode == False:    #online with manual entrance of biogas compositions
         pass
-
+      
+      #%% Online Mode without training With biogas composition from frontend
+      elif stateSelectionSideA == False and biogas == True and TrainingMode == False:
+        pass
+    
+      
+      #%% Offline operation
       elif stateSelectionSideA == True:    #offline
         user_id101 = data["name"] + "101"
         user_id102 = data["name"] + "102"
@@ -330,7 +338,8 @@ class BMP(Resource):
           for key in users_instances:
             if key in bmp_instances_offline_SideA:
               del bmp_instances_offline_SideA[key]
-
+        
+        # R101
         if user_id101 not in bmp_instances_offline_SideA:
           bmp_instances_offline_SideA[user_id101] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideA, ReactorVolume = ReactorVolumeSideA, InitialFreeVolume = InitialFreeVolumeSideA,
                                                                               SubstrateNumber = SubstrateNumberSideA, MixRule = MixRuleSideA, 
@@ -352,10 +361,353 @@ class BMP(Resource):
         if OperationMethodSideA in ["Time", "Injection"]:
           R101.MixtureCalculationFeeding()
         
+        #feeding in case time or injection
         R101.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
-        R101.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = K1, K2 = K2, speed_time=Speed_time)
+        #reactor execution model
+        R101.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
+        bmp_output["SVR101"] = float(R101.SV_int) 
+        bmp_output["OCR101"] = float(R101.OC)
+        bmp_output["STR101"] = float(R101.ST_int)
+        bmp_output["XR101"] = float(R101.x)
+        bmp_output["PBMR101"] = float(R101.PBM)
+        bmp_output["KR101"] = KSideA
+        bmp_output["EaR101"] = EaSideA
+        bmp_output["lambdaR101"] = LSideA
+        bmp_output["TempR101"] = TemperatureSideA   
+        bmp_output["pHR101"] = pHSideA
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR101"] =float(R101.nCH4)
+        bmp_output["carbondioxidemolR101"] = float(R101.nCO2)
+        bmp_output["oxygenmolR101"] = float(R101.nO2)
+        bmp_output["hydrogensulfurmolR101"] = float(R101.nH2S)
+        bmp_output["hydrogenmolR101"] = float(R101.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR101"] = float(R101.xCH4*100)
+        bmp_output["carbondioxideconcentrationR101"] = float(R101.xCO2*100)
+        bmp_output["oxygenconcentrationR101"] = float(R101.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR101"] = float(R101.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR101"] = float(R101.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR101"] = float(R101.vCH4)
+        bmp_output["carbondioxidevolR101"] = float(R101.vCO2)
+        bmp_output["oxygenvolR101"] = float(R101.vO2)
+        bmp_output["hydrogensulfurvolR101"] = float(R101.vH2S)
+        bmp_output["hydrogenvolR101"] = float(R101.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideA == "Pressure":
+            R101.Measurement_by_pressure(T = TemperatureManualSideA, Pset = pressureSetPointSideA)
+        elif measurementMethodSideA == "VolumeDisplaced":
+            R101.Measument_by_volume(T = TemperatureManualSideA, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR101"] = float(R101.P_acum_psi)
+        bmp_output["storagebiogaspressureR101"] = float(R101.P_psi)
+        bmp_output["storagebiogasR101"] = float(R101.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR101"] = float(R101.Vnormalbiogas)
+        bmp_output["LHVR101"] = float(R101.LHV_JNm3)
+        bmp_output["EnergyR101"] = float(R101.Energia)
+       
+        R101.GlobaltimeCounter()
 
-    
+        # R102
+        if user_id102 not in bmp_instances_offline_SideA:
+          bmp_instances_offline_SideA[user_id102] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideA, ReactorVolume = ReactorVolumeSideA, InitialFreeVolume = InitialFreeVolumeSideA,
+                                                                              SubstrateNumber = SubstrateNumberSideA, MixRule = MixRuleSideA, 
+                                                                              Fraction1 = Fraction1SideA, Fraction2 = Fraction2SideA, Fraction3 = Fraction3SideA, Fraction4 = Fraction4SideA, WaterFraction = WaterFractionSideA,
+                                                                              Volume1 = Fraction1SideA, Volume2 = Fraction2SideA, Volume3 = Fraction3SideA, Volume4 = Fraction4SideA, WaterVolume = WaterFractionSideA,
+                                                                              Weight1 = Fraction1SideA, Weight2 = Fraction2SideA, Weight3 = Fraction3SideA, Weight4 = Fraction4SideA, WaterWeight = WaterFractionSideA,
+                                                                              ST1 = ST1SideA, SV1 = SV1SideA, rho1 = rho1SideA, Cc1 = Cc1SideA, Ch1 = Ch1SideA, Co1 = Co1SideA, Cn1 = Cn1SideA, Cs1 = Cs1SideA,
+                                                                              ST2 = ST2SideA, SV2 = SV2SideA, rho2 = rho2SideA, Cc2 = Cc2SideA, Ch2 = Ch2SideA, Co2 = Co2SideA, Cn2 = Cn2SideA, Cs2 = Cs2SideA,
+                                                                              ST3 = ST3SideA, SV3 = SV3SideA, rho3 = rho3SideA, Cc3 = Cc3SideA, Ch3 = Ch3SideA, Co3 = Co3SideA, Cn3 = Cn3SideA, Cs3 = Cs3SideA,
+                                                                              ST4 = ST4SideA, SV4 = SV4SideA, rho4 = rho4SideA, Cc4 = Cc4SideA, Ch4 = Ch4SideA, Co4 = Co4SideA, Cn4 = Cn4SideA, Cs4 = Cs4SideA,
+                                                                              OperationMethod = OperationMethodSideA, tp = time_stepSideA)  
+        
+        R102 = bmp_instances_offline_SideA[user_id102]
+
+        #Mixing R102
+        R102.MixControl(MixVelocity = MixVelocitySideA, MixTime = mixTimeSideA, DailyMixing = mixDailySideA, speed_time = speed_time)
+        bmp_output["mixVelocityR102"] = R102.MixVelocity
+
+        if OperationMethodSideA in ["Time", "Injection"]:
+          R102.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R102.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R102.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
+        bmp_output["SVR102"] = float(R102.SV_int) 
+        bmp_output["OCR102"] = float(R102.OC)
+        bmp_output["STR102"] = float(R102.ST_int)
+        bmp_output["XR102"] = float(R102.x)
+        bmp_output["PBMR102"] = float(R102.PBM)
+        bmp_output["KR102"] = KSideA
+        bmp_output["EaR102"] = EaSideA
+        bmp_output["lambdaR102"] = LSideA
+        bmp_output["TempR102"] = TemperatureSideA   
+        bmp_output["pHR102"] = pHSideA
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR102"] =float(R102.nCH4)
+        bmp_output["carbondioxidemolR102"] = float(R102.nCO2)
+        bmp_output["oxygenmolR102"] = float(R102.nO2)
+        bmp_output["hydrogensulfurmolR102"] = float(R102.nH2S)
+        bmp_output["hydrogenmolR102"] = float(R102.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR102"] = float(R102.xCH4*100)
+        bmp_output["carbondioxideconcentrationR102"] = float(R102.xCO2*100)
+        bmp_output["oxygenconcentrationR102"] = float(R102.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR102"] = float(R102.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR102"] = float(R102.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR102"] = float(R102.vCH4)
+        bmp_output["carbondioxidevolR102"] = float(R102.vCO2)
+        bmp_output["oxygenvolR102"] = float(R102.vO2)
+        bmp_output["hydrogensulfurvolR102"] = float(R102.vH2S)
+        bmp_output["hydrogenvolR102"] = float(R102.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideA == "Pressure":
+            R102.Measurement_by_pressure(T = TemperatureManualSideA, Pset = pressureSetPointSideA)
+        elif measurementMethodSideA == "VolumeDisplaced":
+            R102.Measument_by_volume(T = TemperatureManualSideA, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR102"] = float(R102.P_acum_psi)
+        bmp_output["storagebiogaspressureR102"] = float(R102.P_psi)
+        bmp_output["storagebiogasR102"] = float(R102.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR102"] = float(R102.Vnormalbiogas)
+        bmp_output["LHVR102"] = float(R102.LHV_JNm3)
+        bmp_output["EnergyR102"] = float(R102.Energia)
+       
+        R102.GlobaltimeCounter()
+
+        # R103
+        if user_id103 not in bmp_instances_offline_SideA:
+          bmp_instances_offline_SideA[user_id103] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideA, ReactorVolume = ReactorVolumeSideA, InitialFreeVolume = InitialFreeVolumeSideA,
+                                                                              SubstrateNumber = SubstrateNumberSideA, MixRule = MixRuleSideA, 
+                                                                              Fraction1 = Fraction1SideA, Fraction2 = Fraction2SideA, Fraction3 = Fraction3SideA, Fraction4 = Fraction4SideA, WaterFraction = WaterFractionSideA,
+                                                                              Volume1 = Fraction1SideA, Volume2 = Fraction2SideA, Volume3 = Fraction3SideA, Volume4 = Fraction4SideA, WaterVolume = WaterFractionSideA,
+                                                                              Weight1 = Fraction1SideA, Weight2 = Fraction2SideA, Weight3 = Fraction3SideA, Weight4 = Fraction4SideA, WaterWeight = WaterFractionSideA,
+                                                                              ST1 = ST1SideA, SV1 = SV1SideA, rho1 = rho1SideA, Cc1 = Cc1SideA, Ch1 = Ch1SideA, Co1 = Co1SideA, Cn1 = Cn1SideA, Cs1 = Cs1SideA,
+                                                                              ST2 = ST2SideA, SV2 = SV2SideA, rho2 = rho2SideA, Cc2 = Cc2SideA, Ch2 = Ch2SideA, Co2 = Co2SideA, Cn2 = Cn2SideA, Cs2 = Cs2SideA,
+                                                                              ST3 = ST3SideA, SV3 = SV3SideA, rho3 = rho3SideA, Cc3 = Cc3SideA, Ch3 = Ch3SideA, Co3 = Co3SideA, Cn3 = Cn3SideA, Cs3 = Cs3SideA,
+                                                                              ST4 = ST4SideA, SV4 = SV4SideA, rho4 = rho4SideA, Cc4 = Cc4SideA, Ch4 = Ch4SideA, Co4 = Co4SideA, Cn4 = Cn4SideA, Cs4 = Cs4SideA,
+                                                                              OperationMethod = OperationMethodSideA, tp = time_stepSideA)  
+        
+        R103 = bmp_instances_offline_SideA[user_id103]
+
+        #Mixing R103
+        R103.MixControl(MixVelocity = MixVelocitySideA, MixTime = mixTimeSideA, DailyMixing = mixDailySideA, speed_time = speed_time)
+        bmp_output["mixVelocityR103"] = R103.MixVelocity
+
+        if OperationMethodSideA in ["Time", "Injection"]:
+          R103.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R103.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R103.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
+        bmp_output["SVR103"] = float(R103.SV_int) 
+        bmp_output["OCR103"] = float(R103.OC)
+        bmp_output["STR103"] = float(R103.ST_int)
+        bmp_output["XR103"] = float(R103.x)
+        bmp_output["PBMR103"] = float(R103.PBM)
+        bmp_output["KR103"] = KSideA
+        bmp_output["EaR103"] = EaSideA
+        bmp_output["lambdaR103"] = LSideA
+        bmp_output["TempR103"] = TemperatureSideA   
+        bmp_output["pHR103"] = pHSideA
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR103"] =float(R103.nCH4)
+        bmp_output["carbondioxidemolR103"] = float(R103.nCO2)
+        bmp_output["oxygenmolR103"] = float(R103.nO2)
+        bmp_output["hydrogensulfurmolR103"] = float(R103.nH2S)
+        bmp_output["hydrogenmolR103"] = float(R103.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR103"] = float(R103.xCH4*100)
+        bmp_output["carbondioxideconcentrationR103"] = float(R103.xCO2*100)
+        bmp_output["oxygenconcentrationR103"] = float(R103.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR103"] = float(R103.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR103"] = float(R103.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR103"] = float(R103.vCH4)
+        bmp_output["carbondioxidevolR103"] = float(R103.vCO2)
+        bmp_output["oxygenvolR103"] = float(R103.vO2)
+        bmp_output["hydrogensulfurvolR103"] = float(R103.vH2S)
+        bmp_output["hydrogenvolR103"] = float(R103.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideA == "Pressure":
+            R103.Measurement_by_pressure(T = TemperatureManualSideA, Pset = pressureSetPointSideA)
+        elif measurementMethodSideA == "VolumeDisplaced":
+            R103.Measument_by_volume(T = TemperatureManualSideA, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR103"] = float(R103.P_acum_psi)
+        bmp_output["storagebiogaspressureR103"] = float(R103.P_psi)
+        bmp_output["storagebiogasR103"] = float(R103.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR103"] = float(R103.Vnormalbiogas)
+        bmp_output["LHVR103"] = float(R103.LHV_JNm3)
+        bmp_output["EnergyR103"] = float(R103.Energia)
+       
+        R103.GlobaltimeCounter()
+
+        # R104
+        if user_id104 not in bmp_instances_offline_SideA:
+          bmp_instances_offline_SideA[user_id104] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideA, ReactorVolume = ReactorVolumeSideA, InitialFreeVolume = InitialFreeVolumeSideA,
+                                                                              SubstrateNumber = SubstrateNumberSideA, MixRule = MixRuleSideA, 
+                                                                              Fraction1 = Fraction1SideA, Fraction2 = Fraction2SideA, Fraction3 = Fraction3SideA, Fraction4 = Fraction4SideA, WaterFraction = WaterFractionSideA,
+                                                                              Volume1 = Fraction1SideA, Volume2 = Fraction2SideA, Volume3 = Fraction3SideA, Volume4 = Fraction4SideA, WaterVolume = WaterFractionSideA,
+                                                                              Weight1 = Fraction1SideA, Weight2 = Fraction2SideA, Weight3 = Fraction3SideA, Weight4 = Fraction4SideA, WaterWeight = WaterFractionSideA,
+                                                                              ST1 = ST1SideA, SV1 = SV1SideA, rho1 = rho1SideA, Cc1 = Cc1SideA, Ch1 = Ch1SideA, Co1 = Co1SideA, Cn1 = Cn1SideA, Cs1 = Cs1SideA,
+                                                                              ST2 = ST2SideA, SV2 = SV2SideA, rho2 = rho2SideA, Cc2 = Cc2SideA, Ch2 = Ch2SideA, Co2 = Co2SideA, Cn2 = Cn2SideA, Cs2 = Cs2SideA,
+                                                                              ST3 = ST3SideA, SV3 = SV3SideA, rho3 = rho3SideA, Cc3 = Cc3SideA, Ch3 = Ch3SideA, Co3 = Co3SideA, Cn3 = Cn3SideA, Cs3 = Cs3SideA,
+                                                                              ST4 = ST4SideA, SV4 = SV4SideA, rho4 = rho4SideA, Cc4 = Cc4SideA, Ch4 = Ch4SideA, Co4 = Co4SideA, Cn4 = Cn4SideA, Cs4 = Cs4SideA,
+                                                                              OperationMethod = OperationMethodSideA, tp = time_stepSideA)  
+        
+        R104 = bmp_instances_offline_SideA[user_id104]
+
+        #Mixing R104
+        R104.MixControl(MixVelocity = MixVelocitySideA, MixTime = mixTimeSideA, DailyMixing = mixDailySideA, speed_time = speed_time)
+        bmp_output["mixVelocityR104"] = R104.MixVelocity
+
+        if OperationMethodSideA in ["Time", "Injection"]:
+          R104.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R104.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R104.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
+        bmp_output["SVR104"] = float(R104.SV_int) 
+        bmp_output["OCR104"] = float(R104.OC)
+        bmp_output["STR104"] = float(R104.ST_int)
+        bmp_output["XR104"] = float(R104.x)
+        bmp_output["PBMR104"] = float(R104.PBM)
+        bmp_output["KR104"] = KSideA
+        bmp_output["EaR104"] = EaSideA
+        bmp_output["lambdaR104"] = LSideA
+        bmp_output["TempR104"] = TemperatureSideA   
+        bmp_output["pHR104"] = pHSideA
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR104"] =float(R104.nCH4)
+        bmp_output["carbondioxidemolR104"] = float(R104.nCO2)
+        bmp_output["oxygenmolR104"] = float(R104.nO2)
+        bmp_output["hydrogensulfurmolR104"] = float(R104.nH2S)
+        bmp_output["hydrogenmolR104"] = float(R104.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR104"] = float(R104.xCH4*100)
+        bmp_output["carbondioxideconcentrationR104"] = float(R104.xCO2*100)
+        bmp_output["oxygenconcentrationR104"] = float(R104.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR104"] = float(R104.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR104"] = float(R104.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR104"] = float(R104.vCH4)
+        bmp_output["carbondioxidevolR104"] = float(R104.vCO2)
+        bmp_output["oxygenvolR104"] = float(R104.vO2)
+        bmp_output["hydrogensulfurvolR104"] = float(R104.vH2S)
+        bmp_output["hydrogenvolR104"] = float(R104.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideA == "Pressure":
+            R104.Measurement_by_pressure(T = TemperatureManualSideA, Pset = pressureSetPointSideA)
+        elif measurementMethodSideA == "VolumeDisplaced":
+            R104.Measument_by_volume(T = TemperatureManualSideA, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR104"] = float(R104.P_acum_psi)
+        bmp_output["storagebiogaspressureR104"] = float(R104.P_psi)
+        bmp_output["storagebiogasR104"] = float(R104.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR104"] = float(R104.Vnormalbiogas)
+        bmp_output["LHVR104"] = float(R104.LHV_JNm3)
+        bmp_output["EnergyR104"] = float(R104.Energia)
+       
+        R104.GlobaltimeCounter()
+
+        # R105
+        if user_id105 not in bmp_instances_offline_SideA:
+          bmp_instances_offline_SideA[user_id105] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideA, ReactorVolume = ReactorVolumeSideA, InitialFreeVolume = InitialFreeVolumeSideA,
+                                                                              SubstrateNumber = SubstrateNumberSideA, MixRule = MixRuleSideA, 
+                                                                              Fraction1 = Fraction1SideA, Fraction2 = Fraction2SideA, Fraction3 = Fraction3SideA, Fraction4 = Fraction4SideA, WaterFraction = WaterFractionSideA,
+                                                                              Volume1 = Fraction1SideA, Volume2 = Fraction2SideA, Volume3 = Fraction3SideA, Volume4 = Fraction4SideA, WaterVolume = WaterFractionSideA,
+                                                                              Weight1 = Fraction1SideA, Weight2 = Fraction2SideA, Weight3 = Fraction3SideA, Weight4 = Fraction4SideA, WaterWeight = WaterFractionSideA,
+                                                                              ST1 = ST1SideA, SV1 = SV1SideA, rho1 = rho1SideA, Cc1 = Cc1SideA, Ch1 = Ch1SideA, Co1 = Co1SideA, Cn1 = Cn1SideA, Cs1 = Cs1SideA,
+                                                                              ST2 = ST2SideA, SV2 = SV2SideA, rho2 = rho2SideA, Cc2 = Cc2SideA, Ch2 = Ch2SideA, Co2 = Co2SideA, Cn2 = Cn2SideA, Cs2 = Cs2SideA,
+                                                                              ST3 = ST3SideA, SV3 = SV3SideA, rho3 = rho3SideA, Cc3 = Cc3SideA, Ch3 = Ch3SideA, Co3 = Co3SideA, Cn3 = Cn3SideA, Cs3 = Cs3SideA,
+                                                                              ST4 = ST4SideA, SV4 = SV4SideA, rho4 = rho4SideA, Cc4 = Cc4SideA, Ch4 = Ch4SideA, Co4 = Co4SideA, Cn4 = Cn4SideA, Cs4 = Cs4SideA,
+                                                                              OperationMethod = OperationMethodSideA, tp = time_stepSideA)  
+        
+        R105 = bmp_instances_offline_SideA[user_id105]
+
+        #Mixing R105
+        R105.MixControl(MixVelocity = MixVelocitySideA, MixTime = mixTimeSideA, DailyMixing = mixDailySideA, speed_time = speed_time)
+        bmp_output["mixVelocityR105"] = R105.MixVelocity
+
+        if OperationMethodSideA in ["Time", "Injection"]:
+          R105.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R105.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R105.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
+        bmp_output["SVR105"] = float(R105.SV_int) 
+        bmp_output["OCR105"] = float(R105.OC)
+        bmp_output["STR105"] = float(R105.ST_int)
+        bmp_output["XR105"] = float(R105.x)
+        bmp_output["PBMR105"] = float(R105.PBM)
+        bmp_output["KR105"] = KSideA
+        bmp_output["EaR105"] = EaSideA
+        bmp_output["lambdaR105"] = LSideA
+        bmp_output["TempR105"] = TemperatureSideA   
+        bmp_output["pHR105"] = pHSideA
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR105"] =float(R105.nCH4)
+        bmp_output["carbondioxidemolR105"] = float(R105.nCO2)
+        bmp_output["oxygenmolR105"] = float(R105.nO2)
+        bmp_output["hydrogensulfurmolR105"] = float(R105.nH2S)
+        bmp_output["hydrogenmolR105"] = float(R105.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR105"] = float(R105.xCH4*100)
+        bmp_output["carbondioxideconcentrationR105"] = float(R105.xCO2*100)
+        bmp_output["oxygenconcentrationR105"] = float(R105.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR105"] = float(R105.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR105"] = float(R105.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR105"] = float(R105.vCH4)
+        bmp_output["carbondioxidevolR105"] = float(R105.vCO2)
+        bmp_output["oxygenvolR105"] = float(R105.vO2)
+        bmp_output["hydrogensulfurvolR105"] = float(R105.vH2S)
+        bmp_output["hydrogenvolR105"] = float(R105.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideA == "Pressure":
+            R105.Measurement_by_pressure(T = TemperatureManualSideA, Pset = pressureSetPointSideA)
+        elif measurementMethodSideA == "VolumeDisplaced":
+            R105.Measument_by_volume(T = TemperatureManualSideA, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR105"] = float(R105.P_acum_psi)
+        bmp_output["storagebiogaspressureR105"] = float(R105.P_psi)
+        bmp_output["storagebiogasR105"] = float(R105.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR105"] = float(R105.Vnormalbiogas)
+        bmp_output["LHVR105"] = float(R105.LHV_JNm3)
+        bmp_output["EnergyR105"] = float(R105.Energia)
+       
+        R105.GlobaltimeCounter()
+
+        # Csusv.append(float(R101.Csus_ini_SV_mol))
+        # DCsusv.append(float(R101.DCsus_ini_SV_mol))
+        # nCH4v.append(float(R101.nCH4))
+        # nCO2v.append(float(R101.nCO2))
+        # nH2Sv.append(float(R101.nH2S))
+        # nH2v.append(float(R101.nH2))
+        # nO2v.append(float(R101.nO2))
+        # nNH3v.append(float(R101.nNH3))
+        # xCH4v.append(float(R101.xCH4))
+        # xCO2v.append(float(R101.xCO2))
+        # xH2Sv.append(float(R101.xH2S))
+        # xH2v.append(float(R101.xH2))
+        # xO2v.append(float(R101.xO2))
+        # xv.append(float(R101.x))
           
 
 
