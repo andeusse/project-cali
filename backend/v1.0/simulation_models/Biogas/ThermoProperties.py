@@ -186,6 +186,16 @@ class ThermoProperties:
         self.vH2 = (self.ZH2*self.R*self.T)/(self.P+self.Patm)
         self.vNH3 = (self.ZNH3*self.R*self.T)/(self.P+self.Patm)
 
+        # VolEspecifico normal
+        self.vCH4_norm = (self.ZCH4*self.R*273.15)/(100000)  # [m3/mol]
+        self.vCO2_norm = (self.ZCO2*self.R*273.15)/(100000)  # [m3/mol]
+        self.vN2_norm= (self.ZN2*self.R*273.15)/(100000)  # [m3/mol]
+        self.vO2_norm= (self.ZO2*self.R*273.15)/(100000)  # [m3/mol]
+        self.vH2O_norm = (self.ZH2O*self.R*273.15)/(100000)  # [m3/mol]
+        self.vH2S_norm = (self.ZH2S*self.R*273.15)/(100000)  # [m3/mol]
+        self.vH2_norm= (self.ZH2*self.R*273.15)/(100000)
+        self.vNH3_norm = (self.ZNH3*self.R*273.15)/(100000)
+
         # entalpias individuales
         self.TrefH = 25+273.15  # Temperatura de refrencia pra soluciÃÂ³n de integral
 
@@ -213,7 +223,6 @@ class ThermoProperties:
         
 
         # Entalpia mezcla
-
         self.Hbiogasmolar = self.xCH4*self.HCH4 + self.xCO2*self.HCO2 + self.xN2*self.HN2 + \
             self.xO2*self.HO2 + self.xH2O*self.HH2O + self.xH2S*self.HH2S + self.xH2*self.HH2 + self.xNH3*self.HNH3 # [kJ/kmol]
         
@@ -224,6 +233,9 @@ class ThermoProperties:
         
         self.Volumenespbio = self.xCH4*self.vCH4 + self.xCO2*self.vCO2 + self.xN2*self.vN2 + \
             self.xO2*self.vO2 + self.xH2O*self.vH2O + self.xH2S*self.vH2S + self.xH2*self.vH2 + self.xNH3*self.vNH3  # [m^3/kmol]
+        
+        self.Volumenespbio_norm = self.xCH4*self.vCH4_norm + self.xCO2*self.vCO2_norm + self.xN2*self.vN2_norm + \
+            self.xO2*self.vO2_norm + self.xH2O*self.vH2O_norm + self.xH2S*self.vH2S_norm + self.xH2*self.vH2_norm + self.xNH3*self.vNH3_norm  # [m^3/mol]
 
         return self.Hbiogasmolar, self.Hbiogasmas, self.Volumenespbio
     

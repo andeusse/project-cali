@@ -537,9 +537,12 @@ class BMPModelOffline:
                     self.DCsus_ini_SV_mol = 0
                 else:
                     self.DCsus_ini_SV_mol  = self.Csus_ini_SV_molv[-1] - self.Csus_ini_SV_molv[0]
-                self.SV_int = (self.Csus_ini_SV_mol/self.rho)*self.MW_sustrato
-                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed)/self.rho)*self.MW_sustrato
-                self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
+                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
+                try:
+                    self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                except ZeroDivisionError:
+                    self.OC = 0
             else:
                 self.Csus_ini_SV_molv = odeint(model_Arrhenius, y0 = self.Csus_ini_SV_mol, t=time_sim, args=(K1, K2, self.ReactorVolume/1000, T, 0, 0, 1))
                 self.Csus_ini_SV_mol = self.Csus_ini_SV_molv[-1]
@@ -548,9 +551,12 @@ class BMPModelOffline:
                 else:
                     self.DCsus_ini_SV_mol  = self.Csus_ini_SV_molv[-1] - self.Csus_ini_SV_molv[0]
                 
-                self.SV_int = (self.Csus_ini_SV_mol/self.rho_ini)*self.MW_sustrato
-                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed)/self.rho_ini)*self.MW_sustrato
-                self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
+                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
+                try:
+                    self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                except ZeroDivisionError:
+                    self.OC = 0
 
         elif model == "ADM1":
             if OperationMethod in ["Time", "Injection"]:
@@ -560,8 +566,8 @@ class BMPModelOffline:
                     self.DCsus_ini_SV_mol = 0
                 else:
                     self.DCsus_ini_SV_mol  = self.Csus_ini_SV_molv[-1] - self.Csus_ini_SV_molv[0]
-                self.SV_int = (self.Csus_ini_SV_mol/self.rho)*self.MW_sustrato
-                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed)/self.rho)*self.MW_sustrato
+                self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
+                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
                 self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
                 
             else:
@@ -571,10 +577,13 @@ class BMPModelOffline:
                     self.DCsus_ini_SV_mol = 0
                 else:
                     self.DCsus_ini_SV_mol  = self.Csus_ini_SV_molv[-1] - self.Csus_ini_SV_molv[0]
-                self.SV_int = (self.Csus_ini_SV_mol/self.rho_ini)*self.MW_sustrato
-                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed)/self.rho_ini)*self.MW_sustrato
-                self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
-        
+                self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
+                self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
+                try:
+                    self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                except ZeroDivisionError:
+                    self.OC = 0
+
         elif model == "Gompertz":
             time_sim = [self.Globaltime/86400, (self.Globaltime + self.tp*self.speed_time)/86400]
             y_tv = model_Gompertz(time_sim, K1, K2, K3)
@@ -603,6 +612,12 @@ class BMPModelOffline:
             self.nH2Sv = self.nbiogasv * self.xH2S
             self.nO2v = self.nbiogasv * self.xO2
             self.nH2v = self.nbiogasv * self.xH2
+
+            self.vCH4 = self.Vnormalbiogas * self.xCH4 
+            self.vCO2 = self.Vnormalbiogas * self.xCO2
+            self.vO2 = self.Vnormalbiogas * self.xO2
+            self.vH2S = self.Vnormalbiogas * self.xH2S
+            self.vH2 = self.Vnormalbiogas * self.xH2
             
             self.DnCH4 = abs(self.nCH4v[-1] - self.nCH4v[0])
             self.DnCO2 = abs(self.nCO2v[-1] - self.nCO2v[0])
@@ -624,9 +639,12 @@ class BMPModelOffline:
 
             self.PBM = (self.Vnormalbiogas * self.xCH4)/self.gSV  
 
-            self.SV_int = (self.Csus_ini_SV_mol/self.rho_ini)*self.MW_sustrato  
-            self.ST_int = (self.Csus_ini_ST_mol/self.rho_ini)*self.MW_sustrato  
-            self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)     
+            self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato  
+            self.ST_int = (self.Csus_ini_ST_mol)*self.MW_sustrato  
+            try:
+                self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400) 
+            except ZeroDivisionError:
+                self.OC = 0    
 
         if model in ["Arrhenius", "ADM1"]:
             if OperationMethod == "NoDosing":
@@ -666,6 +684,12 @@ class BMPModelOffline:
                 self.Vnormalbiogas_m3 = (self.nbiogas * 8.314 * Tstd)/Pstd
                 self.Vnormalbiogas = self.Vnormalbiogas_m3*1000000
 
+                self.vCH4 = self.Vnormalbiogas * self.xCH4 
+                self.vCO2 = self.Vnormalbiogas * self.xCO2
+                self.vO2 = self.Vnormalbiogas * self.xO2
+                self.vH2S = self.Vnormalbiogas * self.xH2S
+                self.vH2 = self.Vnormalbiogas * self.xH2
+
                 self.PBM = (self.Vnormalbiogas * self.xCH4)/self.gSV
 
             else:
@@ -704,10 +728,17 @@ class BMPModelOffline:
                 self.Vnormalbiogas_m3 = (self.nbiogas * 8.314 * Tstd)/Pstd
                 self.Vnormalbiogas = self.Vnormalbiogas_m3*1000000
 
-                self.PBM = (self.Vnormalbiogas * self.xCH4)/self.gSV
+                self.vCH4 = self.Vnormalbiogas * self.xCH4 
+                self.vCO2 = self.Vnormalbiogas * self.xCO2
+                self.vO2 = self.Vnormalbiogas * self.xO2
+                self.vH2S = self.Vnormalbiogas * self.xH2S
+                self.vH2 = self.Vnormalbiogas * self.xH2
 
-        
+                self.PBM = (self.Vnormalbiogas * self.xCH4)/self.gSV
+             
     def Measurement_by_pressure(self, T, Pset):   #Temperature in Celsius        
+        Pstd = 100000
+        Tstd = 273.15
         self.InitialFreeVolume = self.InitialFreeVolume - self.Qr*(self.TimeFeed/60)
         if self.InitialFreeVolume < self.ReactorVolume:
             self.InitialFreeVolume = self.InitialFreeVolumei
@@ -716,6 +747,8 @@ class BMPModelOffline:
         self.nbiogasp = self.nbiogas - self.nbiogasi
         self.P_pascal = self.nbiogasp*8.314*(T+273.15)/(self.InitialFreeVolume/1000000)
         self.P_psi = self.P_pascal/6894.76
+        self.Vnorm_sto_m3 = (self.nbiogasp * 8.314 * Tstd)/Pstd
+        self.Vnorm_sto_nmL = self.Vnorm_sto_m3 * 1000000
         
         #Accumulated pressure
         self.P_acum_pa = self.nbiogas*8.314*(T+273.15)/(self.InitialFreeVolume/1000000)
@@ -723,6 +756,15 @@ class BMPModelOffline:
 
         if self.P_psi>Pset:
             self.nbiogasi = self.nbiogas
+        
+        self.H_biogas = self.Thermo.Hgases(xCH4=self.xCH4, xCO2=self.xCO2, xH2O=0, xO2=self.xO2, xN2=0, xH2S=self.xH2S, xH2=self.xH2, P=self.P_pascal/100, Patm = 98, T=T, xNH3=0)
+        self.Vesp = self.Thermo.Volumenespbio_norm     #[m3/mol]
+        self.LHV_Jmol = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2=self.nCO2, molH2S=self.nH2S, molO2=self.nO2, molH2=self.nH2)[0])
+        try:
+            self.LHV_JNm3 = self.LHV_Jmol*(1/self.Vesp)
+        except ZeroDivisionError:
+            self.LHV_JNm3=0
+        self.Energia = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2=self.nCO2, molH2S=self.nH2S, molO2=self.nO2, molH2=self.nH2)[1]) 
         
         self.hpool_mm = 0
     
@@ -744,6 +786,15 @@ class BMPModelOffline:
         
         if self.hpool_mm > hmax:
             self.nbiogasi = self.nbiogas
+        
+        self.H_biogas = self.Thermo.Hgases(xCH4=self.xCH4, xCO2=self.xCO2, xH2O=0, xO2=self.xO2, xN2=0, xH2S=self.xH2S, xH2=self.xH2, P=self.P_pascal/100, Patm = 98, T=T, xNH3=0)
+        self.Vesp = self.Thermo.Volumenespbio_norm     #[m3/mol]
+        self.LHV_Jmol = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2=self.nCO2, molH2S=self.nH2S, molO2=self.nO2, molH2=self.nH2)[0])
+        try:
+            self.LHV_JNm3 = self.LHV_Jmol*(1/self.Vesp)
+        except ZeroDivisionError:
+            self.LHV_JNm3=0
+        self.Energia = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2=self.nCO2, molH2S=self.nH2S, molO2=self.nO2, molH2=self.nH2)[1]) 
 
 
     def GlobaltimeCounter(self):
