@@ -481,28 +481,29 @@ class BMP_online:
                     attempts += 1
                     print("Try", attempts)
         
-        attempts = 1
-        while attempts <= 5:
-            try:
-                self.query5 = self.influxDB.QueryCreator(measurement="Planta_PBM", train_time=TrainTime, type=16)
-                df_last = self.influxDB.InfluxDBreader(query=self.query5)
-                #df_last = pd.concat(self.influxDB.InfluxDBreader(query = self.query5), ignore_index=True)
-                #df_last = pd.DataFrame(self.influxDB.InfluxDBreader(query = self.query5))
-                last_time = df_last["_time"].max()
-                t_end = last_time.to_pydatetime().astimezone(datetime.timezone.utc)
-                t_start = t_end - datetime.timedelta(minutes=TrainTime)
+        # attempts = 1
+        # while attempts <= 5:
+        #     try:
+        #         self.query5 = self.influxDB.QueryCreator(measurement="Planta_PBM", train_time=TrainTime, type=16)
+        #         df_last = self.influxDB.InfluxDBreader(query=self.query5)
+        #         #df_last = pd.concat(self.influxDB.InfluxDBreader(query = self.query5), ignore_index=True)
+        #         #df_last = pd.DataFrame(self.influxDB.InfluxDBreader(query = self.query5))
+        #         last_time = df_last["_time"].max()
+        #         t_end = last_time.to_pydatetime().astimezone(datetime.timezone.utc)
+        #         t_start = t_end - datetime.timedelta(minutes=TrainTime)
 
-                t_end_str = t_end.isoformat(timespec="milliseconds").replace('+00:00', 'Z') 
-                t_start_str = t_start.isoformat(timespec="milliseconds").replace('+00:00', 'Z')
-                self.query6 = self.influxDB.QueryCreator(measurement="Planta_PBM", t_start_str = t_start_str, t_end_str = t_end_str, type=17)
-                self.PlantEstimation = self.influxDB.InfluxDBreader(query = self.query6)
-                # self.PlantEstimation = pd.concat(self.influxDB.InfluxDBreader(query = self.query6), ignore_index=True)
-                self.PlantEstimation.set_index("_field", inplace = True)
-                break
-            except Exception as e:
-                print(f"Try {attempts} failed: {e}")
-                attempts += 1
-                print("Try", attempts)
+        #         t_end_str = t_end.isoformat(timespec="milliseconds").replace('+00:00', 'Z') 
+        #         t_start_str = t_start.isoformat(timespec="milliseconds").replace('+00:00', 'Z')
+        #         self.query6 = self.influxDB.QueryCreator(measurement="Planta_PBM", t_start_str = t_start_str, t_end_str = t_end_str, type=17)
+        #         self.PlantEstimation = self.influxDB.InfluxDBreader(query = self.query6)
+        #         # self.PlantEstimation = pd.concat(self.influxDB.InfluxDBreader(query = self.query6), ignore_index=True)
+        #         self.PlantEstimation.set_index("_field", inplace = True)
+        #         break
+
+        #     except Exception as e:
+        #         print(f"Try {attempts} failed: {e}", flush=True)
+        #         attempts += 1
+        #         print("Try", attempts , flush = True)
 
         # self.PlantSideA.to_csv(r'.\DataTestPBM\TrainDataSideA.csv')
         # self.PlantSideB.to_csv(r'.\DataTestPBM\TrainDataSideB.csv')

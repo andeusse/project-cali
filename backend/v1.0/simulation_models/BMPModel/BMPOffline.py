@@ -795,6 +795,7 @@ class BMPModelOffline:
         except ZeroDivisionError:
             self.LHV_JNm3=0
         self.Energia = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2=self.nCO2, molH2S=self.nH2S, molO2=self.nO2, molH2=self.nH2)[1]) 
+        self.Energy_mWh = self.Energia*(1000/3600)
 
 
     def GlobaltimeCounter(self):
