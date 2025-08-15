@@ -2225,11 +2225,13 @@ class BMP_online:
         self.P = ReactorData[f'Pressure{ReactorName}'].iloc[iterations_counts]                                  #Psi
         self.Vnorm = (self.P*550*273.15)/(100*(self.Temp+273.15))                                               #mL
         self.Vacum = biogasVol_normalized.iloc[iterations_counts]                                               #mL
+        self.Energy = ReactorData[f'Energia{ReactorName}'].iloc[iterations_counts]                              #mWh
         
         return (self.MixVel, self.SV_int, self.OC, self.ST_int, self.x, self.PBM, self.Temp, self.pH,
                 self.nCH4, self.nCO2, self.nO2, self.nH2S, self.nH2,
                 self.xCH4, self.xCO2, self.xO2, self.xH2S, self.xH2,
-                self.vCH4, self.vCO2, self.vO2, self.vH2S, self.vH2)
+                self.vCH4, self.vCO2, self.vO2, self.vH2S, self.vH2,
+                self.Pacum, self.P, self.Vnorm, self.Vacum, self.Energy)
 
 
 
