@@ -157,6 +157,7 @@ class BMP_online:
                 self.ST_ini = (self.ST1 * self.Fraction1/100)                                       #Total solids decimal 1 substrate diluted
                 self.SV_ini = (self.SV1 * self.Fraction1/100)                                       #Total volatile solids decimal 1 substrate diluted
                 self.rho_ini = (self.rho1 * self.Fraction1/100 + 1000 * self.WaterFraction/100)     #density of the mixture
+                self.rho = self.rho_ini
                 self.Cc = Cc1
                 self.Ch = Ch1
                 self.Co = Co1
@@ -167,6 +168,7 @@ class BMP_online:
                 self.ST_ini = (self.ST1 * self.Fraction1/100) + (self.ST2 * self.Fraction2/100)
                 self.SV_ini = (self.SV1 * self.Fraction1/100) + (self.SV2 * self.Fraction2/100)
                 self.rho_ini = (self.rho1 * self.Fraction1/100) + (self.rho2 * self.Fraction2/100) + (1000 * self.WaterFraction/100)
+                self.rho = self.rho_ini
                 gc1 = (Fraction1/100) * Cc1 * (self.ST1); gc2 = (Fraction2/100) * Cc2 * (self.ST2)
                 gh1 = (Fraction1/100) * Ch1 * (self.ST1); gh2 = (Fraction2/100) * Ch2 * (self.ST2)
                 go1 = (Fraction1/100) * Co1 * (self.ST1); go2 = (Fraction2/100) * Co2 * (self.ST2)
@@ -182,6 +184,7 @@ class BMP_online:
                 self.ST_ini = (self.ST1 * self.Fraction1/100) + (self.ST2 * self.Fraction2/100) + (self.ST3 * self.Fraction3/100)
                 self.SV_ini = (self.SV1 * self.Fraction1/100) + (self.SV2 * self.Fraction2/100) + (self.SV3 * self.Fraction3/100)
                 self.rho_ini = (self.rho1 * self.Fraction1/100) + (self.rho2 * self.Fraction2/100) + (self.rho3 * self.Fraction3/100)
+                self.rho = self.rho_ini
                 gc1 = (Fraction1/100) * Cc1 * (self.ST1); gc2 = (Fraction2/100) * Cc2 * (self.ST2); gc3 = (Fraction3/100) * Cc3 * (self.ST3)
                 gh1 = (Fraction1/100) * Ch1 * (self.ST1); gh2 = (Fraction2/100) * Ch2 * (self.ST2); gh3 = (Fraction3/100) * Ch3 * (self.ST3)
                 go1 = (Fraction1/100) * Co1 * (self.ST1); go2 = (Fraction2/100) * Co2 * (self.ST2); go3 = (Fraction3/100) * Co3 * (self.ST3)
@@ -197,6 +200,7 @@ class BMP_online:
                 self.ST_ini = (self.ST1 * self.Fraction1/100) + (self.ST2 * self.Fraction2/100) + (self.ST3 * self.Fraction3/100) + (self.ST4 * self.Fraction4/100)
                 self.SV_ini = (self.SV1 * self.Fraction1/100) + (self.SV2 * self.Fraction2/100) + (self.SV3 * self.Fraction3/100) + (self.SV4 * self.Fraction4/100)
                 self.rho_ini = (self.rho1 * self.Fraction1/100) + (self.rho2 * self.Fraction2/100) + (self.rho3 * self.Fraction3/100) + (self.rho4 * self.Fraction4/100)
+                self.rho = self.rho_ini
                 gc1 = (Fraction1/100) * Cc1 * (self.ST1); gc2 = (Fraction2/100) * Cc2 * (self.ST2); gc3 = (Fraction3/100) * Cc3 * (self.ST3); gc4 = (Fraction4/100) * Cc4 * (self.ST4)
                 gh1 = (Fraction1/100) * Ch1 * (self.ST1); gh2 = (Fraction2/100) * Ch2 * (self.ST2); gh3 = (Fraction3/100) * Ch3 * (self.ST3); gh4 = (Fraction4/100) * Ch4 * (self.ST4)
                 go1 = (Fraction1/100) * Co1 * (self.ST1); go2 = (Fraction2/100) * Co2 * (self.ST2); go3 = (Fraction3/100) * Co3 * (self.ST3); go4 = (Fraction4/100) * Co4 * (self.ST4)
@@ -213,6 +217,7 @@ class BMP_online:
                 self.ST_ini = (self.ST1 * self.Fraction1/100)                                       #Total solids decimal 1 substrate diluted
                 self.SV_ini = (self.SV1 * self.Fraction1/100)                                       #Total volatile solids decimal 1 substrate diluted
                 self.rho_ini = (self.rho1 * self.Fraction1/100 + 1000 * self.WaterFraction/100)     #density of the mixture
+                self.rho = self.rho_ini
                 self.Cc = Cc1
                 self.Ch = Ch1
                 self.Co = Co1
@@ -223,6 +228,7 @@ class BMP_online:
                 self.ST_ini = self.ST2
                 self.SV_ini = self.SV2
                 self.rho_ini = self.rho2
+                self.rho = self.rho_ini
                 self.Cc = Cc2
                 self.Ch = Ch2
                 self.Co = Co2
@@ -233,6 +239,7 @@ class BMP_online:
                 self.ST_ini = self.ST3
                 self.SV_ini = self.SV3
                 self.rho_ini = self.rho3
+                self.rho = self.rho_ini
                 self.Cc = Cc3
                 self.Ch = Ch3
                 self.Co = Co3
@@ -243,6 +250,7 @@ class BMP_online:
                 self.ST_ini = self.ST4
                 self.SV_ini = self.SV4
                 self.rho_ini = self.rho4
+                self.rho = self.rho_ini
                 self.Cc = Cc4
                 self.Ch = Ch4
                 self.Co = Co4   
@@ -282,18 +290,6 @@ class BMP_online:
         self.Csus_ini_SV_mol = (self.rho_ini*self.SV_ini)/self.MW_sustrato
         self.Csus_fixed = self.Csus_ini_ST_mol - self.Csus_ini_SV_mol
 
-        #Initital values for optimization
-        if Model == "Arrhenius":
-            self.K_ini_R101 = 1
-            self.Ea_ini_R101 = 1
-            self.K_ini_R102 = 1
-            self.Ea_ini_R102 = 1
-            self.K_ini_R103 = 1
-            self.Ea_ini_R103 = 1
-            self.K_ini_R104 = 1
-            self.Ea_ini_R104 = 1
-
-    
     def SubstrateFeeding (self):
         if self.SubstrateNumber == 1:
             self.ST = (self.ST1 * self.Fraction1/100)                                       #Total solids decimal 1 substrate diluted
@@ -456,7 +452,7 @@ class BMP_online:
                     self.PlantSideA.set_index("_field", inplace = True)
                     break
                 except Exception as e:
-                    print(f"Try {attempts} failed: {e}")
+                    print("Trouble consiltant plant Side A")
                     attempts += 1
                     print("Try", attempts)
 
@@ -477,33 +473,34 @@ class BMP_online:
                     self.PlantSideB.set_index("_field", inplace = True)
                     break
                 except Exception as e:
+                    print("Trouble consiltant plant Side B")
                     print(f"Try {attempts} failed: {e}")
                     attempts += 1
                     print("Try", attempts)
         
-        # attempts = 1
-        # while attempts <= 5:
-        #     try:
-        #         self.query5 = self.influxDB.QueryCreator(measurement="Planta_PBM", train_time=TrainTime, type=16)
-        #         df_last = self.influxDB.InfluxDBreader(query=self.query5)
-        #         #df_last = pd.concat(self.influxDB.InfluxDBreader(query = self.query5), ignore_index=True)
-        #         #df_last = pd.DataFrame(self.influxDB.InfluxDBreader(query = self.query5))
-        #         last_time = df_last["_time"].max()
-        #         t_end = last_time.to_pydatetime().astimezone(datetime.timezone.utc)
-        #         t_start = t_end - datetime.timedelta(minutes=TrainTime)
+        attempts = 1
+        while attempts <= 5:
+            try:
+                self.query5 = self.influxDB.QueryCreator(measurement="Planta_PBM", train_time=TrainTime, type=16)
+                df_last = self.influxDB.InfluxDBreader(query=self.query5)
+                df_last = pd.concat(df_last, ignore_index=True)
+                # df_last = pd.DataFrame(self.influxDB.InfluxDBreader(query = self.query5))
+                last_time = df_last["_time"].max()
+                t_end = last_time.to_pydatetime().astimezone(datetime.timezone.utc)
+                t_start = t_end - datetime.timedelta(minutes=TrainTime)
 
-        #         t_end_str = t_end.isoformat(timespec="milliseconds").replace('+00:00', 'Z') 
-        #         t_start_str = t_start.isoformat(timespec="milliseconds").replace('+00:00', 'Z')
-        #         self.query6 = self.influxDB.QueryCreator(measurement="Planta_PBM", t_start_str = t_start_str, t_end_str = t_end_str, type=17)
-        #         self.PlantEstimation = self.influxDB.InfluxDBreader(query = self.query6)
-        #         # self.PlantEstimation = pd.concat(self.influxDB.InfluxDBreader(query = self.query6), ignore_index=True)
-        #         self.PlantEstimation.set_index("_field", inplace = True)
-        #         break
+                t_end_str = t_end.isoformat(timespec="milliseconds").replace('+00:00', 'Z') 
+                t_start_str = t_start.isoformat(timespec="milliseconds").replace('+00:00', 'Z')
+                self.query6 = self.influxDB.QueryCreator(measurement="Planta_PBM", t_start_str = t_start_str, t_end_str = t_end_str, type=17)
+                # self.PlantEstimation = self.influxDB.InfluxDBreader(query = self.query6)
+                self.PlantEstimation = pd.concat(self.influxDB.InfluxDBreader(query = self.query6), ignore_index=True)
+                self.PlantEstimation.set_index("_field", inplace = True)
+                break
 
-        #     except Exception as e:
-        #         print(f"Try {attempts} failed: {e}", flush=True)
-        #         attempts += 1
-        #         print("Try", attempts , flush = True)
+            except Exception as e:
+                print(f"Try {attempts} failed: {e}", flush=True)
+                attempts += 1
+                print("Try", attempts , flush = True)
 
         # self.PlantSideA.to_csv(r'.\DataTestPBM\TrainDataSideA.csv')
         # self.PlantSideB.to_csv(r'.\DataTestPBM\TrainDataSideB.csv')
@@ -545,6 +542,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR101 = DataEstimation.loc["PTotalR101", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-101", ["_time", "_value"]]
                     VolAcumR101 = DataEstimation.loc["Volumen_bioR101_Pressure", ["_time", "_value"]]
                     TempGasR101 = DataPlantSideA.loc["TE-101B", ["_time", "_value"]]
                     xCH4R101 = DataPlantSideA.loc["CH4-101", ["_time", "_value"]]
@@ -553,16 +551,18 @@ class BMP_online:
                     xH2SR101 = DataPlantSideA.loc["H2S-101", ["_time", "_value"]]
                     xH2R101 = DataPlantSideA.loc["H2-101", ["_time", "_value"]]
                     EnergiaR101 = DataEstimation.loc["Energia_mWhR101_Pressure", ["_time", "_value"]]
+                    PressureR101 = DataPlantSideA.loc["PT-101", ["_time", "_value"]]
                     
-                    DataR101 = [Inyections, AcumPressureR101, VolAcumR101, TempGasR101, xCH4R101, xCO2R101,
-                                xO2R101, xH2SR101, xH2R101, EnergiaR101, TempR101, pHR101]
-                    Columns_names = ["Inyections", "AcumPressureR101", "VolAcumR101", "TempGasR101", "xCH4R101", "xCO2R101",
-                                "xO2R101", "xH2SR101", "xH2R101", "EnergiaR101", "TempR101", "pHR101"]
+                    DataR101 = [Inyections, AcumPressureR101, MixVelocity, VolAcumR101, TempGasR101, xCH4R101, xCO2R101,
+                                xO2R101, xH2SR101, xH2R101, EnergiaR101, TempR101, pHR101, PressureR101]
+                    Columns_names = ["Inyections", "AcumPressureR101", "MixVelocity", "VolAcumR101", "TempGasR101", "xCH4R101", "xCO2R101",
+                                "xO2R101", "xH2SR101", "xH2R101", "EnergiaR101", "TempR101", "pHR101", "PressureR101"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR101 = DataEstimation.loc["VacumA", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-101", ["_time", "_value"]]
                     TempPoolR101 = DataEstimation.loc["TE-100A", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR101 = DataEstimation.loc["PT-100A", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R101 = DataPlantSideA.loc["CH4-101", ["_time", "_value"]]
@@ -571,11 +571,12 @@ class BMP_online:
                     xH2SR101 = DataPlantSideA.loc["H2S-101", ["_time", "_value"]]
                     xH2R101 = DataPlantSideA.loc["H2-101", ["_time", "_value"]]
                     EnergiaR101 = DataEstimation.loc["Energia_mWhR101_Pressure", ["_time", "_value"]]
+                    PressureR101 = DataPlantSideA.loc["PT-101", ["_time", "_value"]]
                     
-                    DataR101 = [Inyections, VolAcumR101, TempPoolR101, PressureR101, xCH4R101, xCO2R101,
+                    DataR101 = [Inyections, VolAcumR101, MixVelocity, TempPoolR101, PressureR101, xCH4R101, xCO2R101,
                                 xO2R101, xH2SR101, xH2R101, EnergiaR101, TempR101, pHR101]
                     
-                    Columns_names = ["Inyections", "VolAcumR101", "TempGasR101", "xCH4R101", "xCO2R101",
+                    Columns_names = ["Inyections", "VolAcumR101", "MixVelocity", "TempGasR101", "PressureR101", "xCH4R101", "xCO2R101",
                                 "xO2R101", "xH2SR101", "xH2R101", "EnergiaR101", "TempR101", "pHR101"]
                 
                 R101_data = pd.concat(DataR101)
@@ -588,6 +589,7 @@ class BMP_online:
                     #Biogas topcase
                     AcumPressureR101 = DataEstimation.loc["PTotalR101", ["_time", "_value"]]
                     VolAcumR101 = DataEstimation.loc["Volumen_bioR101_Pressure", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-101", ["_time", "_value"]]
                     TempGasR101 = DataPlantSideA.loc["TE-101B", ["_time", "_value"]]
                     xCH4R101 = DataPlantSideA.loc["CH4-101", ["_time", "_value"]]
                     xCO2R101 = DataPlantSideA.loc["CO2-101", ["_time", "_value"]]
@@ -595,17 +597,19 @@ class BMP_online:
                     xH2SR101 = DataPlantSideA.loc["H2S-101", ["_time", "_value"]]
                     xH2R101 = DataPlantSideA.loc["H2-101", ["_time", "_value"]]
                     EnergiaR101 = DataEstimation.loc["Energia_mWhR101_Pressure", ["_time", "_value"]]
+                    PressureR101 = DataPlantSideA.loc["PT-101", ["_time", "_value"]]
                     
-                    DataR101 = [AcumPressureR101, VolAcumR101, TempGasR101, xCH4R101, xCO2R101,
-                                xO2R101, xH2SR101, xH2R101, EnergiaR101, TempR101, pHR101]
+                    DataR101 = [AcumPressureR101, VolAcumR101,  MixVelocity, TempGasR101, xCH4R101, xCO2R101,
+                                xO2R101, xH2SR101, xH2R101, EnergiaR101, TempR101, pHR101, PressureR101]
                     
-                    Columns_names = ["AcumPressureR101", "VolAcumR101", "TempGasR101", "xCH4R101", "xCO2R101",
-                                "xO2R101", "xH2SR101", "xH2R101", "EnergiaR101", "TempR101", "pHR101"]
+                    Columns_names = ["AcumPressureR101", "VolAcumR101", "MixVelocity", "TempGasR101", "xCH4R101", "xCO2R101",
+                                "xO2R101", "xH2SR101", "xH2R101", "EnergiaR101", "TempR101", "pHR101", "PressureR101"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR101 = DataEstimation.loc["VacumA", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-101", ["_time", "_value"]]
                     TempPoolR101 = DataEstimation.loc["TE-100A", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR101 = DataEstimation.loc["PT-100A", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R101 = DataPlantSideA.loc["CH4-101", ["_time", "_value"]]
@@ -614,11 +618,12 @@ class BMP_online:
                     xH2SR101 = DataPlantSideA.loc["H2S-101", ["_time", "_value"]]
                     xH2R101 = DataPlantSideA.loc["H2-101", ["_time", "_value"]]
                     EnergiaR101 = DataEstimation.loc["Energia_mWhR101_Pressure", ["_time", "_value"]]
+                    PressureR101 = DataPlantSideA.loc["PT-101", ["_time", "_value"]]
                     
-                    DataR101 = [VolAcumR101, TempPoolR101, PressureR101, xCH4R101, xCO2R101,
+                    DataR101 = [VolAcumR101, TempPoolR101, MixVelocity,  PressureR101, xCH4R101, xCO2R101,
                                 xO2R101, xH2SR101, xH2R101, EnergiaR101, TempR101, pHR101]
                     
-                    Columns_names = ["VolAcumR101", "TempGasR101", "xCH4R101", "xCO2R101",
+                    Columns_names = ["VolAcumR101", "TempGasR101", "MixVelocity", "PressureR101", "xCH4R101", "xCO2R101",
                                 "xO2R101", "xH2SR101", "xH2R101", "EnergiaR101", "TempR101", "pHR101"]
                 
             R101_data = DataR101[0].rename(columns={'_value': 'df1_value'})
@@ -670,6 +675,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR102 = DataEstimation.loc["PTotalR102", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-102", ["_time", "_value"]]
                     VolAcumR102 = DataEstimation.loc["Volumen_bioR102_Pressure", ["_time", "_value"]]
                     TempGasR102 = DataPlantSideA.loc["TE-102B", ["_time", "_value"]]
                     xCH4R102 = DataPlantSideA.loc["CH4-102", ["_time", "_value"]]
@@ -678,16 +684,18 @@ class BMP_online:
                     xH2SR102 = DataPlantSideA.loc["H2S-102", ["_time", "_value"]]
                     xH2R102 = DataPlantSideA.loc["H2-102", ["_time", "_value"]]
                     EnergiaR102 = DataEstimation.loc["Energia_mWhR102_Pressure", ["_time", "_value"]]
+                    PressureR102 = DataPlantSideA.loc["PT-102", ["_time", "_value"]]
                     
-                    DataR102 = [Inyections, AcumPressureR102, VolAcumR102, TempGasR102, xCH4R102, xCO2R102,
-                                xO2R102, xH2SR102, xH2R102, EnergiaR102, TempR102, pHR102]
-                    Columns_names = ["Inyections", "AcumPressureR102", "VolAcumR102", "TempGasR102", "xCH4R102", "xCO2R102",
-                                "xO2R102", "xH2SR102", "xH2R102", "EnergiaR102", "TempR102", "pHR102"]
+                    DataR102 = [Inyections, AcumPressureR102, MixVelocity, VolAcumR102, TempGasR102, xCH4R102, xCO2R102,
+                                xO2R102, xH2SR102, xH2R102, EnergiaR102, TempR102, pHR102, PressureR102]
+                    Columns_names = ["Inyections", "AcumPressureR102", "MixVelocity", "VolAcumR102", "TempGasR102", "xCH4R102", "xCO2R102",
+                                "xO2R102", "xH2SR102", "xH2R102", "EnergiaR102", "TempR102", "pHR102", "PressureR102"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR102 = DataEstimation.loc["VacumB", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-102", ["_time", "_value"]]
                     TempPoolR102 = DataEstimation.loc["TE-100B", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR102 = DataEstimation.loc["PT-100B", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R102 = DataPlantSideA.loc["CH4-102", ["_time", "_value"]]
@@ -696,11 +704,12 @@ class BMP_online:
                     xH2SR102 = DataPlantSideA.loc["H2S-102", ["_time", "_value"]]
                     xH2R102 = DataPlantSideA.loc["H2-102", ["_time", "_value"]]
                     EnergiaR102 = DataEstimation.loc["Energia_mWhR102_Pressure", ["_time", "_value"]]
+                    PressureR102 = DataPlantSideA.loc["PT-102", ["_time", "_value"]]
                     
-                    DataR102 = [Inyections, VolAcumR102, TempPoolR102, PressureR102, xCH4R102, xCO2R102,
+                    DataR102 = [Inyections, VolAcumR102, MixVelocity, TempPoolR102, PressureR102, xCH4R102, xCO2R102,
                                 xO2R102, xH2SR102, xH2R102, EnergiaR102, TempR102, pHR102]
                     
-                    Columns_names = ["Inyections", "VolAcumR102", "TempGasR102", "xCH4R102", "xCO2R102",
+                    Columns_names = ["Inyections", "VolAcumR102", "MixVelocity", "TempGasR102", "PressureR102", "xCH4R102", "xCO2R102",
                                 "xO2R102", "xH2SR102", "xH2R102", "EnergiaR102", "TempR102", "pHR102"]
                 
                 R102_data = pd.concat(DataR102)
@@ -712,6 +721,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR102 = DataEstimation.loc["PTotalR102", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-102", ["_time", "_value"]]
                     VolAcumR102 = DataEstimation.loc["Volumen_bioR102_Pressure", ["_time", "_value"]]
                     TempGasR102 = DataPlantSideA.loc["TE-102B", ["_time", "_value"]]
                     xCH4R102 = DataPlantSideA.loc["CH4-102", ["_time", "_value"]]
@@ -720,17 +730,19 @@ class BMP_online:
                     xH2SR102 = DataPlantSideA.loc["H2S-102", ["_time", "_value"]]
                     xH2R102 = DataPlantSideA.loc["H2-102", ["_time", "_value"]]
                     EnergiaR102 = DataEstimation.loc["Energia_mWhR102_Pressure", ["_time", "_value"]]
+                    PressureR102 = DataPlantSideA.loc["PT-102", ["_time", "_value"]]
                     
-                    DataR102 = [AcumPressureR102, VolAcumR102, TempGasR102, xCH4R102, xCO2R102,
-                                xO2R102, xH2SR102, xH2R102, EnergiaR102, TempR102, pHR102]
+                    DataR102 = [AcumPressureR102, VolAcumR102, MixVelocity, TempGasR102, xCH4R102, xCO2R102,
+                                xO2R102, xH2SR102, xH2R102, EnergiaR102, TempR102, pHR102, PressureR102]
                     
-                    Columns_names = ["AcumPressureR102", "VolAcumR102", "TempGasR102", "xCH4R102", "xCO2R102",
-                                "xO2R102", "xH2SR102", "xH2R102", "EnergiaR102", "TempR102", "pHR102"]
+                    Columns_names = ["AcumPressureR102", "VolAcumR102", "MixVelocity", "TempGasR102", "xCH4R102", "xCO2R102",
+                                "xO2R102", "xH2SR102", "xH2R102", "EnergiaR102", "TempR102", "pHR102", "PressureR102"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR102 = DataEstimation.loc["VacumB", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-102", ["_time", "_value"]]
                     TempPoolR102 = DataEstimation.loc["TE-100B", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR102 = DataEstimation.loc["PT-100B", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R102 = DataPlantSideA.loc["CH4-102", ["_time", "_value"]]
@@ -739,11 +751,12 @@ class BMP_online:
                     xH2SR102 = DataPlantSideA.loc["H2S-102", ["_time", "_value"]]
                     xH2R102 = DataPlantSideA.loc["H2-102", ["_time", "_value"]]
                     EnergiaR102 = DataEstimation.loc["Energia_mWhR102_Pressure", ["_time", "_value"]]
+                    PressureR102 = DataPlantSideA.loc["PT-102", ["_time", "_value"]]
                     
-                    DataR102 = [VolAcumR102, TempPoolR102, PressureR102, xCH4R102, xCO2R102,
+                    DataR102 = [VolAcumR102, TempPoolR102, MixVelocity, PressureR102, xCH4R102, xCO2R102,
                                 xO2R102, xH2SR102, xH2R102, EnergiaR102, TempR102, pHR102]
                     
-                    Columns_names = ["VolAcumR102", "TempGasR102", "xCH4R102", "xCO2R102",
+                    Columns_names = ["VolAcumR102", "TempGasR102", "MixVelocity", "PressureR102", "xCH4R102", "xCO2R102",
                                 "xO2R102", "xH2SR102", "xH2R102", "EnergiaR102", "TempR102", "pHR102"]
                 
             R102_data = DataR102[0].rename(columns={'_value': 'df1_value'})
@@ -795,6 +808,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR103 = DataEstimation.loc["PTotalR103", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-103", ["_time", "_value"]]
                     VolAcumR103 = DataEstimation.loc["Volumen_bioR103_Pressure", ["_time", "_value"]]
                     TempGasR103 = DataPlantSideA.loc["TE-103B", ["_time", "_value"]]
                     xCH4R103 = DataPlantSideA.loc["CH4-103", ["_time", "_value"]]
@@ -803,16 +817,18 @@ class BMP_online:
                     xH2SR103 = DataPlantSideA.loc["H2S-103", ["_time", "_value"]]
                     xH2R103 = DataPlantSideA.loc["H2-103", ["_time", "_value"]]
                     EnergiaR103 = DataEstimation.loc["Energia_mWhR103_Pressure", ["_time", "_value"]]
+                    PressureR103 = DataPlantSideA.loc["PT-103", ["_time", "_value"]]
                     
-                    DataR103 = [Inyections, AcumPressureR103, VolAcumR103, TempGasR103, xCH4R103, xCO2R103,
-                                xO2R103, xH2SR103, xH2R103, EnergiaR103, TempR103, pHR103]
-                    Columns_names = ["Inyections", "AcumPressureR103", "VolAcumR103", "TempGasR103", "xCH4R103", "xCO2R103",
-                                "xO2R103", "xH2SR103", "xH2R103", "EnergiaR103", "TempR103", "pHR103"]
+                    DataR103 = [Inyections, AcumPressureR103, MixVelocity, VolAcumR103, TempGasR103, xCH4R103, xCO2R103,
+                                xO2R103, xH2SR103, xH2R103, EnergiaR103, TempR103, pHR103, PressureR103]
+                    Columns_names = ["Inyections", "AcumPressureR103", "MixVelocity", "VolAcumR103", "TempGasR103", "xCH4R103", "xCO2R103",
+                                "xO2R103", "xH2SR103", "xH2R103", "EnergiaR103", "TempR103", "pHR103", "PressureR103"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR103 = DataEstimation.loc["VacumC", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-103", ["_time", "_value"]]
                     TempPoolR103 = DataEstimation.loc["TE-100C", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR103 = DataEstimation.loc["PT-100C", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R103 = DataPlantSideA.loc["CH4-103", ["_time", "_value"]]
@@ -821,11 +837,12 @@ class BMP_online:
                     xH2SR103 = DataPlantSideA.loc["H2S-103", ["_time", "_value"]]
                     xH2R103 = DataPlantSideA.loc["H2-103", ["_time", "_value"]]
                     EnergiaR103 = DataEstimation.loc["Energia_mWhR103_Pressure", ["_time", "_value"]]
+                    PressureR103 = DataPlantSideA.loc["PT-103", ["_time", "_value"]]
                     
-                    DataR103 = [Inyections, VolAcumR103, TempPoolR103, PressureR103, xCH4R103, xCO2R103,
+                    DataR103 = [Inyections, VolAcumR103, MixVelocity, TempPoolR103, PressureR103, xCH4R103, xCO2R103,
                                 xO2R103, xH2SR103, xH2R103, EnergiaR103, TempR103, pHR103]
                     
-                    Columns_names = ["Inyections", "VolAcumR103", "TempGasR103", "xCH4R103", "xCO2R103",
+                    Columns_names = ["Inyections", "VolAcumR103", "MixVelocity", "TempGasR103", "PressureR103", "xCH4R103", "xCO2R103",
                                 "xO2R103", "xH2SR103", "xH2R103", "EnergiaR103", "TempR103", "pHR103"]
                 
                 R103_data = pd.concat(DataR103)
@@ -837,6 +854,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR103 = DataEstimation.loc["PTotalR103", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-103", ["_time", "_value"]]
                     VolAcumR103 = DataEstimation.loc["Volumen_bioR103_Pressure", ["_time", "_value"]]
                     TempGasR103 = DataPlantSideA.loc["TE-103B", ["_time", "_value"]]
                     xCH4R103 = DataPlantSideA.loc["CH4-103", ["_time", "_value"]]
@@ -845,17 +863,19 @@ class BMP_online:
                     xH2SR103 = DataPlantSideA.loc["H2S-103", ["_time", "_value"]]
                     xH2R103 = DataPlantSideA.loc["H2-103", ["_time", "_value"]]
                     EnergiaR103 = DataEstimation.loc["Energia_mWhR103_Pressure", ["_time", "_value"]]
+                    PressureR103 = DataPlantSideA.loc["PT-103", ["_time", "_value"]]
                     
-                    DataR103 = [AcumPressureR103, VolAcumR103, TempGasR103, xCH4R103, xCO2R103,
-                                xO2R103, xH2SR103, xH2R103, EnergiaR103, TempR103, pHR103]
+                    DataR103 = [AcumPressureR103, VolAcumR103, MixVelocity, TempGasR103, xCH4R103, xCO2R103,
+                                xO2R103, xH2SR103, xH2R103, EnergiaR103, TempR103, pHR103, PressureR103]
                     
-                    Columns_names = ["AcumPressureR103", "VolAcumR103", "TempGasR103", "xCH4R103", "xCO2R103",
-                                "xO2R103", "xH2SR103", "xH2R103", "EnergiaR103", "TempR103", "pHR103"]
+                    Columns_names = ["AcumPressureR103", "VolAcumR103", "MixVelocity", "TempGasR103", "xCH4R103", "xCO2R103",
+                                "xO2R103", "xH2SR103", "xH2R103", "EnergiaR103", "TempR103", "pHR103", "PressureR103"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR103 = DataEstimation.loc["VacumC", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-103", ["_time", "_value"]]
                     TempPoolR103 = DataEstimation.loc["TE-100C", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR103 = DataEstimation.loc["PT-100C", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R103 = DataPlantSideA.loc["CH4-103", ["_time", "_value"]]
@@ -864,11 +884,12 @@ class BMP_online:
                     xH2SR103 = DataPlantSideA.loc["H2S-103", ["_time", "_value"]]
                     xH2R103 = DataPlantSideA.loc["H2-103", ["_time", "_value"]]
                     EnergiaR103 = DataEstimation.loc["Energia_mWhR103_Pressure", ["_time", "_value"]]
+                    PressureR103 = DataPlantSideA.loc["PT-103", ["_time", "_value"]]
                     
-                    DataR103 = [VolAcumR103, TempPoolR103, PressureR103, xCH4R103, xCO2R103,
+                    DataR103 = [VolAcumR103, TempPoolR103, MixVelocity, PressureR103, xCH4R103, xCO2R103,
                                 xO2R103, xH2SR103, xH2R103, EnergiaR103, TempR103, pHR103]
                     
-                    Columns_names = ["VolAcumR103", "TempGasR103", "xCH4R103", "xCO2R103",
+                    Columns_names = ["VolAcumR103", "TempGasR103", "MixVelocity", "PressureR103", "xCH4R103", "xCO2R103",
                                 "xO2R103", "xH2SR103", "xH2R103", "EnergiaR103", "TempR103", "pHR103"]
                 
             R103_data = DataR103[0].rename(columns={'_value': 'df1_value'})
@@ -920,6 +941,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR104 = DataEstimation.loc["PTotalR104", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-104", ["_time", "_value"]]
                     VolAcumR104 = DataEstimation.loc["Volumen_bioR104_Pressure", ["_time", "_value"]]
                     TempGasR104 = DataPlantSideA.loc["TE-104B", ["_time", "_value"]]
                     xCH4R104 = DataPlantSideA.loc["CH4-104", ["_time", "_value"]]
@@ -928,16 +950,18 @@ class BMP_online:
                     xH2SR104 = DataPlantSideA.loc["H2S-104", ["_time", "_value"]]
                     xH2R104 = DataPlantSideA.loc["H2-104", ["_time", "_value"]]
                     EnergiaR104 = DataEstimation.loc["Energia_mWhR104_Pressure", ["_time", "_value"]]
+                    PressureR104 = DataPlantSideA.loc["PT-104", ["_time", "_value"]]
                     
-                    DataR104 = [Inyections, AcumPressureR104, VolAcumR104, TempGasR104, xCH4R104, xCO2R104,
-                                xO2R104, xH2SR104, xH2R104, EnergiaR104, TempR104, pHR104]
-                    Columns_names = ["Inyections", "AcumPressureR104", "VolAcumR104", "TempGasR104", "xCH4R104", "xCO2R104",
-                                "xO2R104", "xH2SR104", "xH2R104", "EnergiaR104", "TempR104", "pHR104"]
+                    DataR104 = [Inyections, AcumPressureR104, MixVelocity, VolAcumR104, TempGasR104, xCH4R104, xCO2R104,
+                                xO2R104, xH2SR104, xH2R104, EnergiaR104, TempR104, pHR104, PressureR104]
+                    Columns_names = ["Inyections", "AcumPressureR104", "MixVelocity", "VolAcumR104", "TempGasR104", "xCH4R104", "xCO2R104",
+                                "xO2R104", "xH2SR104", "xH2R104", "EnergiaR104", "TempR104", "pHR104", "PressureR104"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR104 = DataEstimation.loc["VacumD", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-104", ["_time", "_value"]]
                     TempPoolR104 = DataEstimation.loc["TE-100D", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR104 = DataEstimation.loc["PT-100D", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R104 = DataPlantSideA.loc["CH4-104", ["_time", "_value"]]
@@ -947,10 +971,10 @@ class BMP_online:
                     xH2R104 = DataPlantSideA.loc["H2-104", ["_time", "_value"]]
                     EnergiaR104 = DataEstimation.loc["Energia_mWhR104_Pressure", ["_time", "_value"]]
                     
-                    DataR104 = [Inyections, VolAcumR104, TempPoolR104, PressureR104, xCH4R104, xCO2R104,
+                    DataR104 = [Inyections, VolAcumR104, MixVelocity, TempPoolR104, PressureR104, xCH4R104, xCO2R104,
                                 xO2R104, xH2SR104, xH2R104, EnergiaR104, TempR104, pHR104]
                     
-                    Columns_names = ["Inyections", "VolAcumR104", "TempGasR104", "xCH4R104", "xCO2R104",
+                    Columns_names = ["Inyections", "VolAcumR104", "MixVelocity", "TempGasR104", "PressureR104", "xCH4R104", "xCO2R104",
                                 "xO2R104", "xH2SR104", "xH2R104", "EnergiaR104", "TempR104", "pHR104"]
                 
                 R104_data = pd.concat(DataR104)
@@ -962,6 +986,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR104 = DataEstimation.loc["PTotalR104", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-104", ["_time", "_value"]]
                     VolAcumR104 = DataEstimation.loc["Volumen_bioR104_Pressure", ["_time", "_value"]]
                     TempGasR104 = DataPlantSideA.loc["TE-104B", ["_time", "_value"]]
                     xCH4R104 = DataPlantSideA.loc["CH4-104", ["_time", "_value"]]
@@ -970,17 +995,19 @@ class BMP_online:
                     xH2SR104 = DataPlantSideA.loc["H2S-104", ["_time", "_value"]]
                     xH2R104 = DataPlantSideA.loc["H2-104", ["_time", "_value"]]
                     EnergiaR104 = DataEstimation.loc["Energia_mWhR104_Pressure", ["_time", "_value"]]
+                    PressureR104 = DataPlantSideA.loc["PT-104", ["_time", "_value"]]
                     
-                    DataR104 = [AcumPressureR104, VolAcumR104, TempGasR104, xCH4R104, xCO2R104,
-                                xO2R104, xH2SR104, xH2R104, EnergiaR104, TempR104, pHR104]
+                    DataR104 = [AcumPressureR104, VolAcumR104, MixVelocity, TempGasR104, xCH4R104, xCO2R104,
+                                xO2R104, xH2SR104, xH2R104, EnergiaR104, TempR104, pHR104, PressureR104]
                     
-                    Columns_names = ["AcumPressureR104", "VolAcumR104", "TempGasR104", "xCH4R104", "xCO2R104",
-                                "xO2R104", "xH2SR104", "xH2R104", "EnergiaR104", "TempR104", "pHR104"]
+                    Columns_names = ["AcumPressureR104", "VolAcumR104", "MixVelocity", "TempGasR104", "xCH4R104", "xCO2R104",
+                                "xO2R104", "xH2SR104", "xH2R104", "EnergiaR104", "TempR104", "pHR104", "PressureR104"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR104 = DataEstimation.loc["VacumD", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-104", ["_time", "_value"]]
                     TempPoolR104 = DataEstimation.loc["TE-100D", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR104 = DataEstimation.loc["PT-100D", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R104 = DataPlantSideA.loc["CH4-104", ["_time", "_value"]]
@@ -990,10 +1017,10 @@ class BMP_online:
                     xH2R104 = DataPlantSideA.loc["H2-104", ["_time", "_value"]]
                     EnergiaR104 = DataEstimation.loc["Energia_mWhR104_Pressure", ["_time", "_value"]]
                     
-                    DataR104 = [VolAcumR104, TempPoolR104, PressureR104, xCH4R104, xCO2R104,
+                    DataR104 = [VolAcumR104, TempPoolR104, MixVelocity, PressureR104, xCH4R104, xCO2R104,
                                 xO2R104, xH2SR104, xH2R104, EnergiaR104, TempR104, pHR104]
                     
-                    Columns_names = ["VolAcumR104", "TempGasR104", "xCH4R104", "xCO2R104",
+                    Columns_names = ["VolAcumR104", "TempGasR104", "MixVelocity", "PressureR104", "xCH4R104", "xCO2R104",
                                 "xO2R104", "xH2SR104", "xH2R104", "EnergiaR104", "TempR104", "pHR104"]
                 
             R104_data = DataR104[0].rename(columns={'_value': 'df1_value'})
@@ -1045,6 +1072,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR105 = DataEstimation.loc["PTotalR105", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-105", ["_time", "_value"]]
                     VolAcumR105 = DataEstimation.loc["Volumen_bioR105_Pressure", ["_time", "_value"]]
                     TempGasR105 = DataPlantSideA.loc["TE-105B", ["_time", "_value"]]
                     xCH4R105 = DataPlantSideA.loc["CH4-105", ["_time", "_value"]]
@@ -1053,16 +1081,18 @@ class BMP_online:
                     xH2SR105 = DataPlantSideA.loc["H2S-105", ["_time", "_value"]]
                     xH2R105 = DataPlantSideA.loc["H2-105", ["_time", "_value"]]
                     EnergiaR105 = DataEstimation.loc["Energia_mWhR105_Pressure", ["_time", "_value"]]
+                    PressureR105 = DataPlantSideA.loc["PT-105", ["_time", "_value"]]
                     
-                    DataR105 = [Inyections, AcumPressureR105, VolAcumR105, TempGasR105, xCH4R105, xCO2R105,
-                                xO2R105, xH2SR105, xH2R105, EnergiaR105, TempR105, pHR105]
-                    Columns_names = ["Inyections", "AcumPressureR105", "VolAcumR105", "TempGasR105", "xCH4R105", "xCO2R105",
-                                "xO2R105", "xH2SR105", "xH2R105", "EnergiaR105", "TempR105", "pHR105"]
+                    DataR105 = [Inyections, AcumPressureR105, MixVelocity, VolAcumR105, TempGasR105, xCH4R105, xCO2R105,
+                                xO2R105, xH2SR105, xH2R105, EnergiaR105, TempR105, pHR105, PressureR105]
+                    Columns_names = ["Inyections", "AcumPressureR105", "MixVelocity", "VolAcumR105", "TempGasR105", "xCH4R105", "xCO2R105",
+                                "xO2R105", "xH2SR105", "xH2R105", "EnergiaR105", "TempR105", "pHR105", "PressureR105"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR105 = DataEstimation.loc["VacumE", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-105", ["_time", "_value"]]
                     TempPoolR105 = DataEstimation.loc["TE-100E", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR105 = DataEstimation.loc["PT-100E", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R105 = DataPlantSideA.loc["CH4-105", ["_time", "_value"]]
@@ -1072,10 +1102,10 @@ class BMP_online:
                     xH2R105 = DataPlantSideA.loc["H2-105", ["_time", "_value"]]
                     EnergiaR105 = DataEstimation.loc["Energia_mWhR105_Pressure", ["_time", "_value"]]
                     
-                    DataR105 = [Inyections, VolAcumR105, TempPoolR105, PressureR105, xCH4R105, xCO2R105,
+                    DataR105 = [Inyections, VolAcumR105, MixVelocity, TempPoolR105, PressureR105, xCH4R105, xCO2R105,
                                 xO2R105, xH2SR105, xH2R105, EnergiaR105, TempR105, pHR105]
                     
-                    Columns_names = ["Inyections", "VolAcumR105", "TempGasR105", "xCH4R105", "xCO2R105",
+                    Columns_names = ["Inyections", "VolAcumR105", "MixVelocity", "TempGasR105", "PressureR105", "xCH4R105", "xCO2R105",
                                 "xO2R105", "xH2SR105", "xH2R105", "EnergiaR105", "TempR105", "pHR105"]
                 
                 R105_data = pd.concat(DataR105)
@@ -1087,6 +1117,7 @@ class BMP_online:
                 if MeasureMethodSideA == "Pressure":
                     #Biogas topcase
                     AcumPressureR105 = DataEstimation.loc["PTotalR105", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-105", ["_time", "_value"]]
                     VolAcumR105 = DataEstimation.loc["Volumen_bioR105_Pressure", ["_time", "_value"]]
                     TempGasR105 = DataPlantSideA.loc["TE-105B", ["_time", "_value"]]
                     xCH4R105 = DataPlantSideA.loc["CH4-105", ["_time", "_value"]]
@@ -1095,17 +1126,19 @@ class BMP_online:
                     xH2SR105 = DataPlantSideA.loc["H2S-105", ["_time", "_value"]]
                     xH2R105 = DataPlantSideA.loc["H2-105", ["_time", "_value"]]
                     EnergiaR105 = DataEstimation.loc["Energia_mWhR105_Pressure", ["_time", "_value"]]
+                    PressureR105 = DataPlantSideA.loc["PT-105", ["_time", "_value"]]
                     
-                    DataR105 = [AcumPressureR105, VolAcumR105, TempGasR105, xCH4R105, xCO2R105,
-                                xO2R105, xH2SR105, xH2R105, EnergiaR105, TempR105, pHR105]
+                    DataR105 = [AcumPressureR105, VolAcumR105, MixVelocity, TempGasR105, xCH4R105, xCO2R105,
+                                xO2R105, xH2SR105, xH2R105, EnergiaR105, TempR105, pHR105, PressureR105]
                     
-                    Columns_names = ["AcumPressureR105", "VolAcumR105", "TempGasR105", "xCH4R105", "xCO2R105",
-                                "xO2R105", "xH2SR105", "xH2R105", "EnergiaR105", "TempR105", "pHR105"]
+                    Columns_names = ["AcumPressureR105", "VolAcumR105", "MixVelocity", "TempGasR105", "xCH4R105", "xCO2R105",
+                                "xO2R105", "xH2SR105", "xH2R105", "EnergiaR105", "TempR105", "pHR105", "PressureR105"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideA == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR105 = DataEstimation.loc["VacumE", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-105", ["_time", "_value"]]
                     TempPoolR105 = DataEstimation.loc["TE-100E", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR105 = DataEstimation.loc["PT-100E", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R105 = DataPlantSideA.loc["CH4-105", ["_time", "_value"]]
@@ -1115,10 +1148,10 @@ class BMP_online:
                     xH2R105 = DataPlantSideA.loc["H2-105", ["_time", "_value"]]
                     EnergiaR105 = DataEstimation.loc["Energia_mWhR105_Pressure", ["_time", "_value"]]
                     
-                    DataR105 = [VolAcumR105, TempPoolR105, PressureR105, xCH4R105, xCO2R105,
+                    DataR105 = [VolAcumR105, TempPoolR105, MixVelocity, PressureR105, xCH4R105, xCO2R105,
                                 xO2R105, xH2SR105, xH2R105, EnergiaR105, TempR105, pHR105]
                     
-                    Columns_names = ["VolAcumR105", "TempGasR105", "xCH4R105", "xCO2R105",
+                    Columns_names = ["VolAcumR105", "TempGasR105", "MixVelocity", "PressureR105", "xCH4R105", "xCO2R105",
                                 "xO2R105", "xH2SR105", "xH2R105", "EnergiaR105", "TempR105", "pHR105"]
                 
             R105_data = DataR105[0].rename(columns={'_value': 'df1_value'})
@@ -1172,6 +1205,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR106 = DataEstimation.loc["PTotalR106", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-106", ["_time", "_value"]]
                     VolAcumR106 = DataEstimation.loc["Volumen_bioR106_Pressure", ["_time", "_value"]]
                     TempGasR106 = DataPlantSideB.loc["TE-106B", ["_time", "_value"]]
                     xCH4R106 = DataPlantSideB.loc["CH4-106", ["_time", "_value"]]
@@ -1180,16 +1214,18 @@ class BMP_online:
                     xH2SR106 = DataPlantSideB.loc["H2S-106", ["_time", "_value"]]
                     xH2R106 = DataPlantSideB.loc["H2-106", ["_time", "_value"]]
                     EnergiaR106 = DataEstimation.loc["Energia_mWhR106_Pressure", ["_time", "_value"]]
+                    PressureR106 = DataPlantSideA.loc["PT-106", ["_time", "_value"]]
                     
-                    DataR106 = [Inyections, AcumPressureR106, VolAcumR106, TempGasR106, xCH4R106, xCO2R106,
-                                xO2R106, xH2SR106, xH2R106, EnergiaR106, TempR106, pHR106]
-                    Columns_names = ["Inyections", "AcumPressureR106", "VolAcumR106", "TempGasR106", "xCH4R106", "xCO2R106",
-                                "xO2R106", "xH2SR106", "xH2R106", "EnergiaR106", "TempR106", "pHR106"]
+                    DataR106 = [Inyections, AcumPressureR106, MixVelocity, VolAcumR106, TempGasR106, xCH4R106, xCO2R106,
+                                xO2R106, xH2SR106, xH2R106, EnergiaR106, TempR106, pHR106, PressureR106]
+                    Columns_names = ["Inyections", "AcumPressureR106", "MixVelocity", "VolAcumR106", "TempGasR106", "xCH4R106", "xCO2R106",
+                                "xO2R106", "xH2SR106", "xH2R106", "EnergiaR106", "TempR106", "pHR106", "PressureR106"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR106 = DataEstimation.loc["VacumA", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-106", ["_time", "_value"]]
                     TempPoolR106 = DataEstimation.loc["TE-100A", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR106 = DataEstimation.loc["PT-100A", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R106 = DataPlantSideB.loc["CH4-106", ["_time", "_value"]]
@@ -1199,10 +1235,10 @@ class BMP_online:
                     xH2R106 = DataPlantSideB.loc["H2-106", ["_time", "_value"]]
                     EnergiaR106 = DataEstimation.loc["Energia_mWhR106_Pressure", ["_time", "_value"]]
                     
-                    DataR106 = [Inyections, VolAcumR106, TempPoolR106, PressureR106, xCH4R106, xCO2R106,
+                    DataR106 = [Inyections, VolAcumR106, MixVelocity, TempPoolR106, PressureR106, xCH4R106, xCO2R106,
                                 xO2R106, xH2SR106, xH2R106, EnergiaR106, TempR106, pHR106]
                     
-                    Columns_names = ["Inyections", "VolAcumR106", "TempGasR106", "xCH4R106", "xCO2R106",
+                    Columns_names = ["Inyections", "VolAcumR106", "MixVelocity", "TempGasR106", "PressureR106", "xCH4R106", "xCO2R106",
                                 "xO2R106", "xH2SR106", "xH2R106", "EnergiaR106", "TempR106", "pHR106"]
                 
                 R106_data = pd.concat(DataR106)
@@ -1214,6 +1250,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR106 = DataEstimation.loc["PTotalR106", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-106", ["_time", "_value"]]
                     VolAcumR106 = DataEstimation.loc["Volumen_bioR106_Pressure", ["_time", "_value"]]
                     TempGasR106 = DataPlantSideB.loc["TE-106B", ["_time", "_value"]]
                     xCH4R106 = DataPlantSideB.loc["CH4-106", ["_time", "_value"]]
@@ -1222,17 +1259,19 @@ class BMP_online:
                     xH2SR106 = DataPlantSideB.loc["H2S-106", ["_time", "_value"]]
                     xH2R106 = DataPlantSideB.loc["H2-106", ["_time", "_value"]]
                     EnergiaR106 = DataEstimation.loc["Energia_mWhR106_Pressure", ["_time", "_value"]]
+                    PressureR106 = DataPlantSideA.loc["PT-106", ["_time", "_value"]]
+
+                    DataR106 = [AcumPressureR106, VolAcumR106, MixVelocity, TempGasR106, xCH4R106, xCO2R106,
+                                xO2R106, xH2SR106, xH2R106, EnergiaR106, TempR106, pHR106, PressureR106]
                     
-                    DataR106 = [AcumPressureR106, VolAcumR106, TempGasR106, xCH4R106, xCO2R106,
-                                xO2R106, xH2SR106, xH2R106, EnergiaR106, TempR106, pHR106]
-                    
-                    Columns_names = ["AcumPressureR106", "VolAcumR106", "TempGasR106", "xCH4R106", "xCO2R106",
-                                "xO2R106", "xH2SR106", "xH2R106", "EnergiaR106", "TempR106", "pHR106"]
+                    Columns_names = ["AcumPressureR106", "VolAcumR106", "MixVelocity", "TempGasR106", "xCH4R106", "xCO2R106",
+                                "xO2R106", "xH2SR106", "xH2R106", "EnergiaR106", "TempR106", "pHR106", "PressureR106"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR106 = DataEstimation.loc["VacumA", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-106", ["_time", "_value"]]
                     TempPoolR106 = DataEstimation.loc["TE-100A", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR106 = DataEstimation.loc["PT-100A", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R106 = DataPlantSideB.loc["CH4-106", ["_time", "_value"]]
@@ -1242,10 +1281,10 @@ class BMP_online:
                     xH2R106 = DataPlantSideB.loc["H2-106", ["_time", "_value"]]
                     EnergiaR106 = DataEstimation.loc["Energia_mWhR106_Pressure", ["_time", "_value"]]
                     
-                    DataR106 = [VolAcumR106, TempPoolR106, PressureR106, xCH4R106, xCO2R106,
+                    DataR106 = [VolAcumR106, TempPoolR106, MixVelocity, PressureR106, xCH4R106, xCO2R106,
                                 xO2R106, xH2SR106, xH2R106, EnergiaR106, TempR106, pHR106]
                     
-                    Columns_names = ["VolAcumR106", "TempGasR106", "xCH4R106", "xCO2R106",
+                    Columns_names = ["VolAcumR106", "TempGasR106", "MixVelocity", "PressureR106", "xCH4R106", "xCO2R106",
                                 "xO2R106", "xH2SR106", "xH2R106", "EnergiaR106", "TempR106", "pHR106"]
                 
             R106_data = DataR106[0].rename(columns={'_value': 'df1_value'})
@@ -1297,6 +1336,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR107 = DataEstimation.loc["PTotalR107", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-107", ["_time", "_value"]]
                     VolAcumR107 = DataEstimation.loc["Volumen_bioR107_Pressure", ["_time", "_value"]]
                     TempGasR107 = DataPlantSideB.loc["TE-107B", ["_time", "_value"]]
                     xCH4R107 = DataPlantSideB.loc["CH4-107", ["_time", "_value"]]
@@ -1305,16 +1345,18 @@ class BMP_online:
                     xH2SR107 = DataPlantSideB.loc["H2S-107", ["_time", "_value"]]
                     xH2R107 = DataPlantSideB.loc["H2-107", ["_time", "_value"]]
                     EnergiaR107 = DataEstimation.loc["Energia_mWhR107_Pressure", ["_time", "_value"]]
+                    PressureR107 = DataPlantSideA.loc["PT-107", ["_time", "_value"]]
                     
-                    DataR107 = [Inyections, AcumPressureR107, VolAcumR107, TempGasR107, xCH4R107, xCO2R107,
-                                xO2R107, xH2SR107, xH2R107, EnergiaR107, TempR107, pHR107]
-                    Columns_names = ["Inyections", "AcumPressureR107", "VolAcumR107", "TempGasR107", "xCH4R107", "xCO2R107",
-                                "xO2R107", "xH2SR107", "xH2R107", "EnergiaR107", "TempR107", "pHR107"]
+                    DataR107 = [Inyections, AcumPressureR107, MixVelocity, VolAcumR107, TempGasR107, xCH4R107, xCO2R107,
+                                xO2R107, xH2SR107, xH2R107, EnergiaR107, TempR107, pHR107, PressureR107]
+                    Columns_names = ["Inyections", "AcumPressureR107", "MixVelocity", "VolAcumR107", "TempGasR107", "xCH4R107", "xCO2R107",
+                                "xO2R107", "xH2SR107", "xH2R107", "EnergiaR107", "TempR107", "pHR107", "PressureR107"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR107 = DataEstimation.loc["VacumB", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-107", ["_time", "_value"]]
                     TempPoolR107 = DataEstimation.loc["TE-100B", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR107 = DataEstimation.loc["PT-100B", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R107 = DataPlantSideB.loc["CH4-107", ["_time", "_value"]]
@@ -1324,10 +1366,10 @@ class BMP_online:
                     xH2R107 = DataPlantSideB.loc["H2-107", ["_time", "_value"]]
                     EnergiaR107 = DataEstimation.loc["Energia_mWhR107_Pressure", ["_time", "_value"]]
                     
-                    DataR107 = [Inyections, VolAcumR107, TempPoolR107, PressureR107, xCH4R107, xCO2R107,
+                    DataR107 = [Inyections, VolAcumR107, MixVelocity, TempPoolR107, PressureR107, xCH4R107, xCO2R107,
                                 xO2R107, xH2SR107, xH2R107, EnergiaR107, TempR107, pHR107]
                     
-                    Columns_names = ["Inyections", "VolAcumR107", "TempGasR107", "xCH4R107", "xCO2R107",
+                    Columns_names = ["Inyections", "VolAcumR107", "MixVelocity", "TempGasR107", "PressureR107", "xCH4R107", "xCO2R107",
                                 "xO2R107", "xH2SR107", "xH2R107", "EnergiaR107", "TempR107", "pHR107"]
                 
                 R107_data = pd.concat(DataR107)
@@ -1339,6 +1381,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR107 = DataEstimation.loc["PTotalR107", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-107", ["_time", "_value"]]
                     VolAcumR107 = DataEstimation.loc["Volumen_bioR107_Pressure", ["_time", "_value"]]
                     TempGasR107 = DataPlantSideB.loc["TE-107B", ["_time", "_value"]]
                     xCH4R107 = DataPlantSideB.loc["CH4-107", ["_time", "_value"]]
@@ -1347,17 +1390,19 @@ class BMP_online:
                     xH2SR107 = DataPlantSideB.loc["H2S-107", ["_time", "_value"]]
                     xH2R107 = DataPlantSideB.loc["H2-107", ["_time", "_value"]]
                     EnergiaR107 = DataEstimation.loc["Energia_mWhR107_Pressure", ["_time", "_value"]]
+                    PressureR107 = DataPlantSideA.loc["PT-107", ["_time", "_value"]]
                     
-                    DataR107 = [AcumPressureR107, VolAcumR107, TempGasR107, xCH4R107, xCO2R107,
-                                xO2R107, xH2SR107, xH2R107, EnergiaR107, TempR107, pHR107]
+                    DataR107 = [AcumPressureR107, VolAcumR107, MixVelocity, TempGasR107, xCH4R107, xCO2R107,
+                                xO2R107, xH2SR107, xH2R107, EnergiaR107, TempR107, pHR107, PressureR107]
                     
-                    Columns_names = ["AcumPressureR107", "VolAcumR107", "TempGasR107", "xCH4R107", "xCO2R107",
-                                "xO2R107", "xH2SR107", "xH2R107", "EnergiaR107", "TempR107", "pHR107"]
+                    Columns_names = ["AcumPressureR107", "VolAcumR107", "MixVelocity", "TempGasR107", "xCH4R107", "xCO2R107",
+                                "xO2R107", "xH2SR107", "xH2R107", "EnergiaR107", "TempR107", "pHR107", "PressureR107"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR107 = DataEstimation.loc["VacumB", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-107", ["_time", "_value"]]
                     TempPoolR107 = DataEstimation.loc["TE-100B", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR107 = DataEstimation.loc["PT-100B", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R107 = DataPlantSideB.loc["CH4-107", ["_time", "_value"]]
@@ -1367,10 +1412,10 @@ class BMP_online:
                     xH2R107 = DataPlantSideB.loc["H2-107", ["_time", "_value"]]
                     EnergiaR107 = DataEstimation.loc["Energia_mWhR107_Pressure", ["_time", "_value"]]
                     
-                    DataR107 = [VolAcumR107, TempPoolR107, PressureR107, xCH4R107, xCO2R107,
+                    DataR107 = [VolAcumR107, TempPoolR107, MixVelocity, PressureR107, xCH4R107, xCO2R107,
                                 xO2R107, xH2SR107, xH2R107, EnergiaR107, TempR107, pHR107]
                     
-                    Columns_names = ["VolAcumR107", "TempGasR107", "xCH4R107", "xCO2R107",
+                    Columns_names = ["VolAcumR107", "TempGasR107", "MixVelocity", " PressureR107", "xCH4R107", "xCO2R107",
                                 "xO2R107", "xH2SR107", "xH2R107", "EnergiaR107", "TempR107", "pHR107"]
                 
             R107_data = DataR107[0].rename(columns={'_value': 'df1_value'})
@@ -1422,6 +1467,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR108 = DataEstimation.loc["PTotalR108", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-108", ["_time", "_value"]]
                     VolAcumR108 = DataEstimation.loc["Volumen_bioR108_Pressure", ["_time", "_value"]]
                     TempGasR108 = DataPlantSideB.loc["TE-108B", ["_time", "_value"]]
                     xCH4R108 = DataPlantSideB.loc["CH4-108", ["_time", "_value"]]
@@ -1430,16 +1476,18 @@ class BMP_online:
                     xH2SR108 = DataPlantSideB.loc["H2S-108", ["_time", "_value"]]
                     xH2R108 = DataPlantSideB.loc["H2-108", ["_time", "_value"]]
                     EnergiaR108 = DataEstimation.loc["Energia_mWhR108_Pressure", ["_time", "_value"]]
+                    PressureR108 = DataPlantSideA.loc["PT-108", ["_time", "_value"]]
                     
-                    DataR108 = [Inyections, AcumPressureR108, VolAcumR108, TempGasR108, xCH4R108, xCO2R108,
-                                xO2R108, xH2SR108, xH2R108, EnergiaR108, TempR108, pHR108]
-                    Columns_names = ["Inyections", "AcumPressureR108", "VolAcumR108", "TempGasR108", "xCH4R108", "xCO2R108",
-                                "xO2R108", "xH2SR108", "xH2R108", "EnergiaR108", "TempR108", "pHR108"]
+                    DataR108 = [Inyections, AcumPressureR108, MixVelocity, VolAcumR108, TempGasR108, xCH4R108, xCO2R108,
+                                xO2R108, xH2SR108, xH2R108, EnergiaR108, TempR108, pHR108, PressureR108]
+                    Columns_names = ["Inyections", "AcumPressureR108", "MixVelocity", "VolAcumR108", "TempGasR108", "xCH4R108", "xCO2R108",
+                                "xO2R108", "xH2SR108", "xH2R108", "EnergiaR108", "TempR108", "pHR108", "PressureR108"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR108 = DataEstimation.loc["VacumC", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-108", ["_time", "_value"]]
                     TempPoolR108 = DataEstimation.loc["TE-100C", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR108 = DataEstimation.loc["PT-100C", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R108 = DataPlantSideB.loc["CH4-108", ["_time", "_value"]]
@@ -1449,10 +1497,10 @@ class BMP_online:
                     xH2R108 = DataPlantSideB.loc["H2-108", ["_time", "_value"]]
                     EnergiaR108 = DataEstimation.loc["Energia_mWhR108_Pressure", ["_time", "_value"]]
                     
-                    DataR108 = [Inyections, VolAcumR108, TempPoolR108, PressureR108, xCH4R108, xCO2R108,
+                    DataR108 = [Inyections, VolAcumR108, MixVelocity, TempPoolR108, PressureR108, xCH4R108, xCO2R108,
                                 xO2R108, xH2SR108, xH2R108, EnergiaR108, TempR108, pHR108]
                     
-                    Columns_names = ["Inyections", "VolAcumR108", "TempGasR108", "xCH4R108", "xCO2R108",
+                    Columns_names = ["Inyections", "VolAcumR108", "MixVelocity", "TempGasR108", "PressureR108", "xCH4R108", "xCO2R108",
                                 "xO2R108", "xH2SR108", "xH2R108", "EnergiaR108", "TempR108", "pHR108"]
                 
                 R108_data = pd.concat(DataR108)
@@ -1464,6 +1512,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR108 = DataEstimation.loc["PTotalR108", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-108", ["_time", "_value"]]
                     VolAcumR108 = DataEstimation.loc["Volumen_bioR108_Pressure", ["_time", "_value"]]
                     TempGasR108 = DataPlantSideB.loc["TE-108B", ["_time", "_value"]]
                     xCH4R108 = DataPlantSideB.loc["CH4-108", ["_time", "_value"]]
@@ -1472,17 +1521,19 @@ class BMP_online:
                     xH2SR108 = DataPlantSideB.loc["H2S-108", ["_time", "_value"]]
                     xH2R108 = DataPlantSideB.loc["H2-108", ["_time", "_value"]]
                     EnergiaR108 = DataEstimation.loc["Energia_mWhR108_Pressure", ["_time", "_value"]]
+                    PressureR108 = DataPlantSideA.loc["PT-108", ["_time", "_value"]]
                     
-                    DataR108 = [AcumPressureR108, VolAcumR108, TempGasR108, xCH4R108, xCO2R108,
-                                xO2R108, xH2SR108, xH2R108, EnergiaR108, TempR108, pHR108]
+                    DataR108 = [AcumPressureR108, VolAcumR108, MixVelocity, TempGasR108, xCH4R108, xCO2R108,
+                                xO2R108, xH2SR108, xH2R108, EnergiaR108, TempR108, pHR108, PressureR108]
                     
-                    Columns_names = ["AcumPressureR108", "VolAcumR108", "TempGasR108", "xCH4R108", "xCO2R108",
-                                "xO2R108", "xH2SR108", "xH2R108", "EnergiaR108", "TempR108", "pHR108"]
+                    Columns_names = ["AcumPressureR108", "VolAcumR108", "MixVelocity", "TempGasR108", "xCH4R108", "xCO2R108",
+                                "xO2R108", "xH2SR108", "xH2R108", "EnergiaR108", "TempR108", "pHR108", "PressureR108"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR108 = DataEstimation.loc["VacumC", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-108", ["_time", "_value"]]
                     TempPoolR108 = DataEstimation.loc["TE-100C", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR108 = DataEstimation.loc["PT-100C", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R108 = DataPlantSideB.loc["CH4-108", ["_time", "_value"]]
@@ -1492,10 +1543,10 @@ class BMP_online:
                     xH2R108 = DataPlantSideB.loc["H2-108", ["_time", "_value"]]
                     EnergiaR108 = DataEstimation.loc["Energia_mWhR108_Pressure", ["_time", "_value"]]
                     
-                    DataR108 = [VolAcumR108, TempPoolR108, PressureR108, xCH4R108, xCO2R108,
+                    DataR108 = [VolAcumR108, TempPoolR108, MixVelocity, PressureR108, xCH4R108, xCO2R108,
                                 xO2R108, xH2SR108, xH2R108, EnergiaR108, TempR108, pHR108]
                     
-                    Columns_names = ["VolAcumR108", "TempGasR108", "xCH4R108", "xCO2R108",
+                    Columns_names = ["VolAcumR108", "TempGasR108", "MixVelocity", "PressureR108", "xCH4R108", "xCO2R108",
                                 "xO2R108", "xH2SR108", "xH2R108", "EnergiaR108", "TempR108", "pHR108"]
                 
             R108_data = DataR108[0].rename(columns={'_value': 'df1_value'})
@@ -1547,6 +1598,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR109 = DataEstimation.loc["PTotalR109", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-109", ["_time", "_value"]]
                     VolAcumR109 = DataEstimation.loc["Volumen_bioR109_Pressure", ["_time", "_value"]]
                     TempGasR109 = DataPlantSideB.loc["TE-109B", ["_time", "_value"]]
                     xCH4R109 = DataPlantSideB.loc["CH4-109", ["_time", "_value"]]
@@ -1555,16 +1607,18 @@ class BMP_online:
                     xH2SR109 = DataPlantSideB.loc["H2S-109", ["_time", "_value"]]
                     xH2R109 = DataPlantSideB.loc["H2-109", ["_time", "_value"]]
                     EnergiaR109 = DataEstimation.loc["Energia_mWhR109_Pressure", ["_time", "_value"]]
+                    PressureR109 = DataPlantSideA.loc["PT-109", ["_time", "_value"]]
                     
-                    DataR109 = [Inyections, AcumPressureR109, VolAcumR109, TempGasR109, xCH4R109, xCO2R109,
-                                xO2R109, xH2SR109, xH2R109, EnergiaR109, TempR109, pHR109]
-                    Columns_names = ["Inyections", "AcumPressureR109", "VolAcumR109", "TempGasR109", "xCH4R109", "xCO2R109",
-                                "xO2R109", "xH2SR109", "xH2R109", "EnergiaR109", "TempR109", "pHR109"]
+                    DataR109 = [Inyections, AcumPressureR109, MixVelocity, VolAcumR109, TempGasR109, xCH4R109, xCO2R109,
+                                xO2R109, xH2SR109, xH2R109, EnergiaR109, TempR109, pHR109, PressureR109]
+                    Columns_names = ["Inyections", "AcumPressureR109", "MixVelocity", "VolAcumR109", "TempGasR109", "xCH4R109", "xCO2R109",
+                                "xO2R109", "xH2SR109", "xH2R109", "EnergiaR109", "TempR109", "pHR109", "PressureR109"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR109 = DataEstimation.loc["VacumD", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-109", ["_time", "_value"]]
                     TempPoolR109 = DataEstimation.loc["TE-100D", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR109 = DataEstimation.loc["PT-100D", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R109 = DataPlantSideB.loc["CH4-109", ["_time", "_value"]]
@@ -1574,10 +1628,10 @@ class BMP_online:
                     xH2R109 = DataPlantSideB.loc["H2-109", ["_time", "_value"]]
                     EnergiaR109 = DataEstimation.loc["Energia_mWhR109_Pressure", ["_time", "_value"]]
                     
-                    DataR109 = [Inyections, VolAcumR109, TempPoolR109, PressureR109, xCH4R109, xCO2R109,
+                    DataR109 = [Inyections, VolAcumR109, MixVelocity, TempPoolR109, PressureR109, xCH4R109, xCO2R109,
                                 xO2R109, xH2SR109, xH2R109, EnergiaR109, TempR109, pHR109]
                     
-                    Columns_names = ["Inyections", "VolAcumR109", "TempGasR109", "xCH4R109", "xCO2R109",
+                    Columns_names = ["Inyections", "VolAcumR109", "MixVelocity", "TempGasR109", "PressureR109", "xCH4R109", "xCO2R109",
                                 "xO2R109", "xH2SR109", "xH2R109", "EnergiaR109", "TempR109", "pHR109"]
                 
                 R109_data = pd.concat(DataR109)
@@ -1589,6 +1643,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR109 = DataEstimation.loc["PTotalR109", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-109", ["_time", "_value"]]
                     VolAcumR109 = DataEstimation.loc["Volumen_bioR109_Pressure", ["_time", "_value"]]
                     TempGasR109 = DataPlantSideB.loc["TE-109B", ["_time", "_value"]]
                     xCH4R109 = DataPlantSideB.loc["CH4-109", ["_time", "_value"]]
@@ -1597,17 +1652,19 @@ class BMP_online:
                     xH2SR109 = DataPlantSideB.loc["H2S-109", ["_time", "_value"]]
                     xH2R109 = DataPlantSideB.loc["H2-109", ["_time", "_value"]]
                     EnergiaR109 = DataEstimation.loc["Energia_mWhR109_Pressure", ["_time", "_value"]]
+                    PressureR109 = DataPlantSideA.loc["PT-109", ["_time", "_value"]]
                     
-                    DataR109 = [AcumPressureR109, VolAcumR109, TempGasR109, xCH4R109, xCO2R109,
-                                xO2R109, xH2SR109, xH2R109, EnergiaR109, TempR109, pHR109]
+                    DataR109 = [AcumPressureR109, VolAcumR109, MixVelocity, TempGasR109, xCH4R109, xCO2R109,
+                                xO2R109, xH2SR109, xH2R109, EnergiaR109, TempR109, pHR109, PressureR109]
                     
-                    Columns_names = ["AcumPressureR109", "VolAcumR109", "TempGasR109", "xCH4R109", "xCO2R109",
-                                "xO2R109", "xH2SR109", "xH2R109", "EnergiaR109", "TempR109", "pHR109"]
+                    Columns_names = ["AcumPressureR109", "VolAcumR109", "MixVelocity", "TempGasR109", "xCH4R109", "xCO2R109",
+                                "xO2R109", "xH2SR109", "xH2R109", "EnergiaR109", "TempR109", "pHR109", "PressureR109"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR109 = DataEstimation.loc["VacumD", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-109", ["_time", "_value"]]
                     TempPoolR109 = DataEstimation.loc["TE-100D", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR109 = DataEstimation.loc["PT-100D", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R109 = DataPlantSideB.loc["CH4-109", ["_time", "_value"]]
@@ -1617,10 +1674,10 @@ class BMP_online:
                     xH2R109 = DataPlantSideB.loc["H2-109", ["_time", "_value"]]
                     EnergiaR109 = DataEstimation.loc["Energia_mWhR109_Pressure", ["_time", "_value"]]
                     
-                    DataR109 = [VolAcumR109, TempPoolR109, PressureR109, xCH4R109, xCO2R109,
+                    DataR109 = [VolAcumR109, TempPoolR109, MixVelocity, PressureR109, xCH4R109, xCO2R109,
                                 xO2R109, xH2SR109, xH2R109, EnergiaR109, TempR109, pHR109]
                     
-                    Columns_names = ["VolAcumR109", "TempGasR109", "xCH4R109", "xCO2R109",
+                    Columns_names = ["VolAcumR109", "TempGasR109", "MixVelocity", "PressureR109", "xCH4R109", "xCO2R109",
                                 "xO2R109", "xH2SR109", "xH2R109", "EnergiaR109", "TempR109", "pHR109"]
                 
             R109_data = DataR109[0].rename(columns={'_value': 'df1_value'})
@@ -1672,6 +1729,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR110 = DataEstimation.loc["PTotalR110", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-110", ["_time", "_value"]]
                     VolAcumR110 = DataEstimation.loc["Volumen_bioR110_Pressure", ["_time", "_value"]]
                     TempGasR110 = DataPlantSideB.loc["TE-110B", ["_time", "_value"]]
                     xCH4R110 = DataPlantSideB.loc["CH4-110", ["_time", "_value"]]
@@ -1680,16 +1738,18 @@ class BMP_online:
                     xH2SR110 = DataPlantSideB.loc["H2S-110", ["_time", "_value"]]
                     xH2R110 = DataPlantSideB.loc["H2-110", ["_time", "_value"]]
                     EnergiaR110 = DataEstimation.loc["Energia_mWhR110_Pressure", ["_time", "_value"]]
+                    PressureR110 = DataPlantSideA.loc["PT-110", ["_time", "_value"]]
                     
-                    DataR110 = [Inyections, AcumPressureR110, VolAcumR110, TempGasR110, xCH4R110, xCO2R110,
-                                xO2R110, xH2SR110, xH2R110, EnergiaR110, TempR110, pHR110]
-                    Columns_names = ["Inyections", "AcumPressureR110", "VolAcumR110", "TempGasR110", "xCH4R110", "xCO2R110",
-                                "xO2R110", "xH2SR110", "xH2R110", "EnergiaR110", "TempR110", "pHR110"]
+                    DataR110 = [Inyections, AcumPressureR110, MixVelocity, VolAcumR110, TempGasR110, xCH4R110, xCO2R110,
+                                xO2R110, xH2SR110, xH2R110, EnergiaR110, TempR110, pHR110, PressureR110]
+                    Columns_names = ["Inyections", "AcumPressureR110", "MixVelocity", "VolAcumR110", "TempGasR110", "xCH4R110", "xCO2R110",
+                                "xO2R110", "xH2SR110", "xH2R110", "EnergiaR110", "TempR110", "pHR110", "PressureR110"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR110 = DataEstimation.loc["VacumE", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-110", ["_time", "_value"]]
                     TempPoolR110 = DataEstimation.loc["TE-100E", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR110 = DataEstimation.loc["PT-100E", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R110 = DataPlantSideB.loc["CH4-110", ["_time", "_value"]]
@@ -1699,10 +1759,10 @@ class BMP_online:
                     xH2R110 = DataPlantSideB.loc["H2-110", ["_time", "_value"]]
                     EnergiaR110 = DataEstimation.loc["Energia_mWhR110_Pressure", ["_time", "_value"]]
                     
-                    DataR110 = [Inyections, VolAcumR110, TempPoolR110, PressureR110, xCH4R110, xCO2R110,
+                    DataR110 = [Inyections, VolAcumR110, MixVelocity, TempPoolR110, PressureR110, xCH4R110, xCO2R110,
                                 xO2R110, xH2SR110, xH2R110, EnergiaR110, TempR110, pHR110]
                     
-                    Columns_names = ["Inyections", "VolAcumR110", "TempGasR110", "xCH4R110", "xCO2R110",
+                    Columns_names = ["Inyections", "VolAcumR110", "MixVelocity", "TempGasR110", "PressureR110", "xCH4R110", "xCO2R110",
                                 "xO2R110", "xH2SR110", "xH2R110", "EnergiaR110", "TempR110", "pHR110"]
                 
                 R110_data = pd.concat(DataR110)
@@ -1714,6 +1774,7 @@ class BMP_online:
                 if MeasureMethodSideB == "Pressure":
                     #Biogas topcase
                     AcumPressureR110 = DataEstimation.loc["PTotalR110", ["_time", "_value"]]
+                    MixVelocity = DataPlantSideA.loc["SE-110", ["_time", "_value"]]
                     VolAcumR110 = DataEstimation.loc["Volumen_bioR110_Pressure", ["_time", "_value"]]
                     TempGasR110 = DataPlantSideB.loc["TE-110B", ["_time", "_value"]]
                     xCH4R110 = DataPlantSideB.loc["CH4-110", ["_time", "_value"]]
@@ -1722,17 +1783,19 @@ class BMP_online:
                     xH2SR110 = DataPlantSideB.loc["H2S-110", ["_time", "_value"]]
                     xH2R110 = DataPlantSideB.loc["H2-110", ["_time", "_value"]]
                     EnergiaR110 = DataEstimation.loc["Energia_mWhR110_Pressure", ["_time", "_value"]]
+                    PressureR110 = DataPlantSideA.loc["PT-110", ["_time", "_value"]]
                     
-                    DataR110 = [AcumPressureR110, VolAcumR110, TempGasR110, xCH4R110, xCO2R110,
-                                xO2R110, xH2SR110, xH2R110, EnergiaR110, TempR110, pHR110]
+                    DataR110 = [AcumPressureR110, VolAcumR110, MixVelocity, TempGasR110, xCH4R110, xCO2R110,
+                                xO2R110, xH2SR110, xH2R110, EnergiaR110, TempR110, pHR110, PressureR110]
                     
-                    Columns_names = ["AcumPressureR110", "VolAcumR110", "TempGasR110", "xCH4R110", "xCO2R110",
-                                "xO2R110", "xH2SR110", "xH2R110", "EnergiaR110", "TempR110", "pHR110"]
+                    Columns_names = ["AcumPressureR110", "VolAcumR110", "MixVelocity", "TempGasR110", "xCH4R110", "xCO2R110",
+                                "xO2R110", "xH2SR110", "xH2R110", "EnergiaR110", "TempR110", "pHR110", "PressureR110"]
 
                 #Accumulated Volume
                 elif MeasureMethodSideB == "VolumeDisplaced":
                     #Biogas volume
                     VolAcumR110 = DataEstimation.loc["VacumE", ["_time", "_value"]]       #Preguntar si es nivel o volumen
+                    MixVelocity = DataPlantSideA.loc["SE-110", ["_time", "_value"]]
                     TempPoolR110 = DataEstimation.loc["TE-100E", ["_time", "_value"]]     #Temperature of flowmeter
                     PressureR110 = DataEstimation.loc["PT-100E", ["_time", "_value"]]     #Pressure of flowmeter
                     xCH4R110 = DataPlantSideB.loc["CH4-110", ["_time", "_value"]]
@@ -1742,10 +1805,10 @@ class BMP_online:
                     xH2R110 = DataPlantSideB.loc["H2-110", ["_time", "_value"]]
                     EnergiaR110 = DataEstimation.loc["Energia_mWhR110_Pressure", ["_time", "_value"]]
                     
-                    DataR110 = [VolAcumR110, TempPoolR110, PressureR110, xCH4R110, xCO2R110,
+                    DataR110 = [VolAcumR110, TempPoolR110, MixVelocity, PressureR110, xCH4R110, xCO2R110,
                                 xO2R110, xH2SR110, xH2R110, EnergiaR110, TempR110, pHR110]
                     
-                    Columns_names = ["VolAcumR110", "TempGasR110", "xCH4R110", "xCO2R110",
+                    Columns_names = ["VolAcumR110", "TempGasR110", "MixVelocity", "PressureR110", "xCH4R110", "xCO2R110",
                                 "xO2R110", "xH2SR110", "xH2R110", "EnergiaR110", "TempR110", "pHR110"]
                 
             R110_data = DataR110[0].rename(columns={'_value': 'df1_value'})
@@ -1907,5 +1970,273 @@ class BMP_online:
         ReactorData["ST_int"] = ST_ini
         ReactorData["SV_int"] = SV_ini
         ReactorData["Csus_mol_int"] = Csus_mol
+        ReactorData["y_t"] = ReactorData[f'VolAcum{ReactorName}']/(ReactorData["Csus_mol_int"]*self.MW_sustrato* (Vrxn/1000)) 
         
         return ReactorData
+    
+    def ReactorOptimization(self, Model, iterations_counts, Reactorname, ReactorData, ReactorVolume, OperationMethod):
+        def model_Arrhenius(C, t, K, Ea, VR, T_func, Csus_in_func_1 = 0, Q_func_1 = 0, Operation = 1):
+            R = 8.314
+            T=T_func(t)
+            Csus_in_1 = Csus_in_func_1(t)
+            Q_1 = Q_func_1(t)
+                    
+            if Operation == 1:         #One entrance without recirculation
+                dCsus_dt = - (C * K * np.exp(-(Ea)/(R*T))) / VR
+            elif Operation == 2:       #Two entrances with differents concentrations
+                dCsus_dt = ((Q_1 / VR) * (Csus_in_1 - C)) - (C * K * np.exp(-(Ea)/(R*T))) / VR
+            return dCsus_dt
+
+        def model_ADM1(C, t, K, VR, Csus_in_func_1 = 0, Q_func_1 = 0, Operation = 1):
+            Csus_in_1 = Csus_in_func_1(t)
+            Q_1 = Q_func_1(t)
+                    
+            if Operation == 1:         #One entrance without recirculation
+                dCsus_dt = - (C * K) / VR
+            elif Operation == 2:       #Two entrances with differents concentrations
+                dCsus_dt = ((Q_1 / VR) * (Csus_in_1 - C)) - (C * K) / VR
+            return dCsus_dt
+
+        def model_Gompertz(t, ym, U, L):
+            t = np.array(t, dtype = float)
+            y_t = ym * np.exp(-np.exp(((U*np.e)/ym)*(L-t)+1))
+            return y_t
+        
+        def Optimization_Arrhenius (t, C_exp, y0, VR, temperatures, Qi1, Csus_in_i1, Operation, K=1, Ea=1): 
+            # Define the objective function to minimize
+            def objective(params):
+                K, Ea = params
+                t_train = t
+
+                #interpol the vectors according to experimental time
+                T_func = lambda t: np.interp(t, t_train, temperatures)
+                Q_func1 = lambda t: np.interp(t, t_train, Qi1)
+                VR_func = VR
+                Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
+                
+                C_model = odeint(model_Arrhenius, y0, t, args = (K, Ea, VR_func, T_func, Q_func1, Csus_in1, Operation)).flatten()
+
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                return squared_diff
+            
+            result = minimize(objective, [K, Ea], method = 'Nelder-Mead')
+            return result
+
+        def Optimization_ADM1 (t, C_exp, y0, VR, Qi1, Csus_in_i1, Operation, K=1):
+            # Define the objective function to minimize
+            def objective(params):
+                K = params
+                t_train = t
+                Q_func1 = lambda t: np.interp(t, t_train, Qi1)
+                VR_func = VR
+                Csus_in1 = lambda t: np.interp(t, t_train, Csus_in_i1)
+                
+                C_model = odeint(model_ADM1, y0, t, args = (K, VR_func, Q_func1, Csus_in1, Operation)).flatten()
+                
+                squared_diff = np.sum((C_exp - C_model) ** 2)
+                return squared_diff
+            
+            result = minimize(objective, [K], method = 'Nelder-Mead')
+            return result
+        
+        def Optimization_Gompertz (t, y_t_exp, ym, U, L):
+            def objetive (params):
+                ym, U, L = params
+                y_t_model = model_Gompertz(t=t, ym=ym, U=U, L=L)
+                squared_diff = np.sum((y_t_exp - y_t_model)**2)
+                return squared_diff
+            
+            result = minimize(objetive, [ym, U, L], method = 'Nelder-Mead')
+            return result
+        
+        iterations_trains = len(ReactorData)
+        
+        if iterations_counts == 1:
+            if Model == 'Arrhenius':
+                self.K_ini = 1
+                self.Ea_ini = 1
+                self.resolution = 200
+            elif Model == 'ADM1':
+                self.K_ini = 1
+                self.resolution = 10000
+            elif Model == 'Gompertz':
+                self.ym_ini = 1
+                self.U_ini = 1
+                self.L_ini = 1
+                self.resolution = 2000
+
+        if Model == "Arrhenius":
+            if iterations_counts + self.resolution < iterations_trains:
+                time = ReactorData["normalice_time"].iloc[iterations_counts:iterations_counts + self.resolution]
+                C_exp = ReactorData['Csus_mol_int'].iloc[iterations_counts:iterations_counts + self.resolution]
+                Temp = ReactorData[f'Temp{Reactorname}'].iloc[iterations_counts:iterations_counts + self.resolution]
+                if OperationMethod in ["Time", "Injection"]:
+                    Q_in = ReactorData["Q_in"].iloc[iterations_counts:iterations_counts + self.resolution]
+                    C_in = ReactorData["C_in"].iloc[iterations_counts:iterations_counts + self.resolution]
+                    Operation_Method = 2
+                else:
+                    Operation_Method = 1
+                
+                K_iniv = []
+                Ea_iniv = []
+                obj_funv = []
+                for i in range (len(time)):
+                    t_exp_opt = time[i : self.resolution]
+                    t_exp_opt = t_exp_opt - min(t_exp_opt)  
+                    C_exp_opt = C_exp[i : self.resolution]
+                    Temp_opt = Temp[i : self.resolution]
+                    C_o = C_exp_opt.iloc[0]
+                    if OperationMethod in ["Time", "Injection"]:
+                        Q_in_opt = Q_in[i : self.resolution]
+                        C_in_opt = C_in[i : self.resolution]
+                    else:
+                        Q_in_opt = np.zeros_like(t_exp_opt, dtype=float) 
+                        C_in_opt = np.zeros_like(t_exp_opt, dtype=float)
+                    
+                    Optimized = Optimization_Arrhenius(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_o, VR = ReactorVolume, temperatures = Temp_opt,
+                                                        Qi1 = Q_in_opt, Csus_in_i1 = C_in_opt, Operation = Operation_Method, K=self.K_ini, Ea=self.Ea_ini)
+                    
+                    self.K_ini = Optimized.x[0]
+                    self.Ea_ini = Optimized.x[1]
+                    obj_fun = Optimized.fun
+
+                    K_iniv.append(self.K_ini)
+                    Ea_iniv.append(self.Ea_ini)
+                    obj_funv.append(obj_fun)
+                
+            self.K_opt = st.mean(K_iniv)
+            self.Ea_opt = st.mean(Ea_iniv)
+            self.L_opt = 0
+            self.obj_fun = st.mean(obj_funv)
+        
+        elif Model == "ADM1":
+            if iterations_counts + self.resolution < iterations_trains:
+                time = ReactorData["normalice_time"].iloc[iterations_counts:iterations_counts + self.resolution]
+                C_exp = ReactorData['Csus_mol_int'].iloc[iterations_counts:iterations_counts + self.resolution]
+                if OperationMethod in ["Time", "Injection"]:
+                    Q_in = ReactorData["Q_in"].iloc[iterations_counts:iterations_counts + self.resolution]
+                    C_in = ReactorData["C_in"].iloc[iterations_counts:iterations_counts + self.resolution]
+                    Operation_Method = 2
+                else:
+                    Operation_Method = 1
+                
+                K_iniv = []
+                Ea_iniv = []
+                L_iniv = []
+                obj_funv = []
+                for i in range (len(time)):
+                    t_exp_opt = time[i : self.resolution]
+                    t_exp_opt = t_exp_opt - min(t_exp_opt)  
+                    C_exp_opt = C_exp[i : self.resolution]
+                    C_o = C_exp_opt.iloc[0]
+                    if OperationMethod in ["Time", "Injection"]:
+                        Q_in_opt = Q_in[i : self.resolution]
+                        C_in_opt = C_in[i : self.resolution]
+                    else:
+                        Q_in_opt = np.zeros_like(t_exp_opt, dtype=float) 
+                        C_in_opt = np.zeros_like(t_exp_opt, dtype=float)
+                    
+                    Optimized = Optimization_ADM1(t = t_exp_opt, C_exp = C_exp_opt, y0 = C_o, VR = ReactorVolume,
+                                                    Qi1 = Q_in_opt, Csus_in_i1 = C_in_opt, Operation = Operation_Method, K=self.K_ini)
+                    
+                    self.K_ini = Optimized.x[0]
+                    obj_fun = Optimized.fun 
+                    
+                    K_iniv.append(self.K_ini)
+                    obj_funv.append(obj_fun)
+                
+            self.K_opt = st.mean(K_iniv)
+            self.Ea_opt = 0
+            self.L_opt = 0
+            self.obj_fun = st.mean(obj_funv)
+
+        elif Model == "Gompertz":
+            if iterations_counts + self.resolution < iterations_trains:
+                time = ReactorData["normalice_time"].iloc[iterations_counts:iterations_counts + self.resolution]
+                y_t_exp = ReactorData['y_t'].iloc[iterations_counts:iterations_counts + self.resolution]
+
+                yv = []
+                Uv = []
+                Lv = []
+                funv = []
+                for i in range(len(time)):
+                    t_exp_opt = time[i:self.resolution]
+                    y_t_exp_opt = y_t_exp[i:self.resolution]
+
+                    Optimized = Optimization_Gompertz(t=t_exp_opt, y_t_exp = y_t_exp_opt, ym = self.ym_ini, U=self.U_ini, L=self.L_ini)
+                    self.ym_ini = Optimized.x[0]
+                    self.U_ini = Optimized.x[1]
+                    self.L_ini = Optimized.x[2]
+                    fun = Optimized.fun
+
+                    yv.append(self.ym_ini)
+                    Uv.append(self.U_ini)
+                    Lv.append(self.L_ini)
+                    funv.append(fun)
+            
+            self.K_opt = st.mean(yv)
+            self.Ea_opt = st.mean(Uv)
+            self.L_opt = st.mean(Lv)
+            self.obj_fun = st.mean(funv)
+        
+        return self.K_opt, self.Ea_opt, self.L_opt, self.obj_fun
+
+
+    
+    def exit_variable_training (self, iterations_counts, ReactorName, ReactorData, Vrxn):
+        
+        self.MixVel = ReactorData["MixVelocity"].iloc[iterations_counts]                                        #RPM
+        self.SV_int = ReactorData["SV_int"].iloc[iterations_counts] * self.rho                                  #g/L
+        self.SV_int = float(self.SV_int)                                                                        #g/L
+        
+        self.OC = ReactorData["Csus_mol_int"].iloc[iterations_counts] * self.MW_sustrato / (ReactorData["normalice_time"].iloc[iterations_counts] / 1440)
+        
+        self.ST_int = ReactorData["ST_int"].iloc[iterations_counts] * self.rho
+        
+        self.x = (ReactorData["Csus_mol_int"].iloc[0] - ReactorData["Csus_mol_int"].iloc[iterations_counts])/ReactorData["Csus_mol_int"].iloc[0]
+        
+        biogasVol = ReactorData[f"VolAcum{ReactorName}"]
+        biogasVol_normalized = biogasVol - min(biogasVol)  #mL
+        self.PBM = biogasVol_normalized.iloc[iterations_counts] / (self.SV_int * (Vrxn / 1000))
+
+        self.Temp = ReactorData[f'Temp{ReactorName}'].iloc[iterations_counts]                                    #°C
+
+        self.pH = ReactorData[f'pH{ReactorName}'].iloc[iterations_counts]                                          #pH
+
+        self.nCH4 = ReactorData["nCH4"].iloc[iterations_counts]                                                 #mol
+        self.nCO2 = ReactorData["nCO2"].iloc[iterations_counts]                                                 #mol
+        self.nO2 = ReactorData["nO2"].iloc[iterations_counts]                                                   #mol
+        self.nH2S = ReactorData["nH2S"].iloc[iterations_counts]                                                 #mol
+        self.nH2 = ReactorData["nH2"].iloc[iterations_counts]
+
+        self.xCH4 = ReactorData[f'xCH4{ReactorName}'].iloc[iterations_counts]                                   #%
+        self.xCO2 = ReactorData[f'xCO2{ReactorName}'].iloc[iterations_counts]                                   #%
+        self.xO2 = ReactorData[f'xO2{ReactorName}'].iloc[iterations_counts]                                     #%
+        self.xH2S = ReactorData[f'xH2S{ReactorName}'].iloc[iterations_counts]                                   #%
+        self.xH2 = ReactorData[f'xH2{ReactorName}'].iloc[iterations_counts]                                     #%
+
+        self.vCH4 = biogasVol_normalized.iloc[iterations_counts] * (self.xCH4 / 100)                            #mL
+        self.vCO2 = biogasVol_normalized.iloc[iterations_counts] * (self.xCO2 / 100)                            #mL
+        self.vO2 = biogasVol_normalized.iloc[iterations_counts] * (self.xO2 / 100)                              #mL
+        self.vH2S = biogasVol_normalized.iloc[iterations_counts] * (self.xH2S / 1000000)                        #mL
+        self.vH2 = biogasVol_normalized.iloc[iterations_counts] * (self.xH2 / 1000000)                          #mL
+
+        self.Pacum = ReactorData[f'AcumPressure{ReactorName}'].iloc[iterations_counts]                          #Psi
+        self.P = ReactorData[f'Pressure{ReactorName}'].iloc[iterations_counts]                                  #Psi
+        self.Vnorm = (self.P*550*273.15)/(100*(self.Temp+273.15))                                               #mL
+        self.Vacum = biogasVol_normalized.iloc[iterations_counts]                                               #mL
+        self.Energy = ReactorData[f'Energia{ReactorName}'].iloc[iterations_counts]                              #mWh
+        
+        return (self.MixVel, self.SV_int, self.OC, self.ST_int, self.x, self.PBM, self.Temp, self.pH,
+                self.nCH4, self.nCO2, self.nO2, self.nH2S, self.nH2,
+                self.xCH4, self.xCO2, self.xO2, self.xH2S, self.xH2,
+                self.vCH4, self.vCO2, self.vO2, self.vH2S, self.vH2,
+                self.Pacum, self.P, self.Vnorm, self.Vacum, self.Energy)
+
+
+
+
+
+
+
+
