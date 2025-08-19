@@ -1040,7 +1040,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   },
   waterCompositionSideA: {
     disabled: false,
-    value: 80,
+    value: 80.0,
     tooltip: 'Fracción de agua [%]',
     unit: '%',
     variableString: 'Fracción de agua',
@@ -1731,7 +1731,7 @@ export const BMP: BiochemicalMethanePotentialParameters = {
   },
   waterCompositionSideB: {
     disabled: false,
-    value: 80,
+    value: 80.0,
     tooltip: 'Fracción de agua [%]',
     unit: '%',
     variableString: 'Fracción de agua',
@@ -2126,6 +2126,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Parámetro cinético ADM1 R101',
@@ -2138,6 +2139,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 3,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R101',
@@ -2150,6 +2152,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Energía de activación de arrhenius R101',
@@ -2162,6 +2165,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Tasa de producción de biogás R101',
@@ -2174,6 +2178,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R101',
@@ -2258,6 +2263,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R102',
@@ -2270,6 +2276,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 3,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R102',
@@ -2282,6 +2289,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Energía de activación de arrhenius R102',
@@ -2294,6 +2302,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R102',
@@ -2306,6 +2315,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R102',
@@ -2390,6 +2400,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Parámetro cinético ADM1 R103',
@@ -2402,6 +2413,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 3,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R103',
@@ -2414,6 +2426,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Energía de activación de arrhenius R103',
@@ -2426,6 +2439,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R103',
@@ -2438,6 +2452,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R103',
@@ -2522,6 +2537,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R104',
@@ -2534,7 +2550,9 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 3,
     isVertical: true,
+    scientificNotation: true
   },
+  
   {
     name: 'Potencial de producción de biogás de Gompertz  R104',
     variable: 'KR104',
@@ -2546,6 +2564,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Energía de activación de arrhenius R104',
@@ -2558,6 +2577,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R104',
@@ -2570,6 +2590,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R104',
@@ -2654,6 +2675,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R105',
@@ -2666,6 +2688,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 3,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R105',
@@ -2678,6 +2701,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Energía de activación de arrhenius R105',
@@ -2690,6 +2714,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 2,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R105',
@@ -2702,6 +2727,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 4,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R105',
@@ -4431,6 +4457,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R106',
@@ -4443,6 +4470,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 15,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R106',
@@ -4455,6 +4483,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Energía de activación de arrhenius R106',
@@ -4467,6 +4496,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R106',
@@ -4479,6 +4509,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R106',
@@ -4563,6 +4594,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R107',
@@ -4575,6 +4607,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 15,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R107',
@@ -4587,6 +4620,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Energía de activación de arrhenius R107',
@@ -4599,6 +4633,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R107',
@@ -4611,6 +4646,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R107',
@@ -4695,6 +4731,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R108',
@@ -4707,6 +4744,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 15,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R108',
@@ -4719,6 +4757,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Energía de activación de arrhenius R108',
@@ -4731,6 +4770,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R108',
@@ -4743,6 +4783,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R108',
@@ -4827,6 +4868,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R109',
@@ -4839,6 +4881,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 15,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R109',
@@ -4851,6 +4894,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Energía de activación de arrhenius R109',
@@ -4863,6 +4907,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R109',
@@ -4875,6 +4920,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R109',
@@ -4959,6 +5005,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Parámetro cinético ADM1 R110',
@@ -4971,6 +5018,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 15,
     isVertical: true,
+    scientificNotation: true
   },
   {
     name: 'Potencial de producción de biogás de Gompertz  R110',
@@ -4983,6 +5031,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4450,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Energía de activación de arrhenius R110',
@@ -4995,6 +5044,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 14,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tasa de producción de biogás R110',
@@ -5007,6 +5057,7 @@ export const BMP_VARIABLES: DiagramVariableType[] = [
     y: 4600,
     hasAdditionalCondition: 16,
     isVertical: true,
+    scientificNotation: true,
   },
   {
     name: 'Tiempo mínimo para la producción de biogás R110',

@@ -1666,7 +1666,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                           name="waterCompositionSideA"
                           handleChange={handleChange}
                           disabled={system.disableParameters}
-                          isInteger
                         ></CustomNumberField>
                       </Grid>
                       {system.amountOfSubstratesSideA.value >= 1 && (
@@ -2337,7 +2336,6 @@ const BiochemicalMethanePotential = (props: Props) => {
                           name="waterCompositionSideB"
                           handleChange={handleChange}
                           disabled={system.disableParameters}
-                          isInteger
                         ></CustomNumberField>
                       </Grid>
                       {system.amountOfSubstratesSideB.value >= 1 && (
