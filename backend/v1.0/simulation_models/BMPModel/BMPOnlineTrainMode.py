@@ -8,6 +8,7 @@ import numpy as np
 from scipy.integrate import odeint
 from scipy.optimize import minimize
 import statistics as st
+from simulation_models.Biogas import ThermoProperties
 
 class BMP_online:
     def __init__ (self, DB_IP, DB_Port, DB_Organization, DB_Bucket, DB_Token,
@@ -26,6 +27,9 @@ class BMP_online:
         self.connectionState = self.influxDB.InfluxDBconnection()
         if not self.connectionState:
             raise ConnectionError(f"Database connection failed: {self.influxDB.ERROR_MESSAGE}")
+        
+        #initialization Thermodynamic model
+        self.Thermo = ThermoProperties.ThermoProperties()
         
         #construction of the plant
         self.MeasureMethod = MeasureMethod
@@ -1847,6 +1851,144 @@ class BMP_online:
 
             self.R110_data = R110_data
     
+    def StochoimetricExpendtire_Reactor(self, ReactorName, ReactorData, Vrxn, OperationMethod, xCH4, xCO2, xO2, xH2S, XH2):    #Reactor name: R101, ReactorData: ProccesingData, Vrxn: mL
+        Pstd = 100000
+        ReactorData["nbiogas"] = Pstd * (ReactorData[f'VolAcum{ReactorName}']/1000000)/(8.314 * 273.15)
+        ReactorData["nCH4"] = ReactorData["nbiogas"] * (xCH4/100)
+        ReactorData["nCO2"] = ReactorData["nbiogas"] * (xCO2/100)
+        ReactorData["nO2"] = ReactorData["nbiogas"] * (xO2/100)
+        ReactorData["nH2S"] = ReactorData["nbiogas"] * (xH2S/1000000)
+        ReactorData["nH2"] = ReactorData["nbiogas"] * (XH2/1000000)
+        ReactorData["nNH3"] = ReactorData["nCH4"] * self.s_NH3/self.s_CH4
+        ReactorData["nUn"] = ReactorData["nbiogas"] - ReactorData["nCH4"] - ReactorData["nCO2"] - ReactorData["nO2"] - ReactorData["nH2S"] - ReactorData["nH2"] - ReactorData["nNH3"]
+
+        MW_CH4 = 16.04256  # g/mol
+        MW_CO2 = 44.009    #g/mol
+        MW_O2 = 31.9988    #g/mol
+        MW_H2S = 34.082    #g/mol
+        MW_H2 = 2.01588    #g/mol
+        MW_NH3 = 17.03052  #g/mol
+        ReactorData["wCH4"] = ReactorData["nCH4"] * MW_CH4
+        ReactorData["wCO2"] = ReactorData["nCO2"] * MW_CO2
+        ReactorData["wO2"] = ReactorData["nO2"] * MW_O2
+        ReactorData["wH2S"] = ReactorData["nH2S"] * MW_H2S
+        ReactorData["wH2"] = ReactorData["nH2"] * MW_H2
+        ReactorData["wNH3"] = ReactorData["nNH3"] * MW_NH3
+        ReactorData["wTotal"] = ReactorData["wCH4"] + ReactorData["wCO2"] + ReactorData["wO2"] + ReactorData["wH2S"] + ReactorData["wH2"] + ReactorData["wNH3"]
+
+        #Derivation per time moles
+        ReactorData["dnbiogas_dt"] = ReactorData["nbiogas"].diff()
+        ReactorData["dnCH4_dt"] = ReactorData["nCH4"].diff()
+        ReactorData["dnCO2_dt"] = ReactorData["nCO2"].diff()
+        ReactorData["dnO2_dt"] = ReactorData["nO2"].diff()
+        ReactorData["dnH2S_dt"] = ReactorData["nH2S"].diff()
+        ReactorData["dnH2_dt"] = ReactorData["nH2"].diff()
+        ReactorData["dnNH3_dt"] = ReactorData["nNH3"].diff()
+
+        #Derivation per time mass
+        ReactorData["dWtotal_dt"] = ReactorData["wTotal"].diff()
+        ReactorData["dWCH4_dt"] = ReactorData["wCH4"].diff()
+        ReactorData["dWCO2_dt"] = ReactorData["wCO2"].diff()
+        ReactorData["dWO2_dt"] = ReactorData["wO2"].diff()
+        ReactorData["dWH2S_dt"] = ReactorData["wH2S"].diff()
+        ReactorData["dWH2_dt"] = ReactorData["wH2"].diff()
+        ReactorData["dWNH3_dt"] = ReactorData["wNH3"].diff()
+
+        #Delta_time
+        ReactorData["dt"] = ReactorData["normalice_time"].diff()
+
+        #fill first row with 0
+        ReactorData.fillna(0, inplace=True)
+
+        #Feeding conditions
+        if OperationMethod == "Time":
+            if ReactorName in ["R101", "R102", "R103", "R104", "R105"]:
+                Q_time = float(self.PlantEstimation.loc["FE_A1", "_value"].iloc[-1])/1000
+            elif ReactorName in ["R106", "R107", "R108", "R109", "R110"]:
+                Q_time = float(self.PlantEstimation.loc["FE_B1", "_value"].iloc[-1])/1000
+        elif OperationMethod == "Injection":
+            if ReactorName in ["R101", "R102", "R103", "R104", "R105"]:
+                Q_time = float(self.PlantEstimation.loc["FE_A2", "_value"].iloc[-1])/1000
+            elif ReactorName in ["R106", "R107", "R108", "R109", "R110"]:
+                Q_time = float(self.PlantEstimation.loc["FE_B2", "_value"].iloc[-1])/1000
+        else:
+            Q_time = 0        
+
+        ST_ini = []
+        SV_ini = []
+        Csus_mol = []
+        Q_inv = []
+        if 'ST_int' not in ReactorData.columns:
+            self.ST_ini = self.ST_ini
+        else:
+            self.ST_ini = ReactorData['ST_int'].iloc[0]
+        if 'SV_int' not in ReactorData.columns:
+            self.SV_ini = self.SV_ini
+        else:
+            self.SV_ini = ReactorData['SV_int'].iloc[0]
+        if 'Csus_mol_int' not in ReactorData.columns:
+            self.Csus_ini_SV_mol = self.Csus_ini_SV_mol
+        else:
+            self.Csus_ini_SV_mol = ReactorData['Csus_mol_int'].iloc[0]
+        #Total solids balance
+        if OperationMethod in ["Time", "Injection"]:
+            for i in range (len(ReactorData)):
+                #Total solids balance
+                gST_ini = self.ST_ini * (Vrxn/1000) * self.rho
+                flow_in = ReactorData["Inyections"].iloc[i]
+                if flow_in == 1:
+                    Q_in = Q_time
+                else:
+                    Q_in = 0
+                Q_inv.append(Q_in)
+                gST_in = Q_in * self.ST * self.rho * ReactorData["dt"].iloc[i]
+                gST_out_g =  ReactorData["dWtotal_dt"].iloc[i]
+                gST_out_l = Q_in * self.ST_ini * ReactorData["dt"].iloc[i]
+                self.ST_ini = (gST_ini + gST_in - gST_out_g - gST_out_l) / (Vrxn/1000) / self.rho
+                ST_ini.append(self.ST_ini)
+                #Volatile Solids balance
+                gSV_ini = self.SV_ini * (Vrxn/1000) * self.rho
+                gSV_in = Q_in * self.SV * self.rho * ReactorData["dt"].iloc[i]
+                gSV_out_g =  ReactorData["dWtotal_dt"].iloc[i]
+                gSV_out_l = Q_in * self.SV_ini * ReactorData["dt"].iloc[i]
+                self.SV_ini = (gSV_ini + gSV_in - gSV_out_g - gSV_out_l) / (Vrxn/1000) / self.rho
+                SV_ini.append(self.SV_ini)
+                #Volatile mol balance
+                mol_ini = self.Csus_ini_SV_mol * (Vrxn/1000)
+                mol_in = Q_in * self.Csus_SV_mol * ReactorData["dt"].iloc[i]
+                mol_out_g = ReactorData["dnCH4_dt"].iloc[i] * (1/self.s_CH4)
+                mol_out_l = Q_in * self.Csus_ini_SV_mol * ReactorData["dt"].iloc[i]
+                self.Csus_ini_SV_mol = (mol_ini + mol_in - mol_out_g - mol_out_l) / (Vrxn/1000)
+                Csus_mol.append(self.Csus_ini_SV_mol)
+
+            ReactorData["Q_in"] = Q_inv
+            ReactorData["C_in"] = self.Csus_SV_mol
+                
+        elif OperationMethod == "NoDosing":
+            for i in range (len(ReactorData)):
+                #total solids balance
+                gST_ini = self.ST_ini * (Vrxn/1000) * self.rho_ini
+                gST_out_g =  ReactorData["dWtotal_dt"].iloc[i]
+                self.ST_ini = (gST_ini - gST_out_g) / (Vrxn/1000) / self.rho_ini
+                ST_ini.append(self.ST_ini)
+                #Balance solids balance
+                gSV_ini = self.SV_ini * (Vrxn/1000) * self.rho_ini
+                gSV_out_g =  ReactorData["dWtotal_dt"].iloc[i]
+                self.SV_ini = (gSV_ini - gSV_out_g)/(Vrxn/1000)/self.rho_ini
+                SV_ini.append(self.SV_ini)
+                #mol volatile balance
+                mol_ini = self.Csus_ini_SV_mol * (Vrxn/1000)
+                mol_out_g =  ReactorData["dnCH4_dt"].iloc[i] * (1/self.s_CH4)
+                self.Csus_ini_SV_mol = (mol_ini - mol_out_g)/(Vrxn/1000)
+                Csus_mol.append(self.Csus_ini_SV_mol)
+      
+        ReactorData["ST_int"] = ST_ini
+        ReactorData["SV_int"] = SV_ini
+        ReactorData["Csus_mol_int"] = Csus_mol
+        ReactorData["y_t"] = ReactorData[f'VolAcum{ReactorName}']/(ReactorData["Csus_mol_int"]*self.MW_sustrato* (Vrxn/1000)) 
+        
+        return ReactorData
+
     def StochoimetricExpendtire_Reactor_batch (self, ReactorName, ReactorData, Vrxn, OperationMethod):    #Reactor name: R101, ReactorData: ProccesingData, Vrxn: mL
         Pstd = 100000     
         #ReactorData[f'VolAcum{ReactorName}'] = ReactorData[f'VolAcum{ReactorName}'] - min(ReactorData[f'VolAcum{ReactorName}'])                                                          #Pa
@@ -2063,7 +2205,7 @@ class BMP_online:
                 self.ym_ini = 1
                 self.U_ini = 1
                 self.L_ini = 1
-                self.resolution = 2000
+                self.resolution = 500
 
         if Model == "Arrhenius":
             if iterations_counts + self.resolution < iterations_trains:
@@ -2104,7 +2246,7 @@ class BMP_online:
                     Ea_iniv.append(self.Ea_ini)
                     obj_funv.append(obj_fun)
                 
-            self.K_opt = st.mean(K_iniv)
+            self.K_opt = st.mean(K_iniv)/60
             self.Ea_opt = st.mean(Ea_iniv)
             self.L_opt = 0
             self.obj_fun = st.mean(obj_funv)
@@ -2122,7 +2264,6 @@ class BMP_online:
                 
                 K_iniv = []
                 Ea_iniv = []
-                L_iniv = []
                 obj_funv = []
                 for i in range (len(time)):
                     t_exp_opt = time[i : self.resolution]
@@ -2145,7 +2286,7 @@ class BMP_online:
                     K_iniv.append(self.K_ini)
                     obj_funv.append(obj_fun)
                 
-            self.K_opt = st.mean(K_iniv)
+            self.K_opt = st.mean(K_iniv)/60
             self.Ea_opt = 0
             self.L_opt = 0
             self.obj_fun = st.mean(obj_funv)
@@ -2175,13 +2316,11 @@ class BMP_online:
                     funv.append(fun)
             
             self.K_opt = st.mean(yv)
-            self.Ea_opt = st.mean(Uv)
-            self.L_opt = st.mean(Lv)
+            self.Ea_opt = st.mean(Uv)*1440
+            self.L_opt = st.mean(Lv)/1440
             self.obj_fun = st.mean(funv)
         
         return self.K_opt, self.Ea_opt, self.L_opt, self.obj_fun
-
-
     
     def exit_variable_training (self, iterations_counts, ReactorName, ReactorData, Vrxn):
         
@@ -2197,7 +2336,7 @@ class BMP_online:
         
         biogasVol = ReactorData[f"VolAcum{ReactorName}"]
         biogasVol_normalized = biogasVol - min(biogasVol)  #mL
-        self.PBM = biogasVol_normalized.iloc[iterations_counts] / (self.SV_int * (Vrxn / 1000))
+        self.PBM = ReactorData[f'VolAcum{ReactorName}'].iloc[iterations_counts] / (self.SV_int * (Vrxn / 1000))
 
         self.Temp = ReactorData[f'Temp{ReactorName}'].iloc[iterations_counts]                                    #°C
 
@@ -2224,14 +2363,80 @@ class BMP_online:
         self.Pacum = ReactorData[f'AcumPressure{ReactorName}'].iloc[iterations_counts]                          #Psi
         self.P = ReactorData[f'Pressure{ReactorName}'].iloc[iterations_counts]                                  #Psi
         self.Vnorm = (self.P*550*273.15)/(100*(self.Temp+273.15))                                               #mL
-        self.Vacum = biogasVol_normalized.iloc[iterations_counts]                                               #mL
+        self.Vacum = ReactorData[f'VolAcum{ReactorName}'].iloc[iterations_counts]                               #mL
         self.Energy = ReactorData[f'Energia{ReactorName}'].iloc[iterations_counts]                              #mWh
-        
+
+        self.BiogasProperties = float(self.Thermo.Hgases(xCH4=self.xCH4/100, xCO2=self.xCO2/100, xH2O=0, xO2=self.xO2/100, xN2=0, xH2S=self.xH2S/1000000, xH2=self.xH2/1000000, P=100, Patm = 98, T=25, xNH3=0)[3])
+        self.Energy1 = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2 = self.nCO2, molH2S = self.nH2S, molO2 = self.nO2, molH2 = self.nH2)[0])
+        try:
+            self.LHV = self.Energy1/self.BiogasProperties   
+        except ZeroDivisionError:
+            self.LHV = 0                                     
+
         return (self.MixVel, self.SV_int, self.OC, self.ST_int, self.x, self.PBM, self.Temp, self.pH,
                 self.nCH4, self.nCO2, self.nO2, self.nH2S, self.nH2,
                 self.xCH4, self.xCO2, self.xO2, self.xH2S, self.xH2,
                 self.vCH4, self.vCO2, self.vO2, self.vH2S, self.vH2,
-                self.Pacum, self.P, self.Vnorm, self.Vacum, self.Energy)
+                self.Pacum, self.P, self.Vnorm, self.Vacum, self.Energy, self.LHV)
+    
+    def exit_variable_online (self, ReactorName, ReactorData, Vrxn):
+        
+        self.MixVel = ReactorData["MixVelocity"].iloc[-1]                                        #RPM
+        self.SV_int = ReactorData["SV_int"].iloc[-1] * self.rho                                  #g/L
+        self.SV_int = float(self.SV_int)                                                                        #g/L
+        
+        self.OC = ReactorData["Csus_mol_int"].iloc[-1] * self.MW_sustrato / (ReactorData["normalice_time"].iloc[-1] / 1440)
+        
+        self.ST_int = ReactorData["ST_int"].iloc[-1] * self.rho
+        
+        self.x = (ReactorData["Csus_mol_int"].iloc[0] - ReactorData["Csus_mol_int"].iloc[-1])/ReactorData["Csus_mol_int"].iloc[0]
+        
+        biogasVol = ReactorData[f"VolAcum{ReactorName}"]
+        biogasVol_normalized = biogasVol - min(biogasVol)  #mL
+        self.PBM = ReactorData[f'VolAcum{ReactorName}'].iloc[-1] / (self.SV_int * (Vrxn / 1000))
+
+        self.Temp = ReactorData[f'Temp{ReactorName}'].iloc[-1]                                    #°C
+
+        self.pH = ReactorData[f'pH{ReactorName}'].iloc[-1]                                          #pH
+
+        self.nCH4 = ReactorData["nCH4"].iloc[-1]                                                 #mol
+        self.nCO2 = ReactorData["nCO2"].iloc[-1]                                                 #mol
+        self.nO2 = ReactorData["nO2"].iloc[-1]                                                   #mol
+        self.nH2S = ReactorData["nH2S"].iloc[-1]                                                 #mol
+        self.nH2 = ReactorData["nH2"].iloc[-1]
+
+        self.xCH4 = ReactorData[f'xCH4{ReactorName}'].iloc[-1]                                   #%
+        self.xCO2 = ReactorData[f'xCO2{ReactorName}'].iloc[-1]                                   #%
+        self.xO2 = ReactorData[f'xO2{ReactorName}'].iloc[-1]                                     #%
+        self.xH2S = ReactorData[f'xH2S{ReactorName}'].iloc[-1]                                   #%
+        self.xH2 = ReactorData[f'xH2{ReactorName}'].iloc[-1]                                     #%
+
+        self.vCH4 = biogasVol_normalized.iloc[-1] * (self.xCH4 / 100)                            #mL
+        self.vCO2 = biogasVol_normalized.iloc[-1] * (self.xCO2 / 100)                            #mL
+        self.vO2 = biogasVol_normalized.iloc[-1] * (self.xO2 / 100)                              #mL
+        self.vH2S = biogasVol_normalized.iloc[-1] * (self.xH2S / 1000000)                        #mL
+        self.vH2 = biogasVol_normalized.iloc[-1] * (self.xH2 / 1000000)                          #mL
+
+        self.Pacum = ReactorData[f'AcumPressure{ReactorName}'].iloc[-1]                          #Psi
+        self.P = ReactorData[f'Pressure{ReactorName}'].iloc[-1]                                  #Psi
+        self.Vnorm = (self.P*550*273.15)/(100*(self.Temp+273.15))                                               #mL
+        self.Vacum = ReactorData[f'VolAcum{ReactorName}'].iloc[-1]                               #mL
+        self.Energy = ReactorData[f'Energia{ReactorName}'].iloc[-1]                              #mWh
+
+        self.BiogasProperties = float(self.Thermo.Hgases(xCH4=self.xCH4/100, xCO2=self.xCO2/100, xH2O=0, xO2=self.xO2/100, xN2=0, xH2S=self.xH2S/1000000, xH2=self.xH2/1000000, P=100, Patm = 98, T=25, xNH3=0)[3])
+        self.Energy1 = float(self.Thermo.LHV(molCH4=self.nCH4, molCO2 = self.nCO2, molH2S = self.nH2S, molO2 = self.nO2, molH2 = self.nH2)[0])
+        try:
+            self.LHV = self.Energy1/self.BiogasProperties   
+        except ZeroDivisionError:
+            self.LHV = 0                                     
+
+        return (self.MixVel, self.SV_int, self.OC, self.ST_int, self.x, self.PBM, self.Temp, self.pH,
+                self.nCH4, self.nCO2, self.nO2, self.nH2S, self.nH2,
+                self.xCH4, self.xCO2, self.xO2, self.xH2S, self.xH2,
+                self.vCH4, self.vCO2, self.vO2, self.vH2S, self.vH2,
+                self.Pacum, self.P, self.Vnorm, self.Vacum, self.Energy, self.LHV)
+    
+
 
 
 

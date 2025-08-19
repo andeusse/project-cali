@@ -237,7 +237,7 @@ class ThermoProperties:
         self.Volumenespbio_norm = self.xCH4*self.vCH4_norm + self.xCO2*self.vCO2_norm + self.xN2*self.vN2_norm + \
             self.xO2*self.vO2_norm + self.xH2O*self.vH2O_norm + self.xH2S*self.vH2S_norm + self.xH2*self.vH2_norm + self.xNH3*self.vNH3_norm  # [m^3/mol]
 
-        return self.Hbiogasmolar, self.Hbiogasmas, self.Volumenespbio
+        return self.Hbiogasmolar, self.Hbiogasmas, self.Volumenespbio, self.Volumenespbio_norm
     
     def BiogasAbsoluteHumidity (self, RH, T):
          #Antoine Equation for saturation pressure estimation
