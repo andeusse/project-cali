@@ -5,6 +5,7 @@ from simulation_models.BMPModel import BMPOnlineTrainMode
 from tools import DBManager
 import os
 import json
+import numpy as np
 
 bmp_instances = {}
 data_instances = {}
@@ -70,7 +71,8 @@ class BMP(Resource):
 
     #Global twin
     name = data["name"]
-    TrainingMode = data["trainingMode"]
+    TrainingMode = True
+    #TrainingMode = data["trainingMode"]
     iteration = data["iteration"]
 
     # SideA 
@@ -294,8 +296,72 @@ class BMP(Resource):
           SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
           DataSideA = SideA.PlantSideA
           DataInterfaz = SideA.PlantEstimation
-          print(DataSideA, flush = True)
-          print(DataInterfaz, flush = True)
+          SideA.ProcessData(SideA = True, SideB = False, MeasureMethodSideA = measurementMethodSideA, MeasureMethodSideB = measurementMethodSideA, DataPlantSideA = DataSideA, DataPlantSideB = DataSideA,  
+                           DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideA)
+          R101_data = SideA.R101_data
+          R102_data = SideA.R102_data
+          R103_data = SideA.R103_data
+          R104_data = SideA.R104_data
+          R105_data = SideA.R105_data
+          if SideA.OperationMethod in ["Time", "Injection"]:
+            SideA.SubstrateFeeding()
+          
+          R101 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R101", ReactorData = R101_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R102 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R102", ReactorData = R102_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R103 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R103", ReactorData = R103_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R104 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R104", ReactorData = R104_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          R105 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R105", ReactorData = R105_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+          data_instances[user_data_sideA] = [R101, R102, R103, R104, R105]
+        
+        R101_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R101", ReactorData = data_instances[user_data_sideA][0], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R102_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R102", ReactorData = data_instances[user_data_sideA][1], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R103_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R103", ReactorData = data_instances[user_data_sideA][2], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R104_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R104", ReactorData = data_instances[user_data_sideA][3], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R105_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R105", ReactorData = data_instances[user_data_sideA][4], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        
+        R101_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R101", ReactorData = data_instances[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
+        #Output variables
+        #R101
+        bmp_output["mixVelocityR101"] = float(R101_exit[0]) 
+        bmp_output["SVR101"] = float(R101_exit[1])
+        bmp_output["OCR101"] = float(R101_exit[2])
+        bmp_output["STR101"] = float(R101_exit[3])
+        bmp_output["XR101"] = float(R101_exit[4])
+        bmp_output["PBMR101"] = float(R101_exit[5])
+        bmp_output["KR101"] = float(R101_opt[0]/60)
+        bmp_output["EaR101"] = float(R101_opt[1])
+        bmp_output["lambdaR101"] = float(R101_opt[2])
+        bmp_output["Objetive"] = float(R101_opt[3])
+        bmp_output["TempR101"] = float(R101_exit[6])  
+        bmp_output["pHR101"] = float(R101_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR102"] =float(R101_exit[8])
+        bmp_output["carbondioxidemolR102"] = float(R101_exit[9])
+        bmp_output["oxygenmolR102"] = float(R101_exit[10])
+        bmp_output["hydrogensulfurmolR102"] = float(R101_exit[11])
+        bmp_output["hydrogenmolR102"] = float(R101_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR101"] = float(R101_exit[13])
+        bmp_output["carbondioxideconcentrationR101"] = float(R101_exit[14])
+        bmp_output["oxygenconcentrationR101"] = float(R101_exit[15])
+        bmp_output["hydrogensulfurconcentrationR101"] = float(R101_exit[16])
+        bmp_output["hydrogenconcentrationR101"] = float(R101_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR101"] = float(R101_exit[18])
+        bmp_output["carbondioxidevolR101"] = float(R101_exit[19])
+        bmp_output["oxygenvolR101"] = float(R101_exit[20])
+        bmp_output["hydrogensulfurvolR101"] = float(R101_exit[21])
+        bmp_output["hydrogenvolR101"] = float(R101_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR101"] = float(R101_exit[23])
+        bmp_output["storagebiogaspressureR101"] = float(R101_exit[24])
+        bmp_output["storagebiogasR101"] = float(R101_exit[25])
+        bmp_output["accumbiogasR101"] = float(R101_exit[26])
+        bmp_output["EnergyR101"] = float(R101_exit[27])
+        bmp_output["LHVR101"] = 0
+        
+        
+
         
       
       #%% Online Mode without training (just show the values from plant) without income from manual interface
@@ -674,6 +740,11 @@ class BMP(Resource):
         bmp_output["accumbiogasR105"] = float(R105.Vnormalbiogas)
         bmp_output["LHVR105"] = float(R105.LHV_JNm3)
         bmp_output["EnergyR105"] = float(R105.Energia)
+
+        bmp_output = {
+                      k: (0 if (v is None or (isinstance(v, (int, float)) and np.isnan(v))) else v)
+                      for k, v in bmp_output.items()
+                  }
        
         R105.GlobaltimeCounter()
 
