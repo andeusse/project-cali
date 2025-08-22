@@ -7,10 +7,13 @@ import os
 import json
 import numpy as np
 
-bmp_instances = {}
-data_instances = {}
+bmp_instancesSideA = {}
+bmp_instancesSideB = {}
+data_instancesSideA = {}
+data_instancesSideB = {}
 
 bmp_instances_offline_SideA = {}
+bmp_instances_offline_SideB = {}
 
 class BMP(Resource):
   def get(self):
@@ -83,7 +86,7 @@ class BMP(Resource):
     ReactorVolumeSideA = data["rxnVolumeSideA"]["value"]         #Reactor Volume (mL)   
     InitialFreeVolumeSideA = data["freeVolumeSideA"]["value"]    #Free volume (mL)
     ModelSideA = data["modelSelectionSideA"]                     #Arrhenius, Gompertz, ADM1
-    time_stepSideA = data["stepTime"]["value"]                   #Time step, seconds 
+    time_stepSideA = data["digitalTwinStepTime"]["value"]                   #Time step, seconds 
     speed_time = data["timeMultiplier"]["value"]
 
     #Model parameters
@@ -107,6 +110,38 @@ class BMP(Resource):
 
     #pressure control
     pressureSetPointSideA = data["pressureSetPointSideA"]["value"]
+
+    #biogas compositions
+    #R101
+    xCH4R101 = data["methaneR101"]["value"]
+    xCO2R101 = data["carbonDioxideR101"]["value"]
+    xO2R101 = data["oxygenR101"]["value"]
+    xH2SR101 = data["sulfurHydrogenR101"]["value"]
+    xH2R101 = data["hydrogenR101"]["value"]
+    #R102
+    xCH4R102 = data["methaneR102"]["value"]
+    xCO2R102 = data["carbonDioxideR102"]["value"]
+    xO2R102 = data["oxygenR102"]["value"]
+    xH2SR102 = data["sulfurHydrogenR102"]["value"]
+    xH2R102 = data["hydrogenR102"]["value"]
+    #R103
+    xCH4R103 = data["methaneR103"]["value"]
+    xCO2R103 = data["carbonDioxideR103"]["value"]
+    xO2R103 = data["oxygenR103"]["value"]
+    xH2SR103 = data["sulfurHydrogenR103"]["value"]
+    xH2R103 = data["hydrogenR103"]["value"]
+    #R104
+    xCH4R104 = data["methaneR104"]["value"]
+    xCO2R104 = data["carbonDioxideR104"]["value"]
+    xO2R104 = data["oxygenR104"]["value"]
+    xH2SR104 = data["sulfurHydrogenR104"]["value"]
+    xH2R104 = data["hydrogenR104"]["value"]
+    #R105
+    xCH4R105 = data["methaneR105"]["value"]
+    xCO2R105 = data["carbonDioxideR105"]["value"]
+    xO2R105 = data["oxygenR105"]["value"]
+    xH2SR105 = data["sulfurHydrogenR105"]["value"]
+    xH2R105 = data["hydrogenR105"]["value"]
 
     #Initial conditions for substrate
     SubstrateNumberSideA = data["amountOfSubstratesSideA"]["value"]   #Substrate number
@@ -160,27 +195,8 @@ class BMP(Resource):
     Cs4SideA = data["sulfurContentSubstrate4SideA"]["value"]
 
     #Biogas compositions Manually
-    biogas = data["manualBiogasCompositionSideA"]            #False: Auto, True: Manual
-    
-    #R101
-    methaneR101 = data["methaneR101"]["value"]
-    carbonDioxideR101 = data["carbonDioxideR101"]["value"]
-    oxygenR101 = data["oxygenR101"]["value"]
-    sulfurHydrogenR101 = data["sulfurHydrogenR101"]["value"]
-    hydrogenR101 = data["hydrogenR101"]["value"]
-    #R102
-    methaneR102 = data["methaneR102"]["value"]
-    carbonDioxideR102 = data["carbonDioxideR102"]["value"]
-    oxygenR102 = data["oxygenR102"]["value"]
-    sulfurHydrogenR102 = data["sulfurHydrogenR102"]["value"]
-    hydrogenR102 = data["hydrogenR102"]["value"]
-    #R103
-    methaneR103 = data["methaneR103"]["value"]
-    carbonDioxideR103 = data["carbonDioxideR103"]["value"]
-    oxygenR103 = data["oxygenR103"]["value"]
-    sulfurHydrogenR103 = data["sulfurHydrogenR103"]["value"]
-    hydrogenR103 = data["hydrogenR103"]["value"]
-    
+    biogasSideA = data["manualBiogasCompositionSideA"]            #False: Auto, True: Manual
+       
     #Operation Method
     OperationMethodSideA = data["dosificationTypeSideA"]                  #NoDosing, Time, Injection
     dosificationVolumeSideA = data["dosificationVolumeSideA"]["value"]
@@ -190,11 +206,68 @@ class BMP(Resource):
 
     # SideB 
     # Operational Conditions
+    StateSideB = data["isSideBOn"]                               #True: Turning on, Fals: Truning off
     stateSelectionSideB = data["stateSelection"]            #False: Online, True: offline
     measurementMethodSideB =  data["measurementMethodSideB"]     #"Pressure, VolumeDisplaced"
-    ReactorVolumeSideB = data["rxnVolumeSideB"]                  #Reactor Volume (mL)   
-    InitialFreeVolumeSideB = data["freeVolumeSideB"]             #Free volume (mL)
-    ModelSideB = data["modelSelectionSideB"]                     #Arrhenius, Gompertz, ADM1 
+    ReactorVolumeSideB = data["rxnVolumeSideB"]["value"]         #Reactor Volume (mL)   
+    InitialFreeVolumeSideB = data["freeVolumeSideB"]["value"]    #Free volume (mL)
+    ModelSideB = data["modelSelectionSideB"]                     #Arrhenius, Gompertz, ADM1
+    time_stepSideB = data["digitalTwinStepTime"]["value"]                   #Time step, seconds 
+    speed_time = data["timeMultiplier"]["value"]
+
+    #Model parameters
+    KSideB = data["kineticKSideB"]["value"]
+    EaSideB = data["kineticEaSideB"]["value"]
+    LSideB = data["kineticLambdaSideB"]["value"]
+   
+    #Mixing
+    MixManualSideB = data["mixManualSideB"]                      #True: manual, False:Auto
+    MixVelocitySideB = data["mixVelocitySideB"]["value"]
+    mixTimeSideB = data["mixTimeSideB"]["value"] 
+    mixDailySideB = data["mixDailySideB"]["value"] 
+
+    #Temperature control
+    TemperatureManualSideB = data["TemperatureSideB"]["disabled"]
+    TemperatureSideB = data["TemperatureSideB"]["value"]
+
+    #pHControl
+    pHManualSideB = data["pHSideB"]["disabled"]
+    pHSideB = data["pHSideB"]["value"]
+
+    #pressure control
+    pressureSetPointSideB = data["pressureSetPointSideB"]["value"]
+
+    #biogas compositions
+    #R101
+    xCH4R101 = data["methaneR101"]["value"]
+    xCO2R101 = data["carbonDioxideR101"]["value"]
+    xO2R101 = data["oxygenR101"]["value"]
+    xH2SR101 = data["sulfurHydrogenR101"]["value"]
+    xH2R101 = data["hydrogenR101"]["value"]
+    #R102
+    xCH4R102 = data["methaneR102"]["value"]
+    xCO2R102 = data["carbonDioxideR102"]["value"]
+    xO2R102 = data["oxygenR102"]["value"]
+    xH2SR102 = data["sulfurHydrogenR102"]["value"]
+    xH2R102 = data["hydrogenR102"]["value"]
+    #R103
+    xCH4R103 = data["methaneR103"]["value"]
+    xCO2R103 = data["carbonDioxideR103"]["value"]
+    xO2R103 = data["oxygenR103"]["value"]
+    xH2SR103 = data["sulfurHydrogenR103"]["value"]
+    xH2R103 = data["hydrogenR103"]["value"]
+    #R104
+    xCH4R104 = data["methaneR104"]["value"]
+    xCO2R104 = data["carbonDioxideR104"]["value"]
+    xO2R104 = data["oxygenR104"]["value"]
+    xH2SR104 = data["sulfurHydrogenR104"]["value"]
+    xH2R104 = data["hydrogenR104"]["value"]
+    #R105
+    xCH4R105 = data["methaneR105"]["value"]
+    xCO2R105 = data["carbonDioxideR105"]["value"]
+    xO2R105 = data["oxygenR105"]["value"]
+    xH2SR105 = data["sulfurHydrogenR105"]["value"]
+    xH2R105 = data["hydrogenR105"]["value"]
 
     #Initial conditions for substrate
     SubstrateNumberSideB = data["amountOfSubstratesSideB"]["value"]   #Substrate number
@@ -209,7 +282,7 @@ class BMP(Resource):
 
     #Substrate 1 properties
     ST1SideB = data["totalSolidsSubstrate1SideB"]["value"]
-    SV1SideB = data["volatileSolidsSubstrate1SIdeA"]["value"]
+    SV1SideB = data["volatileSolidsSubstrate1SideB"]["value"]
     rho1SideB = data["densitySubstrate1SideB"]["value"]
     Cc1SideB = data["carbonContentSubstrate1SideB"]["value"]
     Ch1SideB = data["hydrogenContentSubstrate1SideB"]["value"]
@@ -219,7 +292,7 @@ class BMP(Resource):
     
     #Substrate 2 properties
     ST2SideB = data["totalSolidsSubstrate2SideB"]["value"]
-    SV2SideB = data["volatileSolidsSubstrate2SideA"]["value"]
+    SV2SideB = data["volatileSolidsSubstrate2SideB"]["value"]
     rho2SideB = data["densitySubstrate2SideB"]["value"]
     Cc2SideB = data["carbonContentSubstrate2SideB"]["value"]
     Ch2SideB = data["hydrogenContentSubstrate2SideB"]["value"]
@@ -229,7 +302,7 @@ class BMP(Resource):
 
     #Substrate 3 properties
     ST3SideB = data["totalSolidsSubstrate3SideB"]["value"]
-    SV3SideB = data["volatileSolidsSubstrate3SideA"]["value"]
+    SV3SideB = data["volatileSolidsSubstrate3SideB"]["value"]
     rho3SideB = data["densitySubstrate3SideB"]["value"]
     Cc3SideB = data["carbonContentSubstrate3SideB"]["value"]
     Ch3SideB = data["hydrogenContentSubstrate3SideB"]["value"]
@@ -239,47 +312,48 @@ class BMP(Resource):
 
     #Substrate 4 properties
     ST4SideB = data["totalSolidsSubstrate4SideB"]["value"]
-    SV4SideB = data["volatileSolidsSubstrate4SIdeA"]["value"]
+    SV4SideB = data["volatileSolidsSubstrate4SideB"]["value"]
     rho4SideB = data["densitySubstrate4SideB"]["value"]
     Cc4SideB = data["carbonContentSubstrate4SideB"]["value"]
     Ch4SideB = data["hydrogenContentSubstrate4SideB"]["value"]
     Co4SideB = data["oxygenContentSubstrate4SideB"]["value"]
     Cn4SideB = data["nitrogenContentSubstrate4SideB"]["value"]
     Cs4SideB = data["sulfurContentSubstrate4SideB"]["value"]
-    
+
+    #Biogas compositions Manually
+    biogasSideB = data["manualBiogasCompositionSideB"]            #False: Auto, True: Manual
+       
     #Operation Method
-    OperationMethodSideB = data["dosificationTypeSideB"]     #NoDosing, Time, Injection
-    TrainTimeSideB = data["testDurationSideB"]["value"]   
+    OperationMethodSideB = data["dosificationTypeSideB"]                  #NoDosing, Time, Injection
+    dosificationVolumeSideB = data["dosificationVolumeSideB"]["value"]
+    dailyInyectionsSideB = data["dailyInyectionsSideB"]["value"]
+    TrainTimeSideB = data["testDurationSideB"]["value"] 
+    TrainTimeSideB = TrainTimeSideB * 24 * 60                               #trnasform days into minutes
     
-    # ---- Side A - Working
+
+    #%% ---- Side A - Working
     if StateSideA == True:
+      user_idSideA = name + "SideA"
+      user_data_sideA = name + "DataSideA"
+
+      user_instances_SideA = [user_idSideA]
+      data_instances_SideA = [user_data_sideA]
+    
+      if iteration == 1:   
+          for key in user_instances_SideA:
+            if key in bmp_instancesSideA:
+              del bmp_instancesSideA[key]  
+      
+      if iteration == 1:
+        for key in data_instances_SideA:
+          if key in data_instancesSideA:
+            del data_instancesSideA[key]       
 
       #%% Online mode with Training and getting data from interface
-      if stateSelectionSideA == False and biogas == False and TrainingMode == True:    #Online, biogas compounds in auto
+      if stateSelectionSideA == False and biogasSideA == False and TrainingMode == True:    #Online, biogas compounds in auto
         
-        # instances online
-        user_idSideA = name + "SideA"
-        user_idSideB = name + "SideB"
-
-        user_data_sideA = name + "sideAData" 
-        user_data_sideB = name + "sideBData"
-
-
-        user_instances = [user_idSideA, user_idSideB]
-        user_instances_data = [user_data_sideA, user_data_sideB]
-        
-        #Delete existing instances online
-        if iteration == 1:   
-          for key in user_instances:
-            if key in bmp_instances:
-              del bmp_instances[key]
-          
-          for key in user_instances_data:
-            if key in data_instances:
-              del data_instances[key]
-
-        if user_idSideA not in bmp_instances:
-          bmp_instances[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+        if user_idSideA not in bmp_instancesSideA:
+          bmp_instancesSideA[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
                                                                       MeasureMethod=measurementMethodSideA, ReactorVolume=ReactorVolumeSideA, InitialFreeVolume=InitialFreeVolumeSideA, 
                                                                       SubstrateNumber=SubstrateNumberSideA, MixRule=MixRuleSideA,
                                                                       Fraction1=Fraction1SideA, Fraction2=Fraction2SideA, Fraction3=Fraction3SideA, Fraction4=Fraction4SideA, WaterFraction=WaterFractionSideA,
@@ -291,8 +365,8 @@ class BMP(Resource):
                                                                       ST4=ST4SideA, SV4=SV4SideA, rho4=rho4SideA, Cc4=Cc4SideA, Ch4=Ch4SideA, Co4=Co4SideA,Cn4=Cn4SideA, Cs4=Cs4SideA,
                                                                       OperationMethod = OperationMethodSideA, Model=ModelSideA)
 
-        SideA = bmp_instances[user_idSideA]
-        if user_data_sideA not in data_instances:
+        SideA = bmp_instancesSideA[user_idSideA]
+        if user_data_sideA not in data_instancesSideA:
           SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
           DataSideA = SideA.PlantSideA
           DataInterfaz = SideA.PlantEstimation
@@ -311,15 +385,19 @@ class BMP(Resource):
           R103 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R103", ReactorData = R103_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
           R104 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R104", ReactorData = R104_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
           R105 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R105", ReactorData = R105_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-          data_instances[user_data_sideA] = [R101, R102, R103, R104, R105]
+          data_instancesSideA[user_data_sideA] = [R101, R102, R103, R104, R105]
         
-        R101_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R101", ReactorData = data_instances[user_data_sideA][0], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
-        R102_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R102", ReactorData = data_instances[user_data_sideA][1], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
-        R103_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R103", ReactorData = data_instances[user_data_sideA][2], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
-        R104_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R104", ReactorData = data_instances[user_data_sideA][3], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
-        R105_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R105", ReactorData = data_instances[user_data_sideA][4], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R101_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R101", ReactorData = data_instancesSideA[user_data_sideA][0], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R102_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R102", ReactorData = data_instancesSideA[user_data_sideA][1], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R103_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R103", ReactorData = data_instancesSideA[user_data_sideA][2], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R104_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R104", ReactorData = data_instancesSideA[user_data_sideA][3], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R105_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R105", ReactorData = data_instancesSideA[user_data_sideA][4], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
         
-        R101_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R101", ReactorData = data_instances[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
+        R101_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R101", ReactorData = data_instancesSideA[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
+        R102_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R102", ReactorData = data_instancesSideA[user_data_sideA][1], Vrxn = ReactorVolumeSideA)
+        R103_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R103", ReactorData = data_instancesSideA[user_data_sideA][2], Vrxn = ReactorVolumeSideA)
+        R104_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R104", ReactorData = data_instancesSideA[user_data_sideA][3], Vrxn = ReactorVolumeSideA)
+        R105_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R105", ReactorData = data_instancesSideA[user_data_sideA][4], Vrxn = ReactorVolumeSideA)
         #Output variables
         #R101
         bmp_output["mixVelocityR101"] = float(R101_exit[0]) 
@@ -335,11 +413,11 @@ class BMP(Resource):
         bmp_output["TempR101"] = float(R101_exit[6])  
         bmp_output["pHR101"] = float(R101_exit[7])
          #---- Productos de reacción en moles [mol]
-        bmp_output["methanemolR102"] =float(R101_exit[8])
-        bmp_output["carbondioxidemolR102"] = float(R101_exit[9])
-        bmp_output["oxygenmolR102"] = float(R101_exit[10])
-        bmp_output["hydrogensulfurmolR102"] = float(R101_exit[11])
-        bmp_output["hydrogenmolR102"] = float(R101_exit[12]) 
+        bmp_output["methanemolR101"] =float(R101_exit[8])
+        bmp_output["carbondioxidemolR101"] = float(R101_exit[9])
+        bmp_output["oxygenmolR101"] = float(R101_exit[10])
+        bmp_output["hydrogensulfurmolR101"] = float(R101_exit[11])
+        bmp_output["hydrogenmolR101"] = float(R101_exit[12]) 
         #---- Gas concentration
         bmp_output["methaneconcentrationR101"] = float(R101_exit[13])
         bmp_output["carbondioxideconcentrationR101"] = float(R101_exit[14])
@@ -358,33 +436,908 @@ class BMP(Resource):
         bmp_output["storagebiogasR101"] = float(R101_exit[25])
         bmp_output["accumbiogasR101"] = float(R101_exit[26])
         bmp_output["EnergyR101"] = float(R101_exit[27])
-        bmp_output["LHVR101"] = 0
-        
+        bmp_output["LHVR101"] = float(R101_exit[28])
+
+        #R102
+        bmp_output["mixVelocityR102"] = float(R102_exit[0]) 
+        bmp_output["SVR102"] = float(R102_exit[1])
+        bmp_output["OCR102"] = float(R102_exit[2])
+        bmp_output["STR102"] = float(R102_exit[3])
+        bmp_output["XR102"] = float(R102_exit[4])
+        bmp_output["PBMR102"] = float(R102_exit[5])
+        bmp_output["KR102"] = float(R102_opt[0]/60)
+        bmp_output["EaR102"] = float(R102_opt[1])
+        bmp_output["lambdaR102"] = float(R102_opt[2])
+        bmp_output["Objetive"] = float(R102_opt[3])
+        bmp_output["TempR102"] = float(R102_exit[6])  
+        bmp_output["pHR102"] = float(R102_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR102"] =float(R102_exit[8])
+        bmp_output["carbondioxidemolR102"] = float(R102_exit[9])
+        bmp_output["oxygenmolR102"] = float(R102_exit[10])
+        bmp_output["hydrogensulfurmolR102"] = float(R102_exit[11])
+        bmp_output["hydrogenmolR102"] = float(R102_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR102"] = float(R102_exit[13])
+        bmp_output["carbondioxideconcentrationR102"] = float(R102_exit[14])
+        bmp_output["oxygenconcentrationR102"] = float(R102_exit[15])
+        bmp_output["hydrogensulfurconcentrationR102"] = float(R102_exit[16])
+        bmp_output["hydrogenconcentrationR102"] = float(R102_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR102"] = float(R102_exit[18])
+        bmp_output["carbondioxidevolR102"] = float(R102_exit[19])
+        bmp_output["oxygenvolR102"] = float(R102_exit[20])
+        bmp_output["hydrogensulfurvolR102"] = float(R102_exit[21])
+        bmp_output["hydrogenvolR102"] = float(R102_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR102"] = float(R102_exit[23])
+        bmp_output["storagebiogaspressureR102"] = float(R102_exit[24])
+        bmp_output["storagebiogasR102"] = float(R102_exit[25])
+        bmp_output["accumbiogasR102"] = float(R102_exit[26])
+        bmp_output["EnergyR102"] = float(R102_exit[27])
+        bmp_output["LHVR102"] = float(R102_exit[28])
+
+        #R103
+        bmp_output["mixVelocityR103"] = float(R103_exit[0]) 
+        bmp_output["SVR103"] = float(R103_exit[1])
+        bmp_output["OCR103"] = float(R103_exit[2])
+        bmp_output["STR103"] = float(R103_exit[3])
+        bmp_output["XR103"] = float(R103_exit[4])
+        bmp_output["PBMR103"] = float(R103_exit[5])
+        bmp_output["KR103"] = float(R103_opt[0]/60)
+        bmp_output["EaR103"] = float(R103_opt[1])
+        bmp_output["lambdaR103"] = float(R103_opt[2])
+        bmp_output["Objetive"] = float(R103_opt[3])
+        bmp_output["TempR103"] = float(R103_exit[6])  
+        bmp_output["pHR103"] = float(R103_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR103"] =float(R103_exit[8])
+        bmp_output["carbondioxidemolR103"] = float(R103_exit[9])
+        bmp_output["oxygenmolR103"] = float(R103_exit[10])
+        bmp_output["hydrogensulfurmolR103"] = float(R103_exit[11])
+        bmp_output["hydrogenmolR103"] = float(R103_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR103"] = float(R103_exit[13])
+        bmp_output["carbondioxideconcentrationR103"] = float(R103_exit[14])
+        bmp_output["oxygenconcentrationR103"] = float(R103_exit[15])
+        bmp_output["hydrogensulfurconcentrationR103"] = float(R103_exit[16])
+        bmp_output["hydrogenconcentrationR103"] = float(R103_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR103"] = float(R103_exit[18])
+        bmp_output["carbondioxidevolR103"] = float(R103_exit[19])
+        bmp_output["oxygenvolR103"] = float(R103_exit[20])
+        bmp_output["hydrogensulfurvolR103"] = float(R103_exit[21])
+        bmp_output["hydrogenvolR103"] = float(R103_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR103"] = float(R103_exit[23])
+        bmp_output["storagebiogaspressureR103"] = float(R103_exit[24])
+        bmp_output["storagebiogasR103"] = float(R103_exit[25])
+        bmp_output["accumbiogasR103"] = float(R103_exit[26])
+        bmp_output["EnergyR103"] = float(R103_exit[27])
+        bmp_output["LHVR103"] = float(R103_exit[28])
+
+        #R104
+        bmp_output["mixVelocityR104"] = float(R104_exit[0]) 
+        bmp_output["SVR104"] = float(R104_exit[1])
+        bmp_output["OCR104"] = float(R104_exit[2])
+        bmp_output["STR104"] = float(R104_exit[3])
+        bmp_output["XR104"] = float(R104_exit[4])
+        bmp_output["PBMR104"] = float(R104_exit[5])
+        bmp_output["KR104"] = float(R104_opt[0]/60)
+        bmp_output["EaR104"] = float(R104_opt[1])
+        bmp_output["lambdaR104"] = float(R104_opt[2])
+        bmp_output["Objetive"] = float(R104_opt[3])
+        bmp_output["TempR104"] = float(R104_exit[6])  
+        bmp_output["pHR104"] = float(R104_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR104"] =float(R104_exit[8])
+        bmp_output["carbondioxidemolR104"] = float(R104_exit[9])
+        bmp_output["oxygenmolR104"] = float(R104_exit[10])
+        bmp_output["hydrogensulfurmolR104"] = float(R104_exit[11])
+        bmp_output["hydrogenmolR104"] = float(R104_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR104"] = float(R104_exit[13])
+        bmp_output["carbondioxideconcentrationR104"] = float(R104_exit[14])
+        bmp_output["oxygenconcentrationR104"] = float(R104_exit[15])
+        bmp_output["hydrogensulfurconcentrationR104"] = float(R104_exit[16])
+        bmp_output["hydrogenconcentrationR104"] = float(R104_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR104"] = float(R104_exit[18])
+        bmp_output["carbondioxidevolR104"] = float(R104_exit[19])
+        bmp_output["oxygenvolR104"] = float(R104_exit[20])
+        bmp_output["hydrogensulfurvolR104"] = float(R104_exit[21])
+        bmp_output["hydrogenvolR104"] = float(R104_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR104"] = float(R104_exit[23])
+        bmp_output["storagebiogaspressureR104"] = float(R104_exit[24])
+        bmp_output["storagebiogasR104"] = float(R104_exit[25])
+        bmp_output["accumbiogasR104"] = float(R104_exit[26])
+        bmp_output["EnergyR104"] = float(R104_exit[27])
+        bmp_output["LHVR104"] = float(R104_exit[28])
+
+        #R105
+        bmp_output["mixVelocityR105"] = float(R105_exit[0]) 
+        bmp_output["SVR105"] = float(R105_exit[1])
+        bmp_output["OCR105"] = float(R105_exit[2])
+        bmp_output["STR105"] = float(R105_exit[3])
+        bmp_output["XR105"] = float(R105_exit[4])
+        bmp_output["PBMR105"] = float(R105_exit[5])
+        bmp_output["KR105"] = float(R105_opt[0]/60)
+        bmp_output["EaR105"] = float(R105_opt[1])
+        bmp_output["lambdaR105"] = float(R105_opt[2])
+        bmp_output["Objetive"] = float(R105_opt[3])
+        bmp_output["TempR105"] = float(R105_exit[6])  
+        bmp_output["pHR105"] = float(R105_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR105"] =float(R105_exit[8])
+        bmp_output["carbondioxidemolR105"] = float(R105_exit[9])
+        bmp_output["oxygenmolR105"] = float(R105_exit[10])
+        bmp_output["hydrogensulfurmolR105"] = float(R105_exit[11])
+        bmp_output["hydrogenmolR105"] = float(R105_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR105"] = float(R105_exit[13])
+        bmp_output["carbondioxideconcentrationR105"] = float(R105_exit[14])
+        bmp_output["oxygenconcentrationR105"] = float(R105_exit[15])
+        bmp_output["hydrogensulfurconcentrationR105"] = float(R105_exit[16])
+        bmp_output["hydrogenconcentrationR105"] = float(R105_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR105"] = float(R105_exit[18])
+        bmp_output["carbondioxidevolR105"] = float(R105_exit[19])
+        bmp_output["oxygenvolR105"] = float(R105_exit[20])
+        bmp_output["hydrogensulfurvolR105"] = float(R105_exit[21])
+        bmp_output["hydrogenvolR105"] = float(R105_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR105"] = float(R105_exit[23])
+        bmp_output["storagebiogaspressureR105"] = float(R105_exit[24])
+        bmp_output["storagebiogasR105"] = float(R105_exit[25])
+        bmp_output["accumbiogasR105"] = float(R105_exit[26])
+        bmp_output["EnergyR105"] = float(R105_exit[27])
+        bmp_output["LHVR105"] = float(R105_exit[28])
         
 
-        
-      
       #%% Online Mode without training (just show the values from plant) without income from manual interface
-      elif stateSelectionSideA == False and biogas == False and TrainingMode == False:    #online with manual entrance of biogas compositions
-        pass
+      elif stateSelectionSideA == False and biogasSideA == True and TrainingMode == True:    #online with manual entrance of biogas compositions
+        
+        if user_idSideA not in bmp_instancesSideA:
+          bmp_instancesSideA[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideA, ReactorVolume=ReactorVolumeSideA, InitialFreeVolume=InitialFreeVolumeSideA, 
+                                                                      SubstrateNumber=SubstrateNumberSideA, MixRule=MixRuleSideA,
+                                                                      Fraction1=Fraction1SideA, Fraction2=Fraction2SideA, Fraction3=Fraction3SideA, Fraction4=Fraction4SideA, WaterFraction=WaterFractionSideA,
+                                                                      Volume1=Fraction1SideA, Volume2=Fraction2SideA, Volume3=Fraction3SideA, Volume4=Fraction4SideA, WaterVolume=WaterFractionSideA, 
+                                                                      Weight1=Fraction1SideA, Weight2=Fraction2SideA, Weight3=Fraction3SideA, Weight4=Fraction4SideA, WaterWeight=WaterFractionSideA,
+                                                                      ST1=ST1SideA, SV1=SV1SideA, rho1=rho1SideA, Cc1=Cc1SideA, Ch1=Ch1SideA, Co1=Co1SideA,Cn1=Cn1SideA, Cs1=Cs1SideA,
+                                                                      ST2=ST2SideA, SV2=SV2SideA, rho2=rho2SideA, Cc2=Cc2SideA, Ch2=Ch2SideA, Co2=Co2SideA,Cn2=Cn2SideA, Cs2=Cs2SideA,
+                                                                      ST3=ST3SideA, SV3=SV3SideA, rho3=rho3SideA, Cc3=Cc3SideA, Ch3=Ch3SideA, Co3=Co3SideA,Cn3=Cn3SideA, Cs3=Cs3SideA,
+                                                                      ST4=ST4SideA, SV4=SV4SideA, rho4=rho4SideA, Cc4=Cc4SideA, Ch4=Ch4SideA, Co4=Co4SideA,Cn4=Cn4SideA, Cs4=Cs4SideA,
+                                                                      OperationMethod = OperationMethodSideA, Model=ModelSideA)
       
+        SideA = bmp_instancesSideA[user_idSideA]
+        if user_data_sideA not in data_instances_SideA:
+          SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
+          DataSideA = SideA.PlantSideA
+          DataInterfaz = SideA.PlantEstimation
+          SideA.ProcessData(SideA = True, SideB = False, MeasureMethodSideA = measurementMethodSideA, MeasureMethodSideB = measurementMethodSideA, DataPlantSideA = DataSideA, DataPlantSideB = DataSideA,  
+                           DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideA)
+          R101_data = SideA.R101_data
+          R102_data = SideA.R102_data
+          R103_data = SideA.R103_data
+          R104_data = SideA.R104_data
+          R105_data = SideA.R105_data
+          if SideA.OperationMethod in ["Time", "Injection"]:
+            SideA.SubstrateFeeding()
+          
+          if SideA.OperationMethod in ["Time", "Injection"]:
+            SideA.SubstrateFeeding()
+          
+          R101 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R101", ReactorData = R101_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R101, xCO2=xCO2R101, xO2=xO2R101, xH2S=xH2SR101, XH2=xH2R101)
+          R102 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R102", ReactorData = R102_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R102, xCO2=xCO2R102, xO2=xO2R102, xH2S=xH2SR102, XH2=xH2R102)
+          R103 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R103", ReactorData = R103_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R103, xCO2=xCO2R103, xO2=xO2R103, xH2S=xH2SR103, XH2=xH2R103)
+          R104 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R104", ReactorData = R104_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R104, xCO2=xCO2R104, xO2=xO2R104, xH2S=xH2SR104, XH2=xH2R104)
+          R105 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R105", ReactorData = R105_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R105, xCO2=xCO2R105, xO2=xO2R105, xH2S=xH2SR105, XH2=xH2R105)
+          data_instances_SideA[user_data_sideA] = [R101, R102, R103, R104, R105]
+        
+        R101_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R101", ReactorData = data_instances_SideA[user_data_sideA][0], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R102_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R102", ReactorData = data_instances_SideA[user_data_sideA][1], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R103_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R103", ReactorData = data_instances_SideA[user_data_sideA][2], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R104_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R104", ReactorData = data_instances_SideA[user_data_sideA][3], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        R105_opt = SideA.ReactorOptimization(Model = ModelSideA, iterations_counts = iteration, Reactorname = "R105", ReactorData = data_instances_SideA[user_data_sideA][4], ReactorVolume = ReactorVolumeSideA, OperationMethod = OperationMethodSideA)
+        
+        R101_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R101", ReactorData = data_instances_SideA[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
+        R102_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R102", ReactorData = data_instances_SideA[user_data_sideA][1], Vrxn = ReactorVolumeSideA)
+        R103_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R103", ReactorData = data_instances_SideA[user_data_sideA][2], Vrxn = ReactorVolumeSideA)
+        R104_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R104", ReactorData = data_instances_SideA[user_data_sideA][3], Vrxn = ReactorVolumeSideA)
+        R105_exit = SideA.exit_variable_training (iterations_counts = iteration, ReactorName = "R105", ReactorData = data_instances_SideA[user_data_sideA][4], Vrxn = ReactorVolumeSideA)
+        #Output variables
+        #R101
+        bmp_output["mixVelocityR101"] = float(R101_exit[0]) 
+        bmp_output["SVR101"] = float(R101_exit[1])
+        bmp_output["OCR101"] = float(R101_exit[2])
+        bmp_output["STR101"] = float(R101_exit[3])
+        bmp_output["XR101"] = float(R101_exit[4])
+        bmp_output["PBMR101"] = float(R101_exit[5])
+        bmp_output["KR101"] = float(R101_opt[0]/60)
+        bmp_output["EaR101"] = float(R101_opt[1])
+        bmp_output["lambdaR101"] = float(R101_opt[2])
+        bmp_output["Objetive"] = float(R101_opt[3])
+        bmp_output["TempR101"] = float(R101_exit[6])  
+        bmp_output["pHR101"] = float(R101_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR101"] =float(R101_exit[8])
+        bmp_output["carbondioxidemolR101"] = float(R101_exit[9])
+        bmp_output["oxygenmolR101"] = float(R101_exit[10])
+        bmp_output["hydrogensulfurmolR101"] = float(R101_exit[11])
+        bmp_output["hydrogenmolR101"] = float(R101_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR101"] = float(R101_exit[13])
+        bmp_output["carbondioxideconcentrationR101"] = float(R101_exit[14])
+        bmp_output["oxygenconcentrationR101"] = float(R101_exit[15])
+        bmp_output["hydrogensulfurconcentrationR101"] = float(R101_exit[16])
+        bmp_output["hydrogenconcentrationR101"] = float(R101_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR101"] = float(R101_exit[18])
+        bmp_output["carbondioxidevolR101"] = float(R101_exit[19])
+        bmp_output["oxygenvolR101"] = float(R101_exit[20])
+        bmp_output["hydrogensulfurvolR101"] = float(R101_exit[21])
+        bmp_output["hydrogenvolR101"] = float(R101_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR101"] = float(R101_exit[23])
+        bmp_output["storagebiogaspressureR101"] = float(R101_exit[24])
+        bmp_output["storagebiogasR101"] = float(R101_exit[25])
+        bmp_output["accumbiogasR101"] = float(R101_exit[26])
+        bmp_output["EnergyR101"] = float(R101_exit[27])
+        bmp_output["LHVR101"] = float(R101_exit[28])
+
+        #R102
+        bmp_output["mixVelocityR102"] = float(R102_exit[0]) 
+        bmp_output["SVR102"] = float(R102_exit[1])
+        bmp_output["OCR102"] = float(R102_exit[2])
+        bmp_output["STR102"] = float(R102_exit[3])
+        bmp_output["XR102"] = float(R102_exit[4])
+        bmp_output["PBMR102"] = float(R102_exit[5])
+        bmp_output["KR102"] = float(R102_opt[0]/60)
+        bmp_output["EaR102"] = float(R102_opt[1])
+        bmp_output["lambdaR102"] = float(R102_opt[2])
+        bmp_output["Objetive"] = float(R102_opt[3])
+        bmp_output["TempR102"] = float(R102_exit[6])  
+        bmp_output["pHR102"] = float(R102_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR102"] =float(R102_exit[8])
+        bmp_output["carbondioxidemolR102"] = float(R102_exit[9])
+        bmp_output["oxygenmolR102"] = float(R102_exit[10])
+        bmp_output["hydrogensulfurmolR102"] = float(R102_exit[11])
+        bmp_output["hydrogenmolR102"] = float(R102_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR102"] = float(R102_exit[13])
+        bmp_output["carbondioxideconcentrationR102"] = float(R102_exit[14])
+        bmp_output["oxygenconcentrationR102"] = float(R102_exit[15])
+        bmp_output["hydrogensulfurconcentrationR102"] = float(R102_exit[16])
+        bmp_output["hydrogenconcentrationR102"] = float(R102_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR102"] = float(R102_exit[18])
+        bmp_output["carbondioxidevolR102"] = float(R102_exit[19])
+        bmp_output["oxygenvolR102"] = float(R102_exit[20])
+        bmp_output["hydrogensulfurvolR102"] = float(R102_exit[21])
+        bmp_output["hydrogenvolR102"] = float(R102_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR102"] = float(R102_exit[23])
+        bmp_output["storagebiogaspressureR102"] = float(R102_exit[24])
+        bmp_output["storagebiogasR102"] = float(R102_exit[25])
+        bmp_output["accumbiogasR102"] = float(R102_exit[26])
+        bmp_output["EnergyR102"] = float(R102_exit[27])
+        bmp_output["LHVR102"] = float(R102_exit[28])
+
+        #R103
+        bmp_output["mixVelocityR103"] = float(R103_exit[0]) 
+        bmp_output["SVR103"] = float(R103_exit[1])
+        bmp_output["OCR103"] = float(R103_exit[2])
+        bmp_output["STR103"] = float(R103_exit[3])
+        bmp_output["XR103"] = float(R103_exit[4])
+        bmp_output["PBMR103"] = float(R103_exit[5])
+        bmp_output["KR103"] = float(R103_opt[0]/60)
+        bmp_output["EaR103"] = float(R103_opt[1])
+        bmp_output["lambdaR103"] = float(R103_opt[2])
+        bmp_output["Objetive"] = float(R103_opt[3])
+        bmp_output["TempR103"] = float(R103_exit[6])  
+        bmp_output["pHR103"] = float(R103_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR103"] =float(R103_exit[8])
+        bmp_output["carbondioxidemolR103"] = float(R103_exit[9])
+        bmp_output["oxygenmolR103"] = float(R103_exit[10])
+        bmp_output["hydrogensulfurmolR103"] = float(R103_exit[11])
+        bmp_output["hydrogenmolR103"] = float(R103_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR103"] = float(R103_exit[13])
+        bmp_output["carbondioxideconcentrationR103"] = float(R103_exit[14])
+        bmp_output["oxygenconcentrationR103"] = float(R103_exit[15])
+        bmp_output["hydrogensulfurconcentrationR103"] = float(R103_exit[16])
+        bmp_output["hydrogenconcentrationR103"] = float(R103_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR103"] = float(R103_exit[18])
+        bmp_output["carbondioxidevolR103"] = float(R103_exit[19])
+        bmp_output["oxygenvolR103"] = float(R103_exit[20])
+        bmp_output["hydrogensulfurvolR103"] = float(R103_exit[21])
+        bmp_output["hydrogenvolR103"] = float(R103_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR103"] = float(R103_exit[23])
+        bmp_output["storagebiogaspressureR103"] = float(R103_exit[24])
+        bmp_output["storagebiogasR103"] = float(R103_exit[25])
+        bmp_output["accumbiogasR103"] = float(R103_exit[26])
+        bmp_output["EnergyR103"] = float(R103_exit[27])
+        bmp_output["LHVR103"] = float(R103_exit[28])
+
+        #R104
+        bmp_output["mixVelocityR104"] = float(R104_exit[0]) 
+        bmp_output["SVR104"] = float(R104_exit[1])
+        bmp_output["OCR104"] = float(R104_exit[2])
+        bmp_output["STR104"] = float(R104_exit[3])
+        bmp_output["XR104"] = float(R104_exit[4])
+        bmp_output["PBMR104"] = float(R104_exit[5])
+        bmp_output["KR104"] = float(R104_opt[0]/60)
+        bmp_output["EaR104"] = float(R104_opt[1])
+        bmp_output["lambdaR104"] = float(R104_opt[2])
+        bmp_output["Objetive"] = float(R104_opt[3])
+        bmp_output["TempR104"] = float(R104_exit[6])  
+        bmp_output["pHR104"] = float(R104_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR104"] =float(R104_exit[8])
+        bmp_output["carbondioxidemolR104"] = float(R104_exit[9])
+        bmp_output["oxygenmolR104"] = float(R104_exit[10])
+        bmp_output["hydrogensulfurmolR104"] = float(R104_exit[11])
+        bmp_output["hydrogenmolR104"] = float(R104_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR104"] = float(R104_exit[13])
+        bmp_output["carbondioxideconcentrationR104"] = float(R104_exit[14])
+        bmp_output["oxygenconcentrationR104"] = float(R104_exit[15])
+        bmp_output["hydrogensulfurconcentrationR104"] = float(R104_exit[16])
+        bmp_output["hydrogenconcentrationR104"] = float(R104_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR104"] = float(R104_exit[18])
+        bmp_output["carbondioxidevolR104"] = float(R104_exit[19])
+        bmp_output["oxygenvolR104"] = float(R104_exit[20])
+        bmp_output["hydrogensulfurvolR104"] = float(R104_exit[21])
+        bmp_output["hydrogenvolR104"] = float(R104_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR104"] = float(R104_exit[23])
+        bmp_output["storagebiogaspressureR104"] = float(R104_exit[24])
+        bmp_output["storagebiogasR104"] = float(R104_exit[25])
+        bmp_output["accumbiogasR104"] = float(R104_exit[26])
+        bmp_output["EnergyR104"] = float(R104_exit[27])
+        bmp_output["LHVR104"] = float(R104_exit[28])
+
+        #R105
+        bmp_output["mixVelocityR105"] = float(R105_exit[0]) 
+        bmp_output["SVR105"] = float(R105_exit[1])
+        bmp_output["OCR105"] = float(R105_exit[2])
+        bmp_output["STR105"] = float(R105_exit[3])
+        bmp_output["XR105"] = float(R105_exit[4])
+        bmp_output["PBMR105"] = float(R105_exit[5])
+        bmp_output["KR105"] = float(R105_opt[0]/60)
+        bmp_output["EaR105"] = float(R105_opt[1])
+        bmp_output["lambdaR105"] = float(R105_opt[2])
+        bmp_output["Objetive"] = float(R105_opt[3])
+        bmp_output["TempR105"] = float(R105_exit[6])  
+        bmp_output["pHR105"] = float(R105_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR105"] =float(R105_exit[8])
+        bmp_output["carbondioxidemolR105"] = float(R105_exit[9])
+        bmp_output["oxygenmolR105"] = float(R105_exit[10])
+        bmp_output["hydrogensulfurmolR105"] = float(R105_exit[11])
+        bmp_output["hydrogenmolR105"] = float(R105_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR105"] = float(R105_exit[13])
+        bmp_output["carbondioxideconcentrationR105"] = float(R105_exit[14])
+        bmp_output["oxygenconcentrationR105"] = float(R105_exit[15])
+        bmp_output["hydrogensulfurconcentrationR105"] = float(R105_exit[16])
+        bmp_output["hydrogenconcentrationR105"] = float(R105_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR105"] = float(R105_exit[18])
+        bmp_output["carbondioxidevolR105"] = float(R105_exit[19])
+        bmp_output["oxygenvolR105"] = float(R105_exit[20])
+        bmp_output["hydrogensulfurvolR105"] = float(R105_exit[21])
+        bmp_output["hydrogenvolR105"] = float(R105_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR105"] = float(R105_exit[23])
+        bmp_output["storagebiogaspressureR105"] = float(R105_exit[24])
+        bmp_output["storagebiogasR105"] = float(R105_exit[25])
+        bmp_output["accumbiogasR105"] = float(R105_exit[26])
+        bmp_output["EnergyR105"] = float(R105_exit[27])
+        bmp_output["LHVR105"] = float(R105_exit[28])
+          
+          
       #%% Online Mode without training With biogas composition from frontend
-      elif stateSelectionSideA == False and biogas == True and TrainingMode == False:
-        pass
-    
+      elif stateSelectionSideA == False and biogasSideA == True and TrainingMode == False:  #running online without training
+        
+        if user_idSideA not in bmp_instancesSideA:
+          bmp_instancesSideA[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideA, ReactorVolume=ReactorVolumeSideA, InitialFreeVolume=InitialFreeVolumeSideA, 
+                                                                      SubstrateNumber=SubstrateNumberSideA, MixRule=MixRuleSideA,
+                                                                      Fraction1=Fraction1SideA, Fraction2=Fraction2SideA, Fraction3=Fraction3SideA, Fraction4=Fraction4SideA, WaterFraction=WaterFractionSideA,
+                                                                      Volume1=Fraction1SideA, Volume2=Fraction2SideA, Volume3=Fraction3SideA, Volume4=Fraction4SideA, WaterVolume=WaterFractionSideA, 
+                                                                      Weight1=Fraction1SideA, Weight2=Fraction2SideA, Weight3=Fraction3SideA, Weight4=Fraction4SideA, WaterWeight=WaterFractionSideA,
+                                                                      ST1=ST1SideA, SV1=SV1SideA, rho1=rho1SideA, Cc1=Cc1SideA, Ch1=Ch1SideA, Co1=Co1SideA,Cn1=Cn1SideA, Cs1=Cs1SideA,
+                                                                      ST2=ST2SideA, SV2=SV2SideA, rho2=rho2SideA, Cc2=Cc2SideA, Ch2=Ch2SideA, Co2=Co2SideA,Cn2=Cn2SideA, Cs2=Cs2SideA,
+                                                                      ST3=ST3SideA, SV3=SV3SideA, rho3=rho3SideA, Cc3=Cc3SideA, Ch3=Ch3SideA, Co3=Co3SideA,Cn3=Cn3SideA, Cs3=Cs3SideA,
+                                                                      ST4=ST4SideA, SV4=SV4SideA, rho4=rho4SideA, Cc4=Cc4SideA, Ch4=Ch4SideA, Co4=Co4SideA,Cn4=Cn4SideA, Cs4=Cs4SideA,
+                                                                      OperationMethod = OperationMethodSideA, Model=ModelSideA)
+      
+        SideA = bmp_instancesSideA[user_idSideA]
+        
+        SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
+        DataSideA = SideA.PlantSideA
+        DataInterfaz = SideA.PlantEstimation
+        SideA.ProcessData(SideA = True, SideB = False, MeasureMethodSideA = measurementMethodSideA, MeasureMethodSideB = measurementMethodSideA, DataPlantSideA = DataSideA, DataPlantSideB = DataSideA,  
+                          DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideA)
+        R101_data = SideA.R101_data
+        R102_data = SideA.R102_data
+        R103_data = SideA.R103_data
+        R104_data = SideA.R104_data
+        R105_data = SideA.R105_data
+        if SideA.OperationMethod in ["Time", "Injection"]:
+          SideA.SubstrateFeeding()
+        
+        if SideA.OperationMethod in ["Time", "Injection"]:
+          SideA.SubstrateFeeding()
+        
+        R101 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R101", ReactorData = R101_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R101, xCO2=xCO2R101, xO2=xO2R101, xH2S=xH2SR101, XH2=xH2R101)
+        R102 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R102", ReactorData = R102_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R102, xCO2=xCO2R102, xO2=xO2R102, xH2S=xH2SR102, XH2=xH2R102)
+        R103 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R103", ReactorData = R103_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R103, xCO2=xCO2R103, xO2=xO2R103, xH2S=xH2SR103, XH2=xH2R103)
+        R104 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R104", ReactorData = R104_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R104, xCO2=xCO2R104, xO2=xO2R104, xH2S=xH2SR104, XH2=xH2R104)
+        R105 = SideA.StochoimetricExpendtire_Reactor(ReactorName="R105", ReactorData = R105_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA, xCH4=xCH4R105, xCO2=xCO2R105, xO2=xO2R105, xH2S=xH2SR105, XH2=xH2R105)
+        data_instancesSideA[user_data_sideA] = [R101, R102, R103, R104, R105]
+        
+        R101_exit = SideA.exit_variable_online (ReactorName = "R101", ReactorData = data_instancesSideA[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
+        R102_exit = SideA.exit_variable_online (ReactorName = "R102", ReactorData = data_instancesSideA[user_data_sideA][1], Vrxn = ReactorVolumeSideA)
+        R103_exit = SideA.exit_variable_online (ReactorName = "R103", ReactorData = data_instancesSideA[user_data_sideA][2], Vrxn = ReactorVolumeSideA)
+        R104_exit = SideA.exit_variable_online (ReactorName = "R104", ReactorData = data_instancesSideA[user_data_sideA][3], Vrxn = ReactorVolumeSideA)
+        R105_exit = SideA.exit_variable_online (ReactorName = "R105", ReactorData = data_instancesSideA[user_data_sideA][4], Vrxn = ReactorVolumeSideA)
+        #Output variables
+        #R101
+        bmp_output["mixVelocityR101"] = float(R101_exit[0]) 
+        bmp_output["SVR101"] = float(R101_exit[1])
+        bmp_output["OCR101"] = float(R101_exit[2])
+        bmp_output["STR101"] = float(R101_exit[3])
+        bmp_output["XR101"] = float(R101_exit[4])
+        bmp_output["PBMR101"] = float(R101_exit[5])
+        bmp_output["KR101"] = float(0)
+        bmp_output["EaR101"] = float(0)
+        bmp_output["lambdaR101"] = float(R101_opt[2])
+        bmp_output["Objetive"] = float(R101_opt[3])
+        bmp_output["TempR101"] = float(R101_exit[6])  
+        bmp_output["pHR101"] = float(R101_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR101"] =float(R101_exit[8])
+        bmp_output["carbondioxidemolR101"] = float(R101_exit[9])
+        bmp_output["oxygenmolR101"] = float(R101_exit[10])
+        bmp_output["hydrogensulfurmolR101"] = float(R101_exit[11])
+        bmp_output["hydrogenmolR101"] = float(R101_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR101"] = float(R101_exit[13])
+        bmp_output["carbondioxideconcentrationR101"] = float(R101_exit[14])
+        bmp_output["oxygenconcentrationR101"] = float(R101_exit[15])
+        bmp_output["hydrogensulfurconcentrationR101"] = float(R101_exit[16])
+        bmp_output["hydrogenconcentrationR101"] = float(R101_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR101"] = float(R101_exit[18])
+        bmp_output["carbondioxidevolR101"] = float(R101_exit[19])
+        bmp_output["oxygenvolR101"] = float(R101_exit[20])
+        bmp_output["hydrogensulfurvolR101"] = float(R101_exit[21])
+        bmp_output["hydrogenvolR101"] = float(R101_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR101"] = float(R101_exit[23])
+        bmp_output["storagebiogaspressureR101"] = float(R101_exit[24])
+        bmp_output["storagebiogasR101"] = float(R101_exit[25])
+        bmp_output["accumbiogasR101"] = float(R101_exit[26])
+        bmp_output["EnergyR101"] = float(R101_exit[27])
+        bmp_output["LHVR101"] = float(R101_exit[28])
+
+        #R102
+        bmp_output["mixVelocityR102"] = float(R102_exit[0]) 
+        bmp_output["SVR102"] = float(R102_exit[1])
+        bmp_output["OCR102"] = float(R102_exit[2])
+        bmp_output["STR102"] = float(R102_exit[3])
+        bmp_output["XR102"] = float(R102_exit[4])
+        bmp_output["PBMR102"] = float(R102_exit[5])
+        bmp_output["KR102"] = float(0)
+        bmp_output["EaR102"] = float(0)
+        bmp_output["lambdaR102"] = float(R102_opt[2])
+        bmp_output["Objetive"] = float(R102_opt[3])
+        bmp_output["TempR102"] = float(R102_exit[6])  
+        bmp_output["pHR102"] = float(R102_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR102"] =float(R102_exit[8])
+        bmp_output["carbondioxidemolR102"] = float(R102_exit[9])
+        bmp_output["oxygenmolR102"] = float(R102_exit[10])
+        bmp_output["hydrogensulfurmolR102"] = float(R102_exit[11])
+        bmp_output["hydrogenmolR102"] = float(R102_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR102"] = float(R102_exit[13])
+        bmp_output["carbondioxideconcentrationR102"] = float(R102_exit[14])
+        bmp_output["oxygenconcentrationR102"] = float(R102_exit[15])
+        bmp_output["hydrogensulfurconcentrationR102"] = float(R102_exit[16])
+        bmp_output["hydrogenconcentrationR102"] = float(R102_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR102"] = float(R102_exit[18])
+        bmp_output["carbondioxidevolR102"] = float(R102_exit[19])
+        bmp_output["oxygenvolR102"] = float(R102_exit[20])
+        bmp_output["hydrogensulfurvolR102"] = float(R102_exit[21])
+        bmp_output["hydrogenvolR102"] = float(R102_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR102"] = float(R102_exit[23])
+        bmp_output["storagebiogaspressureR102"] = float(R102_exit[24])
+        bmp_output["storagebiogasR102"] = float(R102_exit[25])
+        bmp_output["accumbiogasR102"] = float(R102_exit[26])
+        bmp_output["EnergyR102"] = float(R102_exit[27])
+        bmp_output["LHVR102"] = float(R102_exit[28])
+
+        #R103
+        bmp_output["mixVelocityR103"] = float(R103_exit[0]) 
+        bmp_output["SVR103"] = float(R103_exit[1])
+        bmp_output["OCR103"] = float(R103_exit[2])
+        bmp_output["STR103"] = float(R103_exit[3])
+        bmp_output["XR103"] = float(R103_exit[4])
+        bmp_output["PBMR103"] = float(R103_exit[5])
+        bmp_output["KR103"] = float(0)
+        bmp_output["EaR103"] = float(0)
+        bmp_output["lambdaR103"] = float(R103_opt[2])
+        bmp_output["Objetive"] = float(R103_opt[3])
+        bmp_output["TempR103"] = float(R103_exit[6])  
+        bmp_output["pHR103"] = float(R103_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR103"] =float(R103_exit[8])
+        bmp_output["carbondioxidemolR103"] = float(R103_exit[9])
+        bmp_output["oxygenmolR103"] = float(R103_exit[10])
+        bmp_output["hydrogensulfurmolR103"] = float(R103_exit[11])
+        bmp_output["hydrogenmolR103"] = float(R103_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR103"] = float(R103_exit[13])
+        bmp_output["carbondioxideconcentrationR103"] = float(R103_exit[14])
+        bmp_output["oxygenconcentrationR103"] = float(R103_exit[15])
+        bmp_output["hydrogensulfurconcentrationR103"] = float(R103_exit[16])
+        bmp_output["hydrogenconcentrationR103"] = float(R103_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR103"] = float(R103_exit[18])
+        bmp_output["carbondioxidevolR103"] = float(R103_exit[19])
+        bmp_output["oxygenvolR103"] = float(R103_exit[20])
+        bmp_output["hydrogensulfurvolR103"] = float(R103_exit[21])
+        bmp_output["hydrogenvolR103"] = float(R103_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR103"] = float(R103_exit[23])
+        bmp_output["storagebiogaspressureR103"] = float(R103_exit[24])
+        bmp_output["storagebiogasR103"] = float(R103_exit[25])
+        bmp_output["accumbiogasR103"] = float(R103_exit[26])
+        bmp_output["EnergyR103"] = float(R103_exit[27])
+        bmp_output["LHVR103"] = float(R103_exit[28])
+
+        #R104
+        bmp_output["mixVelocityR104"] = float(R104_exit[0]) 
+        bmp_output["SVR104"] = float(R104_exit[1])
+        bmp_output["OCR104"] = float(R104_exit[2])
+        bmp_output["STR104"] = float(R104_exit[3])
+        bmp_output["XR104"] = float(R104_exit[4])
+        bmp_output["PBMR104"] = float(R104_exit[5])
+        bmp_output["KR104"] = float(0)
+        bmp_output["EaR104"] = float(0)
+        bmp_output["lambdaR104"] = float(R104_opt[2])
+        bmp_output["Objetive"] = float(R104_opt[3])
+        bmp_output["TempR104"] = float(R104_exit[6])  
+        bmp_output["pHR104"] = float(R104_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR104"] =float(R104_exit[8])
+        bmp_output["carbondioxidemolR104"] = float(R104_exit[9])
+        bmp_output["oxygenmolR104"] = float(R104_exit[10])
+        bmp_output["hydrogensulfurmolR104"] = float(R104_exit[11])
+        bmp_output["hydrogenmolR104"] = float(R104_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR104"] = float(R104_exit[13])
+        bmp_output["carbondioxideconcentrationR104"] = float(R104_exit[14])
+        bmp_output["oxygenconcentrationR104"] = float(R104_exit[15])
+        bmp_output["hydrogensulfurconcentrationR104"] = float(R104_exit[16])
+        bmp_output["hydrogenconcentrationR104"] = float(R104_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR104"] = float(R104_exit[18])
+        bmp_output["carbondioxidevolR104"] = float(R104_exit[19])
+        bmp_output["oxygenvolR104"] = float(R104_exit[20])
+        bmp_output["hydrogensulfurvolR104"] = float(R104_exit[21])
+        bmp_output["hydrogenvolR104"] = float(R104_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR104"] = float(R104_exit[23])
+        bmp_output["storagebiogaspressureR104"] = float(R104_exit[24])
+        bmp_output["storagebiogasR104"] = float(R104_exit[25])
+        bmp_output["accumbiogasR104"] = float(R104_exit[26])
+        bmp_output["EnergyR104"] = float(R104_exit[27])
+        bmp_output["LHVR104"] = float(R104_exit[28])
+
+        #R105
+        bmp_output["mixVelocityR105"] = float(R105_exit[0]) 
+        bmp_output["SVR105"] = float(R105_exit[1])
+        bmp_output["OCR105"] = float(R105_exit[2])
+        bmp_output["STR105"] = float(R105_exit[3])
+        bmp_output["XR105"] = float(R105_exit[4])
+        bmp_output["PBMR105"] = float(R105_exit[5])
+        bmp_output["KR105"] = float(0)
+        bmp_output["EaR105"] = float(0)
+        bmp_output["lambdaR105"] = float(R105_opt[2])
+        bmp_output["Objetive"] = float(R105_opt[3])
+        bmp_output["TempR105"] = float(R105_exit[6])  
+        bmp_output["pHR105"] = float(R105_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR105"] =float(R105_exit[8])
+        bmp_output["carbondioxidemolR105"] = float(R105_exit[9])
+        bmp_output["oxygenmolR105"] = float(R105_exit[10])
+        bmp_output["hydrogensulfurmolR105"] = float(R105_exit[11])
+        bmp_output["hydrogenmolR105"] = float(R105_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR105"] = float(R105_exit[13])
+        bmp_output["carbondioxideconcentrationR105"] = float(R105_exit[14])
+        bmp_output["oxygenconcentrationR105"] = float(R105_exit[15])
+        bmp_output["hydrogensulfurconcentrationR105"] = float(R105_exit[16])
+        bmp_output["hydrogenconcentrationR105"] = float(R105_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR105"] = float(R105_exit[18])
+        bmp_output["carbondioxidevolR105"] = float(R105_exit[19])
+        bmp_output["oxygenvolR105"] = float(R105_exit[20])
+        bmp_output["hydrogensulfurvolR105"] = float(R105_exit[21])
+        bmp_output["hydrogenvolR105"] = float(R105_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR105"] = float(R105_exit[23])
+        bmp_output["storagebiogaspressureR105"] = float(R105_exit[24])
+        bmp_output["storagebiogasR105"] = float(R105_exit[25])
+        bmp_output["accumbiogasR105"] = float(R105_exit[26])
+        bmp_output["EnergyR105"] = float(R105_exit[27])
+        bmp_output["LHVR105"] = float(R105_exit[28])
+
+      #%% Online Mode without training With biogas composition from frontend
+      elif stateSelectionSideA == False and biogasSideA == False and TrainingMode == False:  #running online without training
+        
+        if user_idSideA not in bmp_instancesSideA:
+          bmp_instancesSideA[user_idSideA] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideA, ReactorVolume=ReactorVolumeSideA, InitialFreeVolume=InitialFreeVolumeSideA, 
+                                                                      SubstrateNumber=SubstrateNumberSideA, MixRule=MixRuleSideA,
+                                                                      Fraction1=Fraction1SideA, Fraction2=Fraction2SideA, Fraction3=Fraction3SideA, Fraction4=Fraction4SideA, WaterFraction=WaterFractionSideA,
+                                                                      Volume1=Fraction1SideA, Volume2=Fraction2SideA, Volume3=Fraction3SideA, Volume4=Fraction4SideA, WaterVolume=WaterFractionSideA, 
+                                                                      Weight1=Fraction1SideA, Weight2=Fraction2SideA, Weight3=Fraction3SideA, Weight4=Fraction4SideA, WaterWeight=WaterFractionSideA,
+                                                                      ST1=ST1SideA, SV1=SV1SideA, rho1=rho1SideA, Cc1=Cc1SideA, Ch1=Ch1SideA, Co1=Co1SideA,Cn1=Cn1SideA, Cs1=Cs1SideA,
+                                                                      ST2=ST2SideA, SV2=SV2SideA, rho2=rho2SideA, Cc2=Cc2SideA, Ch2=Ch2SideA, Co2=Co2SideA,Cn2=Cn2SideA, Cs2=Cs2SideA,
+                                                                      ST3=ST3SideA, SV3=SV3SideA, rho3=rho3SideA, Cc3=Cc3SideA, Ch3=Ch3SideA, Co3=Co3SideA,Cn3=Cn3SideA, Cs3=Cs3SideA,
+                                                                      ST4=ST4SideA, SV4=SV4SideA, rho4=rho4SideA, Cc4=Cc4SideA, Ch4=Ch4SideA, Co4=Co4SideA,Cn4=Cn4SideA, Cs4=Cs4SideA,
+                                                                      OperationMethod = OperationMethodSideA, Model=ModelSideA)
+
+        SideA = bmp_instancesSideA[user_idSideA]
+        
+        SideA.GetData(SideA=True, SideB=False, TrainTime=TrainTimeSideA)
+        DataSideA = SideA.PlantSideA
+        DataInterfaz = SideA.PlantEstimation
+        SideA.ProcessData(SideA = True, SideB = False, MeasureMethodSideA = measurementMethodSideA, MeasureMethodSideB = measurementMethodSideA, DataPlantSideA = DataSideA, DataPlantSideB = DataSideA,  
+                          DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideA)
+        R101_data = SideA.R101_data
+        R102_data = SideA.R102_data
+        R103_data = SideA.R103_data
+        R104_data = SideA.R104_data
+        R105_data = SideA.R105_data
+        if SideA.OperationMethod in ["Time", "Injection"]:
+          SideA.SubstrateFeeding()
+        
+        R101 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R101", ReactorData = R101_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+        R102 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R102", ReactorData = R102_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+        R103 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R103", ReactorData = R103_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+        R104 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R104", ReactorData = R104_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+        R105 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R105", ReactorData = R105_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
+        data_instances_SideA[user_data_sideA] = [R101, R102, R103, R104, R105]
+        
+        R101_exit = SideA.exit_variable_online (ReactorName = "R101", ReactorData = data_instancesSideA[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
+        R102_exit = SideA.exit_variable_online (ReactorName = "R102", ReactorData = data_instancesSideA[user_data_sideA][1], Vrxn = ReactorVolumeSideA)
+        R103_exit = SideA.exit_variable_online (ReactorName = "R103", ReactorData = data_instancesSideA[user_data_sideA][2], Vrxn = ReactorVolumeSideA)
+        R104_exit = SideA.exit_variable_online (ReactorName = "R104", ReactorData = data_instancesSideA[user_data_sideA][3], Vrxn = ReactorVolumeSideA)
+        R105_exit = SideA.exit_variable_online (ReactorName = "R105", ReactorData = data_instancesSideA[user_data_sideA][4], Vrxn = ReactorVolumeSideA)
+        #Output variables
+        #R101
+        bmp_output["mixVelocityR101"] = float(R101_exit[0]) 
+        bmp_output["SVR101"] = float(R101_exit[1])
+        bmp_output["OCR101"] = float(R101_exit[2])
+        bmp_output["STR101"] = float(R101_exit[3])
+        bmp_output["XR101"] = float(R101_exit[4])
+        bmp_output["PBMR101"] = float(R101_exit[5])
+        bmp_output["KR101"] = KSideA
+        bmp_output["EaR101"] = EaSideA
+        bmp_output["lambdaR101"] = LSideA
+        bmp_output["Objetive"] = float(R101_opt[3])
+        bmp_output["TempR101"] = float(R101_exit[6])  
+        bmp_output["pHR101"] = float(R101_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR101"] =float(R101_exit[8])
+        bmp_output["carbondioxidemolR101"] = float(R101_exit[9])
+        bmp_output["oxygenmolR101"] = float(R101_exit[10])
+        bmp_output["hydrogensulfurmolR101"] = float(R101_exit[11])
+        bmp_output["hydrogenmolR101"] = float(R101_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR101"] = float(R101_exit[13])
+        bmp_output["carbondioxideconcentrationR101"] = float(R101_exit[14])
+        bmp_output["oxygenconcentrationR101"] = float(R101_exit[15])
+        bmp_output["hydrogensulfurconcentrationR101"] = float(R101_exit[16])
+        bmp_output["hydrogenconcentrationR101"] = float(R101_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR101"] = float(R101_exit[18])
+        bmp_output["carbondioxidevolR101"] = float(R101_exit[19])
+        bmp_output["oxygenvolR101"] = float(R101_exit[20])
+        bmp_output["hydrogensulfurvolR101"] = float(R101_exit[21])
+        bmp_output["hydrogenvolR101"] = float(R101_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR101"] = float(R101_exit[23])
+        bmp_output["storagebiogaspressureR101"] = float(R101_exit[24])
+        bmp_output["storagebiogasR101"] = float(R101_exit[25])
+        bmp_output["accumbiogasR101"] = float(R101_exit[26])
+        bmp_output["EnergyR101"] = float(R101_exit[27])
+        bmp_output["LHVR101"] = float(R101_exit[28])
+
+        #R102
+        bmp_output["mixVelocityR102"] = float(R102_exit[0]) 
+        bmp_output["SVR102"] = float(R102_exit[1])
+        bmp_output["OCR102"] = float(R102_exit[2])
+        bmp_output["STR102"] = float(R102_exit[3])
+        bmp_output["XR102"] = float(R102_exit[4])
+        bmp_output["PBMR102"] = float(R102_exit[5])
+        bmp_output["KR102"] = KSideA
+        bmp_output["EaR102"] = EaSideA
+        bmp_output["lambdaR102"] = LSideA
+        bmp_output["Objetive"] = float(R102_opt[3])
+        bmp_output["TempR102"] = float(R102_exit[6])  
+        bmp_output["pHR102"] = float(R102_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR102"] =float(R102_exit[8])
+        bmp_output["carbondioxidemolR102"] = float(R102_exit[9])
+        bmp_output["oxygenmolR102"] = float(R102_exit[10])
+        bmp_output["hydrogensulfurmolR102"] = float(R102_exit[11])
+        bmp_output["hydrogenmolR102"] = float(R102_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR102"] = float(R102_exit[13])
+        bmp_output["carbondioxideconcentrationR102"] = float(R102_exit[14])
+        bmp_output["oxygenconcentrationR102"] = float(R102_exit[15])
+        bmp_output["hydrogensulfurconcentrationR102"] = float(R102_exit[16])
+        bmp_output["hydrogenconcentrationR102"] = float(R102_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR102"] = float(R102_exit[18])
+        bmp_output["carbondioxidevolR102"] = float(R102_exit[19])
+        bmp_output["oxygenvolR102"] = float(R102_exit[20])
+        bmp_output["hydrogensulfurvolR102"] = float(R102_exit[21])
+        bmp_output["hydrogenvolR102"] = float(R102_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR102"] = float(R102_exit[23])
+        bmp_output["storagebiogaspressureR102"] = float(R102_exit[24])
+        bmp_output["storagebiogasR102"] = float(R102_exit[25])
+        bmp_output["accumbiogasR102"] = float(R102_exit[26])
+        bmp_output["EnergyR102"] = float(R102_exit[27])
+        bmp_output["LHVR102"] = float(R102_exit[28])
+
+        #R103
+        bmp_output["mixVelocityR103"] = float(R103_exit[0]) 
+        bmp_output["SVR103"] = float(R103_exit[1])
+        bmp_output["OCR103"] = float(R103_exit[2])
+        bmp_output["STR103"] = float(R103_exit[3])
+        bmp_output["XR103"] = float(R103_exit[4])
+        bmp_output["PBMR103"] = float(R103_exit[5])
+        bmp_output["KR103"] = KSideA
+        bmp_output["EaR103"] = EaSideA
+        bmp_output["lambdaR103"] = LSideA
+        bmp_output["Objetive"] = float(R103_opt[3])
+        bmp_output["TempR103"] = float(R103_exit[6])  
+        bmp_output["pHR103"] = float(R103_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR103"] =float(R103_exit[8])
+        bmp_output["carbondioxidemolR103"] = float(R103_exit[9])
+        bmp_output["oxygenmolR103"] = float(R103_exit[10])
+        bmp_output["hydrogensulfurmolR103"] = float(R103_exit[11])
+        bmp_output["hydrogenmolR103"] = float(R103_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR103"] = float(R103_exit[13])
+        bmp_output["carbondioxideconcentrationR103"] = float(R103_exit[14])
+        bmp_output["oxygenconcentrationR103"] = float(R103_exit[15])
+        bmp_output["hydrogensulfurconcentrationR103"] = float(R103_exit[16])
+        bmp_output["hydrogenconcentrationR103"] = float(R103_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR103"] = float(R103_exit[18])
+        bmp_output["carbondioxidevolR103"] = float(R103_exit[19])
+        bmp_output["oxygenvolR103"] = float(R103_exit[20])
+        bmp_output["hydrogensulfurvolR103"] = float(R103_exit[21])
+        bmp_output["hydrogenvolR103"] = float(R103_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR103"] = float(R103_exit[23])
+        bmp_output["storagebiogaspressureR103"] = float(R103_exit[24])
+        bmp_output["storagebiogasR103"] = float(R103_exit[25])
+        bmp_output["accumbiogasR103"] = float(R103_exit[26])
+        bmp_output["EnergyR103"] = float(R103_exit[27])
+        bmp_output["LHVR103"] = float(R103_exit[28])
+
+        #R104
+        bmp_output["mixVelocityR104"] = float(R104_exit[0]) 
+        bmp_output["SVR104"] = float(R104_exit[1])
+        bmp_output["OCR104"] = float(R104_exit[2])
+        bmp_output["STR104"] = float(R104_exit[3])
+        bmp_output["XR104"] = float(R104_exit[4])
+        bmp_output["PBMR104"] = float(R104_exit[5])
+        bmp_output["KR104"] = KSideA
+        bmp_output["EaR104"] = EaSideA
+        bmp_output["lambdaR104"] = LSideA
+        bmp_output["Objetive"] = float(R104_opt[3])
+        bmp_output["TempR104"] = float(R104_exit[6])  
+        bmp_output["pHR104"] = float(R104_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR104"] =float(R104_exit[8])
+        bmp_output["carbondioxidemolR104"] = float(R104_exit[9])
+        bmp_output["oxygenmolR104"] = float(R104_exit[10])
+        bmp_output["hydrogensulfurmolR104"] = float(R104_exit[11])
+        bmp_output["hydrogenmolR104"] = float(R104_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR104"] = float(R104_exit[13])
+        bmp_output["carbondioxideconcentrationR104"] = float(R104_exit[14])
+        bmp_output["oxygenconcentrationR104"] = float(R104_exit[15])
+        bmp_output["hydrogensulfurconcentrationR104"] = float(R104_exit[16])
+        bmp_output["hydrogenconcentrationR104"] = float(R104_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR104"] = float(R104_exit[18])
+        bmp_output["carbondioxidevolR104"] = float(R104_exit[19])
+        bmp_output["oxygenvolR104"] = float(R104_exit[20])
+        bmp_output["hydrogensulfurvolR104"] = float(R104_exit[21])
+        bmp_output["hydrogenvolR104"] = float(R104_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR104"] = float(R104_exit[23])
+        bmp_output["storagebiogaspressureR104"] = float(R104_exit[24])
+        bmp_output["storagebiogasR104"] = float(R104_exit[25])
+        bmp_output["accumbiogasR104"] = float(R104_exit[26])
+        bmp_output["EnergyR104"] = float(R104_exit[27])
+        bmp_output["LHVR104"] = float(R104_exit[28])
+
+        #R105
+        bmp_output["mixVelocityR105"] = float(R105_exit[0]) 
+        bmp_output["SVR105"] = float(R105_exit[1])
+        bmp_output["OCR105"] = float(R105_exit[2])
+        bmp_output["STR105"] = float(R105_exit[3])
+        bmp_output["XR105"] = float(R105_exit[4])
+        bmp_output["PBMR105"] = float(R105_exit[5])
+        bmp_output["KR105"] = KSideA
+        bmp_output["EaR105"] = EaSideA
+        bmp_output["lambdaR105"] = LSideA
+        bmp_output["Objetive"] = float(R105_opt[3])
+        bmp_output["TempR105"] = float(R105_exit[6])  
+        bmp_output["pHR105"] = float(R105_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR105"] =float(R105_exit[8])
+        bmp_output["carbondioxidemolR105"] = float(R105_exit[9])
+        bmp_output["oxygenmolR105"] = float(R105_exit[10])
+        bmp_output["hydrogensulfurmolR105"] = float(R105_exit[11])
+        bmp_output["hydrogenmolR105"] = float(R105_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR105"] = float(R105_exit[13])
+        bmp_output["carbondioxideconcentrationR105"] = float(R105_exit[14])
+        bmp_output["oxygenconcentrationR105"] = float(R105_exit[15])
+        bmp_output["hydrogensulfurconcentrationR105"] = float(R105_exit[16])
+        bmp_output["hydrogenconcentrationR105"] = float(R105_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR105"] = float(R105_exit[18])
+        bmp_output["carbondioxidevolR105"] = float(R105_exit[19])
+        bmp_output["oxygenvolR105"] = float(R105_exit[20])
+        bmp_output["hydrogensulfurvolR105"] = float(R105_exit[21])
+        bmp_output["hydrogenvolR105"] = float(R105_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR105"] = float(R105_exit[23])
+        bmp_output["storagebiogaspressureR105"] = float(R105_exit[24])
+        bmp_output["storagebiogasR105"] = float(R105_exit[25])
+        bmp_output["accumbiogasR105"] = float(R105_exit[26])
+        bmp_output["EnergyR105"] = float(R105_exit[27])
+        bmp_output["LHVR105"] = float(R105_exit[28])
+          
       
       #%% Offline operation
-      elif stateSelectionSideA == True:    #offline
+      if stateSelectionSideA == True:    #offline
         user_id101 = data["name"] + "101"
         user_id102 = data["name"] + "102"
         user_id103 = data["name"] + "103"
         user_id104 = data["name"] + "104"
         user_id105 = data["name"] + "105"
   
-        users_instances = [user_id101, user_id102, user_id103, user_id104, user_id105]   
+        users_instancesSideA = [user_id101, user_id102, user_id103, user_id104, user_id105]   
 
         if iteration == 1:   
-          for key in users_instances:
+          for key in users_instancesSideA:
             if key in bmp_instances_offline_SideA:
               del bmp_instances_offline_SideA[key]
         
@@ -696,6 +1649,8 @@ class BMP(Resource):
         
         #feeding in case time or injection
         R105.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
+        bmp_output["caudalSideA"] = float(R105.Qr)
+        bmp_output["volumeSubstrateSideA"] = float(R105.TotalVolFeed)
         #reactor execution model
         R105.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
         bmp_output["SVR105"] = float(R105.SV_int) 
@@ -741,928 +1696,1611 @@ class BMP(Resource):
         bmp_output["LHVR105"] = float(R105.LHV_JNm3)
         bmp_output["EnergyR105"] = float(R105.Energia)
 
-        bmp_output = {
-                      k: (0 if (v is None or (isinstance(v, (int, float)) and np.isnan(v))) else v)
-                      for k, v in bmp_output.items()
-                  }
-       
         R105.GlobaltimeCounter()
+    
+    #%% ---- Side B - Working
+    if StateSideB == True:
+      user_idSideB = name + "SideA"
+      user_data_sideB = name + "DataSideA"
 
-        # Csusv.append(float(R101.Csus_ini_SV_mol))
-        # DCsusv.append(float(R101.DCsus_ini_SV_mol))
-        # nCH4v.append(float(R101.nCH4))
-        # nCO2v.append(float(R101.nCO2))
-        # nH2Sv.append(float(R101.nH2S))
-        # nH2v.append(float(R101.nH2))
-        # nO2v.append(float(R101.nO2))
-        # nNH3v.append(float(R101.nNH3))
-        # xCH4v.append(float(R101.xCH4))
-        # xCO2v.append(float(R101.xCO2))
-        # xH2Sv.append(float(R101.xH2S))
-        # xH2v.append(float(R101.xH2))
-        # xO2v.append(float(R101.xO2))
-        # xv.append(float(R101.x))
+      user_instances_SideB = [user_idSideB]
+      data_instances_SideB = [user_data_sideB]
+    
+      if iteration == 1:   
+          for key in user_instances_SideB:
+            if key in bmp_instancesSideB:
+              del bmp_instancesSideB[key]  
+      
+      if iteration == 1:
+        for key in data_instances_SideB:
+          if key in data_instancesSideB:
+            del data_instancesSideB[key] 
+      
+
+      #%% online mode B
+      if stateSelectionSideB == False and biogasSideB == False and TrainingMode == True:    #Online, biogas compounds in auto
+        
+        if user_idSideB not in bmp_instancesSideB:
+          bmp_instancesSideB[user_idSideB] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideB, ReactorVolume=ReactorVolumeSideB, InitialFreeVolume=InitialFreeVolumeSideB, 
+                                                                      SubstrateNumber=SubstrateNumberSideB, MixRule=MixRuleSideB,
+                                                                      Fraction1=Fraction1SideB, Fraction2=Fraction2SideB, Fraction3=Fraction3SideB, Fraction4=Fraction4SideB, WaterFraction=WaterFractionSideB,
+                                                                      Volume1=Fraction1SideB, Volume2=Fraction2SideB, Volume3=Fraction3SideB, Volume4=Fraction4SideB, WaterVolume=WaterFractionSideB, 
+                                                                      Weight1=Fraction1SideB, Weight2=Fraction2SideB, Weight3=Fraction3SideB, Weight4=Fraction4SideB, WaterWeight=WaterFractionSideB,
+                                                                      ST1=ST1SideB, SV1=SV1SideB, rho1=rho1SideB, Cc1=Cc1SideB, Ch1=Ch1SideB, Co1=Co1SideB,Cn1=Cn1SideB, Cs1=Cs1SideB,
+                                                                      ST2=ST2SideB, SV2=SV2SideB, rho2=rho2SideB, Cc2=Cc2SideB, Ch2=Ch2SideB, Co2=Co2SideB,Cn2=Cn2SideB, Cs2=Cs2SideB,
+                                                                      ST3=ST3SideB, SV3=SV3SideB, rho3=rho3SideB, Cc3=Cc3SideB, Ch3=Ch3SideB, Co3=Co3SideB,Cn3=Cn3SideB, Cs3=Cs3SideB,
+                                                                      ST4=ST4SideB, SV4=SV4SideB, rho4=rho4SideB, Cc4=Cc4SideB, Ch4=Ch4SideB, Co4=Co4SideB,Cn4=Cn4SideB, Cs4=Cs4SideB,
+                                                                      OperationMethod = OperationMethodSideB, Model=ModelSideB)
+
+        SideB = bmp_instancesSideB[user_idSideB]
+        if user_data_sideB not in data_instancesSideB:
+          SideB.GetData(SideA=False, SideB=True, TrainTime=TrainTimeSideB)
+          DataSideB = SideB.PlantSideB
+          DataInterfaz = SideB.PlantEstimation
+          SideB.ProcessData(SideA = False, SideB = True, MeasureMethodSideA = measurementMethodSideB, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideB, DataPlantSideB = DataSideB,  
+                           DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideB)
+          R106_data = SideB.R106_data
+          R107_data = SideB.R107_data
+          R108_data = SideB.R108_data
+          R109_data = SideB.R109_data
+          R110_data = SideB.R110_data
+          if SideB.OperationMethod in ["Time", "Injection"]:
+            SideB.SubstrateFeeding()
           
-
-
-    # iteration = data["iteration"]
-    # Side = data["plantOperation"]
-    # user_id101 = data["name"] + "101"
-    # user_id102 = data["name"] + "102"
-    # user_id103 = data["name"] + "103"
-    # user_id104 = data["name"] + "104"
-    # user_id105 = data["name"] + "105"
-    # user_id106 = data["name"] + "106"
-    # user_id107 = data["name"] + "107"
-    # user_id108 = data["name"] + "108"
-    # user_id109 = data["name"] + "109"
-    # user_id110 = data["name"] + "110"
-    
-    # users_instances = [user_id101, user_id102, user_id103, user_id104, user_id105,
-    #                         user_id106, user_id107, user_id108, user_id109, user_id110]
-    
-    
-    # if iteration == 1:   
-    #   for key in users_instances:
-    #     if key in bmp_instances:
-    #       del bmp_instances[key]
-    
-    # print(data, flush = True)
-            
-    # # SIDE A -------------
-    # #lado A condiciones condiciones generales
-    # offlineA = data["stateSelectionSideA"]
-    # SideA_measurementMethod = data["measurementMethodSideA"]
-
-    # #lado condiciones de corrida
-    # SideA_Vrxn = data["rxnVolumeSideA"]["value"]
-    # SideA_vf = data["freeVolumeSideA"]["value"]
-    # SideA_tp = data["timeStepSideA"]["value"]
-    # SideA_MixRule = data["substrate1CompositionSideA"]["variableString"]
-    # SideA_substrateNumber = data["amountOfSubstratesSideA"]["value"]
-    # SideA_Water = data["waterCompositionSideA"]["value"]
-    # #sustrato 1
-    # SideA_Fraction1 = data["substrate1CompositionSideA"]["value"]
-    # SideA_TS1 = data ["totalSolidsSubstrate1SideA"]["value"]
-    # SideA_VS1 = data["volatileSolidsSubstrate1SIdeA"]["value"]
-    # SideA_rho1 = data["densitySubstrate1SideA"]["value"]
-    # SideA_Cc1 = data["carbonContentSubstrate1SideA"]["value"]
-    # SideA_Ch1 = data["hydrogenContentSubstrate1SideA"]["value"]
-    # SideA_Co1 = data["oxygenContentSubstrate1SideA"]["value"]
-    # SideA_Cn1 = data["nitrogenContentSubstrate1SideA"]["value"]
-    # SideA_Cs1 = data["sulfurContentSubstrate1SideA"]["value"]
-    # #sustrato 2
-    # SideA_Fraction2 = data["substrate2CompositionSideA"]["value"]
-    # SideA_TS2 = data ["totalSolidsSubstrate2SideA"]["value"]
-    # SideA_VS2 = data["volatileSolidsSubstrate2SideA"]["value"]
-    # SideA_rho2 = data["densitySubstrate2SideA"]["value"]
-    # SideA_Cc2 = data["carbonContentSubstrate2SideA"]["value"]
-    # SideA_Ch2 = data["hydrogenContentSubstrate2SideA"]["value"]
-    # SideA_Co2 = data["oxygenContentSubstrate2SideA"]["value"]
-    # SideA_Cn2 = data["nitrogenContentSubstrate2SideA"]["value"]
-    # SideA_Cs2 = data["sulfurContentSubstrate2SideA"]["value"]
-    # #sustrato 3
-    # SideA_Fraction3 = data["substrate3CompositionSideA"]["value"]
-    # SideA_TS3 = data ["totalSolidsSubstrate3SideA"]["value"]
-    # SideA_VS3 = data["volatileSolidsSubstrate3SideA"]["value"]
-    # SideA_rho3 = data["densitySubstrate3SideA"]["value"]
-    # SideA_Cc3 = data["carbonContentSubstrate3SideA"]["value"]
-    # SideA_Ch3 = data["hydrogenContentSubstrate3SideA"]["value"]
-    # SideA_Co3 = data["oxygenContentSubstrate3SideA"]["value"]
-    # SideA_Cn3 = data["nitrogenContentSubstrate3SideA"]["value"]
-    # SideA_Cs3 = data["sulfurContentSubstrate3SideA"]["value"]
-    # #sustrato 4
-    # SideA_Fraction4 = data["substrate4CompositionSideA"]["value"]
-    # SideA_TS4 = data ["totalSolidsSubstrate4SideA"]["value"]
-    # SideA_VS4 = data["volatileSolidsSubstrate4SIdeA"]["value"]
-    # SideA_rho4 = data["densitySubstrate4SideA"]["value"]
-    # SideA_Cc4 = data["carbonContentSubstrate4SideA"]["value"]
-    # SideA_Ch4 = data["hydrogenContentSubstrate4SideA"]["value"]
-    # SideA_Co4 = data["oxygenContentSubstrate4SideA"]["value"]
-    # SideA_Cn4 = data["nitrogenContentSubstrate4SideA"]["value"]
-    # SideA_Cs4 = data["sulfurContentSubstrate4SideA"]["value"]
-    # #mixControl
-    # SideA_ManualMix = data["mixManualSideA"]
-    # SideA_MixVelocity = data["mixVelocitySideA"]["value"]
-    # SideA_MixTime = data["mixTimeSideA"]["value"]
-    # SideA_DailyMixing = data["mixDailySideA"]["value"]
-    # #Control Feed
-    # SideA_ManualFeed = data["feefManualSideA"]
-    # SideA_FeedMode = data["dosificationTypeSideA"]
-    # SideA_FeedVolume = data["dosificationVolumeSideA"]["value"]
-    # SideA_FeedTime = data["dailyInyectionsByTimeSideA"]["value"]
-    # SideA_Injections = data["dailyInyectionsSideA"]["value"]
-    # #Reactor
-    # SideA_Model = data["modelSelectionSideA"]
-    # SideA_pHauto = data["pHSideA"]["disabled"]
-    # SideA_pH = data["pHSideA"]["value"]
-    # SideA_Temperatura = data["TemperatureSideA"]["value"]
-    # SideA_K1 = data["kineticKSideA"]["value"]
-    # SideA_K2 = data["kineticEaSideA"]["value"]
-    # SideA_K3 = data["kineticLambdaSideA"]["value"]
-
-    # # Modo Offline
-    # if offlineA == True:
-    #   #---- Reactor 1
-    #   if user_id101 not in bmp_instances:
-    #     bmp_instances[user_id101] = BMPOffline.BMPModelOffline(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
-    #   R101 = bmp_instances[user_id101]
-    #   R101.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
-    #                           Fraction1 = SideA_Fraction1, Volume1 = SideA_Fraction1, Weight1 = SideA_Fraction1, TS1 = SideA_TS1, VS1 = SideA_VS1, rho1 = SideA_rho1, Cc1 = SideA_Cc1, Hc1 = SideA_Ch1, Oc1 = SideA_Co1, Nc1 = SideA_Cn1, Sc1 = SideA_Cs1,
-    #                           Fraction2 = SideA_Fraction2, Volume2 = SideA_Fraction2, Weight2 = SideA_Fraction2, TS2 = SideA_TS2, VS2 = SideA_VS2, rho2 = SideA_rho2, Cc2 = SideA_Cc2, Hc2 = SideA_Ch2, Oc2 = SideA_Co2, Nc2 = SideA_Cn2, Sc2 = SideA_Cs2,
-    #                           Fraction3 = SideA_Fraction3, Volume3 = SideA_Fraction3, Weight3 = SideA_Fraction3, TS3 = SideA_TS3, VS3 = SideA_VS3, rho3 = SideA_rho3, Cc3 = SideA_Cc3, Hc3 = SideA_Ch3, Oc3 = SideA_Co3, Nc3 = SideA_Cn3, Sc3 = SideA_Cs3,
-    #                           Fraction4 = SideA_Fraction4, Volume4 = SideA_Fraction4, Weight4 = SideA_Fraction4, TS4 = SideA_TS4, VS4 = SideA_VS4, rho4 = SideA_rho4, Cc4 = SideA_Cc4, Hc4 = SideA_Ch4, Oc4 = SideA_Co4, Nc4 = SideA_Cn4, Sc4 = SideA_Cs4)
-      
-    #   #Agitación
-    #   R101.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR101"] = R101.MixVelocity
-
-    #   #Alimentación
-    #   R101.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideA"] = R101.Qr
-    #   bmp_output["volumeSubstrateSideA"] = R101.TotalVolFeed
-
-    #   #Reactor
-    #   R101.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
-    #   #---- Salidas reactor R101
-    #   bmp_output["SVR101"] = R101.SV 
-    #   bmp_output["OCR101"] = R101.OC
-    #   bmp_output["STR101"] = R101.ST
-    #   bmp_output["XR101"] = R101.x
-    #   bmp_output["KR101"] = R101.K1
-    #   bmp_output["EaR101"] = R101.K2
-    #   bmp_output["lambdaR101"] = R101.K3
-    #   bmp_output["TempR101"] = R101.T   
-    #   bmp_output["pHR101"] = R101.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR101"] = R101.mol_CH4
-    #   bmp_output["carbondioxidemolR101"] = R101.mol_CO2
-    #   bmp_output["oxygenmolR101"] = R101.mol_O2
-    #   bmp_output["hydrogensulfurmolR101"] = R101.mol_H2S
-    #   bmp_output["hydrogenmolR101"] = R101.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R101.CompoundsUnits()
-    #   bmp_output["methanevolR101"] = R101.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR101"] = R101.Vnormal_CO2
-    #   bmp_output["oxygenvolR101"] = R101.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR101"] = R101.Vnormal_H2S
-    #   bmp_output["hydrogenvolR101"] = R101.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR101"] = R101.x_CH4
-    #   bmp_output["carbondioxideconcentrationR101"] = R101.x_CO2
-    #   bmp_output["oxygenconcentrationR101"] = R101.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR101"] = R101.x_H2S
-    #   bmp_output["hydrogenconcentrationR101"] = R101.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR101"] = R101.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R101.PressurebyBiogas()
-    #   if SideA_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR101"] = R101.P_acum
-    #     bmp_output["storagebiogaspressureR101"] = R101.P_storage
-    #     bmp_output["storagebiogasR101"] = R101.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R101.poolSensor()
-    #     bmp_output["poolLevelR101"] = R101.hpool
-    #     bmp_output["poolTempR101"] = R101.Tpool
-    #     bmp_output["poolPressureR101"] = R101.Ppool
-    #   #Biogas energy
-    #   R101.biogasEnergy()
-    #   bmp_output["LHVR101"] = R101.LHV
-    #   bmp_output["EnergyR101"] = R101.TotalBiogasEnergy
-    #   bmp_output["PBMR101"] = R101.PBM
+          R106 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R106", ReactorData = R106_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R107 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R107", ReactorData = R107_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R108 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R108", ReactorData = R108_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R109 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R109", ReactorData = R109_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R110 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R110", ReactorData = R110_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          data_instancesSideB[user_data_sideB] = [R106, R107, R108, R109, R110]
         
-    #   # ----- Reactor 2
-    #   if user_id102 not in bmp_instances:
-    #     bmp_instances[user_id102] = BMPOffline.BMPModelOffline(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
-    #   R102 = bmp_instances[user_id102]
-    #   R102.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
-    #                           Fraction1 = SideA_Fraction1, Volume1 = SideA_Fraction1, Weight1 = SideA_Fraction1, TS1 = SideA_TS1, VS1 = SideA_VS1, rho1 = SideA_rho1, Cc1 = SideA_Cc1, Hc1 = SideA_Ch1, Oc1 = SideA_Co1, Nc1 = SideA_Cn1, Sc1 = SideA_Cs1,
-    #                           Fraction2 = SideA_Fraction2, Volume2 = SideA_Fraction2, Weight2 = SideA_Fraction2, TS2 = SideA_TS2, VS2 = SideA_VS2, rho2 = SideA_rho2, Cc2 = SideA_Cc2, Hc2 = SideA_Ch2, Oc2 = SideA_Co2, Nc2 = SideA_Cn2, Sc2 = SideA_Cs2,
-    #                           Fraction3 = SideA_Fraction3, Volume3 = SideA_Fraction3, Weight3 = SideA_Fraction3, TS3 = SideA_TS3, VS3 = SideA_VS3, rho3 = SideA_rho3, Cc3 = SideA_Cc3, Hc3 = SideA_Ch3, Oc3 = SideA_Co3, Nc3 = SideA_Cn3, Sc3 = SideA_Cs3,
-    #                           Fraction4 = SideA_Fraction4, Volume4 = SideA_Fraction4, Weight4 = SideA_Fraction4, TS4 = SideA_TS4, VS4 = SideA_VS4, rho4 = SideA_rho4, Cc4 = SideA_Cc4, Hc4 = SideA_Ch4, Oc4 = SideA_Co4, Nc4 = SideA_Cn4, Sc4 = SideA_Cs4)
-      
-    #   #Agitación
-    #   R102.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR102"] = R102.MixVelocity
-
-    #   #Alimentación
-    #   R102.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideA"] = R102.Qr
-    #   bmp_output["volumeSubstrateSideA"] = R102.TotalVolFeed
-
-    #   #Reactor
-    #   R102.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
-    #   #---- Salidas reactor R102
-    #   bmp_output["SVR102"] = R102.SV 
-    #   bmp_output["OCR102"] = R102.OC
-    #   bmp_output["STR102"] = R102.ST
-    #   bmp_output["XR102"] = R102.x
-    #   bmp_output["KR102"] = R102.K1
-    #   bmp_output["EaR102"] = R102.K2
-    #   bmp_output["lambdaR102"] = R102.K3
-    #   bmp_output["TempR102"] = R102.T   
-    #   bmp_output["pHR102"] = R102.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR102"] = R102.mol_CH4
-    #   bmp_output["carbondioxidemolR102"] = R102.mol_CO2
-    #   bmp_output["oxygenmolR102"] = R102.mol_O2
-    #   bmp_output["hydrogensulfurmolR102"] = R102.mol_H2S
-    #   bmp_output["hydrogenmolR102"] = R102.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R102.CompoundsUnits()
-    #   bmp_output["methanevolR102"] = R102.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR102"] = R102.Vnormal_CO2
-    #   bmp_output["oxygenvolR102"] = R102.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR102"] = R102.Vnormal_H2S
-    #   bmp_output["hydrogenvolR102"] = R102.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR102"] = R102.x_CH4
-    #   bmp_output["carbondioxideconcentrationR102"] = R102.x_CO2
-    #   bmp_output["oxygenconcentrationR102"] = R102.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR102"] = R102.x_H2S
-    #   bmp_output["hydrogenconcentrationR102"] = R102.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR102"] = R102.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R102.PressurebyBiogas()
-    #   if SideA_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR102"] = R102.P_acum
-    #     bmp_output["storagebiogaspressureR102"] = R102.P_storage
-    #     bmp_output["storagebiogasR102"] = R102.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R102.poolSensor()
-    #     bmp_output["poolLevelR102"] = R102.hpool
-    #     bmp_output["poolTempR102"] = R102.Tpool
-    #     bmp_output["poolPressureR102"] = R102.Ppool
-    #   #Biogas energy
-    #   R102.biogasEnergy()
-    #   bmp_output["LHVR102"] = R102.LHV
-    #   bmp_output["EnergyR102"] = R102.TotalBiogasEnergy
-    #   bmp_output["PBMR102"] = R102.PBM
-      
-    #   # ----- Reactor 3
-    #   if user_id103 not in bmp_instances:
-    #     bmp_instances[user_id103] = BMPOffline.BMPModelOffline(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
-    #   R103 = bmp_instances[user_id103]
-    #   R103.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
-    #                           Fraction1 = SideA_Fraction1, Volume1 = SideA_Fraction1, Weight1 = SideA_Fraction1, TS1 = SideA_TS1, VS1 = SideA_VS1, rho1 = SideA_rho1, Cc1 = SideA_Cc1, Hc1 = SideA_Ch1, Oc1 = SideA_Co1, Nc1 = SideA_Cn1, Sc1 = SideA_Cs1,
-    #                           Fraction2 = SideA_Fraction2, Volume2 = SideA_Fraction2, Weight2 = SideA_Fraction2, TS2 = SideA_TS2, VS2 = SideA_VS2, rho2 = SideA_rho2, Cc2 = SideA_Cc2, Hc2 = SideA_Ch2, Oc2 = SideA_Co2, Nc2 = SideA_Cn2, Sc2 = SideA_Cs2,
-    #                           Fraction3 = SideA_Fraction3, Volume3 = SideA_Fraction3, Weight3 = SideA_Fraction3, TS3 = SideA_TS3, VS3 = SideA_VS3, rho3 = SideA_rho3, Cc3 = SideA_Cc3, Hc3 = SideA_Ch3, Oc3 = SideA_Co3, Nc3 = SideA_Cn3, Sc3 = SideA_Cs3,
-    #                           Fraction4 = SideA_Fraction4, Volume4 = SideA_Fraction4, Weight4 = SideA_Fraction4, TS4 = SideA_TS4, VS4 = SideA_VS4, rho4 = SideA_rho4, Cc4 = SideA_Cc4, Hc4 = SideA_Ch4, Oc4 = SideA_Co4, Nc4 = SideA_Cn4, Sc4 = SideA_Cs4)
-      
-    #   #Agitación
-    #   R103.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR103"] = R103.MixVelocity
-
-    #   #Alimentación
-    #   R103.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideA"] = R103.Qr
-    #   bmp_output["volumeSubstrateSideA"] = R103.TotalVolFeed
-
-    #   #Reactor
-    #   R103.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
-    #   #---- Salidas reactor R103
-    #   bmp_output["SVR103"] = R103.SV 
-    #   bmp_output["OCR103"] = R103.OC
-    #   bmp_output["STR103"] = R103.ST
-    #   bmp_output["XR103"] = R103.x
-    #   bmp_output["KR103"] = R103.K1
-    #   bmp_output["EaR103"] = R103.K2
-    #   bmp_output["lambdaR103"] = R103.K3
-    #   bmp_output["TempR103"] = R103.T   
-    #   bmp_output["pHR103"] = R103.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR103"] = R103.mol_CH4
-    #   bmp_output["carbondioxidemolR103"] = R103.mol_CO2
-    #   bmp_output["oxygenmolR103"] = R103.mol_O2
-    #   bmp_output["hydrogensulfurmolR103"] = R103.mol_H2S
-    #   bmp_output["hydrogenmolR103"] = R103.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R103.CompoundsUnits()
-    #   bmp_output["methanevolR103"] = R103.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR103"] = R103.Vnormal_CO2
-    #   bmp_output["oxygenvolR103"] = R103.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR103"] = R103.Vnormal_H2S
-    #   bmp_output["hydrogenvolR103"] = R103.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR103"] = R103.x_CH4
-    #   bmp_output["carbondioxideconcentrationR103"] = R103.x_CO2
-    #   bmp_output["oxygenconcentrationR103"] = R103.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR103"] = R103.x_H2S
-    #   bmp_output["hydrogenconcentrationR103"] = R103.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR103"] = R103.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R103.PressurebyBiogas()
-    #   if SideA_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR103"] = R103.P_acum
-    #     bmp_output["storagebiogaspressureR103"] = R103.P_storage
-    #     bmp_output["storagebiogasR103"] = R103.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R103.poolSensor()
-    #     bmp_output["poolLevelR103"] = R103.hpool
-    #     bmp_output["poolTempR103"] = R103.Tpool
-    #     bmp_output["poolPressureR103"] = R103.Ppool
-    #   #Biogas energy
-    #   R103.biogasEnergy()
-    #   bmp_output["LHVR103"] = R103.LHV
-    #   bmp_output["EnergyR103"] = R103.TotalBiogasEnergy
-    #   bmp_output["PBMR103"] = R103.PBM
+        R106_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R107_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R108_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R109_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R110_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
         
-    #   # ----- Reactor 4
-    #   if user_id104 not in bmp_instances:
-    #     bmp_instances[user_id104] = BMPOffline.BMPModelOffline(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
-    #   R104 = bmp_instances[user_id104]
-    #   R104.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
-    #                           Fraction1 = SideA_Fraction1, Volume1 = SideA_Fraction1, Weight1 = SideA_Fraction1, TS1 = SideA_TS1, VS1 = SideA_VS1, rho1 = SideA_rho1, Cc1 = SideA_Cc1, Hc1 = SideA_Ch1, Oc1 = SideA_Co1, Nc1 = SideA_Cn1, Sc1 = SideA_Cs1,
-    #                           Fraction2 = SideA_Fraction2, Volume2 = SideA_Fraction2, Weight2 = SideA_Fraction2, TS2 = SideA_TS2, VS2 = SideA_VS2, rho2 = SideA_rho2, Cc2 = SideA_Cc2, Hc2 = SideA_Ch2, Oc2 = SideA_Co2, Nc2 = SideA_Cn2, Sc2 = SideA_Cs2,
-    #                           Fraction3 = SideA_Fraction3, Volume3 = SideA_Fraction3, Weight3 = SideA_Fraction3, TS3 = SideA_TS3, VS3 = SideA_VS3, rho3 = SideA_rho3, Cc3 = SideA_Cc3, Hc3 = SideA_Ch3, Oc3 = SideA_Co3, Nc3 = SideA_Cn3, Sc3 = SideA_Cs3,
-    #                           Fraction4 = SideA_Fraction4, Volume4 = SideA_Fraction4, Weight4 = SideA_Fraction4, TS4 = SideA_TS4, VS4 = SideA_VS4, rho4 = SideA_rho4, Cc4 = SideA_Cc4, Hc4 = SideA_Ch4, Oc4 = SideA_Co4, Nc4 = SideA_Cn4, Sc4 = SideA_Cs4)
+        R106_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
+        R107_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
+        R108_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
+        R109_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
+        R110_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
+        #Output variables
+        #R106
+        bmp_output["mixVelocityR106"] = float(R106_exit[0]) 
+        bmp_output["SVR106"] = float(R106_exit[1])
+        bmp_output["OCR106"] = float(R106_exit[2])
+        bmp_output["STR106"] = float(R106_exit[3])
+        bmp_output["XR106"] = float(R106_exit[4])
+        bmp_output["PBMR106"] = float(R106_exit[5])
+        bmp_output["KR106"] = float(R106_opt[0]/60)
+        bmp_output["EaR106"] = float(R106_opt[1])
+        bmp_output["lambdaR106"] = float(R106_opt[2])
+        bmp_output["Objetive"] = float(R106_opt[3])
+        bmp_output["TempR106"] = float(R106_exit[6])  
+        bmp_output["pHR106"] = float(R106_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR106"] =float(R106_exit[8])
+        bmp_output["carbondioxidemolR106"] = float(R106_exit[9])
+        bmp_output["oxygenmolR106"] = float(R106_exit[10])
+        bmp_output["hydrogensulfurmolR106"] = float(R106_exit[11])
+        bmp_output["hydrogenmolR106"] = float(R106_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR106"] = float(R106_exit[13])
+        bmp_output["carbondioxideconcentrationR106"] = float(R106_exit[14])
+        bmp_output["oxygenconcentrationR106"] = float(R106_exit[15])
+        bmp_output["hydrogensulfurconcentrationR106"] = float(R106_exit[16])
+        bmp_output["hydrogenconcentrationR106"] = float(R106_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR106"] = float(R106_exit[18])
+        bmp_output["carbondioxidevolR106"] = float(R106_exit[19])
+        bmp_output["oxygenvolR106"] = float(R106_exit[20])
+        bmp_output["hydrogensulfurvolR106"] = float(R106_exit[21])
+        bmp_output["hydrogenvolR106"] = float(R106_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR106"] = float(R106_exit[23])
+        bmp_output["storagebiogaspressureR106"] = float(R106_exit[24])
+        bmp_output["storagebiogasR106"] = float(R106_exit[25])
+        bmp_output["accumbiogasR106"] = float(R106_exit[26])
+        bmp_output["EnergyR106"] = float(R106_exit[27])
+        bmp_output["LHVR106"] = float(R106_exit[28])
+
+        #R107
+        bmp_output["mixVelocityR107"] = float(R107_exit[0]) 
+        bmp_output["SVR107"] = float(R107_exit[1])
+        bmp_output["OCR107"] = float(R107_exit[2])
+        bmp_output["STR107"] = float(R107_exit[3])
+        bmp_output["XR107"] = float(R107_exit[4])
+        bmp_output["PBMR107"] = float(R107_exit[5])
+        bmp_output["KR107"] = float(R107_opt[0]/60)
+        bmp_output["EaR107"] = float(R107_opt[1])
+        bmp_output["lambdaR107"] = float(R107_opt[2])
+        bmp_output["Objetive"] = float(R107_opt[3])
+        bmp_output["TempR107"] = float(R107_exit[6])  
+        bmp_output["pHR107"] = float(R107_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR107"] =float(R107_exit[8])
+        bmp_output["carbondioxidemolR107"] = float(R107_exit[9])
+        bmp_output["oxygenmolR107"] = float(R107_exit[10])
+        bmp_output["hydrogensulfurmolR107"] = float(R107_exit[11])
+        bmp_output["hydrogenmolR107"] = float(R107_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR107"] = float(R107_exit[13])
+        bmp_output["carbondioxideconcentrationR107"] = float(R107_exit[14])
+        bmp_output["oxygenconcentrationR107"] = float(R107_exit[15])
+        bmp_output["hydrogensulfurconcentrationR107"] = float(R107_exit[16])
+        bmp_output["hydrogenconcentrationR107"] = float(R107_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR107"] = float(R107_exit[18])
+        bmp_output["carbondioxidevolR107"] = float(R107_exit[19])
+        bmp_output["oxygenvolR107"] = float(R107_exit[20])
+        bmp_output["hydrogensulfurvolR107"] = float(R107_exit[21])
+        bmp_output["hydrogenvolR107"] = float(R107_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR107"] = float(R107_exit[23])
+        bmp_output["storagebiogaspressureR107"] = float(R107_exit[24])
+        bmp_output["storagebiogasR107"] = float(R107_exit[25])
+        bmp_output["accumbiogasR107"] = float(R107_exit[26])
+        bmp_output["EnergyR107"] = float(R107_exit[27])
+        bmp_output["LHVR107"] = float(R107_exit[28])
+
+        #R108
+        bmp_output["mixVelocityR108"] = float(R108_exit[0]) 
+        bmp_output["SVR108"] = float(R108_exit[1])
+        bmp_output["OCR108"] = float(R108_exit[2])
+        bmp_output["STR108"] = float(R108_exit[3])
+        bmp_output["XR108"] = float(R108_exit[4])
+        bmp_output["PBMR108"] = float(R108_exit[5])
+        bmp_output["KR108"] = float(R108_opt[0]/60)
+        bmp_output["EaR108"] = float(R108_opt[1])
+        bmp_output["lambdaR108"] = float(R108_opt[2])
+        bmp_output["Objetive"] = float(R108_opt[3])
+        bmp_output["TempR108"] = float(R108_exit[6])  
+        bmp_output["pHR108"] = float(R108_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR108"] =float(R108_exit[8])
+        bmp_output["carbondioxidemolR108"] = float(R108_exit[9])
+        bmp_output["oxygenmolR108"] = float(R108_exit[10])
+        bmp_output["hydrogensulfurmolR108"] = float(R108_exit[11])
+        bmp_output["hydrogenmolR108"] = float(R108_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR108"] = float(R108_exit[13])
+        bmp_output["carbondioxideconcentrationR108"] = float(R108_exit[14])
+        bmp_output["oxygenconcentrationR108"] = float(R108_exit[15])
+        bmp_output["hydrogensulfurconcentrationR108"] = float(R108_exit[16])
+        bmp_output["hydrogenconcentrationR108"] = float(R108_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR108"] = float(R108_exit[18])
+        bmp_output["carbondioxidevolR108"] = float(R108_exit[19])
+        bmp_output["oxygenvolR108"] = float(R108_exit[20])
+        bmp_output["hydrogensulfurvolR108"] = float(R108_exit[21])
+        bmp_output["hydrogenvolR108"] = float(R108_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR108"] = float(R108_exit[23])
+        bmp_output["storagebiogaspressureR108"] = float(R108_exit[24])
+        bmp_output["storagebiogasR108"] = float(R108_exit[25])
+        bmp_output["accumbiogasR108"] = float(R108_exit[26])
+        bmp_output["EnergyR108"] = float(R108_exit[27])
+        bmp_output["LHVR108"] = float(R108_exit[28])
+
+        #R109
+        bmp_output["mixVelocityR109"] = float(R109_exit[0]) 
+        bmp_output["SVR109"] = float(R109_exit[1])
+        bmp_output["OCR109"] = float(R109_exit[2])
+        bmp_output["STR109"] = float(R109_exit[3])
+        bmp_output["XR109"] = float(R109_exit[4])
+        bmp_output["PBMR109"] = float(R109_exit[5])
+        bmp_output["KR109"] = float(R109_opt[0]/60)
+        bmp_output["EaR109"] = float(R109_opt[1])
+        bmp_output["lambdaR109"] = float(R109_opt[2])
+        bmp_output["Objetive"] = float(R109_opt[3])
+        bmp_output["TempR109"] = float(R109_exit[6])  
+        bmp_output["pHR109"] = float(R109_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR109"] =float(R109_exit[8])
+        bmp_output["carbondioxidemolR109"] = float(R109_exit[9])
+        bmp_output["oxygenmolR109"] = float(R109_exit[10])
+        bmp_output["hydrogensulfurmolR109"] = float(R109_exit[11])
+        bmp_output["hydrogenmolR109"] = float(R109_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR109"] = float(R109_exit[13])
+        bmp_output["carbondioxideconcentrationR109"] = float(R109_exit[14])
+        bmp_output["oxygenconcentrationR109"] = float(R109_exit[15])
+        bmp_output["hydrogensulfurconcentrationR109"] = float(R109_exit[16])
+        bmp_output["hydrogenconcentrationR109"] = float(R109_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR109"] = float(R109_exit[18])
+        bmp_output["carbondioxidevolR109"] = float(R109_exit[19])
+        bmp_output["oxygenvolR109"] = float(R109_exit[20])
+        bmp_output["hydrogensulfurvolR109"] = float(R109_exit[21])
+        bmp_output["hydrogenvolR109"] = float(R109_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR109"] = float(R109_exit[23])
+        bmp_output["storagebiogaspressureR109"] = float(R109_exit[24])
+        bmp_output["storagebiogasR109"] = float(R109_exit[25])
+        bmp_output["accumbiogasR109"] = float(R109_exit[26])
+        bmp_output["EnergyR109"] = float(R109_exit[27])
+        bmp_output["LHVR109"] = float(R109_exit[28])
+
+        #R110
+        bmp_output["mixVelocityR110"] = float(R110_exit[0]) 
+        bmp_output["SVR110"] = float(R110_exit[1])
+        bmp_output["OCR110"] = float(R110_exit[2])
+        bmp_output["STR110"] = float(R110_exit[3])
+        bmp_output["XR110"] = float(R110_exit[4])
+        bmp_output["PBMR110"] = float(R110_exit[5])
+        bmp_output["KR110"] = float(R110_opt[0]/60)
+        bmp_output["EaR110"] = float(R110_opt[1])
+        bmp_output["lambdaR110"] = float(R110_opt[2])
+        bmp_output["Objetive"] = float(R110_opt[3])
+        bmp_output["TempR110"] = float(R110_exit[6])  
+        bmp_output["pHR110"] = float(R110_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR110"] =float(R110_exit[8])
+        bmp_output["carbondioxidemolR110"] = float(R110_exit[9])
+        bmp_output["oxygenmolR110"] = float(R110_exit[10])
+        bmp_output["hydrogensulfurmolR110"] = float(R110_exit[11])
+        bmp_output["hydrogenmolR110"] = float(R110_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR110"] = float(R110_exit[13])
+        bmp_output["carbondioxideconcentrationR110"] = float(R110_exit[14])
+        bmp_output["oxygenconcentrationR110"] = float(R110_exit[15])
+        bmp_output["hydrogensulfurconcentrationR110"] = float(R110_exit[16])
+        bmp_output["hydrogenconcentrationR110"] = float(R110_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR110"] = float(R110_exit[18])
+        bmp_output["carbondioxidevolR110"] = float(R110_exit[19])
+        bmp_output["oxygenvolR110"] = float(R110_exit[20])
+        bmp_output["hydrogensulfurvolR110"] = float(R110_exit[21])
+        bmp_output["hydrogenvolR110"] = float(R110_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR110"] = float(R110_exit[23])
+        bmp_output["storagebiogaspressureR110"] = float(R110_exit[24])
+        bmp_output["storagebiogasR110"] = float(R110_exit[25])
+        bmp_output["accumbiogasR110"] = float(R110_exit[26])
+        bmp_output["EnergyR110"] = float(R110_exit[27])
+        bmp_output["LHVR110"] = float(R110_exit[28])
       
-    #   #Agitación
-    #   R104.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR104"] = R104.MixVelocity
-
-    #   #Alimentación
-    #   R104.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideA"] = R104.Qr
-    #   bmp_output["volumeSubstrateSideA"] = R104.TotalVolFeed
-
-    #   #Reactor
-    #   R104.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
-    #   #---- Salidas reactor R104
-    #   bmp_output["SVR104"] = R104.SV 
-    #   bmp_output["OCR104"] = R104.OC
-    #   bmp_output["STR104"] = R104.ST
-    #   bmp_output["XR104"] = R104.x
-    #   bmp_output["KR104"] = R104.K1
-    #   bmp_output["EaR104"] = R104.K2
-    #   bmp_output["lambdaR104"] = R104.K3
-    #   bmp_output["TempR104"] = R104.T   
-    #   bmp_output["pHR104"] = R104.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR104"] = R104.mol_CH4
-    #   bmp_output["carbondioxidemolR104"] = R104.mol_CO2
-    #   bmp_output["oxygenmolR104"] = R104.mol_O2
-    #   bmp_output["hydrogensulfurmolR104"] = R104.mol_H2S
-    #   bmp_output["hydrogenmolR104"] = R104.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R104.CompoundsUnits()
-    #   bmp_output["methanevolR104"] = R104.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR104"] = R104.Vnormal_CO2
-    #   bmp_output["oxygenvolR104"] = R104.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR104"] = R104.Vnormal_H2S
-    #   bmp_output["hydrogenvolR104"] = R104.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR104"] = R104.x_CH4
-    #   bmp_output["carbondioxideconcentrationR104"] = R104.x_CO2
-    #   bmp_output["oxygenconcentrationR104"] = R104.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR104"] = R104.x_H2S
-    #   bmp_output["hydrogenconcentrationR104"] = R104.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR104"] = R104.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R104.PressurebyBiogas()
-    #   if SideA_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR104"] = R104.P_acum
-    #     bmp_output["storagebiogaspressureR104"] = R104.P_storage
-    #     bmp_output["storagebiogasR104"] = R104.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R104.poolSensor()
-    #     bmp_output["poolLevelR104"] = R104.hpool
-    #     bmp_output["poolTempR104"] = R104.Tpool
-    #     bmp_output["poolPressureR104"] = R104.Ppool
-    #   #Biogas energy
-    #   R104.biogasEnergy()
-    #   bmp_output["LHVR104"] = R104.LHV
-    #   bmp_output["EnergyR104"] = R104.TotalBiogasEnergy
-    #   bmp_output["PBMR104"] = R104.PBM
+      if stateSelectionSideB == False and biogasSideB == True and TrainingMode == True:    #Online, biogas compounds in auto
         
-    #   # ----- Reactor 5
-    #   if user_id105 not in bmp_instances:
-    #     bmp_instances[user_id105] = BMPOffline.BMPModelOffline(Vrxn = SideA_Vrxn, Vf=SideA_vf, tp=SideA_tp)
-    #   R105 = bmp_instances[user_id105]
-    #   R105.MixtureCalculation(substratesNumber = SideA_substrateNumber, MixtureRule = SideA_MixRule, WaterFraction = SideA_Water, WaterVolume = SideA_Water, WaterWeight = SideA_Water, 
-    #                           Fraction1 = SideA_Fraction1, Volume1 = SideA_Fraction1, Weight1 = SideA_Fraction1, TS1 = SideA_TS1, VS1 = SideA_VS1, rho1 = SideA_rho1, Cc1 = SideA_Cc1, Hc1 = SideA_Ch1, Oc1 = SideA_Co1, Nc1 = SideA_Cn1, Sc1 = SideA_Cs1,
-    #                           Fraction2 = SideA_Fraction2, Volume2 = SideA_Fraction2, Weight2 = SideA_Fraction2, TS2 = SideA_TS2, VS2 = SideA_VS2, rho2 = SideA_rho2, Cc2 = SideA_Cc2, Hc2 = SideA_Ch2, Oc2 = SideA_Co2, Nc2 = SideA_Cn2, Sc2 = SideA_Cs2,
-    #                           Fraction3 = SideA_Fraction3, Volume3 = SideA_Fraction3, Weight3 = SideA_Fraction3, TS3 = SideA_TS3, VS3 = SideA_VS3, rho3 = SideA_rho3, Cc3 = SideA_Cc3, Hc3 = SideA_Ch3, Oc3 = SideA_Co3, Nc3 = SideA_Cn3, Sc3 = SideA_Cs3,
-    #                           Fraction4 = SideA_Fraction4, Volume4 = SideA_Fraction4, Weight4 = SideA_Fraction4, TS4 = SideA_TS4, VS4 = SideA_VS4, rho4 = SideA_rho4, Cc4 = SideA_Cc4, Hc4 = SideA_Ch4, Oc4 = SideA_Co4, Nc4 = SideA_Cn4, Sc4 = SideA_Cs4)
-      
-    #   #Agitación
-    #   R105.MixControl(MixVelocity = SideA_MixVelocity, MixTime = SideA_MixTime, DailyMixing = SideA_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR105"] = R105.MixVelocity
+        if user_idSideB not in bmp_instancesSideB:
+          bmp_instancesSideB[user_idSideB] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideB, ReactorVolume=ReactorVolumeSideB, InitialFreeVolume=InitialFreeVolumeSideB, 
+                                                                      SubstrateNumber=SubstrateNumberSideB, MixRule=MixRuleSideB,
+                                                                      Fraction1=Fraction1SideB, Fraction2=Fraction2SideB, Fraction3=Fraction3SideB, Fraction4=Fraction4SideB, WaterFraction=WaterFractionSideB,
+                                                                      Volume1=Fraction1SideB, Volume2=Fraction2SideB, Volume3=Fraction3SideB, Volume4=Fraction4SideB, WaterVolume=WaterFractionSideB, 
+                                                                      Weight1=Fraction1SideB, Weight2=Fraction2SideB, Weight3=Fraction3SideB, Weight4=Fraction4SideB, WaterWeight=WaterFractionSideB,
+                                                                      ST1=ST1SideB, SV1=SV1SideB, rho1=rho1SideB, Cc1=Cc1SideB, Ch1=Ch1SideB, Co1=Co1SideB,Cn1=Cn1SideB, Cs1=Cs1SideB,
+                                                                      ST2=ST2SideB, SV2=SV2SideB, rho2=rho2SideB, Cc2=Cc2SideB, Ch2=Ch2SideB, Co2=Co2SideB,Cn2=Cn2SideB, Cs2=Cs2SideB,
+                                                                      ST3=ST3SideB, SV3=SV3SideB, rho3=rho3SideB, Cc3=Cc3SideB, Ch3=Ch3SideB, Co3=Co3SideB,Cn3=Cn3SideB, Cs3=Cs3SideB,
+                                                                      ST4=ST4SideB, SV4=SV4SideB, rho4=rho4SideB, Cc4=Cc4SideB, Ch4=Ch4SideB, Co4=Co4SideB,Cn4=Cn4SideB, Cs4=Cs4SideB,
+                                                                      OperationMethod = OperationMethodSideB, Model=ModelSideB)
 
-    #   #Alimentación
-    #   R105.SubstrateFeed(Mode = SideA_FeedMode, Volume = SideA_FeedVolume, Time = SideA_FeedTime, Inyections = SideA_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideA"] = R105.Qr
-    #   bmp_output["volumeSubstrateSideA"] = R105.TotalVolFeed
+        SideB = bmp_instancesSideB[user_idSideB]
+        if user_data_sideB not in data_instancesSideB:
+          SideB.GetData(SideA=False, SideB=True, TrainTime=TrainTimeSideB)
+          DataSideB = SideB.PlantSideB
+          DataInterfaz = SideB.PlantEstimation
+          SideB.ProcessData(SideA = False, SideB = True, MeasureMethodSideA = measurementMethodSideB, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideB, DataPlantSideB = DataSideB,  
+                           DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideB)
+          R106_data = SideB.R106_data
+          R107_data = SideB.R107_data
+          R108_data = SideB.R108_data
+          R109_data = SideB.R109_data
+          R110_data = SideB.R110_data
+          if SideB.OperationMethod in ["Time", "Injection"]:
+            SideB.SubstrateFeeding()
+          
+          R106 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R106", ReactorData = R106_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R107 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R107", ReactorData = R107_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R108 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R108", ReactorData = R108_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R109 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R109", ReactorData = R109_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R110 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R110", ReactorData = R110_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          data_instancesSideB[user_data_sideB] = [R106, R107, R108, R109, R110]
+        
+        R106_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R107_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R108_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R109_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R110_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        
+        R106_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
+        R107_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
+        R108_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
+        R109_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
+        R110_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
+        #Output variables
+        #R106
+        bmp_output["mixVelocityR106"] = float(R106_exit[0]) 
+        bmp_output["SVR106"] = float(R106_exit[1])
+        bmp_output["OCR106"] = float(R106_exit[2])
+        bmp_output["STR106"] = float(R106_exit[3])
+        bmp_output["XR106"] = float(R106_exit[4])
+        bmp_output["PBMR106"] = float(R106_exit[5])
+        bmp_output["KR106"] = float(R106_opt[0]/60)
+        bmp_output["EaR106"] = float(R106_opt[1])
+        bmp_output["lambdaR106"] = float(R106_opt[2])
+        bmp_output["Objetive"] = float(R106_opt[3])
+        bmp_output["TempR106"] = float(R106_exit[6])  
+        bmp_output["pHR106"] = float(R106_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR106"] =float(R106_exit[8])
+        bmp_output["carbondioxidemolR106"] = float(R106_exit[9])
+        bmp_output["oxygenmolR106"] = float(R106_exit[10])
+        bmp_output["hydrogensulfurmolR106"] = float(R106_exit[11])
+        bmp_output["hydrogenmolR106"] = float(R106_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR106"] = float(R106_exit[13])
+        bmp_output["carbondioxideconcentrationR106"] = float(R106_exit[14])
+        bmp_output["oxygenconcentrationR106"] = float(R106_exit[15])
+        bmp_output["hydrogensulfurconcentrationR106"] = float(R106_exit[16])
+        bmp_output["hydrogenconcentrationR106"] = float(R106_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR106"] = float(R106_exit[18])
+        bmp_output["carbondioxidevolR106"] = float(R106_exit[19])
+        bmp_output["oxygenvolR106"] = float(R106_exit[20])
+        bmp_output["hydrogensulfurvolR106"] = float(R106_exit[21])
+        bmp_output["hydrogenvolR106"] = float(R106_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR106"] = float(R106_exit[23])
+        bmp_output["storagebiogaspressureR106"] = float(R106_exit[24])
+        bmp_output["storagebiogasR106"] = float(R106_exit[25])
+        bmp_output["accumbiogasR106"] = float(R106_exit[26])
+        bmp_output["EnergyR106"] = float(R106_exit[27])
+        bmp_output["LHVR106"] = float(R106_exit[28])
 
-    #   #Reactor
-    #   R105.Reactor(model = SideA_Model, pH = SideA_pH, T = SideA_Temperatura, K1 = SideA_K1, K2 = SideA_K2, K3 = SideA_K3)
-    #   #---- Salidas reactor R105
-    #   bmp_output["SVR105"] = R105.SV 
-    #   bmp_output["OCR105"] = R105.OC
-    #   bmp_output["STR105"] = R105.ST
-    #   bmp_output["XR105"] = R105.x
-    #   bmp_output["KR105"] = R105.K1
-    #   bmp_output["EaR105"] = R105.K2
-    #   bmp_output["lambdaR105"] = R105.K3
-    #   bmp_output["TempR105"] = R105.T   
-    #   bmp_output["pHR105"] = R105.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR105"] = R105.mol_CH4
-    #   bmp_output["carbondioxidemolR105"] = R105.mol_CO2
-    #   bmp_output["oxygenmolR105"] = R105.mol_O2
-    #   bmp_output["hydrogensulfurmolR105"] = R105.mol_H2S
-    #   bmp_output["hydrogenmolR105"] = R105.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R105.CompoundsUnits()
-    #   bmp_output["methanevolR105"] = R105.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR105"] = R105.Vnormal_CO2
-    #   bmp_output["oxygenvolR105"] = R105.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR105"] = R105.Vnormal_H2S
-    #   bmp_output["hydrogenvolR105"] = R105.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR105"] = R105.x_CH4
-    #   bmp_output["carbondioxideconcentrationR105"] = R105.x_CO2
-    #   bmp_output["oxygenconcentrationR105"] = R105.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR105"] = R105.x_H2S
-    #   bmp_output["hydrogenconcentrationR105"] = R105.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR105"] = R105.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R105.PressurebyBiogas()
-    #   if SideA_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR105"] = R105.P_acum
-    #     bmp_output["storagebiogaspressureR105"] = R105.P_storage
-    #     bmp_output["storagebiogasR105"] = R105.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R105.poolSensor()
-    #     bmp_output["poolLevelR105"] = R105.hpool
-    #     bmp_output["poolTempR105"] = R105.Tpool
-    #     bmp_output["poolPressureR105"] = R105.Ppool
-    #   #Biogas energy
-    #   R105.biogasEnergy()
-    #   bmp_output["LHVR105"] = R105.LHV
-    #   bmp_output["EnergyR105"] = R105.TotalBiogasEnergy
-    #   bmp_output["PBMR105"] = R105.PBM
+        #R107
+        bmp_output["mixVelocityR107"] = float(R107_exit[0]) 
+        bmp_output["SVR107"] = float(R107_exit[1])
+        bmp_output["OCR107"] = float(R107_exit[2])
+        bmp_output["STR107"] = float(R107_exit[3])
+        bmp_output["XR107"] = float(R107_exit[4])
+        bmp_output["PBMR107"] = float(R107_exit[5])
+        bmp_output["KR107"] = float(R107_opt[0]/60)
+        bmp_output["EaR107"] = float(R107_opt[1])
+        bmp_output["lambdaR107"] = float(R107_opt[2])
+        bmp_output["Objetive"] = float(R107_opt[3])
+        bmp_output["TempR107"] = float(R107_exit[6])  
+        bmp_output["pHR107"] = float(R107_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR107"] =float(R107_exit[8])
+        bmp_output["carbondioxidemolR107"] = float(R107_exit[9])
+        bmp_output["oxygenmolR107"] = float(R107_exit[10])
+        bmp_output["hydrogensulfurmolR107"] = float(R107_exit[11])
+        bmp_output["hydrogenmolR107"] = float(R107_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR107"] = float(R107_exit[13])
+        bmp_output["carbondioxideconcentrationR107"] = float(R107_exit[14])
+        bmp_output["oxygenconcentrationR107"] = float(R107_exit[15])
+        bmp_output["hydrogensulfurconcentrationR107"] = float(R107_exit[16])
+        bmp_output["hydrogenconcentrationR107"] = float(R107_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR107"] = float(R107_exit[18])
+        bmp_output["carbondioxidevolR107"] = float(R107_exit[19])
+        bmp_output["oxygenvolR107"] = float(R107_exit[20])
+        bmp_output["hydrogensulfurvolR107"] = float(R107_exit[21])
+        bmp_output["hydrogenvolR107"] = float(R107_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR107"] = float(R107_exit[23])
+        bmp_output["storagebiogaspressureR107"] = float(R107_exit[24])
+        bmp_output["storagebiogasR107"] = float(R107_exit[25])
+        bmp_output["accumbiogasR107"] = float(R107_exit[26])
+        bmp_output["EnergyR107"] = float(R107_exit[27])
+        bmp_output["LHVR107"] = float(R107_exit[28])
+
+        #R108
+        bmp_output["mixVelocityR108"] = float(R108_exit[0]) 
+        bmp_output["SVR108"] = float(R108_exit[1])
+        bmp_output["OCR108"] = float(R108_exit[2])
+        bmp_output["STR108"] = float(R108_exit[3])
+        bmp_output["XR108"] = float(R108_exit[4])
+        bmp_output["PBMR108"] = float(R108_exit[5])
+        bmp_output["KR108"] = float(R108_opt[0]/60)
+        bmp_output["EaR108"] = float(R108_opt[1])
+        bmp_output["lambdaR108"] = float(R108_opt[2])
+        bmp_output["Objetive"] = float(R108_opt[3])
+        bmp_output["TempR108"] = float(R108_exit[6])  
+        bmp_output["pHR108"] = float(R108_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR108"] =float(R108_exit[8])
+        bmp_output["carbondioxidemolR108"] = float(R108_exit[9])
+        bmp_output["oxygenmolR108"] = float(R108_exit[10])
+        bmp_output["hydrogensulfurmolR108"] = float(R108_exit[11])
+        bmp_output["hydrogenmolR108"] = float(R108_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR108"] = float(R108_exit[13])
+        bmp_output["carbondioxideconcentrationR108"] = float(R108_exit[14])
+        bmp_output["oxygenconcentrationR108"] = float(R108_exit[15])
+        bmp_output["hydrogensulfurconcentrationR108"] = float(R108_exit[16])
+        bmp_output["hydrogenconcentrationR108"] = float(R108_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR108"] = float(R108_exit[18])
+        bmp_output["carbondioxidevolR108"] = float(R108_exit[19])
+        bmp_output["oxygenvolR108"] = float(R108_exit[20])
+        bmp_output["hydrogensulfurvolR108"] = float(R108_exit[21])
+        bmp_output["hydrogenvolR108"] = float(R108_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR108"] = float(R108_exit[23])
+        bmp_output["storagebiogaspressureR108"] = float(R108_exit[24])
+        bmp_output["storagebiogasR108"] = float(R108_exit[25])
+        bmp_output["accumbiogasR108"] = float(R108_exit[26])
+        bmp_output["EnergyR108"] = float(R108_exit[27])
+        bmp_output["LHVR108"] = float(R108_exit[28])
+
+        #R109
+        bmp_output["mixVelocityR109"] = float(R109_exit[0]) 
+        bmp_output["SVR109"] = float(R109_exit[1])
+        bmp_output["OCR109"] = float(R109_exit[2])
+        bmp_output["STR109"] = float(R109_exit[3])
+        bmp_output["XR109"] = float(R109_exit[4])
+        bmp_output["PBMR109"] = float(R109_exit[5])
+        bmp_output["KR109"] = float(R109_opt[0]/60)
+        bmp_output["EaR109"] = float(R109_opt[1])
+        bmp_output["lambdaR109"] = float(R109_opt[2])
+        bmp_output["Objetive"] = float(R109_opt[3])
+        bmp_output["TempR109"] = float(R109_exit[6])  
+        bmp_output["pHR109"] = float(R109_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR109"] =float(R109_exit[8])
+        bmp_output["carbondioxidemolR109"] = float(R109_exit[9])
+        bmp_output["oxygenmolR109"] = float(R109_exit[10])
+        bmp_output["hydrogensulfurmolR109"] = float(R109_exit[11])
+        bmp_output["hydrogenmolR109"] = float(R109_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR109"] = float(R109_exit[13])
+        bmp_output["carbondioxideconcentrationR109"] = float(R109_exit[14])
+        bmp_output["oxygenconcentrationR109"] = float(R109_exit[15])
+        bmp_output["hydrogensulfurconcentrationR109"] = float(R109_exit[16])
+        bmp_output["hydrogenconcentrationR109"] = float(R109_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR109"] = float(R109_exit[18])
+        bmp_output["carbondioxidevolR109"] = float(R109_exit[19])
+        bmp_output["oxygenvolR109"] = float(R109_exit[20])
+        bmp_output["hydrogensulfurvolR109"] = float(R109_exit[21])
+        bmp_output["hydrogenvolR109"] = float(R109_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR109"] = float(R109_exit[23])
+        bmp_output["storagebiogaspressureR109"] = float(R109_exit[24])
+        bmp_output["storagebiogasR109"] = float(R109_exit[25])
+        bmp_output["accumbiogasR109"] = float(R109_exit[26])
+        bmp_output["EnergyR109"] = float(R109_exit[27])
+        bmp_output["LHVR109"] = float(R109_exit[28])
+
+        #R110
+        bmp_output["mixVelocityR110"] = float(R110_exit[0]) 
+        bmp_output["SVR110"] = float(R110_exit[1])
+        bmp_output["OCR110"] = float(R110_exit[2])
+        bmp_output["STR110"] = float(R110_exit[3])
+        bmp_output["XR110"] = float(R110_exit[4])
+        bmp_output["PBMR110"] = float(R110_exit[5])
+        bmp_output["KR110"] = float(R110_opt[0]/60)
+        bmp_output["EaR110"] = float(R110_opt[1])
+        bmp_output["lambdaR110"] = float(R110_opt[2])
+        bmp_output["Objetive"] = float(R110_opt[3])
+        bmp_output["TempR110"] = float(R110_exit[6])  
+        bmp_output["pHR110"] = float(R110_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR110"] =float(R110_exit[8])
+        bmp_output["carbondioxidemolR110"] = float(R110_exit[9])
+        bmp_output["oxygenmolR110"] = float(R110_exit[10])
+        bmp_output["hydrogensulfurmolR110"] = float(R110_exit[11])
+        bmp_output["hydrogenmolR110"] = float(R110_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR110"] = float(R110_exit[13])
+        bmp_output["carbondioxideconcentrationR110"] = float(R110_exit[14])
+        bmp_output["oxygenconcentrationR110"] = float(R110_exit[15])
+        bmp_output["hydrogensulfurconcentrationR110"] = float(R110_exit[16])
+        bmp_output["hydrogenconcentrationR110"] = float(R110_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR110"] = float(R110_exit[18])
+        bmp_output["carbondioxidevolR110"] = float(R110_exit[19])
+        bmp_output["oxygenvolR110"] = float(R110_exit[20])
+        bmp_output["hydrogensulfurvolR110"] = float(R110_exit[21])
+        bmp_output["hydrogenvolR110"] = float(R110_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR110"] = float(R110_exit[23])
+        bmp_output["storagebiogaspressureR110"] = float(R110_exit[24])
+        bmp_output["storagebiogasR110"] = float(R110_exit[25])
+        bmp_output["accumbiogasR110"] = float(R110_exit[26])
+        bmp_output["EnergyR110"] = float(R110_exit[27])
+        bmp_output["LHVR110"] = float(R110_exit[28])
       
+      if stateSelectionSideB == False and biogasSideB == True and TrainingMode == True:    #Online, biogas compounds in auto
+        
+        if user_idSideB not in bmp_instancesSideB:
+          bmp_instancesSideB[user_idSideB] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideB, ReactorVolume=ReactorVolumeSideB, InitialFreeVolume=InitialFreeVolumeSideB, 
+                                                                      SubstrateNumber=SubstrateNumberSideB, MixRule=MixRuleSideB,
+                                                                      Fraction1=Fraction1SideB, Fraction2=Fraction2SideB, Fraction3=Fraction3SideB, Fraction4=Fraction4SideB, WaterFraction=WaterFractionSideB,
+                                                                      Volume1=Fraction1SideB, Volume2=Fraction2SideB, Volume3=Fraction3SideB, Volume4=Fraction4SideB, WaterVolume=WaterFractionSideB, 
+                                                                      Weight1=Fraction1SideB, Weight2=Fraction2SideB, Weight3=Fraction3SideB, Weight4=Fraction4SideB, WaterWeight=WaterFractionSideB,
+                                                                      ST1=ST1SideB, SV1=SV1SideB, rho1=rho1SideB, Cc1=Cc1SideB, Ch1=Ch1SideB, Co1=Co1SideB,Cn1=Cn1SideB, Cs1=Cs1SideB,
+                                                                      ST2=ST2SideB, SV2=SV2SideB, rho2=rho2SideB, Cc2=Cc2SideB, Ch2=Ch2SideB, Co2=Co2SideB,Cn2=Cn2SideB, Cs2=Cs2SideB,
+                                                                      ST3=ST3SideB, SV3=SV3SideB, rho3=rho3SideB, Cc3=Cc3SideB, Ch3=Ch3SideB, Co3=Co3SideB,Cn3=Cn3SideB, Cs3=Cs3SideB,
+                                                                      ST4=ST4SideB, SV4=SV4SideB, rho4=rho4SideB, Cc4=Cc4SideB, Ch4=Ch4SideB, Co4=Co4SideB,Cn4=Cn4SideB, Cs4=Cs4SideB,
+                                                                      OperationMethod = OperationMethodSideB, Model=ModelSideB)
+
+        SideB = bmp_instancesSideB[user_idSideB]
+        if user_data_sideB not in data_instancesSideB:
+          SideB.GetData(SideA=False, SideB=True, TrainTime=TrainTimeSideB)
+          DataSideB = SideB.PlantSideB
+          DataInterfaz = SideB.PlantEstimation
+          SideB.ProcessData(SideA = False, SideB = True, MeasureMethodSideA = measurementMethodSideB, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideB, DataPlantSideB = DataSideB,  
+                           DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideB)
+          R106_data = SideB.R106_data
+          R107_data = SideB.R107_data
+          R108_data = SideB.R108_data
+          R109_data = SideB.R109_data
+          R110_data = SideB.R110_data
+          if SideB.OperationMethod in ["Time", "Injection"]:
+            SideB.SubstrateFeeding()
+          
+          R106 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R106", ReactorData = R106_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R107 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R107", ReactorData = R107_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R108 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R108", ReactorData = R108_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R109 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R109", ReactorData = R109_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          R110 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R110", ReactorData = R110_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+          data_instancesSideB[user_data_sideB] = [R106, R107, R108, R109, R110]
+        
+        R106_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R107_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R108_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R109_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        R110_opt = SideB.ReactorOptimization(Model = ModelSideB, iterations_counts = iteration, Reactorname = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], ReactorVolume = ReactorVolumeSideB, OperationMethod = OperationMethodSideB)
+        
+        R106_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
+        R107_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
+        R108_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
+        R109_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
+        R110_exit = SideB.exit_variable_training (iterations_counts = iteration, ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
+        #Output variables
+        #R106
+        bmp_output["mixVelocityR106"] = float(R106_exit[0]) 
+        bmp_output["SVR106"] = float(R106_exit[1])
+        bmp_output["OCR106"] = float(R106_exit[2])
+        bmp_output["STR106"] = float(R106_exit[3])
+        bmp_output["XR106"] = float(R106_exit[4])
+        bmp_output["PBMR106"] = float(R106_exit[5])
+        bmp_output["KR106"] = float(R106_opt[0]/60)
+        bmp_output["EaR106"] = float(R106_opt[1])
+        bmp_output["lambdaR106"] = float(R106_opt[2])
+        bmp_output["Objetive"] = float(R106_opt[3])
+        bmp_output["TempR106"] = float(R106_exit[6])  
+        bmp_output["pHR106"] = float(R106_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR106"] =float(R106_exit[8])
+        bmp_output["carbondioxidemolR106"] = float(R106_exit[9])
+        bmp_output["oxygenmolR106"] = float(R106_exit[10])
+        bmp_output["hydrogensulfurmolR106"] = float(R106_exit[11])
+        bmp_output["hydrogenmolR106"] = float(R106_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR106"] = float(R106_exit[13])
+        bmp_output["carbondioxideconcentrationR106"] = float(R106_exit[14])
+        bmp_output["oxygenconcentrationR106"] = float(R106_exit[15])
+        bmp_output["hydrogensulfurconcentrationR106"] = float(R106_exit[16])
+        bmp_output["hydrogenconcentrationR106"] = float(R106_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR106"] = float(R106_exit[18])
+        bmp_output["carbondioxidevolR106"] = float(R106_exit[19])
+        bmp_output["oxygenvolR106"] = float(R106_exit[20])
+        bmp_output["hydrogensulfurvolR106"] = float(R106_exit[21])
+        bmp_output["hydrogenvolR106"] = float(R106_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR106"] = float(R106_exit[23])
+        bmp_output["storagebiogaspressureR106"] = float(R106_exit[24])
+        bmp_output["storagebiogasR106"] = float(R106_exit[25])
+        bmp_output["accumbiogasR106"] = float(R106_exit[26])
+        bmp_output["EnergyR106"] = float(R106_exit[27])
+        bmp_output["LHVR106"] = float(R106_exit[28])
+
+        #R107
+        bmp_output["mixVelocityR107"] = float(R107_exit[0]) 
+        bmp_output["SVR107"] = float(R107_exit[1])
+        bmp_output["OCR107"] = float(R107_exit[2])
+        bmp_output["STR107"] = float(R107_exit[3])
+        bmp_output["XR107"] = float(R107_exit[4])
+        bmp_output["PBMR107"] = float(R107_exit[5])
+        bmp_output["KR107"] = float(R107_opt[0]/60)
+        bmp_output["EaR107"] = float(R107_opt[1])
+        bmp_output["lambdaR107"] = float(R107_opt[2])
+        bmp_output["Objetive"] = float(R107_opt[3])
+        bmp_output["TempR107"] = float(R107_exit[6])  
+        bmp_output["pHR107"] = float(R107_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR107"] =float(R107_exit[8])
+        bmp_output["carbondioxidemolR107"] = float(R107_exit[9])
+        bmp_output["oxygenmolR107"] = float(R107_exit[10])
+        bmp_output["hydrogensulfurmolR107"] = float(R107_exit[11])
+        bmp_output["hydrogenmolR107"] = float(R107_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR107"] = float(R107_exit[13])
+        bmp_output["carbondioxideconcentrationR107"] = float(R107_exit[14])
+        bmp_output["oxygenconcentrationR107"] = float(R107_exit[15])
+        bmp_output["hydrogensulfurconcentrationR107"] = float(R107_exit[16])
+        bmp_output["hydrogenconcentrationR107"] = float(R107_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR107"] = float(R107_exit[18])
+        bmp_output["carbondioxidevolR107"] = float(R107_exit[19])
+        bmp_output["oxygenvolR107"] = float(R107_exit[20])
+        bmp_output["hydrogensulfurvolR107"] = float(R107_exit[21])
+        bmp_output["hydrogenvolR107"] = float(R107_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR107"] = float(R107_exit[23])
+        bmp_output["storagebiogaspressureR107"] = float(R107_exit[24])
+        bmp_output["storagebiogasR107"] = float(R107_exit[25])
+        bmp_output["accumbiogasR107"] = float(R107_exit[26])
+        bmp_output["EnergyR107"] = float(R107_exit[27])
+        bmp_output["LHVR107"] = float(R107_exit[28])
+
+        #R108
+        bmp_output["mixVelocityR108"] = float(R108_exit[0]) 
+        bmp_output["SVR108"] = float(R108_exit[1])
+        bmp_output["OCR108"] = float(R108_exit[2])
+        bmp_output["STR108"] = float(R108_exit[3])
+        bmp_output["XR108"] = float(R108_exit[4])
+        bmp_output["PBMR108"] = float(R108_exit[5])
+        bmp_output["KR108"] = float(R108_opt[0]/60)
+        bmp_output["EaR108"] = float(R108_opt[1])
+        bmp_output["lambdaR108"] = float(R108_opt[2])
+        bmp_output["Objetive"] = float(R108_opt[3])
+        bmp_output["TempR108"] = float(R108_exit[6])  
+        bmp_output["pHR108"] = float(R108_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR108"] =float(R108_exit[8])
+        bmp_output["carbondioxidemolR108"] = float(R108_exit[9])
+        bmp_output["oxygenmolR108"] = float(R108_exit[10])
+        bmp_output["hydrogensulfurmolR108"] = float(R108_exit[11])
+        bmp_output["hydrogenmolR108"] = float(R108_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR108"] = float(R108_exit[13])
+        bmp_output["carbondioxideconcentrationR108"] = float(R108_exit[14])
+        bmp_output["oxygenconcentrationR108"] = float(R108_exit[15])
+        bmp_output["hydrogensulfurconcentrationR108"] = float(R108_exit[16])
+        bmp_output["hydrogenconcentrationR108"] = float(R108_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR108"] = float(R108_exit[18])
+        bmp_output["carbondioxidevolR108"] = float(R108_exit[19])
+        bmp_output["oxygenvolR108"] = float(R108_exit[20])
+        bmp_output["hydrogensulfurvolR108"] = float(R108_exit[21])
+        bmp_output["hydrogenvolR108"] = float(R108_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR108"] = float(R108_exit[23])
+        bmp_output["storagebiogaspressureR108"] = float(R108_exit[24])
+        bmp_output["storagebiogasR108"] = float(R108_exit[25])
+        bmp_output["accumbiogasR108"] = float(R108_exit[26])
+        bmp_output["EnergyR108"] = float(R108_exit[27])
+        bmp_output["LHVR108"] = float(R108_exit[28])
+
+        #R109
+        bmp_output["mixVelocityR109"] = float(R109_exit[0]) 
+        bmp_output["SVR109"] = float(R109_exit[1])
+        bmp_output["OCR109"] = float(R109_exit[2])
+        bmp_output["STR109"] = float(R109_exit[3])
+        bmp_output["XR109"] = float(R109_exit[4])
+        bmp_output["PBMR109"] = float(R109_exit[5])
+        bmp_output["KR109"] = float(R109_opt[0]/60)
+        bmp_output["EaR109"] = float(R109_opt[1])
+        bmp_output["lambdaR109"] = float(R109_opt[2])
+        bmp_output["Objetive"] = float(R109_opt[3])
+        bmp_output["TempR109"] = float(R109_exit[6])  
+        bmp_output["pHR109"] = float(R109_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR109"] =float(R109_exit[8])
+        bmp_output["carbondioxidemolR109"] = float(R109_exit[9])
+        bmp_output["oxygenmolR109"] = float(R109_exit[10])
+        bmp_output["hydrogensulfurmolR109"] = float(R109_exit[11])
+        bmp_output["hydrogenmolR109"] = float(R109_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR109"] = float(R109_exit[13])
+        bmp_output["carbondioxideconcentrationR109"] = float(R109_exit[14])
+        bmp_output["oxygenconcentrationR109"] = float(R109_exit[15])
+        bmp_output["hydrogensulfurconcentrationR109"] = float(R109_exit[16])
+        bmp_output["hydrogenconcentrationR109"] = float(R109_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR109"] = float(R109_exit[18])
+        bmp_output["carbondioxidevolR109"] = float(R109_exit[19])
+        bmp_output["oxygenvolR109"] = float(R109_exit[20])
+        bmp_output["hydrogensulfurvolR109"] = float(R109_exit[21])
+        bmp_output["hydrogenvolR109"] = float(R109_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR109"] = float(R109_exit[23])
+        bmp_output["storagebiogaspressureR109"] = float(R109_exit[24])
+        bmp_output["storagebiogasR109"] = float(R109_exit[25])
+        bmp_output["accumbiogasR109"] = float(R109_exit[26])
+        bmp_output["EnergyR109"] = float(R109_exit[27])
+        bmp_output["LHVR109"] = float(R109_exit[28])
+
+        #R110
+        bmp_output["mixVelocityR110"] = float(R110_exit[0]) 
+        bmp_output["SVR110"] = float(R110_exit[1])
+        bmp_output["OCR110"] = float(R110_exit[2])
+        bmp_output["STR110"] = float(R110_exit[3])
+        bmp_output["XR110"] = float(R110_exit[4])
+        bmp_output["PBMR110"] = float(R110_exit[5])
+        bmp_output["KR110"] = float(R110_opt[0]/60)
+        bmp_output["EaR110"] = float(R110_opt[1])
+        bmp_output["lambdaR110"] = float(R110_opt[2])
+        bmp_output["Objetive"] = float(R110_opt[3])
+        bmp_output["TempR110"] = float(R110_exit[6])  
+        bmp_output["pHR110"] = float(R110_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR110"] =float(R110_exit[8])
+        bmp_output["carbondioxidemolR110"] = float(R110_exit[9])
+        bmp_output["oxygenmolR110"] = float(R110_exit[10])
+        bmp_output["hydrogensulfurmolR110"] = float(R110_exit[11])
+        bmp_output["hydrogenmolR110"] = float(R110_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR110"] = float(R110_exit[13])
+        bmp_output["carbondioxideconcentrationR110"] = float(R110_exit[14])
+        bmp_output["oxygenconcentrationR110"] = float(R110_exit[15])
+        bmp_output["hydrogensulfurconcentrationR110"] = float(R110_exit[16])
+        bmp_output["hydrogenconcentrationR110"] = float(R110_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR110"] = float(R110_exit[18])
+        bmp_output["carbondioxidevolR110"] = float(R110_exit[19])
+        bmp_output["oxygenvolR110"] = float(R110_exit[20])
+        bmp_output["hydrogensulfurvolR110"] = float(R110_exit[21])
+        bmp_output["hydrogenvolR110"] = float(R110_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR110"] = float(R110_exit[23])
+        bmp_output["storagebiogaspressureR110"] = float(R110_exit[24])
+        bmp_output["storagebiogasR110"] = float(R110_exit[25])
+        bmp_output["accumbiogasR110"] = float(R110_exit[26])
+        bmp_output["EnergyR110"] = float(R110_exit[27])
+        bmp_output["LHVR110"] = float(R110_exit[28])
       
-         
-    # else: #Lado A Aquí las funciones del modo Online
-    #   pass
+      if stateSelectionSideB == False and biogasSideB == True and TrainingMode == False:    #Online, biogas compounds in auto
+        
+        if user_idSideB not in bmp_instancesSideB:
+          bmp_instancesSideB[user_idSideB] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideB, ReactorVolume=ReactorVolumeSideB, InitialFreeVolume=InitialFreeVolumeSideB, 
+                                                                      SubstrateNumber=SubstrateNumberSideB, MixRule=MixRuleSideB,
+                                                                      Fraction1=Fraction1SideB, Fraction2=Fraction2SideB, Fraction3=Fraction3SideB, Fraction4=Fraction4SideB, WaterFraction=WaterFractionSideB,
+                                                                      Volume1=Fraction1SideB, Volume2=Fraction2SideB, Volume3=Fraction3SideB, Volume4=Fraction4SideB, WaterVolume=WaterFractionSideB, 
+                                                                      Weight1=Fraction1SideB, Weight2=Fraction2SideB, Weight3=Fraction3SideB, Weight4=Fraction4SideB, WaterWeight=WaterFractionSideB,
+                                                                      ST1=ST1SideB, SV1=SV1SideB, rho1=rho1SideB, Cc1=Cc1SideB, Ch1=Ch1SideB, Co1=Co1SideB,Cn1=Cn1SideB, Cs1=Cs1SideB,
+                                                                      ST2=ST2SideB, SV2=SV2SideB, rho2=rho2SideB, Cc2=Cc2SideB, Ch2=Ch2SideB, Co2=Co2SideB,Cn2=Cn2SideB, Cs2=Cs2SideB,
+                                                                      ST3=ST3SideB, SV3=SV3SideB, rho3=rho3SideB, Cc3=Cc3SideB, Ch3=Ch3SideB, Co3=Co3SideB,Cn3=Cn3SideB, Cs3=Cs3SideB,
+                                                                      ST4=ST4SideB, SV4=SV4SideB, rho4=rho4SideB, Cc4=Cc4SideB, Ch4=Ch4SideB, Co4=Co4SideB,Cn4=Cn4SideB, Cs4=Cs4SideB,
+                                                                      OperationMethod = OperationMethodSideB, Model=ModelSideB)
+
+        SideB = bmp_instancesSideB[user_idSideB]
+        
+        SideB.GetData(SideA=False, SideB=True, TrainTime=TrainTimeSideB)
+        DataSideB = SideB.PlantSideB
+        DataInterfaz = SideB.PlantEstimation
+        SideB.ProcessData(SideA = False, SideB = True, MeasureMethodSideA = measurementMethodSideB, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideB, DataPlantSideB = DataSideB,  
+                          DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideB)
+        R106_data = SideB.R106_data
+        R107_data = SideB.R107_data
+        R108_data = SideB.R108_data
+        R109_data = SideB.R109_data
+        R110_data = SideB.R110_data
+        if SideB.OperationMethod in ["Time", "Injection"]:
+          SideB.SubstrateFeeding()
+        
+        R106 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R106", ReactorData = R106_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R107 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R107", ReactorData = R107_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R108 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R108", ReactorData = R108_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R109 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R109", ReactorData = R109_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R110 = SideB.StochoimetricExpendtire_Reactor(ReactorName="R110", ReactorData = R110_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        data_instancesSideB[user_data_sideB] = [R106, R107, R108, R109, R110]
+               
+        R106_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
+        R107_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
+        R108_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
+        R109_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
+        R110_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
+        #Output variables
+        #R106
+        bmp_output["mixVelocityR106"] = float(R106_exit[0]) 
+        bmp_output["SVR106"] = float(R106_exit[1])
+        bmp_output["OCR106"] = float(R106_exit[2])
+        bmp_output["STR106"] = float(R106_exit[3])
+        bmp_output["XR106"] = float(R106_exit[4])
+        bmp_output["PBMR106"] = float(R106_exit[5])
+        bmp_output["KR106"] = KSideB
+        bmp_output["EaR106"] = EaSideB
+        bmp_output["lambdaR106"] = LSideB
+        bmp_output["Objetive"] = float(R106_opt[3])
+        bmp_output["TempR106"] = float(R106_exit[6])  
+        bmp_output["pHR106"] = float(R106_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR106"] =float(R106_exit[8])
+        bmp_output["carbondioxidemolR106"] = float(R106_exit[9])
+        bmp_output["oxygenmolR106"] = float(R106_exit[10])
+        bmp_output["hydrogensulfurmolR106"] = float(R106_exit[11])
+        bmp_output["hydrogenmolR106"] = float(R106_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR106"] = float(R106_exit[13])
+        bmp_output["carbondioxideconcentrationR106"] = float(R106_exit[14])
+        bmp_output["oxygenconcentrationR106"] = float(R106_exit[15])
+        bmp_output["hydrogensulfurconcentrationR106"] = float(R106_exit[16])
+        bmp_output["hydrogenconcentrationR106"] = float(R106_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR106"] = float(R106_exit[18])
+        bmp_output["carbondioxidevolR106"] = float(R106_exit[19])
+        bmp_output["oxygenvolR106"] = float(R106_exit[20])
+        bmp_output["hydrogensulfurvolR106"] = float(R106_exit[21])
+        bmp_output["hydrogenvolR106"] = float(R106_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR106"] = float(R106_exit[23])
+        bmp_output["storagebiogaspressureR106"] = float(R106_exit[24])
+        bmp_output["storagebiogasR106"] = float(R106_exit[25])
+        bmp_output["accumbiogasR106"] = float(R106_exit[26])
+        bmp_output["EnergyR106"] = float(R106_exit[27])
+        bmp_output["LHVR106"] = float(R106_exit[28])
+
+        #R107
+        bmp_output["mixVelocityR107"] = float(R107_exit[0]) 
+        bmp_output["SVR107"] = float(R107_exit[1])
+        bmp_output["OCR107"] = float(R107_exit[2])
+        bmp_output["STR107"] = float(R107_exit[3])
+        bmp_output["XR107"] = float(R107_exit[4])
+        bmp_output["PBMR107"] = float(R107_exit[5])
+        bmp_output["KR107"] = KSideB
+        bmp_output["EaR107"] = EaSideB
+        bmp_output["lambdaR107"] = LSideB
+        bmp_output["Objetive"] = float(R107_opt[3])
+        bmp_output["TempR107"] = float(R107_exit[6])  
+        bmp_output["pHR107"] = float(R107_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR107"] =float(R107_exit[8])
+        bmp_output["carbondioxidemolR107"] = float(R107_exit[9])
+        bmp_output["oxygenmolR107"] = float(R107_exit[10])
+        bmp_output["hydrogensulfurmolR107"] = float(R107_exit[11])
+        bmp_output["hydrogenmolR107"] = float(R107_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR107"] = float(R107_exit[13])
+        bmp_output["carbondioxideconcentrationR107"] = float(R107_exit[14])
+        bmp_output["oxygenconcentrationR107"] = float(R107_exit[15])
+        bmp_output["hydrogensulfurconcentrationR107"] = float(R107_exit[16])
+        bmp_output["hydrogenconcentrationR107"] = float(R107_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR107"] = float(R107_exit[18])
+        bmp_output["carbondioxidevolR107"] = float(R107_exit[19])
+        bmp_output["oxygenvolR107"] = float(R107_exit[20])
+        bmp_output["hydrogensulfurvolR107"] = float(R107_exit[21])
+        bmp_output["hydrogenvolR107"] = float(R107_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR107"] = float(R107_exit[23])
+        bmp_output["storagebiogaspressureR107"] = float(R107_exit[24])
+        bmp_output["storagebiogasR107"] = float(R107_exit[25])
+        bmp_output["accumbiogasR107"] = float(R107_exit[26])
+        bmp_output["EnergyR107"] = float(R107_exit[27])
+        bmp_output["LHVR107"] = float(R107_exit[28])
+
+        #R108
+        bmp_output["mixVelocityR108"] = float(R108_exit[0]) 
+        bmp_output["SVR108"] = float(R108_exit[1])
+        bmp_output["OCR108"] = float(R108_exit[2])
+        bmp_output["STR108"] = float(R108_exit[3])
+        bmp_output["XR108"] = float(R108_exit[4])
+        bmp_output["PBMR108"] = float(R108_exit[5])
+        bmp_output["KR108"] = KSideB
+        bmp_output["EaR108"] = EaSideB
+        bmp_output["lambdaR108"] = LSideB
+        bmp_output["Objetive"] = float(R108_opt[3])
+        bmp_output["TempR108"] = float(R108_exit[6])  
+        bmp_output["pHR108"] = float(R108_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR108"] =float(R108_exit[8])
+        bmp_output["carbondioxidemolR108"] = float(R108_exit[9])
+        bmp_output["oxygenmolR108"] = float(R108_exit[10])
+        bmp_output["hydrogensulfurmolR108"] = float(R108_exit[11])
+        bmp_output["hydrogenmolR108"] = float(R108_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR108"] = float(R108_exit[13])
+        bmp_output["carbondioxideconcentrationR108"] = float(R108_exit[14])
+        bmp_output["oxygenconcentrationR108"] = float(R108_exit[15])
+        bmp_output["hydrogensulfurconcentrationR108"] = float(R108_exit[16])
+        bmp_output["hydrogenconcentrationR108"] = float(R108_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR108"] = float(R108_exit[18])
+        bmp_output["carbondioxidevolR108"] = float(R108_exit[19])
+        bmp_output["oxygenvolR108"] = float(R108_exit[20])
+        bmp_output["hydrogensulfurvolR108"] = float(R108_exit[21])
+        bmp_output["hydrogenvolR108"] = float(R108_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR108"] = float(R108_exit[23])
+        bmp_output["storagebiogaspressureR108"] = float(R108_exit[24])
+        bmp_output["storagebiogasR108"] = float(R108_exit[25])
+        bmp_output["accumbiogasR108"] = float(R108_exit[26])
+        bmp_output["EnergyR108"] = float(R108_exit[27])
+        bmp_output["LHVR108"] = float(R108_exit[28])
+
+        #R109
+        bmp_output["mixVelocityR109"] = float(R109_exit[0]) 
+        bmp_output["SVR109"] = float(R109_exit[1])
+        bmp_output["OCR109"] = float(R109_exit[2])
+        bmp_output["STR109"] = float(R109_exit[3])
+        bmp_output["XR109"] = float(R109_exit[4])
+        bmp_output["PBMR109"] = float(R109_exit[5])
+        bmp_output["KR109"] = KSideB
+        bmp_output["EaR109"] = EaSideB
+        bmp_output["lambdaR109"] = LSideB
+        bmp_output["Objetive"] = float(R109_opt[3])
+        bmp_output["TempR109"] = float(R109_exit[6])  
+        bmp_output["pHR109"] = float(R109_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR109"] =float(R109_exit[8])
+        bmp_output["carbondioxidemolR109"] = float(R109_exit[9])
+        bmp_output["oxygenmolR109"] = float(R109_exit[10])
+        bmp_output["hydrogensulfurmolR109"] = float(R109_exit[11])
+        bmp_output["hydrogenmolR109"] = float(R109_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR109"] = float(R109_exit[13])
+        bmp_output["carbondioxideconcentrationR109"] = float(R109_exit[14])
+        bmp_output["oxygenconcentrationR109"] = float(R109_exit[15])
+        bmp_output["hydrogensulfurconcentrationR109"] = float(R109_exit[16])
+        bmp_output["hydrogenconcentrationR109"] = float(R109_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR109"] = float(R109_exit[18])
+        bmp_output["carbondioxidevolR109"] = float(R109_exit[19])
+        bmp_output["oxygenvolR109"] = float(R109_exit[20])
+        bmp_output["hydrogensulfurvolR109"] = float(R109_exit[21])
+        bmp_output["hydrogenvolR109"] = float(R109_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR109"] = float(R109_exit[23])
+        bmp_output["storagebiogaspressureR109"] = float(R109_exit[24])
+        bmp_output["storagebiogasR109"] = float(R109_exit[25])
+        bmp_output["accumbiogasR109"] = float(R109_exit[26])
+        bmp_output["EnergyR109"] = float(R109_exit[27])
+        bmp_output["LHVR109"] = float(R109_exit[28])
+
+        #R110
+        bmp_output["mixVelocityR110"] = float(R110_exit[0]) 
+        bmp_output["SVR110"] = float(R110_exit[1])
+        bmp_output["OCR110"] = float(R110_exit[2])
+        bmp_output["STR110"] = float(R110_exit[3])
+        bmp_output["XR110"] = float(R110_exit[4])
+        bmp_output["PBMR110"] = float(R110_exit[5])
+        bmp_output["KR110"] = KSideB
+        bmp_output["EaR110"] = EaSideB
+        bmp_output["lambdaR110"] = LSideB
+        bmp_output["Objetive"] = float(R110_opt[3])
+        bmp_output["TempR110"] = float(R110_exit[6])  
+        bmp_output["pHR110"] = float(R110_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR110"] =float(R110_exit[8])
+        bmp_output["carbondioxidemolR110"] = float(R110_exit[9])
+        bmp_output["oxygenmolR110"] = float(R110_exit[10])
+        bmp_output["hydrogensulfurmolR110"] = float(R110_exit[11])
+        bmp_output["hydrogenmolR110"] = float(R110_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR110"] = float(R110_exit[13])
+        bmp_output["carbondioxideconcentrationR110"] = float(R110_exit[14])
+        bmp_output["oxygenconcentrationR110"] = float(R110_exit[15])
+        bmp_output["hydrogensulfurconcentrationR110"] = float(R110_exit[16])
+        bmp_output["hydrogenconcentrationR110"] = float(R110_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR110"] = float(R110_exit[18])
+        bmp_output["carbondioxidevolR110"] = float(R110_exit[19])
+        bmp_output["oxygenvolR110"] = float(R110_exit[20])
+        bmp_output["hydrogensulfurvolR110"] = float(R110_exit[21])
+        bmp_output["hydrogenvolR110"] = float(R110_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR110"] = float(R110_exit[23])
+        bmp_output["storagebiogaspressureR110"] = float(R110_exit[24])
+        bmp_output["storagebiogasR110"] = float(R110_exit[25])
+        bmp_output["accumbiogasR110"] = float(R110_exit[26])
+        bmp_output["EnergyR110"] = float(R110_exit[27])
+        bmp_output["LHVR110"] = float(R110_exit[28])
+      
+      if stateSelectionSideB == False and biogasSideB == False and TrainingMode == False:    #Online, biogas compounds in auto
+        
+        if user_idSideB not in bmp_instancesSideB:
+          bmp_instancesSideB[user_idSideB] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
+                                                                      MeasureMethod=measurementMethodSideB, ReactorVolume=ReactorVolumeSideB, InitialFreeVolume=InitialFreeVolumeSideB, 
+                                                                      SubstrateNumber=SubstrateNumberSideB, MixRule=MixRuleSideB,
+                                                                      Fraction1=Fraction1SideB, Fraction2=Fraction2SideB, Fraction3=Fraction3SideB, Fraction4=Fraction4SideB, WaterFraction=WaterFractionSideB,
+                                                                      Volume1=Fraction1SideB, Volume2=Fraction2SideB, Volume3=Fraction3SideB, Volume4=Fraction4SideB, WaterVolume=WaterFractionSideB, 
+                                                                      Weight1=Fraction1SideB, Weight2=Fraction2SideB, Weight3=Fraction3SideB, Weight4=Fraction4SideB, WaterWeight=WaterFractionSideB,
+                                                                      ST1=ST1SideB, SV1=SV1SideB, rho1=rho1SideB, Cc1=Cc1SideB, Ch1=Ch1SideB, Co1=Co1SideB,Cn1=Cn1SideB, Cs1=Cs1SideB,
+                                                                      ST2=ST2SideB, SV2=SV2SideB, rho2=rho2SideB, Cc2=Cc2SideB, Ch2=Ch2SideB, Co2=Co2SideB,Cn2=Cn2SideB, Cs2=Cs2SideB,
+                                                                      ST3=ST3SideB, SV3=SV3SideB, rho3=rho3SideB, Cc3=Cc3SideB, Ch3=Ch3SideB, Co3=Co3SideB,Cn3=Cn3SideB, Cs3=Cs3SideB,
+                                                                      ST4=ST4SideB, SV4=SV4SideB, rho4=rho4SideB, Cc4=Cc4SideB, Ch4=Ch4SideB, Co4=Co4SideB,Cn4=Cn4SideB, Cs4=Cs4SideB,
+                                                                      OperationMethod = OperationMethodSideB, Model=ModelSideB)
+
+        SideB = bmp_instancesSideB[user_idSideB]
+        
+        SideB.GetData(SideA=False, SideB=True, TrainTime=TrainTimeSideB)
+        DataSideB = SideB.PlantSideB
+        DataInterfaz = SideB.PlantEstimation
+        SideB.ProcessData(SideA = False, SideB = True, MeasureMethodSideA = measurementMethodSideB, MeasureMethodSideB = measurementMethodSideB, DataPlantSideA = DataSideB, DataPlantSideB = DataSideB,  
+                          DataEstimation = DataInterfaz, OperationMethod = OperationMethodSideB)
+        R106_data = SideB.R106_data
+        R107_data = SideB.R107_data
+        R108_data = SideB.R108_data
+        R109_data = SideB.R109_data
+        R110_data = SideB.R110_data
+        if SideB.OperationMethod in ["Time", "Injection"]:
+          SideB.SubstrateFeeding()
+        
+        R106 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R106", ReactorData = R106_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R107 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R107", ReactorData = R107_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R108 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R108", ReactorData = R108_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R109 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R109", ReactorData = R109_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        R110 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R110", ReactorData = R110_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
+        data_instancesSideB[user_data_sideB] = [R106, R107, R108, R109, R110]
+               
+        R106_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
+        R107_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
+        R108_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
+        R109_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
+        R110_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
+        #Output variables
+        #R106
+        bmp_output["mixVelocityR106"] = float(R106_exit[0]) 
+        bmp_output["SVR106"] = float(R106_exit[1])
+        bmp_output["OCR106"] = float(R106_exit[2])
+        bmp_output["STR106"] = float(R106_exit[3])
+        bmp_output["XR106"] = float(R106_exit[4])
+        bmp_output["PBMR106"] = float(R106_exit[5])
+        bmp_output["KR106"] = KSideB
+        bmp_output["EaR106"] = EaSideB
+        bmp_output["lambdaR106"] = LSideB
+        bmp_output["Objetive"] = float(R106_opt[3])
+        bmp_output["TempR106"] = float(R106_exit[6])  
+        bmp_output["pHR106"] = float(R106_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR106"] =float(R106_exit[8])
+        bmp_output["carbondioxidemolR106"] = float(R106_exit[9])
+        bmp_output["oxygenmolR106"] = float(R106_exit[10])
+        bmp_output["hydrogensulfurmolR106"] = float(R106_exit[11])
+        bmp_output["hydrogenmolR106"] = float(R106_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR106"] = float(R106_exit[13])
+        bmp_output["carbondioxideconcentrationR106"] = float(R106_exit[14])
+        bmp_output["oxygenconcentrationR106"] = float(R106_exit[15])
+        bmp_output["hydrogensulfurconcentrationR106"] = float(R106_exit[16])
+        bmp_output["hydrogenconcentrationR106"] = float(R106_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR106"] = float(R106_exit[18])
+        bmp_output["carbondioxidevolR106"] = float(R106_exit[19])
+        bmp_output["oxygenvolR106"] = float(R106_exit[20])
+        bmp_output["hydrogensulfurvolR106"] = float(R106_exit[21])
+        bmp_output["hydrogenvolR106"] = float(R106_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR106"] = float(R106_exit[23])
+        bmp_output["storagebiogaspressureR106"] = float(R106_exit[24])
+        bmp_output["storagebiogasR106"] = float(R106_exit[25])
+        bmp_output["accumbiogasR106"] = float(R106_exit[26])
+        bmp_output["EnergyR106"] = float(R106_exit[27])
+        bmp_output["LHVR106"] = float(R106_exit[28])
+
+        #R107
+        bmp_output["mixVelocityR107"] = float(R107_exit[0]) 
+        bmp_output["SVR107"] = float(R107_exit[1])
+        bmp_output["OCR107"] = float(R107_exit[2])
+        bmp_output["STR107"] = float(R107_exit[3])
+        bmp_output["XR107"] = float(R107_exit[4])
+        bmp_output["PBMR107"] = float(R107_exit[5])
+        bmp_output["KR107"] = KSideB
+        bmp_output["EaR107"] = EaSideB
+        bmp_output["lambdaR107"] = LSideB
+        bmp_output["Objetive"] = float(R107_opt[3])
+        bmp_output["TempR107"] = float(R107_exit[6])  
+        bmp_output["pHR107"] = float(R107_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR107"] =float(R107_exit[8])
+        bmp_output["carbondioxidemolR107"] = float(R107_exit[9])
+        bmp_output["oxygenmolR107"] = float(R107_exit[10])
+        bmp_output["hydrogensulfurmolR107"] = float(R107_exit[11])
+        bmp_output["hydrogenmolR107"] = float(R107_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR107"] = float(R107_exit[13])
+        bmp_output["carbondioxideconcentrationR107"] = float(R107_exit[14])
+        bmp_output["oxygenconcentrationR107"] = float(R107_exit[15])
+        bmp_output["hydrogensulfurconcentrationR107"] = float(R107_exit[16])
+        bmp_output["hydrogenconcentrationR107"] = float(R107_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR107"] = float(R107_exit[18])
+        bmp_output["carbondioxidevolR107"] = float(R107_exit[19])
+        bmp_output["oxygenvolR107"] = float(R107_exit[20])
+        bmp_output["hydrogensulfurvolR107"] = float(R107_exit[21])
+        bmp_output["hydrogenvolR107"] = float(R107_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR107"] = float(R107_exit[23])
+        bmp_output["storagebiogaspressureR107"] = float(R107_exit[24])
+        bmp_output["storagebiogasR107"] = float(R107_exit[25])
+        bmp_output["accumbiogasR107"] = float(R107_exit[26])
+        bmp_output["EnergyR107"] = float(R107_exit[27])
+        bmp_output["LHVR107"] = float(R107_exit[28])
+
+        #R108
+        bmp_output["mixVelocityR108"] = float(R108_exit[0]) 
+        bmp_output["SVR108"] = float(R108_exit[1])
+        bmp_output["OCR108"] = float(R108_exit[2])
+        bmp_output["STR108"] = float(R108_exit[3])
+        bmp_output["XR108"] = float(R108_exit[4])
+        bmp_output["PBMR108"] = float(R108_exit[5])
+        bmp_output["KR108"] = KSideB
+        bmp_output["EaR108"] = EaSideB
+        bmp_output["lambdaR108"] = LSideB
+        bmp_output["Objetive"] = float(R108_opt[3])
+        bmp_output["TempR108"] = float(R108_exit[6])  
+        bmp_output["pHR108"] = float(R108_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR108"] =float(R108_exit[8])
+        bmp_output["carbondioxidemolR108"] = float(R108_exit[9])
+        bmp_output["oxygenmolR108"] = float(R108_exit[10])
+        bmp_output["hydrogensulfurmolR108"] = float(R108_exit[11])
+        bmp_output["hydrogenmolR108"] = float(R108_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR108"] = float(R108_exit[13])
+        bmp_output["carbondioxideconcentrationR108"] = float(R108_exit[14])
+        bmp_output["oxygenconcentrationR108"] = float(R108_exit[15])
+        bmp_output["hydrogensulfurconcentrationR108"] = float(R108_exit[16])
+        bmp_output["hydrogenconcentrationR108"] = float(R108_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR108"] = float(R108_exit[18])
+        bmp_output["carbondioxidevolR108"] = float(R108_exit[19])
+        bmp_output["oxygenvolR108"] = float(R108_exit[20])
+        bmp_output["hydrogensulfurvolR108"] = float(R108_exit[21])
+        bmp_output["hydrogenvolR108"] = float(R108_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR108"] = float(R108_exit[23])
+        bmp_output["storagebiogaspressureR108"] = float(R108_exit[24])
+        bmp_output["storagebiogasR108"] = float(R108_exit[25])
+        bmp_output["accumbiogasR108"] = float(R108_exit[26])
+        bmp_output["EnergyR108"] = float(R108_exit[27])
+        bmp_output["LHVR108"] = float(R108_exit[28])
+
+        #R109
+        bmp_output["mixVelocityR109"] = float(R109_exit[0]) 
+        bmp_output["SVR109"] = float(R109_exit[1])
+        bmp_output["OCR109"] = float(R109_exit[2])
+        bmp_output["STR109"] = float(R109_exit[3])
+        bmp_output["XR109"] = float(R109_exit[4])
+        bmp_output["PBMR109"] = float(R109_exit[5])
+        bmp_output["KR109"] = KSideB
+        bmp_output["EaR109"] = EaSideB
+        bmp_output["lambdaR109"] = LSideB
+        bmp_output["Objetive"] = float(R109_opt[3])
+        bmp_output["TempR109"] = float(R109_exit[6])  
+        bmp_output["pHR109"] = float(R109_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR109"] =float(R109_exit[8])
+        bmp_output["carbondioxidemolR109"] = float(R109_exit[9])
+        bmp_output["oxygenmolR109"] = float(R109_exit[10])
+        bmp_output["hydrogensulfurmolR109"] = float(R109_exit[11])
+        bmp_output["hydrogenmolR109"] = float(R109_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR109"] = float(R109_exit[13])
+        bmp_output["carbondioxideconcentrationR109"] = float(R109_exit[14])
+        bmp_output["oxygenconcentrationR109"] = float(R109_exit[15])
+        bmp_output["hydrogensulfurconcentrationR109"] = float(R109_exit[16])
+        bmp_output["hydrogenconcentrationR109"] = float(R109_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR109"] = float(R109_exit[18])
+        bmp_output["carbondioxidevolR109"] = float(R109_exit[19])
+        bmp_output["oxygenvolR109"] = float(R109_exit[20])
+        bmp_output["hydrogensulfurvolR109"] = float(R109_exit[21])
+        bmp_output["hydrogenvolR109"] = float(R109_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR109"] = float(R109_exit[23])
+        bmp_output["storagebiogaspressureR109"] = float(R109_exit[24])
+        bmp_output["storagebiogasR109"] = float(R109_exit[25])
+        bmp_output["accumbiogasR109"] = float(R109_exit[26])
+        bmp_output["EnergyR109"] = float(R109_exit[27])
+        bmp_output["LHVR109"] = float(R109_exit[28])
+
+        #R110
+        bmp_output["mixVelocityR110"] = float(R110_exit[0]) 
+        bmp_output["SVR110"] = float(R110_exit[1])
+        bmp_output["OCR110"] = float(R110_exit[2])
+        bmp_output["STR110"] = float(R110_exit[3])
+        bmp_output["XR110"] = float(R110_exit[4])
+        bmp_output["PBMR110"] = float(R110_exit[5])
+        bmp_output["KR110"] = KSideB
+        bmp_output["EaR110"] = EaSideB
+        bmp_output["lambdaR110"] = LSideB
+        bmp_output["Objetive"] = float(R110_opt[3])
+        bmp_output["TempR110"] = float(R110_exit[6])  
+        bmp_output["pHR110"] = float(R110_exit[7])
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR110"] =float(R110_exit[8])
+        bmp_output["carbondioxidemolR110"] = float(R110_exit[9])
+        bmp_output["oxygenmolR110"] = float(R110_exit[10])
+        bmp_output["hydrogensulfurmolR110"] = float(R110_exit[11])
+        bmp_output["hydrogenmolR110"] = float(R110_exit[12]) 
+        #---- Gas concentration
+        bmp_output["methaneconcentrationR110"] = float(R110_exit[13])
+        bmp_output["carbondioxideconcentrationR110"] = float(R110_exit[14])
+        bmp_output["oxygenconcentrationR110"] = float(R110_exit[15])
+        bmp_output["hydrogensulfurconcentrationR110"] = float(R110_exit[16])
+        bmp_output["hydrogenconcentrationR110"] = float(R110_exit[17])
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR110"] = float(R110_exit[18])
+        bmp_output["carbondioxidevolR110"] = float(R110_exit[19])
+        bmp_output["oxygenvolR110"] = float(R110_exit[20])
+        bmp_output["hydrogensulfurvolR110"] = float(R110_exit[21])
+        bmp_output["hydrogenvolR110"] = float(R110_exit[22])
+        #---- Biogas general
+        bmp_output["accumbiogaspressureR110"] = float(R110_exit[23])
+        bmp_output["storagebiogaspressureR110"] = float(R110_exit[24])
+        bmp_output["storagebiogasR110"] = float(R110_exit[25])
+        bmp_output["accumbiogasR110"] = float(R110_exit[26])
+        bmp_output["EnergyR110"] = float(R110_exit[27])
+        bmp_output["LHVR110"] = float(R110_exit[28])
+      
+      #%% Offline operation
+      if stateSelectionSideA == True:    #offline
+        user_id106 = data["name"] + "106"
+        user_id107 = data["name"] + "107"
+        user_id108 = data["name"] + "108"
+        user_id109 = data["name"] + "109"
+        user_id110 = data["name"] + "110"
+  
+        users_instancesSideB = [user_id106, user_id107, user_id108, user_id109, user_id110]   
+
+        if iteration == 1:   
+          for key in users_instancesSideB:
+            if key in bmp_instances_offline_SideB:
+              del bmp_instances_offline_SideB[key]
+        
+        # R106
+        if user_id106 not in bmp_instances_offline_SideB:
+          bmp_instances_offline_SideB[user_id106] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideB, ReactorVolume = ReactorVolumeSideB, InitialFreeVolume = InitialFreeVolumeSideB,
+                                                                              SubstrateNumber = SubstrateNumberSideB, MixRule = MixRuleSideB, 
+                                                                              Fraction1 = Fraction1SideB, Fraction2 = Fraction2SideB, Fraction3 = Fraction3SideB, Fraction4 = Fraction4SideB, WaterFraction = WaterFractionSideB,
+                                                                              Volume1 = Fraction1SideB, Volume2 = Fraction2SideB, Volume3 = Fraction3SideB, Volume4 = Fraction4SideB, WaterVolume = WaterFractionSideB,
+                                                                              Weight1 = Fraction1SideB, Weight2 = Fraction2SideB, Weight3 = Fraction3SideB, Weight4 = Fraction4SideB, WaterWeight = WaterFractionSideB,
+                                                                              ST1 = ST1SideB, SV1 = SV1SideB, rho1 = rho1SideB, Cc1 = Cc1SideB, Ch1 = Ch1SideB, Co1 = Co1SideB, Cn1 = Cn1SideB, Cs1 = Cs1SideB,
+                                                                              ST2 = ST2SideB, SV2 = SV2SideB, rho2 = rho2SideB, Cc2 = Cc2SideB, Ch2 = Ch2SideB, Co2 = Co2SideB, Cn2 = Cn2SideB, Cs2 = Cs2SideB,
+                                                                              ST3 = ST3SideB, SV3 = SV3SideB, rho3 = rho3SideB, Cc3 = Cc3SideB, Ch3 = Ch3SideB, Co3 = Co3SideB, Cn3 = Cn3SideB, Cs3 = Cs3SideB,
+                                                                              ST4 = ST4SideB, SV4 = SV4SideB, rho4 = rho4SideB, Cc4 = Cc4SideB, Ch4 = Ch4SideB, Co4 = Co4SideB, Cn4 = Cn4SideB, Cs4 = Cs4SideB,
+                                                                              OperationMethod = OperationMethodSideB, tp = time_stepSideB)  
+        
+        R106 = bmp_instances_offline_SideB[user_id106]
+
+        #Mixing R106
+        R106.MixControl(MixVelocity = MixVelocitySideB, MixTime = mixTimeSideB, DailyMixing = mixDailySideB, speed_time = speed_time)
+        bmp_output["mixVelocityR106"] = R106.MixVelocity
+
+        if OperationMethodSideB in ["Time", "Injection"]:
+          R106.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R106.SubstrateFeed(Mode = OperationMethodSideB, Volume = dosificationVolumeSideB, Time = dailyInyectionsSideB, Inyections = dailyInyectionsSideB, Q=3.4, speed_time = speed_time)
+        bmp_output["caudalsideB"] = float(R106.Qr)
+        bmp_output["volumeSubstratesideB"] = float(R106.TotalVolFeed)
+        #reactor execution model
+        R106.Reactor(model = ModelSideB, OperationMethod = OperationMethodSideB, T = TemperatureSideB + 273.15, K1 = KSideB, K2 = EaSideB, K3 = LSideB, speed_time=speed_time)
+        bmp_output["SVR106"] = float(R106.SV_int) 
+        bmp_output["OCR106"] = float(R106.OC)
+        bmp_output["STR106"] = float(R106.ST_int)
+        bmp_output["XR106"] = float(R106.x)
+        bmp_output["PBMR106"] = float(R106.PBM)
+        bmp_output["KR106"] = KSideB
+        bmp_output["EaR106"] = EaSideB
+        bmp_output["lambdaR106"] = LSideB
+        bmp_output["TempR106"] = TemperatureSideB   
+        bmp_output["pHR106"] = pHSideB
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR106"] =float(R106.nCH4)
+        bmp_output["carbondioxidemolR106"] = float(R106.nCO2)
+        bmp_output["oxygenmolR106"] = float(R106.nO2)
+        bmp_output["hydrogensulfurmolR106"] = float(R106.nH2S)
+        bmp_output["hydrogenmolR106"] = float(R106.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR106"] = float(R106.xCH4*100)
+        bmp_output["carbondioxideconcentrationR106"] = float(R106.xCO2*100)
+        bmp_output["oxygenconcentrationR106"] = float(R106.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR106"] = float(R106.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR106"] = float(R106.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR106"] = float(R106.vCH4)
+        bmp_output["carbondioxidevolR106"] = float(R106.vCO2)
+        bmp_output["oxygenvolR106"] = float(R106.vO2)
+        bmp_output["hydrogensulfurvolR106"] = float(R106.vH2S)
+        bmp_output["hydrogenvolR106"] = float(R106.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideB == "Pressure":
+            R106.Measurement_by_pressure(T = TemperatureManualSideB, Pset = pressureSetPointSideB)
+        elif measurementMethodSideB == "VolumeDisplaced":
+            R106.Measument_by_volume(T = TemperatureManualSideB, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR106"] = float(R106.P_acum_psi)
+        bmp_output["storagebiogaspressureR106"] = float(R106.P_psi)
+        bmp_output["storagebiogasR106"] = float(R106.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR106"] = float(R106.Vnormalbiogas)
+        bmp_output["LHVR106"] = float(R106.LHV_JNm3)
+        bmp_output["EnergyR106"] = float(R106.Energia)
+
+        R106.GlobaltimeCounter()
+
+        # R107
+        if user_id107 not in bmp_instances_offline_SideB:
+          bmp_instances_offline_SideB[user_id107] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideB, ReactorVolume = ReactorVolumeSideB, InitialFreeVolume = InitialFreeVolumeSideB,
+                                                                              SubstrateNumber = SubstrateNumberSideB, MixRule = MixRuleSideB, 
+                                                                              Fraction1 = Fraction1SideB, Fraction2 = Fraction2SideB, Fraction3 = Fraction3SideB, Fraction4 = Fraction4SideB, WaterFraction = WaterFractionSideB,
+                                                                              Volume1 = Fraction1SideB, Volume2 = Fraction2SideB, Volume3 = Fraction3SideB, Volume4 = Fraction4SideB, WaterVolume = WaterFractionSideB,
+                                                                              Weight1 = Fraction1SideB, Weight2 = Fraction2SideB, Weight3 = Fraction3SideB, Weight4 = Fraction4SideB, WaterWeight = WaterFractionSideB,
+                                                                              ST1 = ST1SideB, SV1 = SV1SideB, rho1 = rho1SideB, Cc1 = Cc1SideB, Ch1 = Ch1SideB, Co1 = Co1SideB, Cn1 = Cn1SideB, Cs1 = Cs1SideB,
+                                                                              ST2 = ST2SideB, SV2 = SV2SideB, rho2 = rho2SideB, Cc2 = Cc2SideB, Ch2 = Ch2SideB, Co2 = Co2SideB, Cn2 = Cn2SideB, Cs2 = Cs2SideB,
+                                                                              ST3 = ST3SideB, SV3 = SV3SideB, rho3 = rho3SideB, Cc3 = Cc3SideB, Ch3 = Ch3SideB, Co3 = Co3SideB, Cn3 = Cn3SideB, Cs3 = Cs3SideB,
+                                                                              ST4 = ST4SideB, SV4 = SV4SideB, rho4 = rho4SideB, Cc4 = Cc4SideB, Ch4 = Ch4SideB, Co4 = Co4SideB, Cn4 = Cn4SideB, Cs4 = Cs4SideB,
+                                                                              OperationMethod = OperationMethodSideB, tp = time_stepSideB)  
+        
+        R107 = bmp_instances_offline_SideB[user_id107]
+
+        #Mixing R107
+        R107.MixControl(MixVelocity = MixVelocitySideB, MixTime = mixTimeSideB, DailyMixing = mixDailySideB, speed_time = speed_time)
+        bmp_output["mixVelocityR107"] = R107.MixVelocity
+
+        if OperationMethodSideB in ["Time", "Injection"]:
+          R107.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R107.SubstrateFeed(Mode = OperationMethodSideB, Volume = dosificationVolumeSideB, Time = dailyInyectionsSideB, Inyections = dailyInyectionsSideB, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R107.Reactor(model = ModelSideB, OperationMethod = OperationMethodSideB, T = TemperatureSideB + 273.15, K1 = KSideB, K2 = EaSideB, K3 = LSideB, speed_time=speed_time)
+        bmp_output["SVR107"] = float(R107.SV_int) 
+        bmp_output["OCR107"] = float(R107.OC)
+        bmp_output["STR107"] = float(R107.ST_int)
+        bmp_output["XR107"] = float(R107.x)
+        bmp_output["PBMR107"] = float(R107.PBM)
+        bmp_output["KR107"] = KSideB
+        bmp_output["EaR107"] = EaSideB
+        bmp_output["lambdaR107"] = LSideB
+        bmp_output["TempR107"] = TemperatureSideB   
+        bmp_output["pHR107"] = pHSideB
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR107"] =float(R107.nCH4)
+        bmp_output["carbondioxidemolR107"] = float(R107.nCO2)
+        bmp_output["oxygenmolR107"] = float(R107.nO2)
+        bmp_output["hydrogensulfurmolR107"] = float(R107.nH2S)
+        bmp_output["hydrogenmolR107"] = float(R107.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR107"] = float(R107.xCH4*100)
+        bmp_output["carbondioxideconcentrationR107"] = float(R107.xCO2*100)
+        bmp_output["oxygenconcentrationR107"] = float(R107.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR107"] = float(R107.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR107"] = float(R107.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR107"] = float(R107.vCH4)
+        bmp_output["carbondioxidevolR107"] = float(R107.vCO2)
+        bmp_output["oxygenvolR107"] = float(R107.vO2)
+        bmp_output["hydrogensulfurvolR107"] = float(R107.vH2S)
+        bmp_output["hydrogenvolR107"] = float(R107.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideB == "Pressure":
+            R107.Measurement_by_pressure(T = TemperatureManualSideB, Pset = pressureSetPointSideB)
+        elif measurementMethodSideB == "VolumeDisplaced":
+            R107.Measument_by_volume(T = TemperatureManualSideB, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR107"] = float(R107.P_acum_psi)
+        bmp_output["storagebiogaspressureR107"] = float(R107.P_psi)
+        bmp_output["storagebiogasR107"] = float(R107.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR107"] = float(R107.Vnormalbiogas)
+        bmp_output["LHVR107"] = float(R107.LHV_JNm3)
+        bmp_output["EnergyR107"] = float(R107.Energia)
+
+        R107.GlobaltimeCounter()
+
+        # R108
+        if user_id108 not in bmp_instances_offline_SideB:
+          bmp_instances_offline_SideB[user_id108] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideB, ReactorVolume = ReactorVolumeSideB, InitialFreeVolume = InitialFreeVolumeSideB,
+                                                                              SubstrateNumber = SubstrateNumberSideB, MixRule = MixRuleSideB, 
+                                                                              Fraction1 = Fraction1SideB, Fraction2 = Fraction2SideB, Fraction3 = Fraction3SideB, Fraction4 = Fraction4SideB, WaterFraction = WaterFractionSideB,
+                                                                              Volume1 = Fraction1SideB, Volume2 = Fraction2SideB, Volume3 = Fraction3SideB, Volume4 = Fraction4SideB, WaterVolume = WaterFractionSideB,
+                                                                              Weight1 = Fraction1SideB, Weight2 = Fraction2SideB, Weight3 = Fraction3SideB, Weight4 = Fraction4SideB, WaterWeight = WaterFractionSideB,
+                                                                              ST1 = ST1SideB, SV1 = SV1SideB, rho1 = rho1SideB, Cc1 = Cc1SideB, Ch1 = Ch1SideB, Co1 = Co1SideB, Cn1 = Cn1SideB, Cs1 = Cs1SideB,
+                                                                              ST2 = ST2SideB, SV2 = SV2SideB, rho2 = rho2SideB, Cc2 = Cc2SideB, Ch2 = Ch2SideB, Co2 = Co2SideB, Cn2 = Cn2SideB, Cs2 = Cs2SideB,
+                                                                              ST3 = ST3SideB, SV3 = SV3SideB, rho3 = rho3SideB, Cc3 = Cc3SideB, Ch3 = Ch3SideB, Co3 = Co3SideB, Cn3 = Cn3SideB, Cs3 = Cs3SideB,
+                                                                              ST4 = ST4SideB, SV4 = SV4SideB, rho4 = rho4SideB, Cc4 = Cc4SideB, Ch4 = Ch4SideB, Co4 = Co4SideB, Cn4 = Cn4SideB, Cs4 = Cs4SideB,
+                                                                              OperationMethod = OperationMethodSideB, tp = time_stepSideB)  
+        
+        R108 = bmp_instances_offline_SideB[user_id108]
+
+        #Mixing R108
+        R108.MixControl(MixVelocity = MixVelocitySideB, MixTime = mixTimeSideB, DailyMixing = mixDailySideB, speed_time = speed_time)
+        bmp_output["mixVelocityR108"] = R108.MixVelocity
+
+        if OperationMethodSideB in ["Time", "Injection"]:
+          R108.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R108.SubstrateFeed(Mode = OperationMethodSideB, Volume = dosificationVolumeSideB, Time = dailyInyectionsSideB, Inyections = dailyInyectionsSideB, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R108.Reactor(model = ModelSideB, OperationMethod = OperationMethodSideB, T = TemperatureSideB + 273.15, K1 = KSideB, K2 = EaSideB, K3 = LSideB, speed_time=speed_time)
+        bmp_output["SVR108"] = float(R108.SV_int) 
+        bmp_output["OCR108"] = float(R108.OC)
+        bmp_output["STR108"] = float(R108.ST_int)
+        bmp_output["XR108"] = float(R108.x)
+        bmp_output["PBMR108"] = float(R108.PBM)
+        bmp_output["KR108"] = KSideB
+        bmp_output["EaR108"] = EaSideB
+        bmp_output["lambdaR108"] = LSideB
+        bmp_output["TempR108"] = TemperatureSideB   
+        bmp_output["pHR108"] = pHSideB
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR108"] =float(R108.nCH4)
+        bmp_output["carbondioxidemolR108"] = float(R108.nCO2)
+        bmp_output["oxygenmolR108"] = float(R108.nO2)
+        bmp_output["hydrogensulfurmolR108"] = float(R108.nH2S)
+        bmp_output["hydrogenmolR108"] = float(R108.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR108"] = float(R108.xCH4*100)
+        bmp_output["carbondioxideconcentrationR108"] = float(R108.xCO2*100)
+        bmp_output["oxygenconcentrationR108"] = float(R108.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR108"] = float(R108.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR108"] = float(R108.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR108"] = float(R108.vCH4)
+        bmp_output["carbondioxidevolR108"] = float(R108.vCO2)
+        bmp_output["oxygenvolR108"] = float(R108.vO2)
+        bmp_output["hydrogensulfurvolR108"] = float(R108.vH2S)
+        bmp_output["hydrogenvolR108"] = float(R108.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideB == "Pressure":
+            R108.Measurement_by_pressure(T = TemperatureManualSideB, Pset = pressureSetPointSideB)
+        elif measurementMethodSideB == "VolumeDisplaced":
+            R108.Measument_by_volume(T = TemperatureManualSideB, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR108"] = float(R108.P_acum_psi)
+        bmp_output["storagebiogaspressureR108"] = float(R108.P_psi)
+        bmp_output["storagebiogasR108"] = float(R108.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR108"] = float(R108.Vnormalbiogas)
+        bmp_output["LHVR108"] = float(R108.LHV_JNm3)
+        bmp_output["EnergyR108"] = float(R108.Energia)
+
+        R108.GlobaltimeCounter()
+
+        # R109
+        if user_id109 not in bmp_instances_offline_SideB:
+          bmp_instances_offline_SideB[user_id109] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideB, ReactorVolume = ReactorVolumeSideB, InitialFreeVolume = InitialFreeVolumeSideB,
+                                                                              SubstrateNumber = SubstrateNumberSideB, MixRule = MixRuleSideB, 
+                                                                              Fraction1 = Fraction1SideB, Fraction2 = Fraction2SideB, Fraction3 = Fraction3SideB, Fraction4 = Fraction4SideB, WaterFraction = WaterFractionSideB,
+                                                                              Volume1 = Fraction1SideB, Volume2 = Fraction2SideB, Volume3 = Fraction3SideB, Volume4 = Fraction4SideB, WaterVolume = WaterFractionSideB,
+                                                                              Weight1 = Fraction1SideB, Weight2 = Fraction2SideB, Weight3 = Fraction3SideB, Weight4 = Fraction4SideB, WaterWeight = WaterFractionSideB,
+                                                                              ST1 = ST1SideB, SV1 = SV1SideB, rho1 = rho1SideB, Cc1 = Cc1SideB, Ch1 = Ch1SideB, Co1 = Co1SideB, Cn1 = Cn1SideB, Cs1 = Cs1SideB,
+                                                                              ST2 = ST2SideB, SV2 = SV2SideB, rho2 = rho2SideB, Cc2 = Cc2SideB, Ch2 = Ch2SideB, Co2 = Co2SideB, Cn2 = Cn2SideB, Cs2 = Cs2SideB,
+                                                                              ST3 = ST3SideB, SV3 = SV3SideB, rho3 = rho3SideB, Cc3 = Cc3SideB, Ch3 = Ch3SideB, Co3 = Co3SideB, Cn3 = Cn3SideB, Cs3 = Cs3SideB,
+                                                                              ST4 = ST4SideB, SV4 = SV4SideB, rho4 = rho4SideB, Cc4 = Cc4SideB, Ch4 = Ch4SideB, Co4 = Co4SideB, Cn4 = Cn4SideB, Cs4 = Cs4SideB,
+                                                                              OperationMethod = OperationMethodSideB, tp = time_stepSideB)  
+        
+        R109 = bmp_instances_offline_SideB[user_id109]
+
+        #Mixing R109
+        R109.MixControl(MixVelocity = MixVelocitySideB, MixTime = mixTimeSideB, DailyMixing = mixDailySideB, speed_time = speed_time)
+        bmp_output["mixVelocityR109"] = R109.MixVelocity
+
+        if OperationMethodSideB in ["Time", "Injection"]:
+          R109.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R109.SubstrateFeed(Mode = OperationMethodSideB, Volume = dosificationVolumeSideB, Time = dailyInyectionsSideB, Inyections = dailyInyectionsSideB, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R109.Reactor(model = ModelSideB, OperationMethod = OperationMethodSideB, T = TemperatureSideB + 273.15, K1 = KSideB, K2 = EaSideB, K3 = LSideB, speed_time=speed_time)
+        bmp_output["SVR109"] = float(R109.SV_int) 
+        bmp_output["OCR109"] = float(R109.OC)
+        bmp_output["STR109"] = float(R109.ST_int)
+        bmp_output["XR109"] = float(R109.x)
+        bmp_output["PBMR109"] = float(R109.PBM)
+        bmp_output["KR109"] = KSideB
+        bmp_output["EaR109"] = EaSideB
+        bmp_output["lambdaR109"] = LSideB
+        bmp_output["TempR109"] = TemperatureSideB   
+        bmp_output["pHR109"] = pHSideB
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR109"] =float(R109.nCH4)
+        bmp_output["carbondioxidemolR109"] = float(R109.nCO2)
+        bmp_output["oxygenmolR109"] = float(R109.nO2)
+        bmp_output["hydrogensulfurmolR109"] = float(R109.nH2S)
+        bmp_output["hydrogenmolR109"] = float(R109.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR109"] = float(R109.xCH4*100)
+        bmp_output["carbondioxideconcentrationR109"] = float(R109.xCO2*100)
+        bmp_output["oxygenconcentrationR109"] = float(R109.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR109"] = float(R109.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR109"] = float(R109.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR109"] = float(R109.vCH4)
+        bmp_output["carbondioxidevolR109"] = float(R109.vCO2)
+        bmp_output["oxygenvolR109"] = float(R109.vO2)
+        bmp_output["hydrogensulfurvolR109"] = float(R109.vH2S)
+        bmp_output["hydrogenvolR109"] = float(R109.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideB == "Pressure":
+            R109.Measurement_by_pressure(T = TemperatureManualSideB, Pset = pressureSetPointSideB)
+        elif measurementMethodSideB == "VolumeDisplaced":
+            R109.Measument_by_volume(T = TemperatureManualSideB, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR109"] = float(R109.P_acum_psi)
+        bmp_output["storagebiogaspressureR109"] = float(R109.P_psi)
+        bmp_output["storagebiogasR109"] = float(R109.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR109"] = float(R109.Vnormalbiogas)
+        bmp_output["LHVR109"] = float(R109.LHV_JNm3)
+        bmp_output["EnergyR109"] = float(R109.Energia)
+
+        R109.GlobaltimeCounter()
+
+        # R110
+        if user_id110 not in bmp_instances_offline_SideB:
+          bmp_instances_offline_SideB[user_id110] = BMPOffline.BMPModelOffline(MeasureMethod = measurementMethodSideB, ReactorVolume = ReactorVolumeSideB, InitialFreeVolume = InitialFreeVolumeSideB,
+                                                                              SubstrateNumber = SubstrateNumberSideB, MixRule = MixRuleSideB, 
+                                                                              Fraction1 = Fraction1SideB, Fraction2 = Fraction2SideB, Fraction3 = Fraction3SideB, Fraction4 = Fraction4SideB, WaterFraction = WaterFractionSideB,
+                                                                              Volume1 = Fraction1SideB, Volume2 = Fraction2SideB, Volume3 = Fraction3SideB, Volume4 = Fraction4SideB, WaterVolume = WaterFractionSideB,
+                                                                              Weight1 = Fraction1SideB, Weight2 = Fraction2SideB, Weight3 = Fraction3SideB, Weight4 = Fraction4SideB, WaterWeight = WaterFractionSideB,
+                                                                              ST1 = ST1SideB, SV1 = SV1SideB, rho1 = rho1SideB, Cc1 = Cc1SideB, Ch1 = Ch1SideB, Co1 = Co1SideB, Cn1 = Cn1SideB, Cs1 = Cs1SideB,
+                                                                              ST2 = ST2SideB, SV2 = SV2SideB, rho2 = rho2SideB, Cc2 = Cc2SideB, Ch2 = Ch2SideB, Co2 = Co2SideB, Cn2 = Cn2SideB, Cs2 = Cs2SideB,
+                                                                              ST3 = ST3SideB, SV3 = SV3SideB, rho3 = rho3SideB, Cc3 = Cc3SideB, Ch3 = Ch3SideB, Co3 = Co3SideB, Cn3 = Cn3SideB, Cs3 = Cs3SideB,
+                                                                              ST4 = ST4SideB, SV4 = SV4SideB, rho4 = rho4SideB, Cc4 = Cc4SideB, Ch4 = Ch4SideB, Co4 = Co4SideB, Cn4 = Cn4SideB, Cs4 = Cs4SideB,
+                                                                              OperationMethod = OperationMethodSideB, tp = time_stepSideB)  
+        
+        R110 = bmp_instances_offline_SideB[user_id110]
+
+        #Mixing R110
+        R110.MixControl(MixVelocity = MixVelocitySideB, MixTime = mixTimeSideB, DailyMixing = mixDailySideB, speed_time = speed_time)
+        bmp_output["mixVelocityR110"] = R110.MixVelocity
+
+        if OperationMethodSideB in ["Time", "Injection"]:
+          R110.MixtureCalculationFeeding()
+        
+        #feeding in case time or injection
+        R110.SubstrateFeed(Mode = OperationMethodSideB, Volume = dosificationVolumeSideB, Time = dailyInyectionsSideB, Inyections = dailyInyectionsSideB, Q=3.4, speed_time = speed_time)
+        #reactor execution model
+        R110.Reactor(model = ModelSideB, OperationMethod = OperationMethodSideB, T = TemperatureSideB + 273.15, K1 = KSideB, K2 = EaSideB, K3 = LSideB, speed_time=speed_time)
+        bmp_output["SVR110"] = float(R110.SV_int) 
+        bmp_output["OCR110"] = float(R110.OC)
+        bmp_output["STR110"] = float(R110.ST_int)
+        bmp_output["XR110"] = float(R110.x)
+        bmp_output["PBMR110"] = float(R110.PBM)
+        bmp_output["KR110"] = KSideB
+        bmp_output["EaR110"] = EaSideB
+        bmp_output["lambdaR110"] = LSideB
+        bmp_output["TempR110"] = TemperatureSideB   
+        bmp_output["pHR110"] = pHSideB
+         #---- Productos de reacción en moles [mol]
+        bmp_output["methanemolR110"] =float(R110.nCH4)
+        bmp_output["carbondioxidemolR110"] = float(R110.nCO2)
+        bmp_output["oxygenmolR110"] = float(R110.nO2)
+        bmp_output["hydrogensulfurmolR110"] = float(R110.nH2S)
+        bmp_output["hydrogenmolR110"] = float(R110.nH2)
+        #---- Productos de reacción en concentracion [%]
+        bmp_output["methaneconcentrationR110"] = float(R110.xCH4*100)
+        bmp_output["carbondioxideconcentrationR110"] = float(R110.xCO2*100)
+        bmp_output["oxygenconcentrationR110"] = float(R110.xO2*100)
+        bmp_output["hydrogensulfurconcentrationR110"] = float(R110.xH2S*1000000)
+        bmp_output["hydrogenconcentrationR110"] = float(R110.xH2*1000000)
+        #---- Productos de reacción en volume [mL]
+        bmp_output["methanevolR110"] = float(R110.vCH4)
+        bmp_output["carbondioxidevolR110"] = float(R110.vCO2)
+        bmp_output["oxygenvolR110"] = float(R110.vO2)
+        bmp_output["hydrogensulfurvolR110"] = float(R110.vH2S)
+        bmp_output["hydrogenvolR110"] = float(R110.vH2)
+        
+        #Run biogas measurement methods
+        if measurementMethodSideB == "Pressure":
+            R110.Measurement_by_pressure(T = TemperatureManualSideB, Pset = pressureSetPointSideB)
+        elif measurementMethodSideB == "VolumeDisplaced":
+            R110.Measument_by_volume(T = TemperatureManualSideB, hmax = 135, hmin = 0, Apool = 60*50)
+        
+        #---- Global biogas properties
+        bmp_output["accumbiogaspressureR110"] = float(R110.P_acum_psi)
+        bmp_output["storagebiogaspressureR110"] = float(R110.P_psi)
+        bmp_output["storagebiogasR110"] = float(R110.Vnorm_sto_nmL)
+        bmp_output["accumbiogasR110"] = float(R110.Vnormalbiogas)
+        bmp_output["LHVR110"] = float(R110.LHV_JNm3)
+        bmp_output["EnergyR110"] = float(R110.Energia)
+
+        R110.GlobaltimeCounter()
     
-    # #lado B condiciones condiciones generales
-    # offlineB = data["stateSelectionSideB"]
-    # SideB_measurementMethod = data["measurementMethodSideB"]
-    
-    # #lado condiciones de corrida
-    # SideB_Vrxn = data["rxnVolumeSideB"]["value"]
-    # SideB_vf = data["freeVolumeSideB"]["value"]
-    # SideB_tp = data["timeStepSideB"]["value"]
-    # SideB_MixRule = data["substrate1CompositionSideB"]["variableString"]
-    # SideB_substrateNumber = data["amountOfSubstratesSideB"]["value"]
-    # SideB_Water = data["waterCompositionSideB"]["value"]
-    
-    # #sustrato 1
-    # SideB_Fraction1 = data["substrate1CompositionSideB"]["value"]
-    # SideB_TS1 = data ["totalSolidsSubstrate1SideB"]["value"]
-    # SideB_VS1 = data["volatileSolidsSubstrate1SideB"]["value"]
-    # SideB_rho1 = data["densitySubstrate1SideB"]["value"]
-    # SideB_Cc1 = data["carbonContentSubstrate1SideB"]["value"]
-    # SideB_Ch1 = data["hydrogenContentSubstrate1SideB"]["value"]
-    # SideB_Co1 = data["oxygenContentSubstrate1SideB"]["value"]
-    # SideB_Cn1 = data["nitrogenContentSubstrate1SideB"]["value"]
-    # SideB_Cs1 = data["sulfurContentSubstrate1SideB"]["value"]
-    # #sustrato 2
-    # SideB_Fraction2 = data["substrate2CompositionSideB"]["value"]
-    # SideB_TS2 = data ["totalSolidsSubstrate2SideB"]["value"]
-    # SideB_VS2 = data["volatileSolidsSubstrate2SideB"]["value"]
-    # SideB_rho2 = data["densitySubstrate2SideB"]["value"]
-    # SideB_Cc2 = data["carbonContentSubstrate2SideB"]["value"]
-    # SideB_Ch2 = data["hydrogenContentSubstrate2SideB"]["value"]
-    # SideB_Co2 = data["oxygenContentSubstrate2SideB"]["value"]
-    # SideB_Cn2 = data["nitrogenContentSubstrate2SideB"]["value"]
-    # SideB_Cs2 = data["sulfurContentSubstrate2SideB"]["value"]
-    # #sustrato 3
-    # SideB_Fraction3 = data["substrate3CompositionSideB"]["value"]
-    # SideB_TS3 = data ["totalSolidsSubstrate3SideB"]["value"]
-    # SideB_VS3 = data["volatileSolidsSubstrate3SideB"]["value"]
-    # SideB_rho3 = data["densitySubstrate3SideB"]["value"]
-    # SideB_Cc3 = data["carbonContentSubstrate3SideB"]["value"]
-    # SideB_Ch3 = data["hydrogenContentSubstrate3SideB"]["value"]
-    # SideB_Co3 = data["oxygenContentSubstrate3SideB"]["value"]
-    # SideB_Cn3 = data["nitrogenContentSubstrate3SideB"]["value"]
-    # SideB_Cs3 = data["sulfurContentSubstrate3SideB"]["value"]
-    # #sustrato 4
-    # SideB_Fraction4 = data["substrate4CompositionSideB"]["value"]
-    # SideB_TS4 = data ["totalSolidsSubstrate4SideB"]["value"]
-    # SideB_VS4 = data["volatileSolidsSubstrate4SideB"]["value"]
-    # SideB_rho4 = data["densitySubstrate4SideB"]["value"]
-    # SideB_Cc4 = data["carbonContentSubstrate4SideB"]["value"]
-    # SideB_Ch4 = data["hydrogenContentSubstrate4SideB"]["value"]
-    # SideB_Co4 = data["oxygenContentSubstrate4SideB"]["value"]
-    # SideB_Cn4 = data["nitrogenContentSubstrate4SideB"]["value"]
-    # SideB_Cs4 = data["sulfurContentSubstrate4SideB"]["value"]
-    # #mixControl
-    # SideB_ManualMix = data["mixManualSideB"]
-    # SideB_MixVelocity = data["mixVelocitySideB"]["value"]
-    # SideB_MixTime = data["mixTimeSideB"]["value"]
-    # SideB_DailyMixing = data["mixDailySideB"]["value"]
-    # #Control Feed
-    # SideB_ManualFeed = data["feefManualSideB"]
-    # SideB_FeedMode = data["dosificationTypeSideB"]
-    # SideB_FeedVolume = data["dosificationVolumeSideB"]["value"]
-    # SideB_FeedTime = data["dailyInyectionsByTimeSideB"]["value"]
-    # SideB_Injections = data["dailyInyectionsSideB"]["value"]
-    # #Reactor
-    # SideB_Model = data["modelSelectionSideB"]
-    # SideB_pHauto = data["pHSideB"]["disabled"]
-    # SideB_pH = data["pHSideB"]["value"]
-    # SideB_Temperatura = data["TemperatureSideB"]["value"]
-    # SideB_K1 = data["kineticKSideB"]["value"]
-    # SideB_K2 = data["kineticEaSideB"]["value"]
-    # SideB_K3 = data["kineticLambdaSideB"]["value"]
-    
-    # # Modo Offline lado B
-    # if offlineB == True:
+    bmp_output = {
+                  k: (0 if (v is None or (isinstance(v, (int, float)) and np.isnan(v))) else v)
+                  for k, v in bmp_output.items()
+              }
 
-    #   #---- Reactor 6
-    #   if user_id106 not in bmp_instances:
-    #     bmp_instances[user_id106] = BMPOffline.BMPModelOffline(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
-    #   R106 = bmp_instances[user_id106]
-    #   R106.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
-    #                           Fraction1 = SideB_Fraction1, Volume1 = SideB_Fraction1, Weight1 = SideB_Fraction1, TS1 = SideB_TS1, VS1 = SideB_VS1, rho1 = SideB_rho1, Cc1 = SideB_Cc1, Hc1 = SideB_Ch1, Oc1 = SideB_Co1, Nc1 = SideB_Cn1, Sc1 = SideB_Cs1,
-    #                           Fraction2 = SideB_Fraction2, Volume2 = SideB_Fraction2, Weight2 = SideB_Fraction2, TS2 = SideB_TS2, VS2 = SideB_VS2, rho2 = SideB_rho2, Cc2 = SideB_Cc2, Hc2 = SideB_Ch2, Oc2 = SideB_Co2, Nc2 = SideB_Cn2, Sc2 = SideB_Cs2,
-    #                           Fraction3 = SideB_Fraction3, Volume3 = SideB_Fraction3, Weight3 = SideB_Fraction3, TS3 = SideB_TS3, VS3 = SideB_VS3, rho3 = SideB_rho3, Cc3 = SideB_Cc3, Hc3 = SideB_Ch3, Oc3 = SideB_Co3, Nc3 = SideB_Cn3, Sc3 = SideB_Cs3,
-    #                           Fraction4 = SideB_Fraction4, Volume4 = SideB_Fraction4, Weight4 = SideB_Fraction4, TS4 = SideB_TS4, VS4 = SideB_VS4, rho4 = SideB_rho4, Cc4 = SideB_Cc4, Hc4 = SideB_Ch4, Oc4 = SideB_Co4, Nc4 = SideB_Cn4, Sc4 = SideB_Cs4)
-      
-    #   #Agitación
-    #   R106.MixControl(MixVelocity = SideB_MixVelocity, MixTime = SideB_MixTime, DailyMixing = SideB_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR106"] = R106.MixVelocity
-
-    #   #Alimentación
-    #   R106.SubstrateFeed(Mode = SideB_FeedMode, Volume = SideB_FeedVolume, Time = SideB_FeedTime, Inyections = SideB_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalsideB"] = R106.Qr
-    #   bmp_output["volumeSubstratesideB"] = R106.TotalVolFeed
-     
-    #   #Reactor
-    #   R106.Reactor(model = SideB_Model, pH = SideB_pH, T = SideB_Temperatura, K1 = SideB_K1, K2 = SideB_K2, K3 = SideB_K3)
-    #   #---- Salidas reactor R106
-    #   bmp_output["SVR106"] = R106.SV 
-    #   bmp_output["OCR106"] = R106.OC
-    #   bmp_output["STR106"] = R106.ST
-    #   bmp_output["XR106"] = R106.x
-    #   bmp_output["KR106"] = R106.K1
-    #   bmp_output["EaR106"] = R106.K2
-    #   bmp_output["lambdaR106"] = R106.K3
-    #   bmp_output["TempR106"] = R106.T   
-    #   bmp_output["pHR106"] = R106.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR106"] = R106.mol_CH4
-    #   bmp_output["carbondioxidemolR106"] = R106.mol_CO2
-    #   bmp_output["oxygenmolR106"] = R106.mol_O2
-    #   bmp_output["hydrogensulfurmolR106"] = R106.mol_H2S
-    #   bmp_output["hydrogenmolR106"] = R106.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R106.CompoundsUnits()
-    #   bmp_output["methanevolR106"] = R106.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR106"] = R106.Vnormal_CO2
-    #   bmp_output["oxygenvolR106"] = R106.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR106"] = R106.Vnormal_H2S
-    #   bmp_output["hydrogenvolR106"] = R106.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR106"] = R106.x_CH4
-    #   bmp_output["carbondioxideconcentrationR106"] = R106.x_CO2
-    #   bmp_output["oxygenconcentrationR106"] = R106.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR106"] = R106.x_H2S
-    #   bmp_output["hydrogenconcentrationR106"] = R106.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR106"] = R106.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R106.PressurebyBiogas()
-    #   if SideB_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR106"] = R106.P_acum
-    #     bmp_output["storagebiogaspressureR106"] = R106.P_storage
-    #     bmp_output["storagebiogasR106"] = R106.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R106.poolSensor()
-    #     bmp_output["poolLevelR106"] = R106.hpool
-    #     bmp_output["poolTempR106"] = R106.Tpool
-    #     bmp_output["poolPressureR106"] = R106.Ppool
-    #   #Biogas energy
-    #   R106.biogasEnergy()
-    #   bmp_output["LHVR106"] = R106.LHV
-    #   bmp_output["EnergyR106"] = R106.TotalBiogasEnergy
-    #   bmp_output["PBMR106"] = R106.PBM
-      
-    #   #---- Reactor 7
-    #   if user_id107 not in bmp_instances:
-    #     bmp_instances[user_id107] = BMPOffline.BMPModelOffline(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
-    #   R107 = bmp_instances[user_id107]
-    #   R107.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
-    #                           Fraction1 = SideB_Fraction1, Volume1 = SideB_Fraction1, Weight1 = SideB_Fraction1, TS1 = SideB_TS1, VS1 = SideB_VS1, rho1 = SideB_rho1, Cc1 = SideB_Cc1, Hc1 = SideB_Ch1, Oc1 = SideB_Co1, Nc1 = SideB_Cn1, Sc1 = SideB_Cs1,
-    #                           Fraction2 = SideB_Fraction2, Volume2 = SideB_Fraction2, Weight2 = SideB_Fraction2, TS2 = SideB_TS2, VS2 = SideB_VS2, rho2 = SideB_rho2, Cc2 = SideB_Cc2, Hc2 = SideB_Ch2, Oc2 = SideB_Co2, Nc2 = SideB_Cn2, Sc2 = SideB_Cs2,
-    #                           Fraction3 = SideB_Fraction3, Volume3 = SideB_Fraction3, Weight3 = SideB_Fraction3, TS3 = SideB_TS3, VS3 = SideB_VS3, rho3 = SideB_rho3, Cc3 = SideB_Cc3, Hc3 = SideB_Ch3, Oc3 = SideB_Co3, Nc3 = SideB_Cn3, Sc3 = SideB_Cs3,
-    #                           Fraction4 = SideB_Fraction4, Volume4 = SideB_Fraction4, Weight4 = SideB_Fraction4, TS4 = SideB_TS4, VS4 = SideB_VS4, rho4 = SideB_rho4, Cc4 = SideB_Cc4, Hc4 = SideB_Ch4, Oc4 = SideB_Co4, Nc4 = SideB_Cn4, Sc4 = SideB_Cs4)
-      
-    #   #Agitación
-    #   R107.MixControl(MixVelocity = SideB_MixVelocity, MixTime = SideB_MixTime, DailyMixing = SideB_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR107"] = R107.MixVelocity
-
-    #   #Alimentación
-    #   R107.SubstrateFeed(Mode = SideB_FeedMode, Volume = SideB_FeedVolume, Time = SideB_FeedTime, Inyections = SideB_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideB"] = R107.Qr
-    #   bmp_output["volumeSubstrateSideB"] = R107.TotalVolFeed
-
-    #   #Reactor
-    #   R107.Reactor(model = SideB_Model, pH = SideB_pH, T = SideB_Temperatura, K1 = SideB_K1, K2 = SideB_K2, K3 = SideB_K3)
-    #   #---- Salidas reactor R107
-    #   bmp_output["SVR107"] = R107.SV 
-    #   bmp_output["OCR107"] = R107.OC
-    #   bmp_output["STR107"] = R107.ST
-    #   bmp_output["XR107"] = R107.x
-    #   bmp_output["KR107"] = R107.K1
-    #   bmp_output["EaR107"] = R107.K2
-    #   bmp_output["lambdaR107"] = R107.K3
-    #   bmp_output["TempR107"] = R107.T   
-    #   bmp_output["pHR107"] = R107.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR107"] = R107.mol_CH4
-    #   bmp_output["carbondioxidemolR107"] = R107.mol_CO2
-    #   bmp_output["oxygenmolR107"] = R107.mol_O2
-    #   bmp_output["hydrogensulfurmolR107"] = R107.mol_H2S
-    #   bmp_output["hydrogenmolR107"] = R107.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R107.CompoundsUnits()
-    #   bmp_output["methanevolR107"] = R107.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR107"] = R107.Vnormal_CO2
-    #   bmp_output["oxygenvolR107"] = R107.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR107"] = R107.Vnormal_H2S
-    #   bmp_output["hydrogenvolR107"] = R107.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR107"] = R107.x_CH4
-    #   bmp_output["carbondioxideconcentrationR107"] = R107.x_CO2
-    #   bmp_output["oxygenconcentrationR107"] = R107.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR107"] = R107.x_H2S
-    #   bmp_output["hydrogenconcentrationR107"] = R107.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR107"] = R107.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R107.PressurebyBiogas()
-    #   if SideB_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR107"] = R107.P_acum
-    #     bmp_output["storagebiogaspressureR107"] = R107.P_storage
-    #     bmp_output["storagebiogasR107"] = R107.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R107.poolSensor()
-    #     bmp_output["poolLevelR107"] = R107.hpool
-    #     bmp_output["poolTempR107"] = R107.Tpool
-    #     bmp_output["poolPressureR107"] = R107.Ppool
-    #   #Biogas energy
-    #   R107.biogasEnergy()
-    #   bmp_output["LHVR107"] = R107.LHV
-    #   bmp_output["EnergyR107"] = R107.TotalBiogasEnergy
-    #   bmp_output["PBMR107"] = R107.PBM
-      
-    #   #---- Reactor 8
-    #   if user_id108 not in bmp_instances:
-    #     bmp_instances[user_id108] = BMPOffline.BMPModelOffline(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
-    #   R108 = bmp_instances[user_id108]
-    #   R108.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
-    #                           Fraction1 = SideB_Fraction1, Volume1 = SideB_Fraction1, Weight1 = SideB_Fraction1, TS1 = SideB_TS1, VS1 = SideB_VS1, rho1 = SideB_rho1, Cc1 = SideB_Cc1, Hc1 = SideB_Ch1, Oc1 = SideB_Co1, Nc1 = SideB_Cn1, Sc1 = SideB_Cs1,
-    #                           Fraction2 = SideB_Fraction2, Volume2 = SideB_Fraction2, Weight2 = SideB_Fraction2, TS2 = SideB_TS2, VS2 = SideB_VS2, rho2 = SideB_rho2, Cc2 = SideB_Cc2, Hc2 = SideB_Ch2, Oc2 = SideB_Co2, Nc2 = SideB_Cn2, Sc2 = SideB_Cs2,
-    #                           Fraction3 = SideB_Fraction3, Volume3 = SideB_Fraction3, Weight3 = SideB_Fraction3, TS3 = SideB_TS3, VS3 = SideB_VS3, rho3 = SideB_rho3, Cc3 = SideB_Cc3, Hc3 = SideB_Ch3, Oc3 = SideB_Co3, Nc3 = SideB_Cn3, Sc3 = SideB_Cs3,
-    #                           Fraction4 = SideB_Fraction4, Volume4 = SideB_Fraction4, Weight4 = SideB_Fraction4, TS4 = SideB_TS4, VS4 = SideB_VS4, rho4 = SideB_rho4, Cc4 = SideB_Cc4, Hc4 = SideB_Ch4, Oc4 = SideB_Co4, Nc4 = SideB_Cn4, Sc4 = SideB_Cs4)
-      
-    #   #Agitación
-    #   R108.MixControl(MixVelocity = SideB_MixVelocity, MixTime = SideB_MixTime, DailyMixing = SideB_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR108"] = R108.MixVelocity
-
-    #   #Alimentación
-    #   R108.SubstrateFeed(Mode = SideB_FeedMode, Volume = SideB_FeedVolume, Time = SideB_FeedTime, Inyections = SideB_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideB"] = R108.Qr
-    #   bmp_output["volumeSubstrateSideB"] = R108.TotalVolFeed
-
-    #   #Reactor
-    #   R108.Reactor(model = SideB_Model, pH = SideB_pH, T = SideB_Temperatura, K1 = SideB_K1, K2 = SideB_K2, K3 = SideB_K3)
-    #   #---- Salidas reactor R108
-    #   bmp_output["SVR108"] = R108.SV 
-    #   bmp_output["OCR108"] = R108.OC
-    #   bmp_output["STR108"] = R108.ST
-    #   bmp_output["XR108"] = R108.x
-    #   bmp_output["KR108"] = R108.K1
-    #   bmp_output["EaR108"] = R108.K2
-    #   bmp_output["lambdaR108"] = R108.K3
-    #   bmp_output["TempR108"] = R108.T   
-    #   bmp_output["pHR108"] = R108.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR108"] = R108.mol_CH4
-    #   bmp_output["carbondioxidemolR108"] = R108.mol_CO2
-    #   bmp_output["oxygenmolR108"] = R108.mol_O2
-    #   bmp_output["hydrogensulfurmolR108"] = R108.mol_H2S
-    #   bmp_output["hydrogenmolR108"] = R108.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R108.CompoundsUnits()
-    #   bmp_output["methanevolR108"] = R108.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR108"] = R108.Vnormal_CO2
-    #   bmp_output["oxygenvolR108"] = R108.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR108"] = R108.Vnormal_H2S
-    #   bmp_output["hydrogenvolR108"] = R108.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR108"] = R108.x_CH4
-    #   bmp_output["carbondioxideconcentrationR108"] = R108.x_CO2
-    #   bmp_output["oxygenconcentrationR108"] = R108.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR108"] = R108.x_H2S
-    #   bmp_output["hydrogenconcentrationR108"] = R108.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR108"] = R108.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R108.PressurebyBiogas()
-    #   if SideB_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR108"] = R108.P_acum
-    #     bmp_output["storagebiogaspressureR108"] = R108.P_storage
-    #     bmp_output["storagebiogasR108"] = R108.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R108.poolSensor()
-    #     bmp_output["poolLevelR108"] = R108.hpool
-    #     bmp_output["poolTempR108"] = R108.Tpool
-    #     bmp_output["poolPressureR108"] = R108.Ppool
-    #   #Biogas energy
-    #   R108.biogasEnergy()
-    #   bmp_output["LHVR108"] = R108.LHV
-    #   bmp_output["EnergyR108"] = R108.TotalBiogasEnergy
-    #   bmp_output["PBMR108"] = R108.PBM
-      
-    #   #---- Reactor 9
-    #   if user_id109 not in bmp_instances:
-    #     bmp_instances[user_id109] = BMPOffline.BMPModelOffline(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
-    #   R109 = bmp_instances[user_id109]
-    #   R109.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
-    #                           Fraction1 = SideB_Fraction1, Volume1 = SideB_Fraction1, Weight1 = SideB_Fraction1, TS1 = SideB_TS1, VS1 = SideB_VS1, rho1 = SideB_rho1, Cc1 = SideB_Cc1, Hc1 = SideB_Ch1, Oc1 = SideB_Co1, Nc1 = SideB_Cn1, Sc1 = SideB_Cs1,
-    #                           Fraction2 = SideB_Fraction2, Volume2 = SideB_Fraction2, Weight2 = SideB_Fraction2, TS2 = SideB_TS2, VS2 = SideB_VS2, rho2 = SideB_rho2, Cc2 = SideB_Cc2, Hc2 = SideB_Ch2, Oc2 = SideB_Co2, Nc2 = SideB_Cn2, Sc2 = SideB_Cs2,
-    #                           Fraction3 = SideB_Fraction3, Volume3 = SideB_Fraction3, Weight3 = SideB_Fraction3, TS3 = SideB_TS3, VS3 = SideB_VS3, rho3 = SideB_rho3, Cc3 = SideB_Cc3, Hc3 = SideB_Ch3, Oc3 = SideB_Co3, Nc3 = SideB_Cn3, Sc3 = SideB_Cs3,
-    #                           Fraction4 = SideB_Fraction4, Volume4 = SideB_Fraction4, Weight4 = SideB_Fraction4, TS4 = SideB_TS4, VS4 = SideB_VS4, rho4 = SideB_rho4, Cc4 = SideB_Cc4, Hc4 = SideB_Ch4, Oc4 = SideB_Co4, Nc4 = SideB_Cn4, Sc4 = SideB_Cs4)
-      
-    #   #Agitación
-    #   R109.MixControl(MixVelocity = SideB_MixVelocity, MixTime = SideB_MixTime, DailyMixing = SideB_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR109"] = R109.MixVelocity
-
-    #   #Alimentación
-    #   R109.SubstrateFeed(Mode = SideB_FeedMode, Volume = SideB_FeedVolume, Time = SideB_FeedTime, Inyections = SideB_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideB"] = R109.Qr
-    #   bmp_output["volumeSubstrateSideB"] = R109.TotalVolFeed
-
-    #   #Reactor
-    #   R109.Reactor(model = SideB_Model, pH = SideB_pH, T = SideB_Temperatura, K1 = SideB_K1, K2 = SideB_K2, K3 = SideB_K3)
-    #   #---- Salidas reactor R109
-    #   bmp_output["SVR109"] = R109.SV 
-    #   bmp_output["OCR109"] = R109.OC
-    #   bmp_output["STR109"] = R109.ST
-    #   bmp_output["XR109"] = R109.x
-    #   bmp_output["KR109"] = R109.K1
-    #   bmp_output["EaR109"] = R109.K2
-    #   bmp_output["lambdaR109"] = R109.K3
-    #   bmp_output["TempR109"] = R109.T   
-    #   bmp_output["pHR109"] = R109.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR109"] = R109.mol_CH4
-    #   bmp_output["carbondioxidemolR109"] = R109.mol_CO2
-    #   bmp_output["oxygenmolR109"] = R109.mol_O2
-    #   bmp_output["hydrogensulfurmolR109"] = R109.mol_H2S
-    #   bmp_output["hydrogenmolR109"] = R109.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R109.CompoundsUnits()
-    #   bmp_output["methanevolR109"] = R109.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR109"] = R109.Vnormal_CO2
-    #   bmp_output["oxygenvolR109"] = R109.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR109"] = R109.Vnormal_H2S
-    #   bmp_output["hydrogenvolR109"] = R109.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR109"] = R109.x_CH4
-    #   bmp_output["carbondioxideconcentrationR109"] = R109.x_CO2
-    #   bmp_output["oxygenconcentrationR109"] = R109.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR109"] = R109.x_H2S
-    #   bmp_output["hydrogenconcentrationR109"] = R109.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR109"] = R109.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R109.PressurebyBiogas()
-    #   if SideB_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR109"] = R109.P_acum
-    #     bmp_output["storagebiogaspressureR109"] = R109.P_storage
-    #     bmp_output["storagebiogasR109"] = R109.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R109.poolSensor()
-    #     bmp_output["poolLevelR109"] = R109.hpool
-    #     bmp_output["poolTempR109"] = R109.Tpool
-    #     bmp_output["poolPressureR109"] = R109.Ppool
-    #   #Biogas energy
-    #   R109.biogasEnergy()
-    #   bmp_output["LHVR109"] = R109.LHV
-    #   bmp_output["EnergyR109"] = R109.TotalBiogasEnergy
-    #   bmp_output["PBMR109"] = R109.PBM
-      
-    #   #---- Reactor 10
-    #   if user_id110 not in bmp_instances:
-    #     bmp_instances[user_id110] = BMPOffline.BMPModelOffline(Vrxn = SideB_Vrxn, Vf=SideB_vf, tp=SideB_tp)
-    #   R110 = bmp_instances[user_id110]
-    #   R110.MixtureCalculation(substratesNumber = SideB_substrateNumber, MixtureRule = SideB_MixRule, WaterFraction = SideB_Water, WaterVolume = SideB_Water, WaterWeight = SideB_Water, 
-    #                           Fraction1 = SideB_Fraction1, Volume1 = SideB_Fraction1, Weight1 = SideB_Fraction1, TS1 = SideB_TS1, VS1 = SideB_VS1, rho1 = SideB_rho1, Cc1 = SideB_Cc1, Hc1 = SideB_Ch1, Oc1 = SideB_Co1, Nc1 = SideB_Cn1, Sc1 = SideB_Cs1,
-    #                           Fraction2 = SideB_Fraction2, Volume2 = SideB_Fraction2, Weight2 = SideB_Fraction2, TS2 = SideB_TS2, VS2 = SideB_VS2, rho2 = SideB_rho2, Cc2 = SideB_Cc2, Hc2 = SideB_Ch2, Oc2 = SideB_Co2, Nc2 = SideB_Cn2, Sc2 = SideB_Cs2,
-    #                           Fraction3 = SideB_Fraction3, Volume3 = SideB_Fraction3, Weight3 = SideB_Fraction3, TS3 = SideB_TS3, VS3 = SideB_VS3, rho3 = SideB_rho3, Cc3 = SideB_Cc3, Hc3 = SideB_Ch3, Oc3 = SideB_Co3, Nc3 = SideB_Cn3, Sc3 = SideB_Cs3,
-    #                           Fraction4 = SideB_Fraction4, Volume4 = SideB_Fraction4, Weight4 = SideB_Fraction4, TS4 = SideB_TS4, VS4 = SideB_VS4, rho4 = SideB_rho4, Cc4 = SideB_Cc4, Hc4 = SideB_Ch4, Oc4 = SideB_Co4, Nc4 = SideB_Cn4, Sc4 = SideB_Cs4)
-      
-    #   #Agitación
-    #   R110.MixControl(MixVelocity = SideB_MixVelocity, MixTime = SideB_MixTime, DailyMixing = SideB_DailyMixing)
-    #   #---- Salidas Agitación
-    #   bmp_output["mixVelocityR110"] = R110.MixVelocity
-
-    #   #Alimentación
-    #   R110.SubstrateFeed(Mode = SideB_FeedMode, Volume = SideB_FeedVolume, Time = SideB_FeedTime, Inyections = SideB_Injections, Q=1)
-    #   #---- Salidas alimentación
-    #   bmp_output["caudalSideB"] = R110.Qr
-    #   bmp_output["volumeSubstrateSideB"] = R110.TotalVolFeed
-
-    #   #Reactor
-    #   R110.Reactor(model = SideB_Model, pH = SideB_pH, T = SideB_Temperatura, K1 = SideB_K1, K2 = SideB_K2, K3 = SideB_K3)
-    #   #---- Salidas reactor R110
-    #   bmp_output["SVR110"] = R110.SV 
-    #   bmp_output["OCR110"] = R110.OC
-    #   bmp_output["STR110"] = R110.ST
-    #   bmp_output["XR110"] = R110.x
-    #   bmp_output["KR110"] = R110.K1
-    #   bmp_output["EaR110"] = R110.K2
-    #   bmp_output["lambdaR110"] = R110.K3
-    #   bmp_output["TempR110"] = R110.T   
-    #   bmp_output["pHR110"] = R110.pH
-    #   #---- Productos de reacción en moles [mol]
-    #   bmp_output["methanemolR110"] = R110.mol_CH4
-    #   bmp_output["carbondioxidemolR110"] = R110.mol_CO2
-    #   bmp_output["oxygenmolR110"] = R110.mol_O2
-    #   bmp_output["hydrogensulfurmolR110"] = R110.mol_H2S
-    #   bmp_output["hydrogenmolR110"] = R110.mol_H2
-    #   #---- Productos de reacción en vol normal [mL]
-    #   R110.CompoundsUnits()
-    #   bmp_output["methanevolR110"] = R110.Vnormal_CH4
-    #   bmp_output["carbondioxidevolR110"] = R110.Vnormal_CO2
-    #   bmp_output["oxygenvolR110"] = R110.Vnormal_O2
-    #   bmp_output["hydrogensulfurvolR110"] = R110.Vnormal_H2S
-    #   bmp_output["hydrogenvolR110"] = R110.Vnormal_H2
-    #   #---- Productos de reacción en concentracion [%]
-    #   bmp_output["methaneconcentrationR110"] = R110.x_CH4
-    #   bmp_output["carbondioxideconcentrationR110"] = R110.x_CO2
-    #   bmp_output["oxygenconcentrationR110"] = R110.x_O2
-    #   bmp_output["hydrogensulfurconcentrationR110"] = R110.x_H2S
-    #   bmp_output["hydrogenconcentrationR110"] = R110.x_H2
-    #   #---- Biogás Volumen acumulado [mL]
-    #   bmp_output["accumbiogasR110"] = R110.Vbiogas
-    #   #---- Biogas Presión y volumen almacenado solo para la opción de almacenamiento por presión
-    #   R110.PressurebyBiogas()
-    #   if SideB_measurementMethod == "Pressure":
-    #     bmp_output["accumbiogaspressureR110"] = R110.P_acum
-    #     bmp_output["storagebiogaspressureR110"] = R110.P_storage
-    #     bmp_output["storagebiogasR110"] = R110.V_storage
-    #   #Volumen desplazado
-    #   else:
-    #     R110.poolSensor()
-    #     bmp_output["poolLevelR110"] = R110.hpool
-    #     bmp_output["poolTempR110"] = R110.Tpool
-    #     bmp_output["poolPressureR110"] = R110.Ppool
-    #   #Biogas energy
-    #   R110.biogasEnergy()
-    #   bmp_output["LHVR110"] = R110.LHV
-    #   bmp_output["EnergyR110"] = R110.TotalBiogasEnergy
-    #   bmp_output["PBMR110"] = R110.PBM
-      
-    # #   print(bmp_instances)
-    
     return {"model": bmp_output}, 200

@@ -292,7 +292,7 @@ class BMPModelOffline:
         self.nH2S = 0
         self.nNH3 = 0
         self.nH2 = 0
-        self.C_ini_convertion = self.Csus_ini_SV_mol
+        self.C_ini_convertion = self.Csus_ini_SV_g
 
         #Pressure methid measurement
         self.nbiogasi=0
@@ -447,12 +447,17 @@ class BMPModelOffline:
     def SubstrateFeed (self, Mode = "Time", Volume = 50, Time = 4, Inyections = 4, Q=1, speed_time = 1):  #from frontend requieres add entrance vble for sideA and SideB
         self.Volume_feed = Volume  #mL
         self.speed_time = speed_time
+      
         if Mode == "Time":
+            if Time == 1:
+                self.Inyections = 2
+            else:
+                self.Inyections = Time
             TimeFeed = (Volume/Q)*60
             self.TimeFeed = TimeFeed
             if self.counterfeed < TimeFeed:
                 self.Qr = Q
-                self.TotalVolFeed = self.TotalVolFeed + self.Qr*((TimeFeed)/60)  
+                self.TotalVolFeed = self.TotalVolFeed + self.Qr*((TimeFeed/(Time-1))/60)  
             else:
                 self.Qr = 0
                 self.TotalVolFeed = self.TotalVolFeed
@@ -462,12 +467,16 @@ class BMPModelOffline:
             
 
         elif Mode == "Injection":
+            if Inyections == 1:
+                self.Inyections = 2
+            else:
+                self.Inyections = Inyections
             IntervalTimeInyection = 24/Inyections
             TimeFeed = (Volume/Q)*60
             self.TimeFeed = TimeFeed
             if self.counterfeed < TimeFeed:
                 self.Qr = Q
-                self.TotalVolFeed = self.TotalVolFeed + self.Qr*(TimeFeed/60) 
+                self.TotalVolFeed = self.TotalVolFeed + self.Qr*(TimeFeed/(Inyections-1)/60) 
             else:
                 self.Qr = 0
                 self.TotalVolFeed = self.TotalVolFeed 
@@ -481,6 +490,7 @@ class BMPModelOffline:
             self.TotalVolFeed = 0
             self.TotalVolFeed = 0
             self.TimeFeed = 0
+            self.Inyections = 2
 
     def MixControl (self, MixVelocity, MixTime, DailyMixing, speed_time):
         self.MixTime = MixTime*60
@@ -694,7 +704,7 @@ class BMPModelOffline:
 
             else:
 
-                self.gSV = self.Csus_ini_SV_mol * self.ReactorVolume/1000 
+                self.gSV = self.Csus_ini_SV_g * self.ReactorVolume/1000 
                 self.x = (self.Csus_SV_mol - self.Csus_ini_SV_mol)/self.Csus_SV_mol
                 self.nCH4 = self.nCH4 + abs(self.DCsus_ini_SV_mol)*(self.s_CH4)*(self.ReactorVolume/1000)
                 self.nCO2 = self.nCO2 + abs(self.DCsus_ini_SV_mol)*(self.s_CO2)*(self.ReactorVolume/1000)
@@ -739,7 +749,7 @@ class BMPModelOffline:
     def Measurement_by_pressure(self, T, Pset):   #Temperature in Celsius        
         Pstd = 100000
         Tstd = 273.15
-        self.InitialFreeVolume = self.InitialFreeVolume - self.Qr*(self.TimeFeed/60)
+        self.InitialFreeVolume = self.InitialFreeVolume - self.Qr*(self.TimeFeed/(self.Inyections-1)/60)
         if self.InitialFreeVolume < self.ReactorVolume:
             self.InitialFreeVolume = self.InitialFreeVolumei
         
@@ -769,7 +779,7 @@ class BMPModelOffline:
         self.hpool_mm = 0
     
     def Measument_by_volume(self, T, hmax, hmin, Apool):   #Temperature in Celsius
-        self.InitialFreeVolume = self.InitialFreeVolume - self.Qr*(self.TimeFeed/60)
+        self.InitialFreeVolume = self.InitialFreeVolume - self.Qr*(self.TimeFeed//(self.Inyections-1)/60)
         if self.InitialFreeVolume < self.ReactorVolume:
             self.InitialFreeVolume = self.InitialFreeVolumei
         
