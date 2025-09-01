@@ -1918,7 +1918,6 @@ class BMP_online:
         SV_ini = []
         Csus_mol = []
         Q_inv = []
-
         if 'ST_int' not in ReactorData.columns:
             self.ST_ini = self.ST_ini
         else:
@@ -2201,7 +2200,7 @@ class BMP_online:
                 self.resolution = 200
             elif Model == 'ADM1':
                 self.K_ini = 1
-                self.resolution = 500
+                self.resolution = 10000
             elif Model == 'Gompertz':
                 self.ym_ini = 1
                 self.U_ini = 1

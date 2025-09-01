@@ -64,7 +64,6 @@ class BMP(Resource):
   def post(self):
     data = request.get_json()
     bmp_output = {}
-    # print(data)
 
     #Database parameters
     DB_IP = os.getenv('DB_IP')
@@ -75,8 +74,8 @@ class BMP(Resource):
 
     #Global twin
     name = data["name"]
-    #TrainingMode = True
-    TrainingMode = data["trainingMode"]
+    TrainingMode = True
+    #TrainingMode = data["trainingMode"]
     iteration = data["iteration"]
 
     # SideA 
@@ -1123,7 +1122,7 @@ class BMP(Resource):
         R103 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R103", ReactorData = R103_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
         R104 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R104", ReactorData = R104_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
         R105 = SideA.StochoimetricExpendtire_Reactor_batch(ReactorName="R105", ReactorData = R105_data, Vrxn = ReactorVolumeSideA, OperationMethod=OperationMethodSideA)
-        data_instancesSideA[user_data_sideA] = [R101, R102, R103, R104, R105]
+        data_instances_SideA[user_data_sideA] = [R101, R102, R103, R104, R105]
         
         R101_exit = SideA.exit_variable_online (ReactorName = "R101", ReactorData = data_instancesSideA[user_data_sideA][0], Vrxn = ReactorVolumeSideA)
         R102_exit = SideA.exit_variable_online (ReactorName = "R102", ReactorData = data_instancesSideA[user_data_sideA][1], Vrxn = ReactorVolumeSideA)
@@ -1141,7 +1140,7 @@ class BMP(Resource):
         bmp_output["KR101"] = KSideA
         bmp_output["EaR101"] = EaSideA
         bmp_output["lambdaR101"] = LSideA
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R101_opt[3])
         bmp_output["TempR101"] = float(R101_exit[6])  
         bmp_output["pHR101"] = float(R101_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -1180,7 +1179,7 @@ class BMP(Resource):
         bmp_output["KR102"] = KSideA
         bmp_output["EaR102"] = EaSideA
         bmp_output["lambdaR102"] = LSideA
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R102_opt[3])
         bmp_output["TempR102"] = float(R102_exit[6])  
         bmp_output["pHR102"] = float(R102_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -1219,7 +1218,7 @@ class BMP(Resource):
         bmp_output["KR103"] = KSideA
         bmp_output["EaR103"] = EaSideA
         bmp_output["lambdaR103"] = LSideA
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R103_opt[3])
         bmp_output["TempR103"] = float(R103_exit[6])  
         bmp_output["pHR103"] = float(R103_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -1258,7 +1257,7 @@ class BMP(Resource):
         bmp_output["KR104"] = KSideA
         bmp_output["EaR104"] = EaSideA
         bmp_output["lambdaR104"] = LSideA
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R104_opt[3])
         bmp_output["TempR104"] = float(R104_exit[6])  
         bmp_output["pHR104"] = float(R104_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -1297,7 +1296,7 @@ class BMP(Resource):
         bmp_output["KR105"] = KSideA
         bmp_output["EaR105"] = EaSideA
         bmp_output["lambdaR105"] = LSideA
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R105_opt[3])
         bmp_output["TempR105"] = float(R105_exit[6])  
         bmp_output["pHR105"] = float(R105_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2451,7 +2450,7 @@ class BMP(Resource):
         bmp_output["EnergyR110"] = float(R110_exit[27])
         bmp_output["LHVR110"] = float(R110_exit[28])
       
-      if stateSelectionSideB == False and biogasSideB == True and TrainingMode == False:    #Online, biogas compounds in auto, No training
+      if stateSelectionSideB == False and biogasSideB == True and TrainingMode == False:    #Online, biogas compounds in auto
         
         if user_idSideB not in bmp_instancesSideB:
           bmp_instancesSideB[user_idSideB] = BMPOnlineTrainMode.BMP_online(DB_IP= DB_IP, DB_Port=DB_Port, DB_Organization=DB_Organization, DB_Bucket=DB_Bucket, DB_Token=DB_Token, 
@@ -2504,7 +2503,7 @@ class BMP(Resource):
         bmp_output["KR106"] = KSideB
         bmp_output["EaR106"] = EaSideB
         bmp_output["lambdaR106"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R106_opt[3])
         bmp_output["TempR106"] = float(R106_exit[6])  
         bmp_output["pHR106"] = float(R106_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2543,7 +2542,7 @@ class BMP(Resource):
         bmp_output["KR107"] = KSideB
         bmp_output["EaR107"] = EaSideB
         bmp_output["lambdaR107"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R107_opt[3])
         bmp_output["TempR107"] = float(R107_exit[6])  
         bmp_output["pHR107"] = float(R107_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2582,7 +2581,7 @@ class BMP(Resource):
         bmp_output["KR108"] = KSideB
         bmp_output["EaR108"] = EaSideB
         bmp_output["lambdaR108"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R108_opt[3])
         bmp_output["TempR108"] = float(R108_exit[6])  
         bmp_output["pHR108"] = float(R108_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2621,7 +2620,7 @@ class BMP(Resource):
         bmp_output["KR109"] = KSideB
         bmp_output["EaR109"] = EaSideB
         bmp_output["lambdaR109"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R109_opt[3])
         bmp_output["TempR109"] = float(R109_exit[6])  
         bmp_output["pHR109"] = float(R109_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2660,7 +2659,7 @@ class BMP(Resource):
         bmp_output["KR110"] = KSideB
         bmp_output["EaR110"] = EaSideB
         bmp_output["lambdaR110"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R110_opt[3])
         bmp_output["TempR110"] = float(R110_exit[6])  
         bmp_output["pHR110"] = float(R110_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2726,11 +2725,11 @@ class BMP(Resource):
         R110 = SideB.StochoimetricExpendtire_Reactor_batch(ReactorName="R110", ReactorData = R110_data, Vrxn = ReactorVolumeSideB, OperationMethod=OperationMethodSideB)
         data_instancesSideB[user_data_sideB] = [R106, R107, R108, R109, R110]
                
-        R106_exit = SideB.exit_variable_online (ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
-        R107_exit = SideB.exit_variable_online (ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
-        R108_exit = SideB.exit_variable_online (ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
-        R109_exit = SideB.exit_variable_online (ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
-        R110_exit = SideB.exit_variable_online (ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
+        R106_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R106", ReactorData = data_instancesSideB[user_data_sideB][0], Vrxn = ReactorVolumeSideB)
+        R107_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R107", ReactorData = data_instancesSideB[user_data_sideB][1], Vrxn = ReactorVolumeSideB)
+        R108_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R108", ReactorData = data_instancesSideB[user_data_sideB][2], Vrxn = ReactorVolumeSideB)
+        R109_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R109", ReactorData = data_instancesSideB[user_data_sideB][3], Vrxn = ReactorVolumeSideB)
+        R110_exit = SideB.exit_variable_online (iterations_counts = iteration, ReactorName = "R110", ReactorData = data_instancesSideB[user_data_sideB][4], Vrxn = ReactorVolumeSideB)
         #Output variables
         #R106
         bmp_output["mixVelocityR106"] = float(R106_exit[0]) 
@@ -2742,7 +2741,7 @@ class BMP(Resource):
         bmp_output["KR106"] = KSideB
         bmp_output["EaR106"] = EaSideB
         bmp_output["lambdaR106"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R106_opt[3])
         bmp_output["TempR106"] = float(R106_exit[6])  
         bmp_output["pHR106"] = float(R106_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2781,7 +2780,7 @@ class BMP(Resource):
         bmp_output["KR107"] = KSideB
         bmp_output["EaR107"] = EaSideB
         bmp_output["lambdaR107"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R107_opt[3])
         bmp_output["TempR107"] = float(R107_exit[6])  
         bmp_output["pHR107"] = float(R107_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2820,7 +2819,7 @@ class BMP(Resource):
         bmp_output["KR108"] = KSideB
         bmp_output["EaR108"] = EaSideB
         bmp_output["lambdaR108"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R108_opt[3])
         bmp_output["TempR108"] = float(R108_exit[6])  
         bmp_output["pHR108"] = float(R108_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2859,7 +2858,7 @@ class BMP(Resource):
         bmp_output["KR109"] = KSideB
         bmp_output["EaR109"] = EaSideB
         bmp_output["lambdaR109"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R109_opt[3])
         bmp_output["TempR109"] = float(R109_exit[6])  
         bmp_output["pHR109"] = float(R109_exit[7])
          #---- Productos de reacción en moles [mol]
@@ -2898,7 +2897,7 @@ class BMP(Resource):
         bmp_output["KR110"] = KSideB
         bmp_output["EaR110"] = EaSideB
         bmp_output["lambdaR110"] = LSideB
-        bmp_output["Objetive"] = float(0)
+        bmp_output["Objetive"] = float(R110_opt[3])
         bmp_output["TempR110"] = float(R110_exit[6])  
         bmp_output["pHR110"] = float(R110_exit[7])
          #---- Productos de reacción en moles [mol]
