@@ -744,8 +744,11 @@ class BMPModelOffline:
                 self.vH2S = self.Vnormalbiogas * self.xH2S
                 self.vH2 = self.Vnormalbiogas * self.xH2
 
-                self.PBM = (self.Vnormalbiogas * self.xCH4)/self.gSV
-             
+                try:
+                    self.PBM = (self.Vnormalbiogas * self.xCH4)/self.gSV
+                except ZeroDivisionError:
+                    self.PBM = 0
+
     def Measurement_by_pressure(self, T, Pset):   #Temperature in Celsius        
         Pstd = 100000
         Tstd = 273.15
