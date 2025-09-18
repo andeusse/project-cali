@@ -1338,9 +1338,11 @@ class BMP(Resource):
         users_instancesSideA = [user_id101, user_id102, user_id103, user_id104, user_id105]   
 
         if iteration == 1:   
+          print(iteration, flush=True)
           for key in users_instancesSideA:
             if key in bmp_instances_offline_SideA:
               del bmp_instances_offline_SideA[key]
+              print(f'{key} was delted', flush=True)
         
         # R101
         if user_id101 not in bmp_instances_offline_SideA:
@@ -2937,10 +2939,12 @@ class BMP(Resource):
   
         users_instancesSideB = [user_id106, user_id107, user_id108, user_id109, user_id110]   
 
-        if iteration == 1:   
+        if iteration == 1: 
+          print(iteration, flush=True)  
           for key in users_instancesSideB:
             if key in bmp_instances_offline_SideB:
               del bmp_instances_offline_SideB[key]
+              print("User Was delete", flush=True)
         
         # R106
         if user_id106 not in bmp_instances_offline_SideB:
