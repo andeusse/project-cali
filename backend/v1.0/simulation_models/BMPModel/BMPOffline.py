@@ -550,7 +550,7 @@ class BMPModelOffline:
                 self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
                 self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
                 try:
-                    self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                    self.OC = self.Csus_ini_SV_g/(self.Globaltime/86400)
                 except ZeroDivisionError:
                     self.OC = 0
             else:
@@ -564,7 +564,7 @@ class BMPModelOffline:
                 self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
                 self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
                 try:
-                    self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                    self.OC = self.Csus_ini_SV_g/(self.Globaltime/86400)
                 except ZeroDivisionError:
                     self.OC = 0
 
@@ -578,7 +578,7 @@ class BMPModelOffline:
                     self.DCsus_ini_SV_mol  = self.Csus_ini_SV_molv[-1] - self.Csus_ini_SV_molv[0]
                 self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
                 self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
-                self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                self.OC = self.Csus_ini_SV_g/(self.Globaltime/86400)
                 
             else:
                 self.Csus_ini_SV_molv = odeint(model_ADM1, y0 = self.Csus_ini_SV_mol, t=time_sim, args=(K1, self.ReactorVolume/1000, 0, 0, 1))
@@ -590,7 +590,7 @@ class BMPModelOffline:
                 self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato
                 self.ST_int = ((self.Csus_ini_SV_mol+self.Csus_fixed))*self.MW_sustrato
                 try:
-                    self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400)
+                    self.OC = self.Csus_ini_SV_g/(self.Globaltime/86400)
                 except ZeroDivisionError:
                     self.OC = 0
 
@@ -652,7 +652,7 @@ class BMPModelOffline:
             self.SV_int = (self.Csus_ini_SV_mol)*self.MW_sustrato  
             self.ST_int = (self.Csus_ini_ST_mol)*self.MW_sustrato  
             try:
-                self.OC = self.Csus_ini_SV_mol/(self.Globaltime/86400) 
+                self.OC = self.Csus_ini_SV_g/(self.Globaltime/86400) 
             except ZeroDivisionError:
                 self.OC = 0    
 
