@@ -71,20 +71,20 @@ export const setBiochemicalMethanePotential = (
       case OperationModelType.Gompertz:
         newState.kineticKSideA.disabled = false;
         newState.kineticKSideA.value = 0.00329;
-        newState.kineticKSideA.unit = '[L/gSV]';
+        newState.kineticKSideA.unit = '[mL/gSV]';
         newState.kineticKSideA.variableString = 'ym';
         newState.kineticKSideA.tooltip =
           'Potencial de producción de biogás para lado A';
 
         newState.kineticEaSideA.disabled = false;
         newState.kineticEaSideA.value = 2.59e-9;
-        newState.kineticEaSideA.unit = '[L/gSV s]';
+        newState.kineticEaSideA.unit = '[mL/gSV dia]';
         newState.kineticEaSideA.variableString = 'U';
         newState.kineticEaSideA.tooltip =
           'Tasa máxima de producción de biogás para lado A';
 
         newState.kineticLambdaSideA.disabled = false;
-        newState.kineticLambdaSideA.unit = 's';
+        newState.kineticLambdaSideA.unit = 'dia';
         newState.kineticLambdaSideA.tooltip =
           'Tiempo mínimo de producción de biogás para lado A';
         break;
