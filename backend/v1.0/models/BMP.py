@@ -1653,7 +1653,7 @@ class BMP(Resource):
         #feeding in case time or injection
         R105.SubstrateFeed(Mode = OperationMethodSideA, Volume = dosificationVolumeSideA, Time = dailyInyectionsSideA, Inyections = dailyInyectionsSideA, Q=3.4, speed_time = speed_time)
         bmp_output["caudalSideA"] = float(R105.Qr)
-        bmp_output["volumeSubstrateSideA"] = float(R105.TotalVolFeed)
+        bmp_output["volumeSubstrateSideA"] = float(R105.TotalVolFeed) - 12.5
         #reactor execution model
         R105.Reactor(model = ModelSideA, OperationMethod = OperationMethodSideA, T = TemperatureSideA + 273.15, K1 = KSideA, K2 = EaSideA, K3 = LSideA, speed_time=speed_time)
         bmp_output["SVR105"] = float(R105.SV_int) 
@@ -2971,7 +2971,7 @@ class BMP(Resource):
         #feeding in case time or injection
         R106.SubstrateFeed(Mode = OperationMethodSideB, Volume = dosificationVolumeSideB, Time = dailyInyectionsSideB, Inyections = dailyInyectionsSideB, Q=3.4, speed_time = speed_time)
         bmp_output["caudalsideB"] = float(R106.Qr)
-        bmp_output["volumeSubstratesideB"] = float(R106.TotalVolFeed)
+        bmp_output["volumeSubstratesideB"] = float(R106.TotalVolFeed) - 12.5
         #reactor execution model
         R106.Reactor(model = ModelSideB, OperationMethod = OperationMethodSideB, T = TemperatureSideB + 273.15, K1 = KSideB, K2 = EaSideB, K3 = LSideB, speed_time=speed_time)
         bmp_output["SVR106"] = float(R106.SV_int) 
