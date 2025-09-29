@@ -457,7 +457,7 @@ class BMPModelOffline:
             self.TimeFeed = TimeFeed
             if self.counterfeed < TimeFeed:
                 self.Qr = Q
-                self.TotalVolFeed = self.TotalVolFeed + self.Qr*((TimeFeed/(Time-1))/60)  
+                self.TotalVolFeed = (self.TotalVolFeed) + self.Qr*((TimeFeed/(Time))/60)
             else:
                 self.Qr = 0
                 self.TotalVolFeed = self.TotalVolFeed
