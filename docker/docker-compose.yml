@@ -39,8 +39,6 @@ services:
       - '3000:3000'
     hostname: grafana
     container_name: grafana
-    volumes:
-      - grafana-storage:/var/lib/grafana
     depends_on:
       - influxdb
     environment:
