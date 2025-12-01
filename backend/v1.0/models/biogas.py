@@ -59,6 +59,7 @@ class Biogas(Resource):
         break
       except:
         attempts += 1
+        trainingData = json.dumps({'names': [], 'values': []}, indent=1)
       finally:
         influxDB.InfluxDBclose()
     
