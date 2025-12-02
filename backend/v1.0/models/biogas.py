@@ -6,7 +6,6 @@ from simulation_models.Biogas import Off_On_Model_Simulation
 from tools import DBManager
 import pandas as pd
 import os
-import json
 import math
 
 
@@ -53,7 +52,6 @@ class Biogas(Resource):
         values_df_temp['var'] = values_df_temp['_field'].str.split('?').str[-2]
 
         values = values_df_temp.pivot(index='name', columns='var', values='_value').to_dict(orient='index')
-        # trainingData = json.dumps({'names': list(values.keys()), 'values': values}, indent=1)
         trainingData = {'names': list(values.keys()), 'values': values}
         
         influxDB.InfluxDBclose()
