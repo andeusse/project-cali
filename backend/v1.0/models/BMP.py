@@ -4,7 +4,6 @@ from simulation_models.BMPModel import BMPOffline
 from simulation_models.BMPModel import BMPOnlineTrainMode
 from tools import DBManager
 import os
-import json
 import numpy as np
 
 bmp_instancesSideA = {}
@@ -50,16 +49,17 @@ class BMP(Resource):
         values_df_temp['var'] = values_df_temp['_field'].str.split('?').str[-2]
 
         values = values_df_temp.pivot(index='name', columns='var', values='_value').to_dict(orient='index')
-        trainingData = json.dumps({'names': list(values.keys()), 'values': values}, indent=1)
+        trainingData = {'names': list(values.keys()), 'values': values}
         
         influxDB.InfluxDBclose()
         break
       except:
         attempts += 1
+        trainingData = {'names': [], 'values': []}
       finally:
         influxDB.InfluxDBclose()
 
-    return trainingData
+    return trainingData, 200
 
   def post(self):
     data = request.get_json()
