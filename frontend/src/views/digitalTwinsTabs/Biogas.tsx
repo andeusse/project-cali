@@ -47,8 +47,8 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import saveAs from 'file-saver';
 import { getValueByKey } from '../../utils/getValueByKey';
 import { OperationModelType } from '../../types/common';
-import { AxiosError } from 'axios';
-import { trainingDataAPIMock } from '../../api/digitalTwinsModels';
+import { AxiosError, AxiosResponse } from 'axios';
+import { trainingDataAPI, trainingDataAPIMock } from '../../api/digitalTwinsModels';
 import { errorResp } from '../../types/api';
 import { TrainingDataType } from '../../types/trainingData';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
@@ -170,13 +170,13 @@ const Biogas = () => {
 
   useEffect(() => {
     dispatch(setIsLoading(true));
-    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+    trainingDataAPI<TrainingDataType, AxiosResponse<TrainingDataType>>(
       'biogas',
       system.inputOperationMode,
       system.operationModelType
     )
       .then((resp) => {
-        if (!resp.names.includes(system.selectedTrainingData)) {
+        if (!resp.data.names.includes(system.selectedTrainingData)) {
           handleChange({
             target: {
               name: 'selectedTrainingData',
@@ -184,7 +184,7 @@ const Biogas = () => {
             },
           });
         }
-        settrainingData(resp);
+        settrainingData(resp.data);
         setSystem((old) => setData(old));
       })
       .catch((err: AxiosError<errorResp>) => {

@@ -47,8 +47,8 @@ import { OperationModelType } from '../../types/common';
 import TimeGraphs from '../../components/models/common/TimeGraphs';
 import BiochemicalMethanePotentialDiagram from '../../components/models/diagram/BiochemicalMethanePotentialDiagram';
 import ToggleCustomNumberField from '../../components/UI/ToggleCustomNumberField';
-import { AxiosError } from 'axios';
-import { trainingDataAPIMock } from '../../api/digitalTwinsModels';
+import { AxiosError, AxiosResponse } from 'axios';
+import { trainingDataAPI, trainingDataAPIMock } from '../../api/digitalTwinsModels';
 import { errorResp } from '../../types/api';
 import { TrainingDataType } from '../../types/trainingData';
 import { setIsLoading } from '../../redux/slices/isLoadingSlice';
@@ -175,14 +175,14 @@ const BiochemicalMethanePotential = (props: Props) => {
 
   useEffect(() => {
     dispatch(setIsLoading(true));
-    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+    trainingDataAPI<TrainingDataType, AxiosResponse<TrainingDataType>>(
       'bmp',
       system.measurementMethodSideA,
       system.modelSelectionSideA,
       false
     )
       .then((resp) => {
-        if (!resp.names.includes(system.selectedTrainingDataA)) {
+        if (!resp.data.names.includes(system.selectedTrainingDataA)) {
           handleChange({
             target: {
               name: 'selectedTrainingDataA',
@@ -190,7 +190,7 @@ const BiochemicalMethanePotential = (props: Props) => {
             },
           });
         }
-        settrainingDataA(resp);
+        settrainingDataA(resp.data);
         setSystem((old) => setDataA(old));
       })
       .catch((err: AxiosError<errorResp>) => {
@@ -209,14 +209,14 @@ const BiochemicalMethanePotential = (props: Props) => {
 
   useEffect(() => {
     dispatch(setIsLoading(true));
-    trainingDataAPIMock<TrainingDataType, TrainingDataType>(
+    trainingDataAPI<TrainingDataType, AxiosResponse<TrainingDataType>>(
       'bmp',
       system.measurementMethodSideB,
       system.modelSelectionSideB,
       false
     )
       .then((resp) => {
-        if (!resp.names.includes(system.selectedTrainingDataB)) {
+        if (!resp.data.names.includes(system.selectedTrainingDataB)) {
           handleChange({
             target: {
               name: 'selectedTrainingDataB',
@@ -224,7 +224,7 @@ const BiochemicalMethanePotential = (props: Props) => {
             },
           });
         }
-        settrainingDataB(resp);
+        settrainingDataB(resp.data);
         setSystem((old) => setDataB(old));
       })
       .catch((err: AxiosError<errorResp>) => {
