@@ -48,8 +48,11 @@ class Biogas(Resource):
     while attempts <= 5:
       try:
         values_df_temp = influxDB.InfluxDBreader(query)
+        values_df_temp = values_df_temp[sum(values_df_temp['_field'].str.contains(p, case=False, na=False).astype(int) for p in ["Gompertz", "ADM1", "Arrhenius"]) < 2]
         values_df_temp['name'] = values_df_temp['_field'].str.split('?').str[-1]
         values_df_temp['var'] = values_df_temp['_field'].str.split('?').str[-2]
+        values_df_temp = values_df_temp[values_df_temp['var'].str.match('^(K|Ea|ym|U|L)_R10[12]$')]
+        values_df_temp['var'] = values_df_temp['var'].replace({'Ea_|U_': 'activationEnergy', 'K_|ym_': 'exponentialFactor', 'L_':     'lambda'}, regex=True)
 
         values = values_df_temp.pivot(index='name', columns='var', values='_value').to_dict(orient='index')
         trainingData = {'names': list(values.keys()), 'values': values}
@@ -58,6 +61,7 @@ class Biogas(Resource):
         break
       except:
         attempts += 1
+        print(attempts)
         trainingData = {'names': [], 'values': []}
       finally:
         influxDB.InfluxDBclose()
